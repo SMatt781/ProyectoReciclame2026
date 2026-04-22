@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Estudios del Sector - Reciclame</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7f9fb",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#cfe9d9",
+                        "tertiary-container": "#092016",
+                        "primary-container": "#021d30",
+                        "on-secondary-container": "#00743a",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#b1c9e2",
+                        "on-surface-variant": "#43474c",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "outline-variant": "#c3c7cd",
+                        "on-secondary-fixed": "#00210c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006d37",
+                        "surface-variant": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#354c40",
+                        "on-secondary": "#ffffff",
+                        "outline": "#73777d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-container": "#71897c",
+                        "tertiary-fixed-dim": "#b3ccbd",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#496177",
+                        "on-secondary-fixed-variant": "#005228",
+                        "on-primary-container": "#6f869e",
+                        "secondary-container": "#6bfe9c",
+                        "on-tertiary-fixed": "#092016",
+                        "secondary-fixed": "#6bfe9c",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#021d30",
+                        "on-primary-fixed-variant": "#31495e",
+                        "primary-fixed": "#cde5ff",
+                        "secondary-fixed-dim": "#4ae183",
+                        "primary-fixed-dim": "#b1c9e2",
+                        "back-tabla-normativas": "#e2e8f8"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+
+        /* SVG Icon utility */
+        .icon-sm { width: 1.25rem; height: 1.25rem; }
+        .icon-md { width: 1.5rem; height: 1.5rem; }
+        .icon-lg { width: 2rem; height: 2rem; }
+        .icon-xl { width: 2.5rem; height: 2.5rem; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-full w-72 p-6 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50">
+    <!-- Brand / Header -->
+    <div class="flex items-center gap-3 mb-10 pl-2">
+        <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M7 19c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-8h4V9h-4V7c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H3v2h4v8zm2-8h6V7H9v4z"/>
+            </svg>
+        </div>
+        <div class="flex flex-col">
+            <h1 class="text-[#001B2E] dark:text-white font-black text-xl font-headline tracking-tight">Reciclame</h1>
+            <span class="text-xs text-on-surface-variant font-medium">Economía Circular</span>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="flex-1 space-y-2">
+      <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/dashboard}">
+        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+        Dashboard
+      </a>
+
+      <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/usuarios/gestion}">
+        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+        Usuarios
+      </a>
+
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/estudios}">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            Estudios
+        </a>
+
+      <a class="bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 font-headline font-bold text-sm tracking-tight scale-95 active:scale-100 transition-transform" th:href="@{/admin/normativas}">
+        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M3 13h2v8H3zm4-8h2v16H7zm4-2h2v18h-2zm4 4h2v14h-2zm4-2h2v16h-2z"
+          />
+        </svg>
+        Repositorio Normativo
+      </a>
+
+
+      <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" href="#">
+        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/>
+        </svg>
+        Registros de actividad
+      </a>
+
+      <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" href="#">
+        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M21 5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5zm-2 0l-6.5 4L5 5h14zm0 13H5V7l6.5 4L19 7v11z"/>
+        </svg>
+        Registros de descarga
+      </a>
+    </nav>
+
+    <!-- CTA -->
+    <div class="mt-8 mb-6">
+        <button type="button"
+                onclick="document.getElementById('modalNuevaNormativa').classList.remove('hidden')"
+                class="w-full bg-primary-container text-on-primary font-label font-bold text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-fixed-variant transition-colors ambient-shadow">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            Añadir Normativa
+        </button>
+    </div>
+
+    <!-- Footer Tabs -->
+    <div class="pt-4 space-y-2 relative before:absolute before:top-0 before:left-4 before:right-4 before:h-px before:bg-surface-variant">
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" href="#">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.62l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.09-.47 0-.59.22L2.74 8.87c-.12.21-.08.48.1.62l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.62l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.04.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.09.47 0 .59-.22l1.92-3.32c.12-.22.07-.48-.1-.62l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+            </svg>
+            Configuración
+        </a>
+
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" href="#">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+            </svg>
+            Cerrar Sesión
+        </a>
+    </div>
+</aside>
+
+<!-- Main Content Canvas -->
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+    <!-- TopAppBar -->
+    <header class="flex justify-between items-center px-8 py-4 w-full h-20 sticky top-0 z-40 bg-[#f7f9fb]/80 dark:bg-slate-950/80 backdrop-blur-xl">
+        <!-- Logo Header Area -->
+        <div class="flex-shrink-0">
+            <div class="text-2xl font-headline font-bold text-primary-container">Reciclame</div>
+        </div>
+
+        <!-- Right Side / Actions & Profile -->
+        <div class="flex items-center gap-6 ml-auto">
+            <button class="text-slate-500 dark:text-slate-400 hover:text-[#2ECC71] transition-colors relative">
+                <svg class="w-6 h-6 text-current" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V2c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 3.36 6 5.92 6 9v5l-2 2v1h16v-1l-2-2z"/>
+                </svg>
+                <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border border-surface-container-lowest"></span>
+            </button>
+
+            <div class="flex items-center gap-3 cursor-pointer p-1 rounded-full hover:bg-surface-container-low transition-colors">
+                <img alt="Paola Flores" class="w-10 h-10 rounded-full object-cover ring-2 ring-surface-container-lowest shadow-sm" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23E8C4A0'/%3E%3Ccircle cx='50' cy='35' r='15' fill='%23D4A574'/%3E%3Cellipse cx='50' cy='65' rx='20' ry='25' fill='%23D4A574'/%3E%3C/svg%3E" />
+                <div class="hidden md:flex flex-col justify-center">
+                    <span class="font-label font-medium text-sm text-[#001B2E] dark:text-white leading-tight">Paola Flores</span>
+                    <span class="text-[10px] font-bold text-on-secondary-fixed bg-secondary-fixed px-2 py-0.5 rounded-full w-max mt-0.5 tracking-wider">ADMIN</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Scrollable Content -->
+    <main class="flex-1 overflow-y-auto px-6 md:px-10 py-8 pb-24">
+        <div class="max-w-7xl mx-auto">
+            <!-- Page Header -->
+            <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                    <h2 class="font-headline text-3xl md:text-4xl font-extrabold text-on-primary-fixed tracking-tight mb-2">Repositorio Normativo Nacional</h2>
+                    <p class="font-body text-sm md:text-base text-on-surface-variant max-w-2xl leading-relaxed">
+                        Acceda a la base de datos centralizada de marcos legales, reglamentos técnicos y proyectos en consulta sobre economía circular y gestión de residuos.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- STATS SECTION -->
+            <div class="grid grid-cols-3 gap-8 mb-12 bg-white rounded-xl p-6 w-full md:w-1/2 mx-auto">
+                <!-- Donut Chart -->
+                <div class="col-span-1">
+                    <h3 class="text-lg font-bold text-[#1a1a1a] mb-6">Distribución por temática</h3>
+                    <div class="flex flex-col items-center">
+                        <!-- SVG Donut Chart -->
+                        <svg viewBox="0 0 120 120" class="w-32 h-32">
+                            <!-- Center circle (white) -->
+                            <circle cx="60" cy="60" r="35" fill="white"/>
+                            <!-- Donut segments -->
+                            <circle cx="60" cy="60" r="45" fill="none" stroke="#006c46" stroke-width="18" stroke-dasharray="70.7 282.7" transform="rotate(0 60 60)"/>
+                            <circle cx="60" cy="60" r="45" fill="none" stroke="#f49e0b" stroke-width="18" stroke-dasharray="52.9 282.7" transform="rotate(89 60 60)"/>
+                            <circle cx="60" cy="60" r="45" fill="none" stroke="#ba1a1a" stroke-width="18" stroke-dasharray="46.8 282.7" transform="rotate(156 60 60)"/>
+                            <circle cx="60" cy="60" r="45" fill="none" stroke="#3b82f6" stroke-width="18" stroke-dasharray="111.5 282.7" transform="rotate(222 60 60)"/>
+                        </svg>
+                        <p class="text-4xl font-bold text-[#1a1a1a] mt-4">142</p>
+                        <p class="text-xs text-[#999] uppercase tracking-wider">NORMAS</p>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="col-span-2 flex flex-col justify-center space-y-4">
+                    <!-- Economía Circular -->
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full bg-[#006c46]"></div>
+                            <span class="text-sm font-medium text-[#666]">Economía circular (EC)</span>
+                        </div>
+                        <div class="flex items-baseline gap-3 pl-6">
+                            <span class="text-2xl font-bold text-[#1a1a1a]">57</span>
+                            <span class="text-xs text-[#999]">40%</span>
+                        </div>
+                    </div>
+
+                    <!-- Gesti. Residuos -->
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full bg-[#3b82f6]"></div>
+                            <span class="text-sm font-medium text-[#666]">Gesti. Residuos (GR)</span>
+                        </div>
+                        <div class="flex items-baseline gap-3 pl-6">
+                            <span class="text-2xl font-bold text-[#1a1a1a]">35</span>
+                            <span class="text-xs text-[#999]">25%</span>
+                        </div>
+                    </div>
+
+                    <!-- Eficien. Energé. -->
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full bg-[#f49e0b]"></div>
+                            <span class="text-sm font-medium text-[#666]">Eficien. Energé. (EE)</span>
+                        </div>
+                        <div class="flex items-baseline gap-3 pl-6">
+                            <span class="text-2xl font-bold text-[#1a1a1a]">21</span>
+                            <span class="text-xs text-[#999]">15%</span>
+                        </div>
+                    </div>
+
+                    <!-- Ley REP -->
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full bg-[#ba1a1a]"></div>
+                            <span class="text-sm font-medium text-[#666]">Ley REP</span>
+                        </div>
+                        <div class="flex items-baseline gap-3 pl-6">
+                            <span class="text-2xl font-bold text-[#1a1a1a]">17</span>
+                            <span class="text-xs text-[#999]">12%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEARCH & FILTERS -->
+            <div class="bg-[#e2e8f8] rounded-xl shadow-sm p-6 mb-6">
+                <!-- Search Bar -->
+                <div class="flex gap-4 mb-6">
+                    <div class="flex-1 relative">
+                        <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <input type="text" placeholder="Buscar por nombre, código o palabra clave" class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
+                    </div>
+                    <button class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                        </svg>
+                        <span class="text-sm font-medium">Filtros avanzados</span>
+                    </button>
+                    <button class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                        <span class="text-sm font-medium">Exportar</span>
+                    </button>
+                </div>
+
+                <!-- TABLE -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <!-- Header -->
+                        <thead class="bg-[#b7c6ee] border-b border-[#bbdefb]">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-extrabold text-[#1a1a1a]">NOMBRE</th>
+                            <th class="px-4 py-3 text-left font-extrabold text-[#1a1a1a]">CÓDIGO</th>
+                            <th class="px-4 py-3 text-left font-extrabold text-[#1a1a1a]">TEMA</th>
+                            <th class="px-4 py-3 text-left font-extrabold text-[#1a1a1a]">ESTADO</th>
+                            <th class="px-4 py-3 text-left font-extrabold text-[#1a1a1a]">ACCESO</th>
+                            <th class="px-4 py-3 text-left font-extrabold text-[#1a1a1a]">TIPO</th>
+                            <th class="px-4 py-3 text-left font-extrabold text-[#1a1a1a]">AÑO</th>
+                            <th class="px-4 py-3 text-left font-extrabold text-[#1a1a1a]">VER NORMATIVA</th>
+                        </tr>
+                        </thead>
+
+                        <!-- Body -->
+                        <tbody class="divide-y divide-[#e0e0e0]">
+                        <!-- Row 1 -->
+                        <tr class="bg-white hover:bg-[#f9f9f9] transition">
+                            <td class="px-4 py-4">
+                                <p class="font-bold text-[#1a1a1a]">Ley de Plásticos de un solo uso</p>
+                                <p class="text-xs text-[#999]">Min. medio Ambiente</p>
+                            </td>
+                            <td class="px-4 py-4 text-[#666]">LEY - 21368</td>
+                            <td class="px-4 py-4">
+                                <span class="inline-block bg-[#006c46]/20 text-[#v] px-3 py-1 rounded-full text-xs font-semibold">ECONOMÍA CIRCULAR</span>
+                            </td>
+                            <td class="px-4 py-4">
+                    <span class="inline-flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-[#006c46]"></span>
+                      <span class="text-[#1a1a1a] font-medium">Vigente</span>
+                    </span>
+                            </td>
+                            <td class="px-4 py-4">
+                    <span class="inline-flex items-center gap-1.5 text-[#00743a] font-medium">
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      </svg>
+                      GRATUITO
+                    </span>
+                            </td>
+                            <td class="px-4 py-4 text-[#666]">Ley Nacional</td>
+                            <td class="px-4 py-4 text-[#1a1a1a] font-medium">2021</td>
+                            <td class="px-4 py-4">
+                                <button class="text-[#1a1a1a] hover:text-[#00743a] transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Row 2 -->
+                        <tr class="bg-white hover:bg-[#f9f9f9] transition">
+                            <td class="px-4 py-4">
+                                <p class="font-bold text-[#1a1a1a]">Metas de recolección de Neumáticos</p>
+                                <p class="text-xs text-[#999]">Gabinete Presidencial</p>
+                            </td>
+                            <td class="px-4 py-4 text-[#666]">DS -08-20 23</td>
+                            <td class="px-4 py-4">
+                                <span class="inline-block bg-[#ba1a1a]/20 text-[#ba1a1a] px-3 py-1 rounded-full text-xs font-semibold">LEY RCP</span>
+                            </td>
+                            <td class="px-4 py-4">
+                    <span class="inline-flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-[#ffc107]"></span>
+                      <span class="text-[#1a1a1a] font-medium">Publicado</span>
+                    </span>
+                            </td>
+                            <td class="px-4 py-4">
+                    <span class="inline-flex items-center gap-1.5 text-[#f57c00] font-medium">
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                      </svg>
+                      DE PAGO
+                    </span>
+                            </td>
+                            <td class="px-4 py-4 text-[#666]">Dec. Supremo</td>
+                            <td class="px-4 py-4 text-[#1a1a1a] font-medium">2023</td>
+                            <td class="px-4 py-4">
+                                <button class="text-[#1a1a1a] hover:text-[#00743a] transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Row 3 -->
+                        <tr class="bg-white hover:bg-[#f9f9f9] transition">
+                            <td class="px-4 py-4">
+                                <p class="font-bold text-[#1a1a1a]">Estrategia Residuos Orgánicos</p>
+                                <p class="text-xs text-[#999]">Min. Agricultura</p>
+                            </td>
+                            <td class="px-4 py-4 text-[#666]">PROC-202* -RO</td>
+                            <td class="px-4 py-4">
+                                <span class="inline-block bg-[#3b82f6]/20 text-[#3b82f6] px-3 py-1 rounded-full text-xs font-semibold">GEST. RESIDUOS</span>
+                            </td>
+                            <td class="px-4 py-4">
+                                <span class="inline-flex items-center gap-1.5">
+                                  <span class="w-2 h-2 rounded-full bg-[#2196f3]"></span>
+                                  <span class="text-[#1a1a1a] font-medium">Consulta</span>
+                                </span>
+                            </td>
+                            <td class="px-4 py-4">
+                                <span class="inline-flex items-center gap-1.5 text-[#f57c00] font-medium">
+                                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                  </svg>
+                                  DE PAGO
+                                </span>
+                            </td>
+                            <td class="px-4 py-4 text-[#666]">Anteproyecto</td>
+                            <td class="px-4 py-4 text-[#1a1a1a] font-medium">2024</td>
+                            <td class="px-4 py-4">
+                                <button class="text-[#1a1a1a] hover:text-[#00743a] transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Row 4 -->
+                        <tr class="bg-white hover:bg-[#f9f9f9] transition">
+                            <td class="px-4 py-4">
+                                <p class="font-bold text-[#1a1a1a]">Reglamento Pilas y Baterías</p>
+                                <p class="text-xs text-[#999]">Min. Economía</p>
+                            </td>
+                            <td class="px-4 py-4 text-[#666]">REC-1994 -A</td>
+                            <td class="px-4 py-4">
+                                <span class="inline-block bg-[#f49e0b]/20 text-[#f49e0b] px-3 py-1 rounded-full text-xs font-semibold">EFICIEN. ENERGÉTICA</span>
+                            </td>
+                            <td class="px-4 py-4">
+                                <span class="inline-flex items-center gap-1.5">
+                                  <span class="w-2 h-2 rounded-full bg-[#e53935]"></span>
+                                  <span class="text-[#1a1a1a] font-medium">Derogada</span>
+                                </span>
+                            </td>
+                            <td class="px-4 py-4">
+                                <span class="inline-flex items-center gap-1.5 text-[#00743a] font-medium">
+                                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                  </svg>
+                                  GRATUITO
+                                </span>
+                            </td>
+                            <td class="px-4 py-4 text-[#666]">Reglamento</td>
+                            <td class="px-4 py-4 text-[#1a1a1a] font-medium">1996</td>
+                            <td class="px-4 py-4">
+                                <button class="text-[#1a1a1a] hover:text-[#00743a] transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- PAGINATION -->
+                <div class="mt-6 flex items-center justify-center gap-2">
+                    <button class="px-3 py-2 text-[#666] hover:bg-[#f0f0f0] rounded transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <button class="w-10 h-10 bg-[#1a1a1a] text-white font-bold rounded hover:bg-[#333] transition">1</button>
+                    <button class="w-10 h-10 text-[#666] hover:bg-[#f0f0f0] rounded transition">2</button>
+                    <button class="w-10 h-10 text-[#666] hover:bg-[#f0f0f0] rounded transition">3</button>
+                    <span class="text-[#999]">...</span>
+                    <button class="w-10 h-10 text-[#666] hover:bg-[#f0f0f0] rounded transition">15</button>
+                    <button class="px-3 py-2 text-[#666] hover:bg-[#f0f0f0] rounded transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+
+        </div>
+    </main>
+</div>
+<div id="modalNuevaNormativa"
+     class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+
+    <div class="w-full max-w-[800px] bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden relative">
+
+        <header class="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-white sticky top-0 z-30">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-lg bg-[#e0e7ff] flex items-center justify-center text-[#064e3b]">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold text-[#0f172a] tracking-tight">Nueva Normativa</h1>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">PANEL DE ADMINISTRACIÓN</p>
+                </div>
+            </div>
+
+            <button type="button"
+                    onclick="document.getElementById('modalNuevaNormativa').classList.add('hidden')"
+                    class="text-gray-400 hover:bg-gray-100 p-2 rounded-full transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 18L18 6M6 6l18 18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+            </button>
+        </header>
+
+        <form th:action="@{/admin/repo_new}" method="post" class="flex flex-col max-h-[90vh] overflow-hidden">
+            <div class="overflow-y-auto px-6 py-8 flex flex-col gap-10 scrollbar-hide">
+
+                <section class="space-y-6">
+                    <header class="flex items-center gap-3">
+                        <div class="w-1 h-5 bg-[#059669] rounded-full"></div>
+                        <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Identificación</h2>
+                    </header>
+
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Nombre de la Normativa</label>
+                            <input name="nombre"
+                                   class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300"
+                                   placeholder="Ej: Ley de Fomento a la Economía Circular"
+                                   type="text"/>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                            <div class="md:col-span-6 space-y-2">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Organismo / Ministerio</label>
+                                <input name="organismo"
+                                       class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all"
+                                       placeholder="Ej. Ministerio de Ambiente"
+                                       type="text"/>
+                            </div>
+
+                            <div class="md:col-span-3 space-y-2">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Código <span class="text-gray-400 font-medium">(OPC)</span></label>
+                                <input name="codigo"
+                                       class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all"
+                                       placeholder="N° 21.325"
+                                       type="text"/>
+                            </div>
+
+                            <div class="md:col-span-3 space-y-2">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Año</label>
+                                <select name="anio"
+                                        class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                    <option>2024</option>
+                                    <option>2023</option>
+                                    <option>2022</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="space-y-6">
+                    <header class="flex items-center gap-3">
+                        <div class="w-1 h-5 bg-[#059669] rounded-full"></div>
+                        <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Clasificación</h2>
+                    </header>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Tipo de Norma</label>
+                            <select name="tipoNorma"
+                                    class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                <option>Decreto Ley</option>
+                                <option>Ley Orgánica</option>
+                                <option>Resolución</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Estado Actual</label>
+                            <select name="estado"
+                                    class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                <option>Vigente</option>
+                                <option>Derogada</option>
+                                <option>En trámite</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="space-y-6">
+                    <header class="flex items-center gap-3">
+                        <div class="w-1 h-5 bg-[#059669] rounded-full"></div>
+                        <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Acceso al Documento</h2>
+                    </header>
+
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Enlace oficial de descarga</label>
+                        <input name="enlace"
+                               class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300"
+                               placeholder="https://bibliotecadelcongreso.cl/..."
+                               type="url"/>
+                    </div>
+                </section>
+            </div>
+
+            <footer class="px-6 py-5 border-t border-gray-100 bg-white flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-0 z-30">
+                <button type="button"
+                        onclick="document.getElementById('modalNuevaNormativa').classList.add('hidden')"
+                        class="w-full sm:w-auto px-8 py-3 text-[11px] font-black text-gray-400 uppercase tracking-widest hover:text-gray-600 transition-colors">
+                    Cancelar
+                </button>
+
+                <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+          <span class="hidden sm:block text-[9px] font-bold text-gray-400 uppercase tracking-widest text-right leading-tight">
+            Todos los campos<br/>son obligatorios
+          </span>
+
+                    <button type="submit"
+                            class="w-full sm:w-auto px-10 py-4 bg-[#059669] text-white text-[11px] font-black uppercase tracking-[0.15em] rounded-xl shadow-lg shadow-[#059669]/20 hover:bg-[#047857] active:scale-95 transition-all">
+                        Guardar Normativa
+                    </button>
+                </div>
+            </footer>
+        </form>
+    </div>
+</div>
+</body>
+</html>
