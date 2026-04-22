@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Registros de Inicio de Sesión - Reciclame</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#10b981",
+                        "primary-dark": "#0f172a",
+                        "table-panel": "#dfe6f5",
+                        "surface-soft": "#f8fafc",
+                        "surface-card": "#ffffff",
+                        "text-main": "#0f172a",
+                        "text-soft": "#64748b",
+                        "text-muted": "#94a3b8",
+                        "danger": "#e11d48",
+                        "warning": "#f59e0b",
+                        "success": "#10b981",
+                        sidebar: {
+                            active: "#059669",
+                            activeBg: "#F0FDF4",
+                        },
+                    },
+                    boxShadow: {
+                        soft: "0 8px 24px rgba(15, 23, 42, 0.05)",
+                        card: "0px 10px 30px rgba(0, 0, 0, 0.04)",
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body { font-family: Inter, system-ui, sans-serif; }
+    </style>
+</head>
+
+<body class="h-screen overflow-hidden bg-surface-soft text-text-main">
+<div class="flex h-screen">
+    <aside class="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-100 bg-white">
+        <div class="flex items-center gap-3 px-6 py-5">
+            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+                <svg viewBox="0 0 24 24" fill="none" class="h-7 w-7">
+                    <path d="M12 3C8.686 3 6 5.462 6 8.5c0 1.99 1.154 3.732 2.885 4.697-.208 1.17-.85 2.193-1.802 2.92-.2.153-.267.425-.164.652.103.228.348.35.592.294 2.062-.474 3.578-1.418 4.497-2.11.33.031.658.047.992.047 3.314 0 6-2.462 6-5.5S15.314 3 12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                    <path d="M9 9.25h6M9.75 12h4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div>
+                <div class="text-xl font-extrabold tracking-tight text-primary-dark">Reciclame</div>
+                <div class="text-xs font-medium text-slate-400">Panel administrativo</div>
+            </div>
+        </div>
+
+        <nav class="flex-1 space-y-2 px-4">
+            <a href="#" class="flex items-center gap-3 rounded-xl px-4 py-3 text-slate-500 hover:bg-slate-50">
+                <span class="font-semibold">Dashboard</span>
+            </a>
+
+            <a th:href="@{/admin/usuarios/gestion}" class="flex items-center gap-3 rounded-xl px-4 py-3 text-slate-500 hover:bg-slate-50">
+                <span class="font-semibold">Usuarios</span>
+            </a>
+
+            <a href="#" class="flex items-center gap-3 rounded-xl px-4 py-3 text-slate-500 hover:bg-slate-50">
+                <span class="font-semibold">Estudios</span>
+            </a>
+
+            <a href="#" class="flex items-center gap-3 rounded-xl px-4 py-3 text-slate-500 hover:bg-slate-50">
+                <span class="font-semibold">Repositorio Normativo</span>
+            </a>
+
+            <a th:href="@{/admin/registros/actividad}"
+               class="flex items-center gap-3 rounded-xl border-r-4 border-sidebar-active bg-sidebar-activeBg px-4 py-3 text-sidebar-active">
+                <span class="font-bold">Registros de actividad</span>
+            </a>
+
+            <a th:href="@{/admin/registros/descargas}"
+               class="flex items-center gap-3 rounded-xl px-4 py-3 text-slate-500 hover:bg-slate-50">
+                <span class="font-semibold">Registros de descargas</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="ml-64 flex h-screen flex-1 flex-col">
+        <header class="sticky top-0 z-40 flex h-14 items-center justify-between bg-white/80 px-6 backdrop-blur-md shadow-sm">
+            <span class="text-xl font-bold tracking-tight text-primary">Recíclame</span>
+
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-sm font-bold text-slate-900">Ana Flores</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-primary">Admin</p>
+                </div>
+                <div class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-emerald-100 bg-emerald-100 text-xs font-bold text-emerald-700">
+                    AF
+                </div>
+            </div>
+        </header>
+
+        <main class="w-full flex-1 space-y-4 px-4 py-4 pr-6">
+            <section>
+                <h1 class="mb-1 text-3xl font-extrabold tracking-tight text-primary-dark">Registros de Inicio de Sesión</h1>
+                <p class="text-sm font-medium text-slate-500">
+                    Monitoreo histórico de accesos y persistencia de sesión dentro del ecosistema Recíclame.
+                </p>
+            </section>
+
+            <form method="get" th:action="@{/admin/registros/actividad}"
+                  class="grid grid-cols-1 gap-3 rounded-[1.7rem] border border-slate-100 bg-white p-4 shadow-sm xl:grid-cols-[1.5fr_0.8fr_0.8fr_auto_auto] xl:items-end">
+                <div>
+                    <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-slate-400">Buscar usuario</label>
+                    <input type="text"
+                           name="texto"
+                           th:value="${texto}"
+                           placeholder="Nombre o correo..."
+                           class="h-11 w-full rounded-xl border border-slate-100 bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-primary" />
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-slate-400">Fecha</label>
+                    <input type="date"
+                           name="fecha"
+                           th:value="${fecha}"
+                           class="h-11 w-full rounded-xl border border-slate-100 bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-primary" />
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-slate-400">Rol</label>
+                    <select name="rol"
+                            class="h-11 w-full rounded-xl border border-slate-100 bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-primary">
+                        <option value="">Todos los roles</option>
+                        <option value="SOCIO" th:selected="${rol == 'SOCIO'}">SOCIO</option>
+                        <option value="VISUALIZADOR" th:selected="${rol == 'VISUALIZADOR'}">VISUALIZADOR</option>
+                        <option value="ADMIN" th:selected="${rol == 'ADMIN'}">ADMIN</option>
+                    </select>
+                </div>
+
+                <div class="flex gap-2">
+                    <button class="rounded-full bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm">
+                        Filtrar
+                    </button>
+                </div>
+
+                <div class="flex gap-2">
+                    <a th:href="@{/admin/registros/actividad/exportar(texto=${texto},fecha=${fecha},rol=${rol})}"
+                       class="rounded-full bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm">
+                        Exportar
+                    </a>
+                </div>
+            </form>
+
+            <section class="rounded-[1.7rem] border border-slate-100 bg-table-panel p-4">
+                <div class="overflow-hidden rounded-[1.3rem] border border-slate-100 bg-white shadow-sm">
+                    <table class="w-full border-collapse text-left">
+                        <thead>
+                        <tr class="bg-slate-50/50">
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Usuario</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Rol</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Fecha</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Hora entrada</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Duración</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Estado</th>
+                        </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-slate-50">
+                        <tr th:each="r : ${sesiones}" class="hover:bg-slate-50/50">
+                            <td class="px-5 py-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary"
+                                         th:text="${r.usuarioIniciales}"></div>
+                                    <div>
+                                        <p class="text-sm font-bold leading-tight text-slate-900" th:text="${r.usuarioNombreCompleto}"></p>
+                                        <p class="text-[11px] leading-tight text-slate-400" th:text="${r.usuario.correo}"></p>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="px-5 py-3">
+                                <span class="rounded-full bg-primary/10 px-3 py-1 text-[10px] font-extrabold uppercase text-primary"
+                                      th:text="${r.usuario.rol.nombre}">
+                                </span>
+                            </td>
+
+                            <td class="px-5 py-3 text-sm font-medium text-slate-600" th:text="${r.fechaTexto}"></td>
+                            <td class="px-5 py-3 text-sm font-medium text-slate-600" th:text="${r.horaEntradaTexto}"></td>
+                            <td class="px-5 py-3 text-sm font-medium text-slate-600" th:text="${r.duracionTexto}"></td>
+
+                            <td class="px-5 py-3">
+                                <div class="flex items-center gap-2" th:if="${r.estado == 'VIGENTE'}">
+                                    <div class="h-2 w-2 rounded-full bg-primary"></div>
+                                    <span class="text-sm font-bold text-primary">Vigente</span>
+                                </div>
+
+                                <div class="flex items-center gap-2" th:if="${r.estado == 'FINALIZADA'}">
+                                    <div class="h-2 w-2 rounded-full bg-slate-400"></div>
+                                    <span class="text-sm font-bold text-slate-500">Finalizada</span>
+                                </div>
+
+                                <div class="flex items-center gap-2" th:if="${r.estado == 'EXPIRADA'}">
+                                    <div class="h-2 w-2 rounded-full bg-rose-500"></div>
+                                    <span class="text-sm font-bold text-rose-600">Sesión expirada</span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(sesiones)}">
+                            <td colspan="6" class="px-6 py-8 text-center text-sm text-slate-400">
+                                No se encontraron registros de actividad
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4 flex items-center justify-between">
+                    <p class="text-sm text-slate-500">
+                        Página <span th:text="${currentPage + 1}"></span> de <span th:text="${totalPages}"></span>
+                    </p>
+
+                    <div class="flex gap-2">
+                        <a th:if="${hasPrevious}"
+                           th:href="@{/admin/registros/actividad(page=${currentPage - 1},texto=${texto},fecha=${fecha},rol=${rol})}"
+                           class="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm">
+                            Anterior
+                        </a>
+
+                        <a th:if="${hasNext}"
+                           th:href="@{/admin/registros/actividad(page=${currentPage + 1},texto=${texto},fecha=${fecha},rol=${rol})}"
+                           class="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm">
+                            Siguiente
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+</body>
+</html>
