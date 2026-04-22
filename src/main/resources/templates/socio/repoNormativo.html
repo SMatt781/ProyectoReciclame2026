@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Repositorio Normativo - Reciclame</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7f9fb",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#cfe9d9",
+                        "tertiary-container": "#092016",
+                        "primary-container": "#021d30",
+                        "on-secondary-container": "#00743a",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#b1c9e2",
+                        "on-surface-variant": "#43474c",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "outline-variant": "#c3c7cd",
+                        "on-secondary-fixed": "#00210c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006d37",
+                        "surface-variant": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#354c40",
+                        "on-secondary": "#ffffff",
+                        "outline": "#73777d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-container": "#71897c",
+                        "tertiary-fixed-dim": "#b3ccbd",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#496177",
+                        "on-secondary-fixed-variant": "#005228",
+                        "on-primary-container": "#6f869e",
+                        "secondary-container": "#6bfe9c",
+                        "on-tertiary-fixed": "#092016",
+                        "secondary-fixed": "#6bfe9c",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#021d30",
+                        "on-primary-fixed-variant": "#31495e",
+                        "primary-fixed": "#cde5ff",
+                        "secondary-fixed-dim": "#4ae183",
+                        "primary-fixed-dim": "#b1c9e2",
+                        "back-tabla-normativas": "#e2e8f8",
+                        "de-pago": "#b45309",
+                        "gratuito": "#047857"
+
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+
+        /* SVG Icon utility */
+        .icon-sm {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .icon-md {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .icon-lg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .icon-xl {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+    <!-- SideNavBar -->
+    <aside class="hidden md:flex flex-col h-full w-64 p-5 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50">
+        <!-- Brand / Header -->
+        <div class="flex items-center gap-3 mb-10 pl-2">
+            <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M7 19c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-8h4V9h-4V7c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H3v2h4v8zm2-8h6V7H9v4z" />
+                </svg>
+            </div>
+            <div class="flex flex-col">
+                <h1 class="text-[#001B2E] dark:text-white font-black text-xl font-headline tracking-tight">Reciclame
+                </h1>
+                <span class="text-xs text-on-surface-variant font-medium">Economía Circular</span>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="flex-1 space-y-2">
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                href="#">
+                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8zm2-8h6V7H9v4z" />
+                </svg>
+                Inicio
+            </a>
+
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                href="#">
+                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                </svg>
+                Estudios
+            </a>
+
+            <a class="bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 font-headline font-bold text-sm tracking-tight scale-95 active:scale-100 transition-transform"
+                href="#">
+                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 13h2v8H3zm4-8h2v16H7zm4-2h2v18h-2zm4 4h2v14h-2zm4-2h2v16h-2z" />
+                </svg>
+                Repositorio Normativo
+            </a>
+
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                href="#">
+                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z" />
+                </svg>
+                Indicadores
+            </a>
+
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                href="#">
+                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M21 5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5zm-2 0l-6.5 4L5 5h14zm0 13H5V7l6.5 4L19 7v11z" />
+                </svg>
+                Publicaciones
+            </a>
+        </nav>
+
+
+
+        <!-- Footer Tabs -->
+        <div
+            class="pt-4 space-y-2 relative before:absolute before:top-0 before:left-4 before:right-4 before:h-px before:bg-surface-variant">
+
+
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                href="#">
+                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
+                </svg>
+                Cerrar Sesión
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Canvas -->
+    <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+        <!-- TopAppBar -->
+        <!-- TopAppBar -->
+        <header class="bg-surface flex items-center justify-between px-8 py-4 w-full h-auto sticky top-0 z-40">
+            <!-- Left Side: Brand -->
+            <div class="flex items-center h-full">
+                <img alt="Reciclame Logo" src="../../static/images/logo-reciclame.png"
+                    th:src="@{/images/logo-reciclame.png}" class="h-9 object-contain" />
+            </div>
+
+            <!-- Right Side: Actions & Profile -->
+            <div class="flex items-center gap-6">
+                <button
+                    class="text-on-surface-variant hover:bg-surface-container rounded-full p-2 transition-colors scale-95 active:scale-90 relative">
+                    <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V2c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 3.36 6 5.92 6 9v5l-2 2v1h16v-1l-2-2z" />
+                    </svg>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+                </button>
+
+                <div class="flex items-center gap-3 pl-4 border-l border-outline-variant/30">
+                    <div class="flex flex-col items-end">
+                        <span class="font-headline font-bold text-sm text-on-primary-fixed">Paola Flores</span>
+                        <span
+                            class="font-label font-medium text-[10px] bg-secondary text-on-secondary px-2 py-0.5 rounded-full tracking-wider">SOCIO</span>
+                    </div>
+                    <svg class="w-10 h-10 rounded-full border-2 border-surface-container-lowest shadow-sm text-primary-container"
+                        fill="currentColor" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="50" fill="#E8C4A0" />
+                        <circle cx="50" cy="35" r="15" fill="#D4A574" />
+                        <ellipse cx="50" cy="65" rx="20" ry="25" fill="#D4A574" />
+                    </svg>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Scrollable Content -->
+        <main class="flex-1 overflow-y-auto px-8 py-3">
+            <div class="w-full">
+                <!-- Page Header -->
+                <div class="mb-5">
+                    <div>
+                        <h2
+                            class="font-headline font-extrabold text-[2.75rem] text-on-primary-fixed leading-tight tracking-tight">
+                            Repositorio Normativo Nacional</h2>
+                        <p class="font-body text-on-surface-variant text-base mt-2">
+                            Acceda a la base de datos centralizada de marcos legales, reglamentos técnicos y proyectos
+                            en consulta sobre economía circular y gestión de residuos.
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- STATS SECTION -->
+                <div class="grid grid-cols-3 gap-8 mb-12 bg-white rounded-xl p-6 w-full md:w-1/2 mx-auto">
+                    <!-- Donut Chart -->
+                    <div class="col-span-1">
+                        <h3 class="text-lg font-bold text-[#1a1a1a] mb-6">Distribución por temática</h3>
+                        <div class="flex flex-col items-center">
+                            <!-- SVG Donut Chart -->
+                            <svg viewBox="0 0 120 120" class="w-32 h-32">
+                                <!-- Center circle (white) -->
+                                <circle cx="60" cy="60" r="35" fill="white" />
+                                <!-- Donut segments -->
+                                <circle cx="60" cy="60" r="45" fill="none" stroke="#006c46" stroke-width="18"
+                                    stroke-dasharray="70.7 282.7" transform="rotate(0 60 60)" />
+                                <circle cx="60" cy="60" r="45" fill="none" stroke="#f49e0b" stroke-width="18"
+                                    stroke-dasharray="52.9 282.7" transform="rotate(89 60 60)" />
+                                <circle cx="60" cy="60" r="45" fill="none" stroke="#ba1a1a" stroke-width="18"
+                                    stroke-dasharray="46.8 282.7" transform="rotate(156 60 60)" />
+                                <circle cx="60" cy="60" r="45" fill="none" stroke="#3b82f6" stroke-width="18"
+                                    stroke-dasharray="111.5 282.7" transform="rotate(222 60 60)" />
+                            </svg>
+                            <p class="text-4xl font-bold text-[#1a1a1a] mt-4">142</p>
+                            <p class="text-xs text-[#999] uppercase tracking-wider">NORMAS</p>
+                        </div>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="col-span-2 flex flex-col justify-center space-y-4">
+                        <!-- Economía Circular -->
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 rounded-full bg-[#006c46]"></div>
+                                <span class="text-sm font-medium text-[#666]">Economía circular (EC)</span>
+                            </div>
+                            <div class="flex items-baseline gap-3 pl-6">
+                                <span class="text-2xl font-bold text-[#1a1a1a]">57</span>
+                                <span class="text-xs text-[#999]">40%</span>
+                            </div>
+                        </div>
+
+                        <!-- Gesti. Residuos -->
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 rounded-full bg-[#3b82f6]"></div>
+                                <span class="text-sm font-medium text-[#666]">Gesti. Residuos (GR)</span>
+                            </div>
+                            <div class="flex items-baseline gap-3 pl-6">
+                                <span class="text-2xl font-bold text-[#1a1a1a]">35</span>
+                                <span class="text-xs text-[#999]">25%</span>
+                            </div>
+                        </div>
+
+                        <!-- Eficien. Energé. -->
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 rounded-full bg-[#f49e0b]"></div>
+                                <span class="text-sm font-medium text-[#666]">Eficien. Energé. (EE)</span>
+                            </div>
+                            <div class="flex items-baseline gap-3 pl-6">
+                                <span class="text-2xl font-bold text-[#1a1a1a]">21</span>
+                                <span class="text-xs text-[#999]">15%</span>
+                            </div>
+                        </div>
+
+                        <!-- Ley REP -->
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 rounded-full bg-[#ba1a1a]"></div>
+                                <span class="text-sm font-medium text-[#666]">Ley REP</span>
+                            </div>
+                            <div class="flex items-baseline gap-3 pl-6">
+                                <span class="text-2xl font-bold text-[#1a1a1a]">17</span>
+                                <span class="text-xs text-[#999]">12%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEARCH & FILTERS -->
+                <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
+                    <!-- Search Bar -->
+                    <div class="flex gap-4 mb-6">
+                        <div class="flex-1 relative">
+                            <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <input type="text" placeholder="Buscar por nombre, código o palabra clave"
+                                class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
+                        </div>
+                        <button
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                            <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
+                            <span class="text-sm font-medium">Filtros avanzados</span>
+                        </button>
+                        <button
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                            <div th:replace="~{fragments/icons.html :: icon-exportar-excel}"></div>
+                            <span class="text-sm font-medium">Exportar</span>
+                        </button>
+                    </div>
+
+                    <!-- LIST VIEW -->
+                    <div class="flex flex-col gap-4">
+                        <!-- Header -->
+                        <div
+                            class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                            <div class="col-span-3">Nombre</div>
+                            <div class="col-span-1 text-center">Código</div>
+                            <div class="col-span-2 text-center">Tema</div>
+                            <div class="col-span-1 text-center">Estado</div>
+                            <div class="col-span-1 text-center">Acceso</div>
+                            <div class="col-span-1 text-center">Tipo</div>
+                            <div class="col-span-1 text-center">Año</div>
+                            <div class="col-span-2 text-right">Ver Normativa</div>
+                        </div>
+
+                        <!-- Row 1 -->
+                        <div
+                            class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                            <div class="col-span-3 flex flex-col w-full text-left">
+                                <h4
+                                    class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors line-clamp-2">
+                                    Ley de Plásticos de un solo uso</h4>
+                                <p class="text-xs text-on-surface-variant mt-1">Min. medio Ambiente</p>
+                            </div>
+                            <div
+                                class="col-span-1 flex justify-center w-full md:w-auto text-xs font-body text-on-surface-variant text-center">
+                                LEY - 21368
+                            </div>
+                            <div class="col-span-2 flex justify-center w-full md:w-auto">
+                                <span
+                                    class="inline-block bg-[#006c46]/20 text-[#006c46] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center">ECONOMÍA
+                                    CIRCULAR</span>
+                            </div>
+                            <div class="col-span-1 flex justify-center w-full md:w-auto">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-[#006c46]"></span>
+                                    <span class="text-on-surface text-xs font-bold">Vigente</span>
+                                </span>
+                            </div>
+                            <div class="col-span-1 flex justify-center w-full md:w-auto">
+                                <span
+                                    class="inline-flex items-center gap-1 text-gratuito text-xs font-bold uppercase tracking-wider">
+                                    <div th:replace="~{fragments/icons.html :: icon-acceso-gratuito}"></div>
+
+                                    GRATUITO
+                                </span>
+                            </div>
+                            <div
+                                class="col-span-1 flex justify-center w-full md:w-auto text-xs font-body text-on-surface-variant text-center">
+                                Ley Nacional
+                            </div>
+                            <div
+                                class="col-span-1 flex justify-center w-full md:w-auto text-sm font-body text-on-surface-variant font-medium text-center">
+                                2021
+                            </div>
+                            <div class="col-span-2 flex justify-end w-full md:w-auto">
+                                <button
+                                    class="font-label text-sm font-semibold text-outline hover:text-primary-container transition-colors flex items-center gap-1 group/link">
+                                    Ver Normativa
+                                    <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Row 2 -->
+                        <div
+                            class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                            <div class="col-span-3 flex flex-col w-full text-left">
+                                <h4
+                                    class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors line-clamp-2">
+                                    Metas de recolección de Neumáticos</h4>
+                                <p class="text-xs text-on-surface-variant mt-1">Gabinete Presidencial</p>
+                            </div>
+                            <div
+                                class="col-span-1 flex justify-center w-full md:w-auto text-xs font-body text-on-surface-variant text-center">
+                                DS -08-20 23
+                            </div>
+                            <div class="col-span-2 flex justify-center w-full md:w-auto">
+                                <span
+                                    class="inline-block bg-[#ba1a1a]/20 text-[#ba1a1a] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center">LEY
+                                    RCP</span>
+                            </div>
+                            <div class="col-span-1 flex justify-center w-full md:w-auto">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-[#ffc107]"></span>
+                                    <span class="text-on-surface text-xs font-bold">Publicado</span>
+                                </span>
+                            </div>
+                            <div class="col-span-1 flex justify-center w-full md:w-auto">
+                                <span
+                                    class="inline-flex items-center gap-1 text-de-pago text-xs font-bold uppercase tracking-wider">
+                                    <div th:replace="~{fragments/icons.html :: icon-acceso-pago}"></div>
+                                    DE PAGO
+                                </span>
+                            </div>
+                            <div
+                                class="col-span-1 flex justify-center w-full md:w-auto text-xs font-body text-on-surface-variant text-center">
+                                Dec. Supremo
+                            </div>
+                            <div
+                                class="col-span-1 flex justify-center w-full md:w-auto text-sm font-body text-on-surface-variant font-medium text-center">
+                                2023
+                            </div>
+                            <div class="col-span-2 flex justify-end w-full md:w-auto">
+                                <button
+                                    class="font-label text-sm font-semibold text-outline hover:text-primary-container transition-colors flex items-center gap-1 group/link">
+                                    Ver Normativa
+                                    <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Row 3 -->
+                        <div
+                            class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                            <div class="col-span-3 flex flex-col w-full text-left">
+                                <h4
+                                    class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors line-clamp-2">
+                                    Estrategia Residuos Orgánicos</h4>
+                                <p class="text-xs text-on-surface-variant mt-1">Min. Agricultura</p>
+                            </div>
+                            <div
+                                class="col-span-1 flex justify-center w-full md:w-auto text-xs font-body text-on-surface-variant text-center">
+                                PROC-202* -RO
+                            </div>
+                            <div class="col-span-2 flex justify-center w-full md:w-auto">
+                                <span
+                                    class="inline-block bg-[#3b82f6]/20 text-[#3b82f6] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center">GEST.
+                                    RESIDUOS</span>
+                            </div>
+                            <div class="col-span-1 flex justify-center w-full md:w-auto">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-[#2196f3]"></span>
+                                    <span class="text-on-surface text-xs font-bold">Consulta</span>
+                                </span>
+                            </div>
+                            <div class="col-span-1 flex justify-center w-full md:w-auto">
+                                <span
+                                    class="inline-flex items-center gap-1 text-de-pago text-xs font-bold uppercase tracking-wider">
+                                    <div th:replace="~{fragments/icons.html :: icon-acceso-pago}"></div>
+                                    DE PAGO
+                                </span>
+                            </div>
+                            <div
+                                class="col-span-1 flex justify-center w-full md:w-auto text-xs font-body text-on-surface-variant text-center">
+                                Anteproyecto
+                            </div>
+                            <div
+                                class="col-span-1 flex justify-center w-full md:w-auto text-sm font-body text-on-surface-variant font-medium text-center">
+                                2024
+                            </div>
+                            <div class="col-span-2 flex justify-end w-full md:w-auto">
+                                <button
+                                    class="font-label text-sm font-semibold text-outline hover:text-primary-container transition-colors flex items-center gap-1 group/link">
+                                    Ver Normativa
+                                    <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Row 4 -->
+                        <div
+                            class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                            <div class="col-span-3 flex flex-col w-full text-left">
+                                <h4
+                                    class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors line-clamp-2">
+                                    Reglamento Pilas y Baterías</h4>
+                                <p class="text-xs text-on-surface-variant mt-1">Min. Economía</p>
+                            </div>
+                            <div
+                                class="col-span-1 flex justify-center w-full md:w-auto text-xs font-body text-on-surface-variant text-center">
+                                REC-1994 -A
+                            </div>
+                            <div class="col-span-2 flex justify-center w-full md:w-auto">
+                                <span
+                                    class="inline-block bg-[#f49e0b]/20 text-[#f49e0b] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center">EFICIEN.
+                                    ENERGÉTICA</span>
+                            </div>
+                            <div class="col-span-1 flex justify-center w-full md:w-auto">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-[#e53935]"></span>
+                                    <span class="text-on-surface text-xs font-bold">Derogada</span>
+                                </span>
+                            </div>
+                            <div class="col-span-1 flex justify-center w-full md:w-auto">
+                                <span
+                                    class="inline-flex items-center gap-1 text-gratuito text-xs font-bold uppercase tracking-wider">
+                                    <div th:replace="~{fragments/icons.html :: icon-acceso-pago}"></div>
+                                    GRATUITO
+                                </span>
+                            </div>
+                            <div
+                                class="col-span-1 flex justify-center w-full md:w-auto text-xs font-body text-on-surface-variant text-center">
+                                Reglamento
+                            </div>
+                            <div
+                                class="col-span-1 flex justify-center w-full md:w-auto text-sm font-body text-on-surface-variant font-medium text-center">
+                                1996
+                            </div>
+                            <div class="col-span-2 flex justify-end w-full md:w-auto">
+                                <button
+                                    class="font-label text-sm font-semibold text-outline hover:text-primary-container transition-colors flex items-center gap-1 group/link">
+                                    Ver Normativa
+                                    <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Minimalist Pagination -->
+                    <div class="mt-12 flex justify-center items-center gap-2">
+                        <button
+                            class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container hover:text-on-surface transition-colors disabled:opacity-50"
+                            disabled="">
+                            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                            </svg>
+                        </button>
+                        <div class="flex items-center gap-1 font-label text-sm font-semibold">
+                            <button
+                                class="w-10 h-10 rounded-full flex items-center justify-center bg-secondary text-on-secondary shadow-md">1</button>
+                            <button
+                                class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">2</button>
+                            <button
+                                class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">3</button>
+                            <span class="px-2 text-outline-variant">...</span>
+                            <button
+                                class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">8</button>
+                        </div>
+                        <button
+                            class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors">
+                            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

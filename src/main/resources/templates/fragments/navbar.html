@@ -1,0 +1,30 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:fragment="navbar" class="flex justify-between items-center px-8 py-4 w-full h-20 docked top-0 sticky z-40 bg-[#f7f9fb]/80 dark:bg-slate-950/80 backdrop-blur-xl">
+
+    <!-- Logo Header Area -->
+    <div class="flex-shrink-0">
+        <img alt="Reciclame Logo" th:src="@{/images/logo.png}" class="h-8 object-contain" />
+    </div>
+
+    <!-- Right Side / Actions & Profile -->
+    <div class="flex items-center gap-6 ml-auto">
+
+        <!-- Notifications -->
+        <button type="button" class="text-slate-500 dark:text-slate-400 hover:text-[#2ECC71] transition-colors relative">
+            <span class="material-symbols-outlined text-2xl">notifications</span>
+            <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border border-surface-container-lowest"></span>
+        </button>
+
+        <!-- Profile Card -->
+        <div class="flex items-center gap-3 cursor-pointer p-1 rounded-full hover:bg-surface-container-low transition-colors">
+            <img th:src="@{${usuarioAvatar}}" alt="Usuario" class="w-10 h-10 rounded-full object-cover ring-2 ring-surface-container-lowest shadow-sm" />
+            <div class="hidden md:flex flex-col justify-center">
+                <span class="font-['Inter'] font-medium text-sm text-[#001B2E] dark:text-white leading-tight" th:text="${usuarioNombre}">Usuario</span>
+                <span class="text-[10px] font-bold text-on-secondary-fixed bg-secondary-fixed px-2 py-0.5 rounded-full w-max mt-0.5 tracking-wider" th:text="${usuarioRol}">SOCIO</span>
+            </div>
+        </div>
+
+    </div>
+
+</header>
+</html>

@@ -1,0 +1,71 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<aside th:fragment="sidebar" class="hidden md:flex flex-col h-full w-72 p-6 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50">
+
+    <!-- Brand / Header -->
+    <div class="flex items-center gap-3 mb-10 pl-2">
+        <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-white text-xl">recycling</span>
+        </div>
+        <div class="flex flex-col">
+            <h1 class="text-[#001B2E] dark:text-white font-black text-xl font-headline tracking-tight">Reciclame</h1>
+            <span class="text-xs text-on-surface-variant font-medium">Economía Circular</span>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="flex-1 space-y-2">
+
+        <a th:href="@{/}" class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-['Plus_Jakarta_Sans'] font-bold text-sm tracking-tight hover:bg-[#eceef0] transition-colors">
+            <span class="material-symbols-outlined" data-weight="fill">home</span>
+            Inicio
+        </a>
+
+        <a th:href="@{/estudios}" th:classappend="${currentPage == 'estudios' ? 'bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800'}" class="rounded-xl px-4 py-3 flex items-center gap-3 font-['Plus_Jakarta_Sans'] font-bold text-sm tracking-tight scale-95 active:scale-100 transition-transform">
+            <span class="material-symbols-outlined" data-weight="fill">menu_book</span>
+            Estudios
+        </a>
+
+        <a th:href="@{/normativas}" th:classappend="${currentPage == 'normativas' ? 'bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800'}" class="rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-['Plus_Jakarta_Sans'] font-bold text-sm tracking-tight hover:bg-[#eceef0] transition-colors">
+            <span class="material-symbols-outlined">gavel</span>
+            Repositorio Normativo
+        </a>
+
+        <a th:href="@{/indicadores}" class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-['Plus_Jakarta_Sans'] font-bold text-sm tracking-tight hover:bg-[#eceef0] transition-colors">
+            <span class="material-symbols-outlined">bar_chart</span>
+            Indicadores
+        </a>
+
+        <a th:href="@{/publicaciones}" class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-['Plus_Jakarta_Sans'] font-bold text-sm tracking-tight hover:bg-[#eceef0] transition-colors">
+            <span class="material-symbols-outlined">auto_stories</span>
+            Publicaciones
+        </a>
+
+    </nav>
+
+    <!-- CTA -->
+    <div class="mt-8 mb-6">
+        <a th:href="@{/estudios/nuevo}" class="w-full bg-primary-container text-on-primary font-label font-bold text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-fixed-variant transition-colors ambient-shadow cursor-pointer">
+            <span class="material-symbols-outlined text-lg">add</span>
+            Añadir Estudio
+        </a>
+    </div>
+
+    <!-- Footer Tabs -->
+    <div class="pt-4 space-y-2 relative before:absolute before:top-0 before:left-4 before:right-4 before:h-px before:bg-surface-variant">
+
+        <a th:href="@{/configuracion}" class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-['Plus_Jakarta_Sans'] font-bold text-sm tracking-tight hover:bg-[#eceef0] transition-colors">
+            <span class="material-symbols-outlined">settings</span>
+            Configuración
+        </a>
+
+        <form th:action="@{/logout}" method="POST" style="display: inline-width: 100%;">
+            <button type="submit" class="w-full text-left text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-['Plus_Jakarta_Sans'] font-bold text-sm tracking-tight hover:bg-[#eceef0] transition-colors border-0 bg-transparent cursor-pointer">
+                <span class="material-symbols-outlined">logout</span>
+                Cerrar Sesión
+            </button>
+        </form>
+
+    </div>
+
+</aside>
+</html>

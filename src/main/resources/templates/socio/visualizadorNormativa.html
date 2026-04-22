@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Visualizador Normativa - Reciclame</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7f9fb",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#cfe9d9",
+                        "tertiary-container": "#092016",
+                        "primary-container": "#021d30",
+                        "on-secondary-container": "#00743a",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#b1c9e2",
+                        "on-surface-variant": "#43474c",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "outline-variant": "#c3c7cd",
+                        "on-secondary-fixed": "#00210c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006d37",
+                        "surface-variant": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#354c40",
+                        "on-secondary": "#ffffff",
+                        "outline": "#73777d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-container": "#71897c",
+                        "tertiary-fixed-dim": "#b3ccbd",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#496177",
+                        "on-secondary-fixed-variant": "#005228",
+                        "on-primary-container": "#6f869e",
+                        "secondary-container": "#6bfe9c",
+                        "on-tertiary-fixed": "#092016",
+                        "secondary-fixed": "#6bfe9c",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#021d30",
+                        "on-primary-fixed-variant": "#31495e",
+                        "primary-fixed": "#cde5ff",
+                        "secondary-fixed-dim": "#4ae183",
+                        "primary-fixed-dim": "#b1c9e2",
+                        "de-pago": "#b45309",
+                        "gratuito": "#047857"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+
+        /* SVG Icon utility */
+        .icon-sm {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .icon-md {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .icon-lg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .icon-xl {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+    <!-- SideNavBar -->
+    <aside class="hidden md:flex flex-col h-full w-64 p-5 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50">
+        <!-- Brand / Header -->
+        <div class="flex items-center gap-3 mb-10 pl-2">
+            <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M7 19c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-8h4V9h-4V7c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H3v2h4v8zm2-8h6V7H9v4z" />
+                </svg>
+            </div>
+            <div class="flex flex-col">
+                <h1 class="text-[#001B2E] dark:text-white font-black text-xl font-headline tracking-tight">Reciclame
+                </h1>
+                <span class="text-xs text-on-surface-variant font-medium">Economía Circular</span>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="flex-1 space-y-2">
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                href="#">
+                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8zm2-8h6V7H9v4z" />
+                </svg>
+                Inicio
+            </a>
+
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                href="#">
+                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                </svg>
+                Estudios
+            </a>
+
+            <a class="bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 font-headline font-bold text-sm tracking-tight scale-95 active:scale-100 transition-transform"
+                href="#">
+                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 13h2v8H3zm4-8h2v16H7zm4-2h2v18h-2zm4 4h2v14h-2zm4-2h2v16h-2z" />
+                </svg>
+                Repositorio Normativo
+            </a>
+
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                href="#">
+                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z" />
+                </svg>
+                Indicadores
+            </a>
+
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                href="#">
+                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M21 5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5zm-2 0l-6.5 4L5 5h14zm0 13H5V7l6.5 4L19 7v11z" />
+                </svg>
+                Publicaciones
+            </a>
+        </nav>
+
+
+        <!-- Footer Tabs -->
+        <div
+            class="pt-4 space-y-2 relative before:absolute before:top-0 before:left-4 before:right-4 before:h-px before:bg-surface-variant">
+
+
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                href="#">
+                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
+                </svg>
+                Cerrar Sesión
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Canvas -->
+    <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+        <!-- TopAppBar -->
+        <header
+            class="flex justify-between items-center px-8 py-4 w-full h-20 sticky top-0 z-40 bg-[#f7f9fb]/80 dark:bg-slate-950/80 backdrop-blur-xl">
+            <!-- Logo Header Area -->
+            <div class="flex items-center h-full">
+                <img alt="Reciclame Logo" src="../../static/images/logo-reciclame.png"
+                    th:src="@{/images/logo-reciclame.png}" class="h-9 object-contain" />
+            </div>
+
+            <!-- Right Side / Actions & Profile -->
+            <div class="flex items-center gap-6">
+                <button
+                    class="text-on-surface-variant hover:bg-surface-container rounded-full p-2 transition-colors scale-95 active:scale-90 relative">
+                    <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V2c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 3.36 6 5.92 6 9v5l-2 2v1h16v-1l-2-2z" />
+                    </svg>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+                </button>
+
+                <div class="flex items-center gap-3 pl-4 border-l border-outline-variant/30">
+                    <div class="flex flex-col items-end">
+                        <span class="font-headline font-bold text-sm text-on-primary-fixed">Paola Flores</span>
+                        <span
+                            class="font-label font-medium text-[10px] bg-secondary text-on-secondary px-2 py-0.5 rounded-full tracking-wider">SOCIO</span>
+                    </div>
+                    <svg class="w-10 h-10 rounded-full border-2 border-surface-container-lowest shadow-sm text-primary-container"
+                        fill="currentColor" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="50" fill="#E8C4A0" />
+                        <circle cx="50" cy="35" r="15" fill="#D4A574" />
+                        <ellipse cx="50" cy="65" rx="20" ry="25" fill="#D4A574" />
+                    </svg>
+                </div>
+            </div>
+        </header>
+        <!-- Main Content canvas modified to force h-full mapping without scroll -->
+        <main class="flex-1 flex flex-col overflow-hidden px-6 md:px-10 py-6 bg-[#f9f9ff]">
+            <div class="w-full flex-shrink-0">
+                <!-- Page Header -->
+                <header class="mb-6">
+                    <div
+                        class="flex items-center font-label text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-4 flex-wrap gap-2">
+                        <span>INICIO</span>
+                        <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                        </svg>
+                        <span>NORMATIVAS NACIONALES</span>
+                        <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                        </svg>
+                        <span class="text-on-primary-fixed">LEY DE FOMENTO AL RECICLAJE Y RESPONSABILIDAD EXTENDIDA DEL
+                            PRODUCTOR</span>
+                    </div>
+                    <h1
+                        class="font-headline text-[2.25rem] leading-tight font-bold text-on-primary-fixed mb-4 max-w-4xl tracking-tight">
+                        Ley de Fomento al Reciclaje y Responsabilidad Extendida del Productor
+                    </h1>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span
+                            class="inline-flex items-center gap-1.5 bg-[#00743a] text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase">
+                            VIGENTE
+                        </span>
+                        <span
+                            class="inline-flex items-center gap-1.5 text-de-pago bg-[#fef3c7] px-4 py-1.5 rounded-full text-xs font-bold uppercase border border-de-pago">
+                            <div th:replace="~{fragments/icons.html :: icon-acceso-pago}"></div>
+                            ACCESO DE PAGO
+                        </span>
+                        <span
+                            class="inline-flex items-center gap-1.5 text-[#1976d2] px-4 py-1.5 rounded-full text-xs font-bold uppercase border border-[#1976d2]">
+                            GESTIÓN DE RESIDUOS
+                        </span>
+                    </div>
+                </header>
+            </div>
+
+            <!-- CONTENEDOR PADRE (GRID) -->
+            <div class="w-full flex-1 min-h-0 h-full overflow-hidden flex flex-col xl:flex-row gap-6">
+
+                <!-- Columna Izquierda -->
+                <div class="w-full xl:w-1/2 h-full flex flex-col">
+                    <section class="flex-1 flex flex-col bg-white rounded-xl p-5 shadow-sm">
+                        <div>
+                            <h4
+                                class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
+                                OBJETO DE LA NORMA</h4>
+                            <p class="font-body text-sm text-on-surface-variant leading-relaxed text-[#1a1a1a]">
+                                Establecer un marco jurídico para la gestión de residuos, la responsabilidad extendida
+                                del productor y el
+                                fomento al reciclaje, con el fin de disminuir la generación de residuos y fomentar su
+                                valorización, mediante
+                                la determinación de obligaciones para los productores de productos prioritarios.
+                            </p>
+                        </div>
+
+                        <div class="mt-6 -mx-5 px-5">
+                            <h4
+                                class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
+                                CAMPOS DE APLICACIÓN
+                            </h4>
+                            <div class="flex flex-wrap gap-3 justify-start">
+                                <span
+                                    class="px-4 py-2 bg-[#e3f2fd] text-[#1976d2] rounded-lg text-xs font-medium border border-[#bbdefb]">
+                                    Aceites Lubricantes
+                                </span>
+                                <span
+                                    class="px-4 py-2 bg-[#e3f2fd] text-[#1976d2] rounded-lg text-xs font-medium border border-[#bbdefb]">
+                                    Aparatos Eléctricos y Electrónicos
+                                </span>
+                                <span
+                                    class="px-4 py-2 bg-[#e3f2fd] text-[#1976d2] rounded-lg text-xs font-medium border border-[#bbdefb]">
+                                    Baterías
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- METADATA GRID -->
+                        <div class="mt-auto grid grid-cols-2 gap-6 pt-4 border-t border-surface-variant">
+                            <div>
+                                <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">CÓDIGO</h3>
+                                <p class="text-sm font-medium text-[#1a1a1a]">LEY-20920</p>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">AÑO DE
+                                    PUBLICACIÓN</h3>
+                                <p class="text-sm font-medium text-[#1a1a1a]">2016</p>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">ORGANISMO EMISOR
+                                </h3>
+                                <p class="text-sm font-medium text-[#1a1a1a]">Ministerio del Medio Ambiente</p>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">TIPO DE NORMA
+                                </h3>
+                                <p class="text-sm font-medium text-[#1a1a1a]">Ley de la República</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Columna Derecha -->
+                <div class="w-full xl:w-1/2 flex flex-col h-full min-h-0 gap-4">
+
+                    <!-- Documento Protegido -->
+                    <div
+                        class="flex-1 flex flex-col justify-center bg-[#041533] rounded-xl p-6 text-center space-y-4 shadow-sm overflow-y-auto">
+
+                        <div>
+                            <h3 class="text-lg font-bold text-white mb-2">DOCUMENTO PROTEGIDO </h3>
+                            <p class="text-[13px] text-[#b0b0b0] leading-relaxed">
+                                No hay vista previa disponible para este documento. Esta norma forma parte del catálogo
+                                de pago y debe ser adquirida a través de la plataforma oficial externa para acceder a su
+                                contenido completo.
+                            </p>
+                        </div>
+                        <div>
+                            <button
+                                class="inline-flex items-center gap-2 bg-white text-[#041533] px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-[#f0f0f0] transition">
+                                Acceder al enlace de compra
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Clasificación Circular -->
+                    <div class="grid grid-cols-2 gap-4">
+
+                        <!-- SECCIÓN 1: Clasificación Circular -->
+                        <section class="shrink-0 bg-[#dce2f3] rounded-xl px-5 py-4">
+                            <h2 class="text-[13px] font-bold text-[#1a1a1a] uppercase tracking-wider mb-4">CLASIFICACIÓN
+                                CIRCULAR</h2>
+
+                            <!-- Prioridad Alta -->
+                            <div class="flex items-center gap-3 pb-3 mb-3 border-b border-[#c2cee8]">
+                                <div
+                                    class="w-9 h-9 rounded-lg bg-[#c8e6c9] flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-4 h-4 text-[#00743a]" fill="currentColor" viewBox="0 0 24 24">
+                                        <path
+                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                                    </svg>
+                                </div>
+                                <div class="flex flex-col">
+                                    <p class="font-bold text-[#1a1a1a] text-sm leading-tight">Prioridad Alta</p>
+                                    <p class="text-xs text-[#00743a] font-medium leading-tight">Fomento de Reciclaje</p>
+                                </div>
+                            </div>
+
+                            <!-- Obligatoriedad -->
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-9 h-9 rounded-lg bg-white border border-[#1a1a1a] flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-4 h-4 text-[#1a1a1a]" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                    </svg>
+                                </div>
+                                <div class="flex flex-col">
+                                    <p class="font-bold text-[#1a1a1a] text-sm leading-tight">Obligatoriedad</p>
+                                    <p class="text-xs text-[#666] font-medium leading-tight">Legal Vinculante</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- SECCIÓN 2: Nueva Sección (tu nueva sección aquí) -->
+                        <section class="shrink-0 bg-[#f0f4ff] rounded-xl px-5 py-4">
+                            <h2 class="text-[13px] font-bold text-[#1a1a1a] uppercase tracking-wider mb-4">INFORMACIÓN
+                                DE ADQUISICIÓN
+                            </h2>
+
+                            <!-- Contenido aquí -->
+                            <p class="text-xs text-[#666] leading-relaxed">
+                                Este documento es propiedad intelectual de su emisor y requiere el pago de una tasa por
+                                derechos de autor o acceso comercial.
+                            </p>
+                        </section>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>
