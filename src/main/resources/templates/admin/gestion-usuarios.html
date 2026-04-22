@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recíclame - Gestión de Usuarios</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#10b981",
+                        "primary-dark": "#0f172a",
+                        "table-panel": "#dfe6f5",
+                        "surface-soft": "#f8fafc",
+                        "surface-card": "#ffffff",
+                        "text-main": "#0f172a",
+                        "text-soft": "#64748b",
+                        "text-muted": "#94a3b8",
+                        "danger": "#e11d48",
+                        "warning": "#f59e0b",
+                        "success": "#10b981"
+                    },
+                    boxShadow: {
+                        soft: "0 8px 24px rgba(15, 23, 42, 0.05)"
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body { font-family: Inter, system-ui, sans-serif; }
+    </style>
+</head>
+
+<body class="h-screen overflow-hidden bg-surface-soft text-text-main">
+<div class="flex h-screen">
+    <aside class="fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-slate-100 bg-white px-5 py-6 shadow-[4px_0_18px_rgba(0,0,0,0.02)]">
+        <div class="mb-8 flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white">
+                <span class="font-bold">R</span>
+            </div>
+            <div>
+                <h1 class="text-xl font-extrabold leading-none text-slate-900">Recíclame</h1>
+                <p class="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Gestión Circular</p>
+            </div>
+        </div>
+
+        <nav class="flex-1 space-y-1">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">Dashboard</a>
+            <a th:href="@{/admin/usuarios/gestion}" class="flex items-center gap-3 rounded-full bg-primary/5 px-4 py-3 text-sm font-semibold text-primary">Usuarios</a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">Estudios</a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">Repositorio Normativo</a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">Registros de actividad</a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">Registros de descargas</a>
+        </nav>
+
+        <div class="mt-auto space-y-1 border-t border-slate-100 pt-5">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-danger">Cerrar Sesión</a>
+        </div>
+    </aside>
+
+    <div class="ml-64 flex-1">
+        <header class="sticky top-0 z-40 flex h-14 items-center justify-between bg-white/80 px-6 backdrop-blur-md shadow-sm">
+            <span class="text-xl font-bold tracking-tight text-primary">Recíclame</span>
+
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-sm font-bold text-slate-900">Ana Flores</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-primary">Admin</p>
+                </div>
+                <div class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-emerald-100 bg-emerald-100 text-xs font-bold text-emerald-700">
+                    AF
+                </div>
+            </div>
+        </header>
+
+        <main class="mx-auto max-w-6xl space-y-4 p-4">
+            <!-- TÍTULO + SOLICITUDES -->
+            <section class="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-4 items-start">
+                <div>
+                    <h2 class="mb-1 text-3xl font-extrabold tracking-tight text-primary-dark">Gestión de Usuarios</h2>
+                    <p class="max-w-2xl text-sm font-medium text-slate-500">
+                        Administra los accesos, roles y el ciclo de vida de los integrantes de la red de economía circular.
+                    </p>
+                </div>
+
+                <section class="flex items-center justify-between rounded-[1.6rem] bg-primary-dark px-5 py-4 text-white shadow-soft">
+                    <div class="flex items-center gap-4">
+                        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10">
+                            <span class="text-base font-bold">!</span>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold">Solicitudes Pendientes</h3>
+                            <p class="max-w-sm text-xs text-slate-400">
+                                Hay <span th:text="${usuariosPendientes}"></span> nuevos usuarios esperando validación para ingresar a la plataforma.
+                            </p>
+                        </div>
+                    </div>
+
+                    <a th:href="@{/admin/usuarios/solicitudes}"
+                       class="rounded-full bg-[#006c49] px-4 py-2 text-xs font-bold hover:bg-[#005a3d] whitespace-nowrap">
+                        Revisar solicitudes
+                    </a>
+                </section>
+            </section>
+
+            <!-- KPIS -->
+            <section class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                <article class="relative overflow-hidden rounded-[1.5rem] border-l-4 border-slate-300 bg-white p-4 shadow-sm">
+                    <p class="mb-1 text-[9px] font-extrabold uppercase tracking-widest text-slate-400">Total Usuarios</p>
+                    <h4 class="text-2xl font-extrabold text-slate-900" th:text="${totalUsuarios}"></h4>
+                </article>
+
+                <article class="relative overflow-hidden rounded-[1.5rem] border-l-4 border-primary bg-white p-4 shadow-sm">
+                    <p class="mb-1 text-[9px] font-extrabold uppercase tracking-widest text-slate-400">Activos</p>
+                    <h4 class="text-2xl font-extrabold text-primary" th:text="${usuariosActivos}"></h4>
+                </article>
+
+                <article class="relative overflow-hidden rounded-[1.5rem] border-l-4 border-rose-500 bg-white p-4 shadow-sm">
+                    <p class="mb-1 text-[9px] font-extrabold uppercase tracking-widest text-slate-400">Bloqueados</p>
+                    <h4 class="text-2xl font-extrabold text-rose-600" th:text="${usuariosBloqueados}"></h4>
+                </article>
+
+                <article class="relative overflow-hidden rounded-[1.5rem] border-l-4 border-amber-500 bg-white p-4 shadow-sm">
+                    <p class="mb-1 flex items-center gap-2 text-[9px] font-extrabold uppercase tracking-widest text-slate-400">
+                        Pendientes
+                        <span class="rounded bg-amber-100 px-2 py-0.5 text-[8px] text-amber-700">Nuevos</span>
+                    </p>
+                    <h4 class="text-2xl font-extrabold text-amber-600" th:text="${usuariosPendientes}"></h4>
+                </article>
+            </section>
+
+            <!-- TABLA -->
+            <section class="rounded-[1.7rem] border border-slate-100 bg-table-panel p-4">
+                <div class="mb-4 flex flex-col items-center justify-between gap-3 md:flex-row">
+                    <form th:action="@{/admin/usuarios/gestion}" method="get" class="relative w-full md:w-72">
+                        <input type="text"
+                               name="texto"
+                               th:value="${texto}"
+                               placeholder="Buscar usuario por nombre, DNI o empresa..."
+                               class="w-full rounded-full border-none bg-white py-2.5 pl-5 pr-4 text-sm shadow-sm focus:ring-2 focus:ring-primary" />
+                    </form>
+
+                    <div class="flex w-full items-center gap-2 md:w-auto">
+                        <button class="flex flex-1 items-center justify-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm md:flex-none">
+                            Filtros avanzados
+                        </button>
+
+                        <button class="flex flex-1 items-center justify-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm md:flex-none">
+                            Exportar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-hidden rounded-[1.3rem] border border-slate-100 bg-white shadow-sm">
+                    <table class="w-full border-collapse text-left">
+                        <thead>
+                        <tr class="bg-slate-50/50">
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Nombre</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Identificación</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Empresa</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Rol</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Estado</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Registro</th>
+                            <th class="px-5 py-3 text-right text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Acciones</th>
+                        </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-slate-50">
+                        <tr th:each="u : ${usuarios}" class="hover:bg-slate-50/50">
+                            <td class="px-5 py-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary"
+                                         th:text="${u.iniciales}">
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold leading-tight text-slate-900" th:text="${u.nombreCompleto}"></p>
+                                        <p class="text-[11px] leading-tight text-slate-400" th:text="${u.correo}"></p>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="px-5 py-3 text-sm font-medium text-slate-600" th:text="${u.dni}"></td>
+                            <td class="px-5 py-3 text-sm italic text-slate-600" th:text="${u.empresa}"></td>
+
+                            <td class="px-5 py-3">
+                    <span class="rounded-full bg-primary/10 px-3 py-1 text-[10px] font-extrabold uppercase text-primary"
+                          th:text="${u.rol}">
+                    </span>
+                            </td>
+
+                            <td class="px-5 py-3">
+                                <div class="flex items-center gap-2" th:if="${u.estado == 'Activo'}">
+                                    <div class="h-2 w-2 rounded-full bg-primary"></div>
+                                    <span class="text-sm font-bold text-primary" th:text="${u.estado}"></span>
+                                </div>
+
+                                <div class="flex items-center gap-2" th:if="${u.estado == 'Bloqueado'}">
+                                    <div class="h-2 w-2 rounded-full bg-rose-500"></div>
+                                    <span class="text-sm font-bold text-rose-600" th:text="${u.estado}"></span>
+                                </div>
+
+                                <div class="flex items-center gap-2" th:if="${u.estado == 'Pendiente'}">
+                                    <div class="h-2 w-2 rounded-full bg-amber-500"></div>
+                                    <span class="text-sm font-bold text-amber-600" th:text="${u.estado}"></span>
+                                </div>
+
+                                <div class="flex items-center gap-2" th:if="${u.estado == 'Rechazado'}">
+                                    <div class="h-2 w-2 rounded-full bg-slate-400"></div>
+                                    <span class="text-sm font-bold text-slate-500" th:text="${u.estado}"></span>
+                                </div>
+                            </td>
+
+                            <td class="px-5 py-3 text-sm text-slate-500" th:text="${u.fechaRegistro}"></td>
+
+                            <td class="space-y-1 px-5 py-3 text-right">
+                                <!-- Editar: solo si NO está bloqueado -->
+                                <div th:if="${u.estado != 'Bloqueado'}">
+                                    <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, modal='edit', id=${u.idUsuario})}"
+                                       class="inline-block rounded-lg text-sm text-slate-400 hover:bg-primary/5 hover:text-primary">
+                                        Editar
+                                    </a>
+                                </div>
+
+                                <!-- Bloquear: solo si está Activo -->
+                                <div th:if="${u.estado == 'Activo'}">
+                                    <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, modal='block', id=${u.idUsuario})}"
+                                       class="inline-block rounded-lg text-sm text-slate-400 hover:bg-rose-50 hover:text-rose-600">
+                                        Bloquear
+                                    </a>
+                                </div>
+
+                                <!-- Desbloquear: solo si está Bloqueado -->
+                                <div th:if="${u.estado == 'Bloqueado'}">
+                                    <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, modal='unblock', id=${u.idUsuario})}"
+                                       class="inline-block rounded-lg text-sm text-slate-400 hover:bg-emerald-50 hover:text-emerald-600">
+                                        Desbloquear
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(usuarios)}">
+                            <td colspan="7" class="px-6 py-8 text-center text-sm text-slate-400">
+                                No hay usuarios para mostrar
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- PAGINACIÓN -->
+                <div class="mt-4 flex items-center justify-between">
+                    <p class="text-sm text-slate-500">
+                        Página <span th:text="${currentPage + 1}"></span> de <span th:text="${totalPages}"></span>
+                    </p>
+
+                    <div class="flex gap-2">
+                        <a th:if="${hasPrevious}"
+                           th:href="@{/admin/usuarios/gestion(page=${currentPage - 1}, texto=${texto})}"
+                           class="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm">
+                            Anterior
+                        </a>
+
+                        <a th:if="${hasNext}"
+                           th:href="@{/admin/usuarios/gestion(page=${currentPage + 1}, texto=${texto})}"
+                           class="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm">
+                            Siguiente
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<!-- MODAL EDITAR -->
+<div th:if="${modal == 'edit'}"
+     class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/30 backdrop-blur-sm px-4">
+    <div class="w-full max-w-2xl rounded-[2rem] bg-white shadow-2xl overflow-hidden">
+        <div class="flex items-center justify-between border-b border-slate-100 px-8 py-5">
+            <div>
+                <h3 class="text-2xl font-extrabold text-primary-dark">Editar usuario</h3>
+                <p class="text-sm text-slate-500">Actualiza la información principal del usuario.</p>
+            </div>
+
+            <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto})}"
+               class="rounded-full bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600">
+                Cerrar
+            </a>
+        </div>
+
+        <form th:action="@{/admin/usuarios/editar(page=${currentPage}, texto=${texto})}"
+              th:object="${editForm}"
+              method="post"
+              class="grid grid-cols-1 gap-4 px-8 py-6 md:grid-cols-2">
+
+            <input type="hidden" th:field="*{idUsuario}">
+
+            <div>
+                <label class="mb-2 block text-sm font-bold text-slate-700">Nombres</label>
+                <input type="text" th:field="*{nombres}" class="w-full rounded-2xl border border-slate-200 px-4 py-3">
+                <p th:if="${fieldErrors != null and fieldErrors.nombres != null}"
+                   th:text="${fieldErrors.nombres}"
+                   class="mt-1 text-xs font-medium text-rose-600"></p>
+            </div>
+
+            <div>
+                <label class="mb-2 block text-sm font-bold text-slate-700">Apellido paterno</label>
+                <input type="text" th:field="*{apellidoPaterno}" class="w-full rounded-2xl border border-slate-200 px-4 py-3">
+                <p th:if="${fieldErrors != null and fieldErrors.apellidoPaterno != null}"
+                   th:text="${fieldErrors.apellidoPaterno}"
+                   class="mt-1 text-xs font-medium text-rose-600"></p>
+            </div>
+
+            <div>
+                <label class="mb-2 block text-sm font-bold text-slate-700">Apellido materno</label>
+                <input type="text" th:field="*{apellidoMaterno}" class="w-full rounded-2xl border border-slate-200 px-4 py-3">
+            </div>
+
+            <div>
+                <label class="mb-2 block text-sm font-bold text-slate-700">DNI</label>
+                <input type="text" th:field="*{dni}" class="w-full rounded-2xl border border-slate-200 px-4 py-3">
+                <p th:if="${fieldErrors != null and fieldErrors.dni != null}"
+                   th:text="${fieldErrors.dni}"
+                   class="mt-1 text-xs font-medium text-rose-600"></p>
+            </div>
+
+            <div>
+                <label class="mb-2 block text-sm font-bold text-slate-700">Correo</label>
+                <input type="email" th:field="*{correo}" class="w-full rounded-2xl border border-slate-200 px-4 py-3">
+                <p th:if="${fieldErrors != null and fieldErrors.correo != null}"
+                   th:text="${fieldErrors.correo}"
+                   class="mt-1 text-xs font-medium text-rose-600"></p>
+            </div>
+
+            <div>
+                <label class="mb-2 block text-sm font-bold text-slate-700">Teléfono</label>
+                <input type="text" th:field="*{telefono}" class="w-full rounded-2xl border border-slate-200 px-4 py-3">
+                <p th:if="${fieldErrors != null and fieldErrors.telefono != null}"
+                   th:text="${fieldErrors.telefono}"
+                   class="mt-1 text-xs font-medium text-rose-600"></p>
+            </div>
+
+            <div>
+                <label class="mb-2 block text-sm font-bold text-slate-700">Rol</label>
+                <select th:field="*{idRol}" class="w-full rounded-2xl border border-slate-200 px-4 py-3">
+                    <option value="">Seleccione un rol</option>
+                    <option th:each="rol : ${roles}" th:value="${rol.idRol}" th:text="${rol.nombre}"></option>
+                </select>
+                <p th:if="${fieldErrors != null and fieldErrors.idRol != null}"
+                   th:text="${fieldErrors.idRol}"
+                   class="mt-1 text-xs font-medium text-rose-600"></p>
+            </div>
+
+            <div>
+                <label class="mb-2 block text-sm font-bold text-slate-700">Empresa</label>
+                <input type="text" th:field="*{razonSocial}" class="w-full rounded-2xl border border-slate-200 px-4 py-3">
+            </div>
+
+            <div>
+                <label class="mb-2 block text-sm font-bold text-slate-700">Cargo</label>
+                <input type="text" th:field="*{cargo}" class="w-full rounded-2xl border border-slate-200 px-4 py-3">
+            </div>
+
+            <div th:if="${mostrarSelectorPendiente}">
+                <label class="mb-2 block text-sm font-bold text-slate-700">Estado de evaluación</label>
+                <select th:field="*{estadoAprobacion}" class="w-full rounded-2xl border border-slate-200 px-4 py-3">
+                    <option value="PENDIENTE">Pendiente</option>
+                </select>
+                <p class="mt-2 text-xs text-slate-400">
+                    Este usuario fue rechazado. Aquí solo puede volver a estado pendiente.
+                </p>
+            </div>
+
+            <div class="md:col-span-2 flex justify-end gap-3 pt-2">
+                <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto})}"
+                   class="rounded-full bg-slate-100 px-5 py-3 text-sm font-bold text-slate-600">
+                    Cancelar
+                </a>
+                <button type="submit"
+                        class="rounded-full bg-primary px-6 py-3 text-sm font-bold text-white">
+                    Guardar cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL BLOQUEAR -->
+<<div th:if="${modal == 'block' or modal == 'unblock'}"
+      class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/30 backdrop-blur-sm px-4">
+    <div class="w-full max-w-xl rounded-[2rem] bg-white shadow-2xl overflow-hidden">
+        <div class="border-b border-slate-100 px-8 py-5">
+            <h3 class="text-2xl font-extrabold text-primary-dark"
+                th:text="${modoBloqueo == 'bloquear' ? 'Bloquear usuario' : 'Desbloquear usuario'}">
+            </h3>
+            <p class="text-sm text-slate-500"
+               th:text="${modoBloqueo == 'bloquear' ? 'Confirma la acción antes de bloquear el acceso.' : 'Confirma la acción para restaurar el acceso del usuario.'}">
+            </p>
+        </div>
+
+        <!-- FORM BLOQUEAR -->
+        <form th:if="${modoBloqueo == 'bloquear'}"
+              th:action="@{/admin/usuarios/bloquear(page=${currentPage}, texto=${texto})}"
+              th:object="${blockForm}"
+              method="post"
+              class="px-8 py-6">
+
+            <input type="hidden" th:field="*{idUsuario}" />
+
+            <div class="mb-5 rounded-2xl bg-rose-50 p-4">
+                <p class="text-sm text-slate-600">Usuario</p>
+                <p class="text-lg font-extrabold text-slate-900" th:text="${usuarioBloqueoNombre}"></p>
+                <p class="text-sm text-slate-500" th:text="${usuarioBloqueoCorreo}"></p>
+            </div>
+
+            <div class="mb-6">
+                <label class="mb-2 block text-sm font-bold text-slate-700">Motivo del bloqueo</label>
+                <textarea th:field="*{motivo}"
+                          rows="4"
+                          class="w-full rounded-2xl border border-slate-200 px-4 py-3"
+                          placeholder="Escribe el motivo del bloqueo..."></textarea>
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto})}"
+                   class="rounded-full bg-slate-100 px-5 py-3 text-sm font-bold text-slate-600">
+                    Cancelar
+                </a>
+
+                <button type="submit"
+                        class="rounded-full bg-rose-600 px-6 py-3 text-sm font-bold text-white">
+                    Confirmar bloqueo
+                </button>
+            </div>
+        </form>
+
+        <!-- FORM DESBLOQUEAR -->
+        <form th:if="${modoBloqueo == 'desbloquear'}"
+              th:action="@{/admin/usuarios/desbloquear(page=${currentPage}, texto=${texto})}"
+              th:object="${blockForm}"
+              method="post"
+              class="px-8 py-6">
+
+            <input type="hidden" th:field="*{idUsuario}" />
+
+            <div class="mb-5 rounded-2xl bg-emerald-50 p-4">
+                <p class="text-sm text-slate-600">Usuario</p>
+                <p class="text-lg font-extrabold text-slate-900" th:text="${usuarioBloqueoNombre}"></p>
+                <p class="text-sm text-slate-500" th:text="${usuarioBloqueoCorreo}"></p>
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto})}"
+                   class="rounded-full bg-slate-100 px-5 py-3 text-sm font-bold text-slate-600">
+                    Cancelar
+                </a>
+
+                <button type="submit"
+                        class="rounded-full bg-emerald-600 px-6 py-3 text-sm font-bold text-white">
+                    Confirmar desbloqueo
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
