@@ -54,7 +54,10 @@ public class AuthController {
         if (authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")
                         || a.getAuthority().equals("ROLE_SUPERADMIN"))) {
-            return "redirect:/admin/usuarios/gestion";
+
+
+            return "redirect:/admin/dashboard";
+
         }
 
         if (authentication.getAuthorities().stream()

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Centro de Notificaciones | Reciclame</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-variant": "#f4f7f9",
+            "on-surface": "#001c3a",
+            "primary": "#001c3a",
+            "secondary": "#2d694f",
+            "background": "#ffffff",
+            "surface-container": "#f8fafb",
+            "surface": "#f7f9fb",
+            "outline-variant": "#d9e1e7"
+          },
+          fontFamily: {
+            "sans": ["Inter", "sans-serif"],
+            "headline": ["Plus Jakarta Sans", "Inter", "sans-serif"]
+          }
+        },
+      },
+    }
+  </script>
+
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      font-size: 20px;
+    }
+
+    .notification-card {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      border-radius: 20px;
+      border: 1px solid rgba(217, 225, 231, 0.5);
+    }
+
+    .ambient-shadow {
+      box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+    }
+  </style>
+</head>
+
+<body class="bg-white text-on-surface antialiased overflow-hidden font-sans">
+<div class="flex h-screen w-full">
+
+  <!-- Sidebar -->
+  <aside class="w-72 h-screen bg-[#f2f4f6] flex flex-col py-8 px-6 border-r border-slate-100">
+    <div class="mb-10 flex items-center gap-3 pl-1">
+      <div class="w-10 h-10 rounded-full bg-[#001c3a] flex items-center justify-center flex-shrink-0">
+        <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">recycling</span>
+      </div>
+      <div class="flex flex-col">
+        <h1 class="text-[#001B2E] font-black text-xl font-headline tracking-tight">Repositorio Circular</h1>
+      </div>
+    </div>
+
+    <nav class="flex-1 space-y-2">
+      <a class="text-slate-600 hover:bg-slate-200/60 rounded-xl px-4 py-3 flex items-center gap-3 transition-all font-headline font-bold text-sm tracking-tight" href="#">
+        <span class="material-symbols-outlined text-[20px]">home</span>
+        Inicio
+      </a>
+
+      <a class="text-slate-600 hover:bg-slate-200/60 rounded-xl px-4 py-3 flex items-center gap-3 transition-all font-headline font-bold text-sm tracking-tight" href="#">
+        <span class="material-symbols-outlined text-[20px]">group</span>
+        Usuarios
+      </a>
+
+      <a class="text-slate-600 hover:bg-slate-200/60 rounded-xl px-4 py-3 flex items-center gap-3 transition-all font-headline font-bold text-sm tracking-tight" href="#">
+        <span class="material-symbols-outlined text-[20px]">auto_stories</span>
+        Estudios
+      </a>
+
+      <a class="text-slate-600 hover:bg-slate-200/60 rounded-xl px-4 py-3 flex items-center gap-3 transition-all font-headline font-bold text-sm tracking-tight" href="#">
+        <span class="material-symbols-outlined text-[20px]">gavel</span>
+        Repositorio Normativo
+      </a>
+
+      <a class="text-slate-600 hover:bg-slate-200/60 rounded-xl px-4 py-3 flex items-center gap-3 transition-all font-headline font-bold text-sm tracking-tight" href="#">
+        <span class="material-symbols-outlined text-[20px]">bar_chart</span>
+        Registros de actividad
+      </a>
+
+      <a class="bg-[#2ECC71]/20 text-[#00743a] rounded-xl px-4 py-3 flex items-center gap-3 font-headline font-bold text-sm tracking-tight" href="#">
+        <span class="material-symbols-outlined text-[20px]">notifications</span>
+        Notificaciones
+      </a>
+    </nav>
+
+    <div class="pt-4 space-y-2 border-t border-slate-200">
+      <a class="text-slate-600 hover:bg-slate-200/60 rounded-xl px-4 py-3 flex items-center gap-3 transition-all font-headline font-bold text-sm tracking-tight" href="#">
+        <span class="material-symbols-outlined text-[20px]">settings</span>
+        Configuración
+      </a>
+
+      <a class="text-slate-600 hover:bg-slate-200/60 rounded-xl px-4 py-3 flex items-center gap-3 transition-all font-headline font-bold text-sm tracking-tight" href="#">
+        <span class="material-symbols-outlined text-[20px]">logout</span>
+        Cerrar Sesión
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="flex-1 flex flex-col min-w-0 bg-[#f7f9fb]">
+    <!-- Top Bar -->
+    <header class="flex justify-between items-center px-8 py-4 w-full h-20 sticky top-0 z-40 bg-[#f7f9fb]/85 backdrop-blur-xl">
+      <div class="text-2xl font-headline font-bold text-[#001c3a]">Reciclame</div>
+
+      <div class="flex items-center gap-6">
+        <button class="relative text-slate-500 hover:text-[#2d694f] transition-colors">
+          <span class="material-symbols-outlined text-[24px]">notifications</span>
+          <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+        </button>
+
+        <div class="flex items-center gap-3 cursor-pointer p-1 rounded-full hover:bg-slate-100 transition-colors">
+          <img
+            alt="Paola Flores"
+            class="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtNWmHLbbgCDDZ_0vV2enzlwHNyv4meeXN2D1os4aYVobwbejIyn6X8y-m6dPam4XANI5BVG7K3xKSJ8YKzxL7cjUETiJckfHHwPhx3wjK5_jsaxHiEDjJ6xZt061VwADtk1fvOGlxmjWpO0rg3eoxlIW8SjopcpwuEzFNFnmaEP6QZIeAYVPAtA7ufr4wBdf8Emk2BbcLLdEVBRsRCLcYQsDTCEQHk5oUAaConUUkM18vd0B8NzddefGJoWC457IwzejRnLNvEdMq"
+          />
+          <div class="hidden md:flex flex-col">
+            <span class="font-medium text-sm text-[#001B2E] leading-tight">Paola Flores</span>
+            <span class="text-[10px] font-bold text-[#00743a] bg-[#dff7e8] px-2 py-0.5 rounded-full w-max mt-0.5 tracking-wider">ADMIN</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-1 overflow-y-auto px-6 md:px-10 py-8 pb-24">
+      <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+          <h2 class="font-headline text-3xl md:text-4xl font-extrabold text-[#001c3a] tracking-tight mb-2">
+            Centro de Notificaciones
+          </h2>
+          <p class="text-sm md:text-base text-slate-500 max-w-2xl leading-relaxed">
+            Mantente al día con publicaciones, solicitudes de usuarios y alertas importantes del sistema.
+          </p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex flex-wrap gap-6 mb-8 border-b border-slate-200">
+          <button class="pb-3 text-[#2d694f] font-bold text-sm border-b-2 border-[#2d694f]">
+            Todas las actividades
+          </button>
+          <button class="pb-3 text-slate-500 font-semibold text-sm hover:text-[#001c3a]">
+            Normativas
+          </button>
+          <button class="pb-3 text-slate-500 font-semibold text-sm hover:text-[#001c3a]">
+            Estudios
+          </button>
+          <button class="pb-3 text-slate-500 font-semibold text-sm hover:text-[#001c3a]">
+            Solicitudes
+          </button>
+          <button class="pb-3 text-slate-500 font-semibold text-sm hover:text-[#001c3a]">
+            Sistema
+          </button>
+        </div>
+
+        <!-- Cards -->
+        <div class="space-y-5">
+
+          <!-- Card 1 -->
+          <div class="notification-card bg-white p-6 flex items-start gap-4 relative">
+            <div class="w-11 h-11 bg-[#d7f9e8] rounded-xl flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-[#2d694f]" style="font-variation-settings: 'FILL' 1;">edit_document</span>
+            </div>
+
+            <div class="flex-1 pr-8">
+              <div class="flex justify-between items-center mb-1 gap-4">
+                <span class="text-[#2d694f] font-bold text-[11px] uppercase tracking-wider">Documento publicado</span>
+                <div class="flex items-center gap-3">
+                  <span class="text-slate-400 text-xs">hace 5 min</span>
+                  <div class="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
+                </div>
+              </div>
+
+              <h3 class="text-lg font-bold text-[#001c3a] mb-2">Nueva normativa publicada</h3>
+              <p class="text-slate-600 text-sm leading-relaxed">
+                Se ha incorporado la directiva 2024/EC sobre plásticos de un solo uso al repositorio.
+              </p>
+            </div>
+
+            <div class="absolute bottom-5 right-6">
+              <input class="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="notification-card bg-white p-6 flex items-start gap-4 relative">
+            <div class="w-11 h-11 bg-[#eef2ff] rounded-xl flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-[#001c3a]" style="font-variation-settings: 'FILL' 1;">description</span>
+            </div>
+
+            <div class="flex-1 pr-8">
+              <div class="flex justify-between items-center mb-1 gap-4">
+                <span class="text-[#2d694f] font-bold text-[11px] uppercase tracking-wider">Documento publicado</span>
+                <div class="flex items-center gap-3">
+                  <span class="text-slate-400 text-xs">hace 24 min</span>
+                  <div class="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
+                </div>
+              </div>
+
+              <h3 class="text-lg font-bold text-[#001c3a] mb-2">Nuevo estudio publicado</h3>
+              <p class="text-slate-600 text-sm leading-relaxed">
+                Se ha actualizado el estudio XXXX sobre economía circular y gestión de residuos.
+              </p>
+            </div>
+
+            <div class="absolute bottom-5 right-6">
+              <input class="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="notification-card bg-white p-6 flex items-start gap-4 relative">
+            <div class="w-11 h-11 bg-[#f1f5f9] rounded-xl flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-slate-700">person_add</span>
+            </div>
+
+            <div class="flex-1 pr-8">
+              <div class="flex justify-between items-center mb-1 gap-4">
+                <span class="text-slate-400 font-bold text-[11px] uppercase tracking-wider">Consulta pública</span>
+                <div class="flex items-center gap-3">
+                  <span class="text-slate-400 text-xs">hace 2 h</span>
+                  <div class="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
+                </div>
+              </div>
+
+              <h3 class="text-lg font-bold text-[#001c3a] mb-2">Solicitud de verificación pendiente</h3>
+              <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                El usuario XXXXX XXXXX solicita registro y validación de perfil.
+              </p>
+
+              <button class="px-4 py-2 bg-[#eef2ff] text-[#001c3a] font-semibold rounded-lg text-sm hover:bg-slate-200 transition-colors">
+                Revisar perfil
+              </button>
+            </div>
+
+            <div class="absolute bottom-5 right-6">
+              <input class="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+            </div>
+          </div>
+
+        </div>
+        <!-- Pagination -->
+        <div class="mt-10 flex justify-center items-center gap-2">
+          <button class="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors disabled:opacity-50" disabled>
+            <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+          </button>
+
+          <div class="flex items-center gap-1 text-sm font-semibold">
+            <button class="w-10 h-10 rounded-full flex items-center justify-center bg-[#245843] text-white shadow-sm">1</button>
+            <button class="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors">2</button>
+            <button class="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors">3</button>
+            <span class="px-2 text-slate-400">...</span>
+            <button class="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors">8</button>
+          </div>
+
+          <button class="w-10 h-10 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors">
+            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+</div>
+
+</body>
+</html>
