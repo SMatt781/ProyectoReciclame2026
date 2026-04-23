@@ -125,13 +125,14 @@
                 <span class="material-symbols-outlined text-[20px]">gavel</span>
                 <span class="text-sm font-medium">Repositorio Normativo</span>
             </a>
-            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
-                <span class="material-symbols-outlined text-[20px]">settings</span>
-                <span class="text-sm font-medium">Configuración</span>
-            </a>
-            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+            <!-- Añadir enlaces a nuevas páginas -->
+            <a th:href="@{/superadmin/estadoSistema}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
                 <span class="material-symbols-outlined text-[20px]">monitor_heart</span>
-                <span class="text-sm font-medium">Estado del monitor</span>
+                <span class="text-sm font-medium">Estado del Monitor</span>
+            </a>
+            <a th:href="@{/superadmin/confSeguridad}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">security</span>
+                <span class="text-sm font-medium">Configuración de Seguridad</span>
             </a>
         </nav>
     </div>

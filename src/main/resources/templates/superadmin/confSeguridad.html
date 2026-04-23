@@ -89,54 +89,51 @@
 </head>
 <body class="bg-background text-on-background antialiased flex">
 <!-- SideNavBar (Smoke White #F2F4F7) -->
-<aside class="bg-[#F2F4F7] fixed left-0 top-0 h-screen w-[260px] border-r border-slate-200 z-50 flex flex-col py-6">
-<div class="px-6">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 bg-[#059669] rounded-lg flex items-center justify-center">
-<span class="material-symbols-outlined text-white" data-icon="recycling">recycling</span>
-</div>
-<div>
-<h1 class="text-lg font-black text-slate-900 tracking-tight">Repositorio Circular</h1>
-<p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Admin System</p>
-</div>
-</div>
-</div>
-<nav class="flex-1 space-y-1">
-<a class="text-slate-600 hover:text-slate-900 mx-2 px-4 py-3 flex items-center gap-3 cursor-pointer transition-all duration-200 hover:bg-slate-200/50 text-[14px]" href="#">
-<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-<span>Dashboard</span>
-</a>
-<a class="text-slate-600 hover:text-slate-900 mx-2 px-4 py-3 flex items-center gap-3 cursor-pointer transition-all duration-200 hover:bg-slate-200/50 text-[14px]" href="#">
-<span class="material-symbols-outlined" data-icon="group">group</span>
-<span>Usuarios</span>
-</a>
-<a class="text-slate-600 hover:text-slate-900 mx-2 px-4 py-3 flex items-center gap-3 cursor-pointer transition-all duration-200 hover:bg-slate-200/50 text-[14px]" href="#">
-<span class="material-symbols-outlined" data-icon="admin_panel_settings">admin_panel_settings</span>
-<span>Administradores</span>
-</a>
-<a class="text-slate-600 hover:text-slate-900 mx-2 px-4 py-3 flex items-center gap-3 cursor-pointer transition-all duration-200 hover:bg-slate-200/50 text-[14px]" href="#">
-<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
-<span>Estudios</span>
-</a>
-<a class="text-slate-600 hover:text-slate-900 mx-2 px-4 py-3 flex items-center gap-3 cursor-pointer transition-all duration-200 hover:bg-slate-200/50 text-[14px]" href="#">
-<span class="material-symbols-outlined" data-icon="library_books">library_books</span>
-<span>Repositorio Normativo</span>
-</a>
-<a class="bg-[#059669]/10 text-[#059669] font-semibold rounded-lg mx-2 px-4 py-3 flex items-center gap-3 cursor-pointer text-[14px]" href="#">
-<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
-<span>Configuración</span>
-</a>
-<a class="text-slate-600 hover:text-slate-900 mx-2 px-4 py-3 flex items-center gap-3 cursor-pointer transition-all duration-200 hover:bg-slate-200/50 text-[14px]" href="#">
-<span class="material-symbols-outlined" data-icon="monitor_heart">monitor_heart</span>
-<span>Estado del monitor</span>
-</a>
-</nav>
-<div class="px-2 mt-auto">
-<a class="text-slate-600 hover:text-red-600 mx-0 px-4 py-3 flex items-center gap-3 cursor-pointer transition-all duration-200 hover:bg-red-50 rounded-lg text-[14px]" href="#">
-<span class="material-symbols-outlined" data-icon="logout">logout</span>
-<span>Cerrar Sesión</span>
-</a>
-</div>
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-[#F2F4F7] border-r border-slate-200 flex flex-col z-50">
+    <div class="p-6">
+        <div class="flex items-center gap-3 mb-10">
+            <div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-white font-black">R</div>
+            <span class="font-black text-slate-900 tracking-tight text-xl">Reciclame</span>
+        </div>
+        <nav class="flex flex-col gap-2">
+            <!-- Active State: Dashboard -->
+            <a th:href="@{/superadmin/dashboard}" class="bg-[#D1FAE5] text-[#0F172A] rounded-lg px-4 py-2.5 flex items-center gap-3 transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+                <span class="text-sm font-bold">Dashboard</span>
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">group</span>
+                <span class="text-sm font-medium">Usuarios</span>
+            </a>
+            <a  th:href="@{/superadmin/administradores}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
+                <span class="text-sm font-medium">Administradores</span>
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">menu_book</span>
+                <span class="text-sm font-medium">Estudios</span>
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">gavel</span>
+                <span class="text-sm font-medium">Repositorio Normativo</span>
+            </a>
+            <!-- Añadir enlaces a nuevas páginas -->
+            <a th:href="@{/superadmin/estadoSistema}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">monitor_heart</span>
+                <span class="text-sm font-medium">Estado del Monitor</span>
+            </a>
+            <a th:href="@{/superadmin/confSeguridad}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">security</span>
+                <span class="text-sm font-medium">Configuración de Seguridad</span>
+            </a>
+        </nav>
+    </div>
+    <div class="mt-auto p-6 border-t border-slate-200">
+        <button class="w-full flex items-center gap-3 px-4 py-2.5 text-slate-600 hover:text-error transition-colors text-sm font-medium">
+            <span class="material-symbols-outlined text-[20px]">logout</span>
+            Cerrar Sesión
+        </button>
+    </div>
 </aside>
 <!-- Main Content -->
 <div class="flex-1 flex flex-col ml-[260px] min-h-screen">
