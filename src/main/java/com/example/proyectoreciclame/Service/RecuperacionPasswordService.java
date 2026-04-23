@@ -39,7 +39,7 @@ public class RecuperacionPasswordService {
         Usuario u = opt.get();
 
         return "APROBADO".equalsIgnoreCase(u.getEstadoAprobacion())
-                && "ACTIVO".equalsIgnoreCase(u.getEstadoCuenta());
+                && u.getEstadoCuenta() == Usuario.EstadoCuenta.ACTIVO;
     }
 
     @Transactional

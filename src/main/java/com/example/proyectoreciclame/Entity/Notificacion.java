@@ -35,10 +35,11 @@ public class Notificacion {
     @Column(name = "mensaje", nullable = false)
     private String mensaje;
 
+    @NotNull
+    @Column(name = "leido", nullable = false)
+    private Boolean leido = false;
 
     private LocalDateTime fecha;
 
-    }
 
-    }
 }
