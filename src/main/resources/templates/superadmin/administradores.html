@@ -106,9 +106,39 @@
             grid-template-columns: repeat(12, 1fr);
             gap: 24px;
         }
+        /* Añadir margen inferior al contenedor principal (main) */
+        main {
+            margin-bottom: 20px; /* Ajusta el valor según tu preferencia */
+        }
+        /* Estilo para el modal */
+        #adminModal {
+            position: fixed;
+            inset: 0; /* top:0; right:0; bottom:0; left:0; /
+            display: flex; / centra el contenido /
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  padding: 1rem; / evita que se pegue a los bordes en móviles */
+        }
+        /* El modal interno ya tiene w-full max-w-lg; asegúrate de que no tenga position:absolute ni transform */
+        #adminModal > div {
+            position: relative;
+            margin: 0 auto;
+        }
+
+        /* Asegurarse de que el fondo de la pantalla oscura cubra toda la ventana */
+        #adminModal .fixed {
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro */
+        }
     </style>
 </head>
 <body class="bg-background text-on-background antialiased flex">
+<!-- Sidebar Wrapper -->
 <!-- Sidebar Wrapper -->
 <aside class="fixed left-0 top-0 h-full w-[260px] bg-[#F2F4F7] border-r border-slate-200 flex flex-col z-50">
     <div class="p-6">
@@ -117,8 +147,8 @@
             <span class="font-black text-slate-900 tracking-tight text-xl">Reciclame</span>
         </div>
         <nav class="flex flex-col gap-2">
-            <!-- Active State: Dashboard -->
-            <a th:href="@{/superadmin/dashboard}" class="bg-[#D1FAE5] text-[#0F172A] rounded-lg px-4 py-2.5 flex items-center gap-3 transition-all" href="#">
+            <!-- Estado cambiado: Dashboard -->
+            <a th:href="@{/superadmin/dashboard}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
                 <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">grid_view</span>
                 <span class="text-sm font-bold">Dashboard</span>
             </a>
@@ -126,7 +156,8 @@
                 <span class="material-symbols-outlined text-[20px]">group</span>
                 <span class="text-sm font-medium">Usuarios</span>
             </a>
-            <a  th:href="@{/superadmin/administradores}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+            <!-- Activado: Administradores -->
+            <a th:href="@{/superadmin/administradores}" class="bg-[#D1FAE5] text-[#0F172A] rounded-lg px-4 py-2.5 flex items-center gap-3 transition-all" href="#">
                 <span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
                 <span class="text-sm font-medium">Administradores</span>
             </a>
@@ -190,78 +221,159 @@
 <h2 class="text-slate-900 text-[52px] font-black leading-tight tracking-tight">Administradores</h2>
 <p class="text-body-md text-slate-500 max-w-2xl mt-2">Gestiona el acceso al núcleo del sistema, define niveles de autoridad y supervisa la actividad de los administradores del repositorio.</p>
 </div>
-<button class="bg-emerald-500 text-slate-950 font-bold px-8 py-3 rounded-xl hover:bg-emerald-400 transition-all flex items-center gap-2 active:scale-95 shadow-lg shadow-emerald-500/20">
-<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
-<span>Crear Administrador</span>
-</button>
-</div>
-<!-- Stats Bento Grid --><div class="bento-grid">
-    <!-- Card: Total de Administradores -->
-    <div class="col-span-3 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-        <div class="flex items-start justify-between mb-6">
-            <div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-600">
-                <span class="material-symbols-outlined" data-icon="badge">badge</span>
-            </div>
-            <span class="text-label-md font-label-md text-emerald-600 uppercase tracking-widest">Total</span>
-        </div>
-        <!-- Mostrar el número de administradores registrados -->
-        <h3 class="text-4xl font-extrabold text-slate-900" th:text="${totalAdmins}">12</h3>
-        <p class="text-body-sm text-slate-500 mt-2">Admins registrados</p>
-    </div>
+    <!-- Botón para abrir el modal -->
+    <button onclick="openModal()" class="bg-emerald-500 text-slate-950 font-bold px-8 py-3 rounded-xl hover:bg-emerald-400 transition-all flex items-center gap-2 active:scale-95 shadow-lg shadow-emerald-500/20">
+        <span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+        <span>Crear Administrador</span>
+    </button>
 
-    <!-- Card: Administradores Vigentes -->
-    <div class="col-span-3 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-        <div class="flex items-start justify-between mb-6">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600">
-                <span class="material-symbols-outlined" data-icon="how_to_reg">how_to_reg</span>
+    <!-- Modal (oculto por defecto con 'hidden') -->
+    <div id="adminModal" class="fixed inset-0 bg-on-surface/40 backdrop-blur-sm z-40 hidden">
+        <div class="relative z-50 w-full max-w-lg bg-surface-container-lowest rounded-xxl shadow-xl overflow-hidden border border-slate-100">
+            <!-- Header del Modal -->
+            <div class="px-8 pt-8 pb-6 flex justify-between items-start">
+                <div>
+                    <h1 class="text-2xl font-black text-slate-900 tracking-tight">Crear Nuevo Administrador</h1>
+                    <p class="text-sm text-slate-500 mt-1">Completa los datos para asignar un nuevo perfil de gestión.</p>
+                </div>
+                <!-- Botón de cierre del modal -->
+                <button onclick="closeModal()" class="p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant">
+                    <span class="material-symbols-outlined" data-icon="close">close</span>
+                </button>
             </div>
-            <span class="text-label-md font-label-md text-emerald-600 uppercase tracking-widest">Vigentes</span>
-        </div>
-        <!-- Mostrar el número de administradores activos -->
-        <h3 class="text-4xl font-extrabold text-slate-900" th:text="${activeAdmins}">08</h3>
-        <p class="text-body-sm text-slate-500 mt-2">Actualmente activos</p>
-    </div>
 
-    <!-- Card: Administradores Pendientes -->
-    <div class="col-span-3 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-        <div class="flex items-start justify-between mb-6">
-            <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
-                <span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+            <!-- Formulario para crear administrador -->
+            <form class="px-8 pb-8 space-y-6">
+                <!-- Campo de Nombres y Apellidos -->
+                <div class="space-y-2">
+                    <label class="font-label-md text-label-md text-on-surface-variant block">NOMBRES Y APELLIDOS*</label>
+                    <input class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl" placeholder="Ej. Juan Pérez" type="text" />
+                </div>
+
+                <!-- Campo de Correo Electrónico -->
+                <div class="space-y-2">
+                    <label class="font-label-md text-label-md text-on-surface-variant block">CORREO ELECTRÓNICO*</label>
+                    <input class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl" placeholder="usuario@reciclame.org" type="email" />
+                </div>
+
+                <!-- Campo de Contraseña y Rol -->
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Rol -->
+                    <div class="space-y-2">
+                        <label class="font-label-md text-label-md text-on-surface-variant block">ROL</label>
+                        <select class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl">
+                            <option selected="">Administrador</option>
+                            <option>Editor</option>
+                            <option>Visualizador</option>
+                        </select>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="space-y-2">
+                        <label class="font-label-md text-label-md text-on-surface-variant block">CONTRASEÑA TEMPORAL*</label>
+                        <input class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl" type="password" value="••••••••" />
+                    </div>
+                </div>
+
+                <!-- Checkbox para invitación -->
+                <div class="flex items-center gap-3 pt-2">
+                    <input class="w-5 h-5 rounded border-outline-variant cursor-pointer" id="invite" type="checkbox" />
+                    <label class="font-body-sm text-body-sm text-on-surface" for="invite">Enviar invitación por correo electrónico automáticamente</label>
+                </div>
+            </form>
+
+            <!-- Footer con botones de Cancelar y Crear Administrador -->
+            <div class="px-8 py-6 bg-slate-50 flex items-center justify-end gap-4 border-t border-slate-100">
+                <button class="px-6 py-3 font-semibold text-slate-500 hover:text-slate-900" type="button" onclick="closeModal()">Cancelar</button>
+                <button class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 px-8 py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/20" type="submit">Crear Administrador</button>
             </div>
-            <span class="text-label-md font-label-md text-amber-600 uppercase tracking-widest">Borradores</span>
         </div>
-        <!-- Mostrar el número de administradores pendientes de activación -->
-        <h3 class="text-4xl font-extrabold text-slate-900" th:text="${pendingAdmins}">04</h3>
-        <p class="text-body-sm text-slate-500 mt-2">Pendientes de activación</p>
+    </div>
+    <!-- JavaScript para abrir y cerrar el modal -->
+    <script>
+        function openModal() {
+            document.getElementById('adminModal').classList.remove('hidden'); // Muestra el modal
+        }
+
+        function closeModal() {
+            document.getElementById('adminModal').classList.add('hidden'); // Oculta el modal
+        }
+    </script>
+</div>
+    <!-- Stats Bento Grid -->
+    <div class="bento-grid">
+        <!-- Card: Total de Administradores -->
+        <div class="col-span-3 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-600">
+                    <span class="material-symbols-outlined" data-icon="badge">badge</span>
+                </div>
+                <span class="text-label-md font-label-md text-emerald-600 uppercase tracking-widest">Total</span>
+            </div>
+            <h3 class="text-4xl font-extrabold text-slate-900" th:text="${totalAdmins}">12</h3>
+            <p class="text-body-sm text-slate-500 mt-2">Admins registrados</p>
+        </div>
+
+        <!-- Card: Administradores Vigentes -->
+        <div class="col-span-3 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                    <span class="material-symbols-outlined" data-icon="how_to_reg">how_to_reg</span>
+                </div>
+                <span class="text-label-md font-label-md text-emerald-600 uppercase tracking-widest">Vigentes</span>
+            </div>
+            <h3 class="text-4xl font-extrabold text-slate-900" th:text="${activeAdmins}">08</h3>
+            <p class="text-body-sm text-slate-500 mt-2">Actualmente activos</p>
+        </div>
+
+        <!-- Card: Administradores Bloqueados -->
+        <div class="col-span-3 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
+                    <span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+                </div>
+                <span class="text-label-md font-label-md text-amber-600 uppercase tracking-widest">Bloqueados</span>
+            </div>
+            <h3 class="text-4xl font-extrabold text-slate-900" th:text="${blockedAdmins}">04</h3> <!-- Cambié de pendingAdmins a blockedAdmins -->
+            <p class="text-body-sm text-slate-500 mt-2">Administradores bloqueados</p> <!-- Descripción cambiada a "bloqueados" -->
+        </div>
+
+        <!-- Card: Estado de seguridad (Nuevo tamaño ajustado) -->
+        <div class="col-span-3 bg-emerald-900 p-8 rounded-3xl shadow-sm text-white flex flex-col">
+            <div class="flex items-start justify-between mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-emerald-400">
+                    <span class="material-symbols-outlined" data-icon="verified_user">verified_user</span>
+                </div>
+                <span class="text-label-md font-label-md text-emerald-400 uppercase tracking-widest">Rating</span>
+            </div>
+            <h3 class="text-4xl font-extrabold text-white">A+</h3>
+            <p class="text-body-sm text-emerald-300 mt-2">Estado de seguridad</p>
+        </div>
     </div>
 </div>
-<div class="col-span-3 bg-emerald-900 p-8 rounded-3xl shadow-sm text-white flex flex-col">
-<div class="flex items-start justify-between mb-6">
-<div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-emerald-400">
-<span class="material-symbols-outlined" data-icon="verified_user">verified_user</span>
-</div>
-<span class="text-label-md font-label-md text-emerald-400 uppercase tracking-widest">Rating</span>
-</div>
-<h3 class="text-4xl font-extrabold text-white">A+</h3>
-<p class="text-body-sm text-emerald-300 mt-2">Estado de seguridad</p>
-</div>
-</div>
-<!-- Table Section -->
-<div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-<div class="p-6 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4">
-<div class="relative w-full sm:w-96">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl" data-icon="search">search</span>
-<input class="w-full pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 transition-all" placeholder="Filtrar por nombre o correo..." type="text"/>
-</div>
-<div class="flex gap-2">
-<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-xl transition-all">
-<span class="material-symbols-outlined" data-icon="filter_list">filter_list</span>
-</button>
-<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-xl transition-all">
-<span class="material-symbols-outlined" data-icon="download">download</span>
-</button>
-</div>
-</div>
+    <!-- Table Section -->
+    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <!-- Barra de búsqueda -->
+            <form action="/superadmin/administradores" method="get" class="relative w-full sm:w-96">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl" data-icon="search">search</span>
+                <input
+                        class="w-full pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                        placeholder="Buscar por nombre o correo..."
+                        type="text"
+                        name="texto"
+                        th:value="${param.texto}" /> <!-- Asegúrate de que thymeleaf esté procesando esto correctamente -->
+            </form>
+            <!-- Botones de acción -->
+            <div class="flex gap-2">
+                <button class="p-2 text-slate-500 hover:bg-slate-50 rounded-xl transition-all">
+                    <span class="material-symbols-outlined" data-icon="filter_list">filter_list</span>
+                </button>
+                <button class="p-2 text-slate-500 hover:bg-slate-50 rounded-xl transition-all">
+                    <span class="material-symbols-outlined" data-icon="download">download</span>
+                </button>
+            </div>
+        </div>
 <div class="overflow-x-auto">
     <table class="w-full text-left font-body-sm">
         <thead>
@@ -319,4 +431,5 @@
 <span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
 <span class="absolute right-full mr-4 bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Nuevo Administrador</span>
 </button>
+
 </body></html>

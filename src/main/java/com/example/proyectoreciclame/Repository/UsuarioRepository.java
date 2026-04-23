@@ -43,6 +43,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
             OR LOWER(COALESCE(u.apellidoMaterno, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
             OR LOWER(u.dni) LIKE LOWER(CONCAT('%', :texto, '%'))
             OR LOWER(COALESCE(ue.razonSocial, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
+            OR LOWER(u.correo) LIKE LOWER(CONCAT('%', :texto, '%'))
           )
         ORDER BY u.fechaRegistro DESC
     """)
@@ -79,5 +80,26 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
           AND u.eliminadoEn IS NULL
     """)
     long countByRol_IdInAndEliminadoEnIsNull(List<Long> rolIds);
+
+    @Query("""
+    SELECT COUNT(u)
+    FROM Usuario u
+    LEFT JOIN u.rol r
+    WHERE r.id IN :rolIds
+      AND u.estadoCuenta = 'ACTIVO'
+      AND u.eliminadoEn IS NULL
+""")
+    long countActiveAdminsByRole(List<Long> rolIds);
+
+    @Query("""
+    SELECT COUNT(u)
+    FROM Usuario u
+    LEFT JOIN u.rol r
+    WHERE r.id IN :rolIds
+      AND u.estadoCuenta = 'BLOQUEADO'
+      AND u.eliminadoEn IS NULL
+""")
+    long countBlockedAdminsByRole(List<Long> rolIds);
+
 
 }

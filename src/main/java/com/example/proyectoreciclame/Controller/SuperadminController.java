@@ -35,24 +35,29 @@ public class SuperadminController {
         // ID de los roles que corresponde a "ADMIN" (id=2) y "SUPERADMIN" (id=1) en la base de datos
         List<Long> rolIds = Arrays.asList(1L, 2L); // 1 = SUPERADMIN, 2 = ADMIN
 
-        // Obtener la lista de administradores (usuarios con rol id=1 o id=2)
-        Page<Usuario> administradores = usuarioRepository.findByRol_IdInAndEliminadoEnIsNull(rolIds, PageRequest.of(0, 10));
+        // Si hay texto de búsqueda, realizar búsqueda con filtros
+        Page<Usuario> administradores;
+        if (texto != null && !texto.isEmpty()) {
+            administradores = usuarioRepository.buscarEnGestion(texto, PageRequest.of(0, 10)); // Buscar por texto
+        } else {
+            administradores = usuarioRepository.findByRol_IdInAndEliminadoEnIsNull(rolIds, PageRequest.of(0, 10));
+        }
 
         // Contar administradores registrados (usuarios con rol ADMIN o SUPERADMIN)
         long totalAdmins = usuarioRepository.countByRol_IdInAndEliminadoEnIsNull(rolIds);
 
         // Contar administradores activos (con estado de cuenta "ACTIVO")
-        long activeAdmins = usuarioRepository.countByEstadoCuentaAndEliminadoEnIsNull("ACTIVO");
+        long activeAdmins = usuarioRepository.countActiveAdminsByRole(rolIds);
 
-        // Contar administradores pendientes de activación (estado de aprobación "PENDIENTE")
-        long pendingAdmins = usuarioRepository.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE");
+        // Contar administradores bloqueados (con estado de cuenta "BLOQUEADO")
+        long blockedAdmins = usuarioRepository.countBlockedAdminsByRole(rolIds);
 
         // Pasar los datos al modelo para los cards
         model.addAttribute("titulo", "Administradores");
         model.addAttribute("administradores", administradores);
         model.addAttribute("totalAdmins", totalAdmins);
         model.addAttribute("activeAdmins", activeAdmins);
-        model.addAttribute("pendingAdmins", pendingAdmins);
+        model.addAttribute("blockedAdmins", blockedAdmins);
 
         return "superadmin/administradores"; // Vista de administradores
     }
