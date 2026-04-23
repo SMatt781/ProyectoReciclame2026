@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recíclame - Solicitudes de Registro</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: Inter, system-ui, sans-serif; }
+    </style>
+</head>
+
+<body class="h-screen overflow-hidden bg-[#f7f9fb] text-slate-900">
+<div class="flex h-screen">
+    <aside class="fixed z-50 flex h-screen w-64 flex-col border-r border-slate-200 bg-white px-5 py-6 shadow-[4px_0_18px_rgba(0,0,0,0.02)]">
+        <div class="mb-8 flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500 text-white font-bold">R</div>
+            <div>
+                <h1 class="text-xl font-extrabold leading-none text-slate-900">Recíclame</h1>
+                <p class="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Gestión Circular</p>
+            </div>
+        </div>
+
+        <nav class="flex-1 space-y-1">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
+                Dashboard
+            </a>
+            <a th:href="@{/admin/usuarios/gestion}" class="flex items-center gap-3 rounded-full bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-600">
+                Usuarios
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
+                Estudios
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
+                Repositorio Normativo
+            </a>
+            <a th:href="@{/admin/registros/actividad}" ...>Registros de actividad</a>
+            <a th:href="@{/admin/registros/descargas}" ...>Registros de descargas</a>
+
+        </nav>
+
+        <div class="mt-auto space-y-1 border-t border-slate-100 pt-5">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-rose-600">
+                Cerrar Sesión
+            </a>
+        </div>
+    </aside>
+
+    <div class="ml-64 flex-1">
+        <header class="sticky top-0 z-40 flex h-14 items-center justify-between bg-white/80 px-6 backdrop-blur-md shadow-sm">
+            <span class="text-xl font-bold tracking-tight text-emerald-600">Recíclame</span>
+
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-sm font-bold text-slate-900">Ana Flores</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">ADMIN</p>
+                </div>
+                <div class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-emerald-100 bg-emerald-100 text-xs font-bold text-emerald-700">
+                    AF
+                </div>
+            </div>
+        </header>
+
+        <main class="mx-auto max-w-6xl space-y-4 p-4">
+            <section>
+                <p class="mb-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+                    Gestión de usuarios &gt; Solicitudes pendientes
+                </p>
+                <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">Solicitudes de Registro</h2>
+            </section>
+
+            <section class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                <article class="rounded-[1.5rem] border-l-4 border-amber-400 bg-white p-4 shadow-sm">
+                    <p class="mb-1 text-[9px] font-extrabold uppercase tracking-widest text-slate-400">Pendientes de aprobación</p>
+                    <h3 class="text-2xl font-extrabold text-slate-900" th:text="${totalPendientes}"></h3>
+                </article>
+
+                <article class="rounded-[1.5rem] bg-white p-4 shadow-sm">
+                    <p class="mb-1 text-[9px] font-extrabold uppercase tracking-widest text-slate-400">Total usuarios activos</p>
+                    <h3 class="text-2xl font-extrabold text-slate-900">1,248</h3>
+                </article>
+
+                <article class="rounded-[1.5rem] bg-white p-4 shadow-sm">
+                    <p class="mb-1 text-[9px] font-extrabold uppercase tracking-widest text-slate-400">Empresas registradas</p>
+                    <h3 class="text-2xl font-extrabold text-slate-900">84</h3>
+                </article>
+
+                <article class="rounded-[1.5rem] bg-white p-4 shadow-sm">
+                    <p class="mb-1 text-[9px] font-extrabold uppercase tracking-widest text-slate-400">Solicitudes hoy</p>
+                    <h3 class="text-2xl font-extrabold text-slate-900">3</h3>
+                </article>
+            </section>
+
+            <section class="rounded-[1.7rem] border border-slate-100 bg-[#dfe6f5] p-4">
+                <div class="mb-4 flex flex-col items-center justify-between gap-3 md:flex-row">
+                    <div class="w-full md:w-72">
+                        <input type="text"
+                               placeholder="Buscar usuario"
+                               class="w-full rounded-full border-0 bg-white py-2.5 pl-5 pr-4 text-sm shadow-sm focus:ring-2 focus:ring-emerald-500">
+                    </div>
+
+                    <div class="flex w-full items-center gap-2 md:w-auto">
+                        <button class="flex flex-1 items-center justify-center rounded-full bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm md:flex-none">
+                            Filtros avanzados
+                        </button>
+                        <button class="flex flex-1 items-center justify-center rounded-full bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm md:flex-none">
+                            Exportar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-hidden rounded-[1.3rem] border border-slate-100 bg-white shadow-sm">
+                    <table class="w-full border-collapse text-left">
+                        <thead>
+                        <tr class="bg-slate-50/50">
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Nombre</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">DNI</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Email</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Empresa</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Rol</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Fecha de solicitud</th>
+                            <th class="px-5 py-3 text-center text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Acciones</th>
+                        </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-slate-50">
+                        <tr th:each="s : ${solicitudes}" class="hover:bg-slate-50/50">
+                            <td class="px-5 py-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700"
+                                         th:text="${s.iniciales}">
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold leading-tight text-slate-900" th:text="${s.nombreCompleto}"></p>
+                                        <p class="text-[11px] leading-tight text-slate-400" th:text="${s.estado}"></p>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="px-5 py-3 text-sm text-slate-500" th:text="${s.dni}"></td>
+                            <td class="px-5 py-3 text-sm text-slate-500" th:text="${s.correo}"></td>
+                            <td class="px-5 py-3 text-sm italic text-slate-500">--</td>
+
+                            <td class="px-5 py-3">
+                                <span class="rounded-full bg-emerald-100 px-3 py-1 text-[10px] font-extrabold uppercase text-emerald-700"
+                                      th:text="${s.rolSolicitado}">
+                                </span>
+                            </td>
+
+                            <td class="px-5 py-3 text-sm text-slate-500" th:text="${s.fechaSolicitud}"></td>
+
+                            <td class="px-5 py-3">
+                                <div class="flex items-center justify-center gap-2">
+                                    <a th:href="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario}}"
+                                       class="rounded-full bg-slate-100 px-3 py-2 text-sm font-bold text-slate-700">
+                                        Ver
+                                    </a>
+
+                                    <form th:action="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario} + '/aceptar'}" method="post">
+                                        <button type="submit"
+                                                class="rounded-full bg-emerald-600 px-3 py-2 text-sm font-bold text-white">
+                                            Aceptar
+                                        </button>
+                                    </form>
+
+                                    <form th:action="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario} + '/denegar'}" method="post">
+                                        <input type="hidden" name="motivo" value="Solicitud denegada por administrador">
+                                        <button type="submit"
+                                                class="rounded-full bg-rose-600 px-3 py-2 text-sm font-bold text-white">
+                                            Denegar
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(solicitudes)}">
+                            <td colspan="7" class="px-6 py-8 text-center text-sm text-slate-400">
+                                No hay solicitudes pendientes
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4 flex items-center justify-between">
+                    <p class="text-sm text-slate-500">
+                        Página <span th:text="${currentPage + 1}"></span> de <span th:text="${totalPages}"></span>
+                    </p>
+
+                    <div class="flex gap-2">
+                        <a th:if="${hasPrevious}"
+                           th:href="@{/admin/usuarios/solicitudes(page=${currentPage - 1})}"
+                           class="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm">
+                            Anterior
+                        </a>
+
+                        <a th:if="${hasNext}"
+                           th:href="@{/admin/usuarios/solicitudes(page=${currentPage + 1})}"
+                           class="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm">
+                            Siguiente
+                        </a>
+                    </div>
+                </div>
+
+                <div class="mx-auto mt-6 flex w-fit items-center gap-4 rounded-2xl bg-[#071a3a] px-5 py-3 text-white shadow-xl">
+                    <span class="text-sm font-bold">1 solicitud seleccionada</span>
+                    <button class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold">Aprobar seleccionados</button>
+                    <button class="rounded-xl border border-rose-500 px-4 py-2 text-sm font-bold text-rose-400">Rechazar seleccionados</button>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+</body>
+</html>

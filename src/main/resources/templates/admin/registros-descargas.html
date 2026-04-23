@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registros de Descargas - Recíclame</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#10b981",
+                        "primary-dark": "#0f172a",
+                        "table-panel": "#dfe6f5",
+                        "surface-soft": "#f8fafc",
+                        "surface-card": "#ffffff",
+                        "text-main": "#0f172a",
+                        "text-soft": "#64748b",
+                        "text-muted": "#94a3b8",
+                        "danger": "#e11d48",
+                        "warning": "#f59e0b",
+                        "success": "#10b981"
+                    },
+                    boxShadow: {
+                        soft: "0 8px 24px rgba(15, 23, 42, 0.05)"
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body { font-family: Inter, system-ui, sans-serif; }
+    </style>
+</head>
+
+<body class="h-screen overflow-hidden bg-surface-soft text-text-main">
+<div class="flex h-screen">
+    <aside class="fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-slate-100 bg-white px-5 py-6 shadow-[4px_0_18px_rgba(0,0,0,0.02)]">
+        <div class="mb-8 flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white">
+                <span class="font-bold">R</span>
+            </div>
+            <div>
+                <h1 class="text-xl font-extrabold leading-none text-slate-900">Recíclame</h1>
+                <p class="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Gestión Circular</p>
+            </div>
+        </div>
+
+        <nav class="flex-1 space-y-1">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
+                Dashboard
+            </a>
+
+            <a th:href="@{/admin/usuarios/gestion}"
+               class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
+                Usuarios
+            </a>
+
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
+                Estudios
+            </a>
+
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
+                Repositorio Normativo
+            </a>
+
+            <a th:href="@{/admin/registros/actividad}"
+               class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
+                Registros de actividad
+            </a>
+
+            <a th:href="@{/admin/registros/descargas}"
+               class="flex items-center gap-3 rounded-full bg-primary/5 px-4 py-3 text-sm font-semibold text-primary">
+                Registros de descargas
+            </a>
+        </nav>
+
+        <div class="mt-auto space-y-1 border-t border-slate-100 pt-5">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-danger">
+                Cerrar Sesión
+            </a>
+        </div>
+    </aside>
+
+    <div class="ml-64 flex-1">
+        <header class="sticky top-0 z-40 flex h-14 items-center justify-between bg-white/80 px-6 backdrop-blur-md shadow-sm">
+            <span class="text-xl font-bold tracking-tight text-primary">Recíclame</span>
+
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-sm font-bold text-slate-900">Ana Flores</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-primary">Admin</p>
+                </div>
+                <div class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-emerald-100 bg-emerald-100 text-xs font-bold text-emerald-700">
+                    AF
+                </div>
+            </div>
+        </header>
+
+        <main class="mx-auto max-w-6xl space-y-4 p-4">
+            <section>
+                <h1 class="mb-1 text-3xl font-extrabold tracking-tight text-primary-dark">Registros de Descargas</h1>
+                <p class="text-sm font-medium text-slate-500">
+                    Gestione y audite el flujo de información técnica de la plataforma en tiempo real.
+                </p>
+            </section>
+
+            <section class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                <article class="relative overflow-hidden rounded-[1.5rem] border-l-4 border-slate-300 bg-white p-4 shadow-sm">
+                    <p class="mb-1 text-[9px] font-extrabold uppercase tracking-widest text-slate-400">Total general</p>
+                    <h4 class="text-2xl font-extrabold text-slate-900" th:text="${totalDescargas}"></h4>
+                    <p class="mt-1 text-[11px] text-slate-400">Descargas registradas</p>
+                </article>
+
+                <article class="relative overflow-hidden rounded-[1.5rem] border-l-4 border-blue-500 bg-white p-4 shadow-sm">
+                    <p class="mb-1 text-[9px] font-extrabold uppercase tracking-widest text-slate-400">Normativas</p>
+                    <h4 class="text-2xl font-extrabold text-slate-900" th:text="${totalNormativas}"></h4>
+                </article>
+
+                <article class="relative overflow-hidden rounded-[1.5rem] border-l-4 border-primary bg-white p-4 shadow-sm">
+                    <p class="mb-1 text-[9px] font-extrabold uppercase tracking-widest text-slate-400">Estudios</p>
+                    <h4 class="text-2xl font-extrabold text-slate-900" th:text="${totalEstudios}"></h4>
+                </article>
+
+                <article class="relative overflow-hidden rounded-[1.5rem] border-l-4 border-primary-dark bg-white p-4 shadow-sm">
+                    <p class="mb-1 text-[9px] font-extrabold uppercase tracking-widest text-slate-400">Acción rápida</p>
+                    <a th:href="@{/admin/registros/descargas/exportar(texto=${texto},tipo=${tipo},fechaInicio=${fechaInicio},fechaFin=${fechaFin})}"
+                       class="mt-2 inline-flex rounded-full bg-primary-dark px-4 py-2 text-sm font-bold text-white">
+                        Exportar
+                    </a>
+                </article>
+            </section>
+
+            <form method="get" th:action="@{/admin/registros/descargas}"
+                  class="grid grid-cols-1 gap-3 rounded-[1.7rem] border border-slate-100 bg-white p-4 shadow-sm xl:grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr_auto] xl:items-end">
+                <div>
+                    <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-slate-400">Búsqueda global</label>
+                    <input type="text"
+                           name="texto"
+                           th:value="${texto}"
+                           placeholder="Usuario, documento o sección..."
+                           class="h-11 w-full rounded-xl border border-slate-100 bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-primary" />
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-slate-400">Sección</label>
+                    <select name="tipo"
+                            class="h-11 w-full rounded-xl border border-slate-100 bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-primary">
+                        <option value="">Todas</option>
+                        <option value="NORMATIVA" th:selected="${tipo == 'NORMATIVA'}">Normativas</option>
+                        <option value="ESTUDIO" th:selected="${tipo == 'ESTUDIO'}">Estudios</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-slate-400">Fecha inicio</label>
+                    <input type="date"
+                           name="fechaInicio"
+                           th:value="${fechaInicio}"
+                           class="h-11 w-full rounded-xl border border-slate-100 bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-primary" />
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-slate-400">Fecha fin</label>
+                    <input type="date"
+                           name="fechaFin"
+                           th:value="${fechaFin}"
+                           class="h-11 w-full rounded-xl border border-slate-100 bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-primary" />
+                </div>
+
+                <div class="flex gap-2">
+                    <button class="rounded-full bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm">
+                        Filtrar
+                    </button>
+                </div>
+            </form>
+
+            <section class="rounded-[1.7rem] border border-slate-100 bg-table-panel p-4">
+                <div class="overflow-hidden rounded-[1.3rem] border border-slate-100 bg-white shadow-sm">
+                    <table class="w-full border-collapse text-left">
+                        <thead>
+                        <tr class="bg-slate-50/50">
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Usuario</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Documento</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Sección</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Fecha</th>
+                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Hora</th>
+                        </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-slate-50">
+                        <tr th:each="r : ${descargas}" class="hover:bg-slate-50/50">
+                            <td class="px-5 py-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary"
+                                         th:text="${r.usuarioIniciales}">
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold leading-tight text-slate-900" th:text="${r.usuarioNombreCompleto}"></p>
+                                        <p class="text-[11px] leading-tight text-slate-400" th:text="${r.usuario.correo}"></p>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="px-5 py-3 text-sm font-medium text-slate-600" th:text="${r.nombreDocumento}"></td>
+
+                            <td class="px-5 py-3">
+                                <span class="rounded-full bg-primary/10 px-3 py-1 text-[10px] font-extrabold uppercase text-primary"
+                                      th:text="${r.tipoDocumento}">
+                                </span>
+                            </td>
+
+                            <td class="px-5 py-3 text-sm font-medium text-slate-600" th:text="${r.fechaTexto}"></td>
+                            <td class="px-5 py-3 text-sm font-medium text-slate-600" th:text="${r.horaTexto}"></td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(descargas)}">
+                            <td colspan="5" class="px-6 py-8 text-center text-sm text-slate-400">
+                                No se encontraron registros de descarga
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4 flex items-center justify-between">
+                    <p class="text-sm text-slate-500">
+                        Página <span th:text="${currentPage + 1}"></span> de <span th:text="${totalPages}"></span>
+                    </p>
+
+                    <div class="flex gap-2">
+                        <a th:if="${hasPrevious}"
+                           th:href="@{/admin/registros/descargas(page=${currentPage - 1},texto=${texto},tipo=${tipo},fechaInicio=${fechaInicio},fechaFin=${fechaFin})}"
+                           class="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm">
+                            Anterior
+                        </a>
+
+                        <a th:if="${hasNext}"
+                           th:href="@{/admin/registros/descargas(page=${currentPage + 1},texto=${texto},tipo=${tipo},fechaInicio=${fechaInicio},fechaFin=${fechaFin})}"
+                           class="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm">
+                            Siguiente
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+</body>
+</html>
