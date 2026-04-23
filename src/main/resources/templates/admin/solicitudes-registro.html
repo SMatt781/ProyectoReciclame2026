@@ -5,216 +5,451 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Recíclame - Solicitudes de Registro</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7f9fb",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#cfe9d9",
+                        "tertiary-container": "#092016",
+                        "primary-container": "#021d30",
+                        "on-secondary-container": "#00743a",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#b1c9e2",
+                        "on-surface-variant": "#43474c",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "outline-variant": "#c3c7cd",
+                        "on-secondary-fixed": "#00210c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006d37",
+                        "surface-variant": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#354c40",
+                        "on-secondary": "#ffffff",
+                        "outline": "#73777d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-container": "#71897c",
+                        "tertiary-fixed-dim": "#b3ccbd",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#496177",
+                        "on-secondary-fixed-variant": "#005228",
+                        "on-primary-container": "#6f869e",
+                        "secondary-container": "#6bfe9c",
+                        "on-tertiary-fixed": "#092016",
+                        "secondary-fixed": "#6bfe9c",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#021d30",
+                        "on-primary-fixed-variant": "#31495e",
+                        "primary-fixed": "#cde5ff",
+                        "secondary-fixed-dim": "#4ae183",
+                        "primary-fixed-dim": "#b1c9e2"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+
     <style>
-        body { font-family: Inter, system-ui, sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+
+        .icon-sm { width: 1.25rem; height: 1.25rem; }
+        .icon-md { width: 1.5rem; height: 1.5rem; }
+        .icon-lg { width: 2rem; height: 2rem; }
+        .icon-xl { width: 2.5rem; height: 2.5rem; }
     </style>
 </head>
 
-<body class="h-screen overflow-hidden bg-[#f7f9fb] text-slate-900">
-<div class="flex h-screen">
-    <aside class="fixed z-50 flex h-screen w-64 flex-col border-r border-slate-200 bg-white px-5 py-6 shadow-[4px_0_18px_rgba(0,0,0,0.02)]">
-        <div class="mb-8 flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500 text-white font-bold">R</div>
-            <div>
-                <h1 class="text-xl font-extrabold leading-none text-slate-900">Recíclame</h1>
-                <p class="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Gestión Circular</p>
-            </div>
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+
+<aside class="hidden md:flex flex-col h-full w-72 p-6 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50">
+    <div class="flex items-center gap-3 mb-10 pl-2">
+        <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M7 19c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-8h4V9h-4V7c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H3v2h4v8zm2-8h6V7H9v4z"/>
+            </svg>
         </div>
-
-        <nav class="flex-1 space-y-1">
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
-                Dashboard
-            </a>
-            <a th:href="@{/admin/usuarios/gestion}" class="flex items-center gap-3 rounded-full bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-600">
-                Usuarios
-            </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
-                Estudios
-            </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
-                Repositorio Normativo
-            </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
-                Registros de actividad
-            </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
-                Registros de descargas
-            </a>
-        </nav>
-
-        <div class="mt-auto space-y-1 border-t border-slate-100 pt-5">
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-rose-600">
-                Cerrar Sesión
-            </a>
+        <div class="flex flex-col">
+            <h1 class="text-[#001B2E] dark:text-white font-black text-xl font-headline tracking-tight">Reciclame</h1>
+            <span class="text-xs text-on-surface-variant font-medium">Economía Circular</span>
         </div>
-    </aside>
-
-    <div class="ml-64 flex-1">
-        <header class="sticky top-0 z-40 flex h-14 items-center justify-between bg-white/80 px-6 backdrop-blur-md shadow-sm">
-            <span class="text-xl font-bold tracking-tight text-emerald-600">Recíclame</span>
-
-            <div class="flex items-center gap-4">
-                <div class="text-right">
-                    <p class="text-sm font-bold text-slate-900">Ana Flores</p>
-                    <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">ADMIN</p>
-                </div>
-                <div class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-emerald-100 bg-emerald-100 text-xs font-bold text-emerald-700">
-                    AF
-                </div>
-            </div>
-        </header>
-
-        <main class="mx-auto max-w-6xl space-y-4 p-4">
-            <section>
-                <p class="mb-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
-                    Gestión de usuarios &gt; Solicitudes pendientes
-                </p>
-                <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">Solicitudes de Registro</h2>
-            </section>
-
-            <section class="grid grid-cols-2 gap-3 lg:grid-cols-4">
-                <article class="rounded-[1.5rem] border-l-4 border-amber-400 bg-white p-4 shadow-sm">
-                    <p class="mb-1 text-[9px] font-extrabold uppercase tracking-widest text-slate-400">Pendientes de aprobación</p>
-                    <h3 class="text-2xl font-extrabold text-slate-900" th:text="${totalPendientes}"></h3>
-                </article>
-
-                <article class="rounded-[1.5rem] bg-white p-4 shadow-sm">
-                    <p class="mb-1 text-[9px] font-extrabold uppercase tracking-widest text-slate-400">Total usuarios activos</p>
-                    <h3 class="text-2xl font-extrabold text-slate-900">1,248</h3>
-                </article>
-
-                <article class="rounded-[1.5rem] bg-white p-4 shadow-sm">
-                    <p class="mb-1 text-[9px] font-extrabold uppercase tracking-widest text-slate-400">Empresas registradas</p>
-                    <h3 class="text-2xl font-extrabold text-slate-900">84</h3>
-                </article>
-
-                <article class="rounded-[1.5rem] bg-white p-4 shadow-sm">
-                    <p class="mb-1 text-[9px] font-extrabold uppercase tracking-widest text-slate-400">Solicitudes hoy</p>
-                    <h3 class="text-2xl font-extrabold text-slate-900">3</h3>
-                </article>
-            </section>
-
-            <section class="rounded-[1.7rem] border border-slate-100 bg-[#dfe6f5] p-4">
-                <div class="mb-4 flex flex-col items-center justify-between gap-3 md:flex-row">
-                    <div class="w-full md:w-72">
-                        <input type="text"
-                               placeholder="Buscar usuario"
-                               class="w-full rounded-full border-0 bg-white py-2.5 pl-5 pr-4 text-sm shadow-sm focus:ring-2 focus:ring-emerald-500">
-                    </div>
-
-                    <div class="flex w-full items-center gap-2 md:w-auto">
-                        <button class="flex flex-1 items-center justify-center rounded-full bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm md:flex-none">
-                            Filtros avanzados
-                        </button>
-                        <button class="flex flex-1 items-center justify-center rounded-full bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm md:flex-none">
-                            Exportar
-                        </button>
-                    </div>
-                </div>
-
-                <div class="overflow-hidden rounded-[1.3rem] border border-slate-100 bg-white shadow-sm">
-                    <table class="w-full border-collapse text-left">
-                        <thead>
-                        <tr class="bg-slate-50/50">
-                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Nombre</th>
-                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">DNI</th>
-                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Email</th>
-                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Empresa</th>
-                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Rol</th>
-                            <th class="px-5 py-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Fecha de solicitud</th>
-                            <th class="px-5 py-3 text-center text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Acciones</th>
-                        </tr>
-                        </thead>
-
-                        <tbody class="divide-y divide-slate-50">
-                        <tr th:each="s : ${solicitudes}" class="hover:bg-slate-50/50">
-                            <td class="px-5 py-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700"
-                                         th:text="${s.iniciales}">
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold leading-tight text-slate-900" th:text="${s.nombreCompleto}"></p>
-                                        <p class="text-[11px] leading-tight text-slate-400" th:text="${s.estado}"></p>
-                                    </div>
-                                </div>
-                            </td>
-
-                            <td class="px-5 py-3 text-sm text-slate-500" th:text="${s.dni}"></td>
-                            <td class="px-5 py-3 text-sm text-slate-500" th:text="${s.correo}"></td>
-                            <td class="px-5 py-3 text-sm italic text-slate-500">--</td>
-
-                            <td class="px-5 py-3">
-                                <span class="rounded-full bg-emerald-100 px-3 py-1 text-[10px] font-extrabold uppercase text-emerald-700"
-                                      th:text="${s.rolSolicitado}">
-                                </span>
-                            </td>
-
-                            <td class="px-5 py-3 text-sm text-slate-500" th:text="${s.fechaSolicitud}"></td>
-
-                            <td class="px-5 py-3">
-                                <div class="flex items-center justify-center gap-2">
-                                    <a th:href="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario}}"
-                                       class="rounded-full bg-slate-100 px-3 py-2 text-sm font-bold text-slate-700">
-                                        Ver
-                                    </a>
-
-                                    <form th:action="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario} + '/aceptar'}" method="post">
-                                        <button type="submit"
-                                                class="rounded-full bg-emerald-600 px-3 py-2 text-sm font-bold text-white">
-                                            Aceptar
-                                        </button>
-                                    </form>
-
-                                    <form th:action="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario} + '/denegar'}" method="post">
-                                        <input type="hidden" name="motivo" value="Solicitud denegada por administrador">
-                                        <button type="submit"
-                                                class="rounded-full bg-rose-600 px-3 py-2 text-sm font-bold text-white">
-                                            Denegar
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <tr th:if="${#lists.isEmpty(solicitudes)}">
-                            <td colspan="7" class="px-6 py-8 text-center text-sm text-slate-400">
-                                No hay solicitudes pendientes
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="mt-4 flex items-center justify-between">
-                    <p class="text-sm text-slate-500">
-                        Página <span th:text="${currentPage + 1}"></span> de <span th:text="${totalPages}"></span>
-                    </p>
-
-                    <div class="flex gap-2">
-                        <a th:if="${hasPrevious}"
-                           th:href="@{/admin/usuarios/solicitudes(page=${currentPage - 1})}"
-                           class="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm">
-                            Anterior
-                        </a>
-
-                        <a th:if="${hasNext}"
-                           th:href="@{/admin/usuarios/solicitudes(page=${currentPage + 1})}"
-                           class="rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm">
-                            Siguiente
-                        </a>
-                    </div>
-                </div>
-
-                <div class="mx-auto mt-6 flex w-fit items-center gap-4 rounded-2xl bg-[#071a3a] px-5 py-3 text-white shadow-xl">
-                    <span class="text-sm font-bold">1 solicitud seleccionada</span>
-                    <button class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold">Aprobar seleccionados</button>
-                    <button class="rounded-xl border border-rose-500 px-4 py-2 text-sm font-bold text-rose-400">Rechazar seleccionados</button>
-                </div>
-            </section>
-        </main>
     </div>
+
+    <nav class="flex-1 space-y-2">
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/dashboard}">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            Dashboard
+        </a>
+
+        <a class="bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 font-headline font-bold text-sm tracking-tight scale-95 active:scale-100 transition-transform" th:href="@{/admin/usuarios/gestion}">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.98 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+            </svg>
+            Usuarios
+        </a>
+
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/estudios}">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            Estudios
+        </a>
+
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/normativas}">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M3 13h2v8H3zm4-8h2v16H7zm4-2h2v18h-2zm4 4h2v14h-2zm4-2h2v16h-2z"/>
+            </svg>
+            Repositorio Normativo
+        </a>
+
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/usuarios/gestion}">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/>
+            </svg>
+            Registros de actividad
+        </a>
+
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/estudios}">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M21 5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5zm-2 0l-6.5 4L5 5h14zm0 13H5V7l6.5 4L19 7v11z"/>
+            </svg>
+            Registros de descarga
+        </a>
+    </nav>
+
+    <div class="pt-4 space-y-2 relative before:absolute before:top-0 before:left-4 before:right-4 before:h-px before:bg-surface-variant">
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" href="#">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.62l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.09-.47 0-.59.22L2.74 8.87c-.12.21-.08.48.1.62l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.62l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.04.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.09.47 0 .59-.22l1.92-3.32c.12-.22.07-.48-.1-.62l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+            </svg>
+            Configuración
+        </a>
+
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" href="#">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+            </svg>
+            Cerrar Sesión
+        </a>
+    </div>
+</aside>
+
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="flex-1 overflow-y-auto px-8 py-3">
+        <div class="w-full">
+
+            <!-- Header -->
+            <div class="mb-5">
+                <div>
+                    <p class="mb-2 text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+                        Gestión de usuarios &gt; Solicitudes pendientes
+                    </p>
+                    <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                        Solicitudes de Registro
+                    </h2>
+                    <p class="font-body text-on-surface-variant text-base mt-2">
+                        Revisa, valida y procesa nuevas solicitudes de acceso a la plataforma.
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
+
+                <!-- KPIs -->
+                <section class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4 mb-8">
+                    <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-amber-200"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="bg-amber-100 text-amber-600 rounded-lg w-10 h-10 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                Pendiente
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
+                                Pendientes de aprobación
+                            </h4>
+                            <div class="text-4xl font-extrabold text-amber-600" th:text="${totalPendientes}"></div>
+                        </div>
+                    </article>
+
+                    <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="bg-secondary-container/30 text-secondary rounded-lg w-10 h-10 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.98 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                Activos
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
+                                Total usuarios activos
+                            </h4>
+                            <div class="text-4xl font-extrabold text-on-primary-fixed">1,248</div>
+                        </div>
+                    </article>
+
+                    <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="bg-blue-100 text-blue-600 rounded-lg w-10 h-10 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                Empresas
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
+                                Empresas registradas
+                            </h4>
+                            <div class="text-4xl font-extrabold text-on-primary-fixed">84</div>
+                        </div>
+                    </article>
+
+                    <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-outline to-surface-variant"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="bg-surface-container text-on-surface-variant rounded-lg w-10 h-10 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                Hoy
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
+                                Solicitudes hoy
+                            </h4>
+                            <div class="text-4xl font-extrabold text-on-primary-fixed">3</div>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- Barra superior -->
+                <section class="mb-5">
+                    <div class="flex flex-col xl:flex-row gap-4 w-full">
+                        <div class="flex-1 relative">
+                            <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <input type="text"
+                                   placeholder="Buscar usuario"
+                                   class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]">
+                        </div>
+
+                        <div class="flex flex-wrap gap-3 shrink-0">
+                            <button type="button"
+                                    class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                                <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M3 4a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9zm7-7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm7 0a1 1 0 011-1h2a1 1 0 011 1v16a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm-7 12a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 01-1-1v-4z" />
+                                </svg>
+                                <span class="text-sm font-medium">Filtros avanzados</span>
+                            </button>
+
+                            <button type="button"
+                                    class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                                <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zM11 3L5.5 8.5l1.42 1.41L11 5.83V15h2V5.83l4.08 4.08L18.5 8.5 12 3z" />
+                                </svg>
+                                <span class="text-sm font-medium">Exportar</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tabla -->
+                <section class="bg-surface-container-lowest rounded-[1.5rem] ambient-shadow ghost-border overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse text-left">
+                            <thead>
+                            <tr class="border-b border-surface-variant bg-surface-container-low/40">
+                                <th class="px-5 py-4 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Nombre</th>
+                                <th class="px-5 py-4 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">DNI</th>
+                                <th class="px-5 py-4 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Email</th>
+                                <th class="px-5 py-4 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Empresa</th>
+                                <th class="px-5 py-4 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Rol</th>
+                                <th class="px-5 py-4 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Fecha de solicitud</th>
+                                <th class="px-5 py-4 text-center text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Acciones</th>
+                            </tr>
+                            </thead>
+
+                            <tbody class="divide-y divide-surface-variant/60">
+                            <tr th:each="s : ${solicitudes}" class="hover:bg-surface-container-low/30 transition-colors">
+                                <td class="px-5 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-secondary-container/30 text-sm font-bold text-secondary"
+                                             th:text="${s.iniciales}">
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold leading-tight text-on-primary-fixed" th:text="${s.nombreCompleto}"></p>
+                                            <p class="text-[11px] leading-tight text-on-surface-variant" th:text="${s.estado}"></p>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="px-5 py-4 text-sm text-on-surface-variant" th:text="${s.dni}"></td>
+                                <td class="px-5 py-4 text-sm text-on-surface-variant" th:text="${s.correo}"></td>
+                                <td class="px-5 py-4 text-sm italic text-on-surface-variant">--</td>
+
+                                <td class="px-5 py-4">
+                                    <span class="rounded-full bg-secondary-container/20 px-3 py-1 text-[10px] font-extrabold uppercase text-secondary"
+                                          th:text="${s.rolSolicitado}">
+                                    </span>
+                                </td>
+
+                                <td class="px-5 py-4 text-sm text-on-surface-variant" th:text="${s.fechaSolicitud}"></td>
+
+                                <td class="px-5 py-4">
+                                    <div class="flex items-center justify-center gap-2 flex-wrap">
+                                        <a th:href="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario}}"
+                                           class="inline-flex items-center rounded-lg px-3 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container transition-colors">
+                                            Ver
+                                        </a>
+
+                                        <form th:action="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario} + '/aceptar'}" method="post">
+                                            <button type="submit"
+                                                    class="rounded-lg bg-secondary px-3 py-2 text-sm font-bold text-on-secondary hover:bg-[#005a3d] transition-colors">
+                                                Aceptar
+                                            </button>
+                                        </form>
+
+                                        <form th:action="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario} + '/denegar'}" method="post">
+                                            <input type="hidden" name="motivo" value="Solicitud denegada por administrador">
+                                            <button type="submit"
+                                                    class="rounded-lg bg-error px-3 py-2 text-sm font-bold text-on-error hover:bg-[#991b1b] transition-colors">
+                                                Denegar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr th:if="${#lists.isEmpty(solicitudes)}">
+                                <td colspan="7" class="px-6 py-8 text-center text-sm text-on-surface-variant">
+                                    No hay solicitudes pendientes
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Paginación -->
+                <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-6">
+                    <a th:if="${hasPrevious}"
+                       th:href="@{/admin/usuarios/solicitudes(page=${currentPage - 1})}"
+                       class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </a>
+
+                    <span th:if="${!hasPrevious}"
+                          class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </span>
+
+                    <div id="pageNumbers" class="flex gap-2">
+                        <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                           th:href="@{/admin/usuarios/solicitudes(page=${i})}"
+                           th:text="${i + 1}"
+                           th:class="${i == currentPage} ?
+                'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
+                :
+                'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container transition'">
+                        </a>
+                    </div>
+
+                    <a th:if="${hasNext}"
+                       th:href="@{/admin/usuarios/solicitudes(page=${currentPage + 1})}"
+                       class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+
+                    <span th:if="${!hasNext}"
+                          class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 5l7 7-7 7" />
+                        </svg>
+                    </span>
+                </div>
+
+                <!-- Acciones masivas -->
+                <div class="mx-auto mt-6 flex w-fit items-center gap-4 rounded-[1.25rem] bg-primary-container px-5 py-3 text-white ambient-shadow">
+                    <span class="text-sm font-bold">1 solicitud seleccionada</span>
+                    <button class="rounded-lg bg-secondary px-4 py-2 text-sm font-bold text-on-secondary hover:bg-[#005a3d] transition-colors">
+                        Aprobar seleccionados
+                    </button>
+                    <button class="rounded-lg border border-error/40 px-4 py-2 text-sm font-bold text-red-200 hover:bg-white/5 transition-colors">
+                        Rechazar seleccionados
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </main>
 </div>
 </body>
 </html>
