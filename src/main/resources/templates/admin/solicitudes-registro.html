@@ -205,116 +205,121 @@
                 </section>
 
                 <!-- Barra superior -->
-                <section class="mb-5">
-                    <div class="flex flex-col xl:flex-row gap-4 w-full">
-                        <div class="flex-1 relative">
-                            <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                            <input type="text"
-                                   placeholder="Buscar usuario"
-                                   class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]">
-                        </div>
-
-                        <div class="flex flex-wrap gap-3 shrink-0">
-                            <button type="button"
-                                    class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                                <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M3 4a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9zm7-7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm7 0a1 1 0 011-1h2a1 1 0 011 1v16a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm-7 12a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 01-1-1v-4z" />
-                                </svg>
-                                <span class="text-sm font-medium">Filtros avanzados</span>
-                            </button>
-
-                            <button type="button"
-                                    class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                                <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zM11 3L5.5 8.5l1.42 1.41L11 5.83V15h2V5.83l4.08 4.08L18.5 8.5 12 3z" />
-                                </svg>
-                                <span class="text-sm font-medium">Exportar</span>
-                            </button>
-                        </div>
+                <form class="flex gap-4 mb-6 w-full">
+                    <div class="flex-1 relative">
+                        <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" placeholder="Buscar usuario"
+                               class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]">
                     </div>
-                </section>
+                    <button type="button"
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                        <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 4a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9zm7-7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm7 0a1 1 0 011-1h2a1 1 0 011 1v16a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm-7 12a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 01-1-1v-4z" />
+                        </svg>
+                        <span class="text-sm font-medium">Filtros avanzados</span>
+                    </button>
+                    <button type="button"
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                        <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zM11 3L5.5 8.5l1.42 1.41L11 5.83V15h2V5.83l4.08 4.08L18.5 8.5 12 3z" />
+                        </svg>
+                        <span class="text-sm font-medium">Exportar</span>
+                    </button>
+                </form>
 
-                <!-- Tabla -->
-                <section class="bg-surface-container-lowest rounded-[1.5rem] ambient-shadow ghost-border overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse text-left">
-                            <thead>
-                            <tr class="border-b border-surface-variant bg-surface-container-low/40">
-                                <th class="px-5 py-4 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Nombre</th>
-                                <th class="px-5 py-4 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">DNI</th>
-                                <th class="px-5 py-4 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Email</th>
-                                <th class="px-5 py-4 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Empresa</th>
-                                <th class="px-5 py-4 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Rol</th>
-                                <th class="px-5 py-4 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Fecha de solicitud</th>
-                                <th class="px-5 py-4 text-center text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Acciones</th>
-                            </tr>
-                            </thead>
+                <!-- Tabla div-grid -->
+                <div class="flex flex-col">
+                    <div class="overflow-x-auto w-full pb-4" th:if="${not #lists.isEmpty(solicitudes)}">
+                        <div class="flex flex-col gap-4 min-w-[1200px] w-full">
 
-                            <tbody class="divide-y divide-surface-variant/60">
-                            <tr th:each="s : ${solicitudes}" class="hover:bg-surface-container-low/30 transition-colors">
-                                <td class="px-5 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-secondary-container/30 text-sm font-bold text-secondary"
-                                             th:text="${s.iniciales}">
-                                        </div>
-                                        <div>
-                                            <p class="text-sm font-bold leading-tight text-on-primary-fixed" th:text="${s.nombreCompleto}"></p>
-                                            <p class="text-[11px] leading-tight text-on-surface-variant" th:text="${s.estado}"></p>
-                                        </div>
+                            <!-- Cabecera -->
+                            <div class="hidden md:grid grid-cols-[240px_100px_180px_150px_100px_150px_1fr] gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                                <div>Nombre</div>
+                                <div>DNI</div>
+                                <div>Email</div>
+                                <div>Empresa</div>
+                                <div>Rol</div>
+                                <div>Fecha solicitud</div>
+                                <div class="text-right">Acciones</div>
+                            </div>
+
+                            <!-- Filas -->
+                            <div th:each="s : ${solicitudes}"
+                                 class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[240px_100px_180px_150px_100px_150px_1fr] gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+
+                                <!-- Nombre -->
+                                <div class="flex items-center gap-3 w-full">
+                                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary-container/30 text-sm font-bold text-secondary"
+                                         th:text="${s.iniciales}"></div>
+                                    <div>
+                                        <p class="text-sm font-bold leading-tight text-on-primary-fixed group-hover:text-secondary transition-colors"
+                                           th:text="${s.nombreCompleto}"></p>
+                                        <p class="text-[11px] leading-tight text-on-surface-variant" th:text="${s.estado}"></p>
                                     </div>
-                                </td>
+                                </div>
 
-                                <td class="px-5 py-4 text-sm text-on-surface-variant" th:text="${s.dni}"></td>
-                                <td class="px-5 py-4 text-sm text-on-surface-variant" th:text="${s.correo}"></td>
-                                <td class="px-5 py-4 text-sm italic text-on-surface-variant">--</td>
+                                <!-- DNI -->
+                                <div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant"
+                                     th:text="${s.dni}"></div>
 
-                                <td class="px-5 py-4">
+                                <!-- Email -->
+                                <div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant"
+                                     th:text="${s.correo}"></div>
+
+                                <!-- Empresa -->
+                                <div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant italic">--</div>
+
+                                <!-- Rol -->
+                                <div class="flex justify-start w-full md:w-auto">
                                     <span class="rounded-full bg-secondary-container/20 px-3 py-1 text-[10px] font-extrabold uppercase text-secondary"
-                                          th:text="${s.rolSolicitado}">
-                                    </span>
-                                </td>
+                                          th:text="${s.rolSolicitado}"></span>
+                                </div>
 
-                                <td class="px-5 py-4 text-sm text-on-surface-variant" th:text="${s.fechaSolicitud}"></td>
+                                <!-- Fecha solicitud -->
+                                <div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant"
+                                     th:text="${s.fechaSolicitud}"></div>
 
-                                <td class="px-5 py-4">
-                                    <div class="flex items-center justify-center gap-2 flex-wrap">
-                                        <a th:href="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario}}"
-                                           class="inline-flex items-center rounded-lg px-3 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container transition-colors">
-                                            Ver
-                                        </a>
-
-                                        <form th:action="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario} + '/aceptar'}" method="post">
-                                            <button type="submit"
-                                                    class="rounded-lg bg-secondary px-3 py-2 text-sm font-bold text-on-secondary hover:bg-[#005a3d] transition-colors">
-                                                Aceptar
-                                            </button>
-                                        </form>
-
-                                        <form th:action="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario} + '/denegar'}" method="post">
-                                            <input type="hidden" name="motivo" value="Solicitud denegada por administrador">
-                                            <button type="submit"
-                                                    class="rounded-lg bg-error px-3 py-2 text-sm font-bold text-on-error hover:bg-[#991b1b] transition-colors">
-                                                Denegar
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr th:if="${#lists.isEmpty(solicitudes)}">
-                                <td colspan="7" class="px-6 py-8 text-center text-sm text-on-surface-variant">
-                                    No hay solicitudes pendientes
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                                <!-- Acciones -->
+                                <div class="flex justify-end w-full md:w-auto items-center gap-2 flex-wrap">
+                                    <a th:href="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario}}"
+                                       class="inline-flex items-center rounded-lg px-3 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container transition-colors">
+                                        Ver
+                                    </a>
+                                    <form th:action="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario} + '/aceptar'}" method="post">
+                                        <button type="submit"
+                                                class="rounded-lg bg-secondary px-3 py-2 text-sm font-bold text-on-secondary hover:bg-[#005a3d] transition-colors">
+                                            Aceptar
+                                        </button>
+                                    </form>
+                                    <form th:action="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario} + '/denegar'}" method="post">
+                                        <input type="hidden" name="motivo" value="Solicitud denegada por administrador">
+                                        <button type="submit"
+                                                class="rounded-lg bg-error px-3 py-2 text-sm font-bold text-on-error hover:bg-[#991b1b] transition-colors">
+                                            Denegar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </section>
+
+                    <!-- Mensaje vacío -->
+                    <div th:if="${#lists.isEmpty(solicitudes)}"
+                         class="py-12 flex flex-col items-center justify-center text-center bg-surface-container-lowest rounded-xl border border-outline-variant/30 border-dashed mt-6">
+                        <svg class="w-16 h-16 text-outline-variant mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                  d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        <h3 class="text-lg font-bold text-on-surface mb-2">No hay solicitudes pendientes</h3>
+                        <p class="text-sm text-on-surface-variant max-w-md">No se encontraron solicitudes que coincidan con los filtros aplicados.</p>
+                    </div>
+                </div>
 
                 <!-- Paginación -->
                 <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-6">
