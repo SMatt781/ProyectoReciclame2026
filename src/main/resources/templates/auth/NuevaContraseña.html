@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Nueva Contraseña - Recíclame</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-fixed": "#131b2e",
+                        "on-surface": "#191c1e",
+                        "surface": "#f7f9fb",
+                        "primary": "#006c49",
+                        "primary-container": "#10b981",
+                        "secondary": "#0058be",
+                        "secondary-container": "#2170e4",
+                        "on-surface-variant": "#3c4a42",
+                        "outline-variant": "#bbcabf",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+                        "body": ["Inter", "ui-sans-serif", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f7f9fb;
+            -webkit-font-smoothing: antialiased;
+        }
+        .bg-shape {
+            position: absolute;
+            z-index: -1;
+            filter: blur(80px);
+            opacity: 0.3;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center overflow-x-hidden relative py-4">
+
+<div class="bg-shape top-[-10%] left-[-5%] w-[400px] h-[400px] rounded-full bg-primary-container"></div>
+<div class="bg-shape bottom-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-secondary-container"></div>
+<div class="absolute inset-0 bg-gradient-to-tr from-[#f7f9fb] via-white/40 to-[#f7f9fb] -z-20"></div>
+
+<header class="mb-6 text-center">
+    <div class="flex flex-col items-center gap-1">
+        <span class="text-2xl font-extrabold text-on-tertiary-fixed tracking-tight font-headline">
+            Recíclame
+        </span>
+        <div class="h-1 w-6 bg-primary rounded-full"></div>
+    </div>
+</header>
+
+<main class="w-full max-w-[420px] px-6">
+    <div class="bg-surface-container-lowest rounded-xl p-6 md:p-10 shadow-[0_20px_40px_-12px_rgba(25,28,30,0.06)] border border-outline-variant/20">
+
+        <div class="text-center mb-8">
+            <h1 class="text-xl md:text-2xl font-bold text-on-tertiary-fixed mb-3 tracking-tight font-headline">Nueva Contraseña</h1>
+            <p class="text-on-surface-variant leading-relaxed max-w-[280px] mx-auto text-xs">
+                Establece una contraseña fuerte para proteger tu acceso corporativo.
+            </p>
+        </div>
+
+        <div th:if="${error}" class="mb-4 rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-600" th:text="${error}"></div>
+
+        <form th:action="@{/password/nueva}" th:object="${form}" class="space-y-5" method="post">
+            <input type="hidden" th:field="*{correo}" />
+            <input type="hidden" th:field="*{codigo}" />
+
+            <div class="space-y-2">
+                <label class="block text-[9px] font-bold tracking-[0.12em] text-on-surface-variant uppercase font-headline" for="password">
+                    NUEVA CONTRASEÑA
+                </label>
+                <div class="relative flex items-center rounded-full group">
+                    <input
+                            class="w-full px-6 py-3 bg-surface-container-low border-transparent focus:border-primary focus:ring-0 rounded-full text-xs text-on-surface placeholder:text-on-surface-variant/40 transition-all"
+                            id="password"
+                            th:field="*{password}"
+                            placeholder="••••••••"
+                            required
+                            type="password"
+                    />
+                </div>
+                <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="mt-2 text-xs font-medium text-red-600"></p>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-[9px] font-bold tracking-[0.12em] text-on-surface-variant uppercase font-headline" for="confirmPassword">
+                    CONFIRMAR CONTRASEÑA
+                </label>
+                <div class="relative flex items-center rounded-full">
+                    <input
+                            class="w-full px-6 py-3 bg-surface-container-low border-transparent focus:border-primary focus:ring-0 rounded-full text-xs text-on-surface placeholder:text-on-surface-variant/40 transition-all"
+                            id="confirmPassword"
+                            th:field="*{confirmPassword}"
+                            placeholder="••••••••"
+                            required
+                            type="password"
+                    />
+                </div>
+                <p th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="mt-2 text-xs font-medium text-red-600"></p>
+            </div>
+
+            <div class="bg-surface-container-low/50 rounded-2xl p-4 border border-outline-variant/10">
+                <p class="text-[9px] font-bold text-on-tertiary-fixed tracking-wide mb-3 uppercase">Requisitos de seguridad</p>
+                <ul class="space-y-2">
+                    <li class="flex items-center gap-2.5 text-[11px] text-on-surface-variant">
+                        <svg class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span>Mínimo 8 caracteres</span>
+                    </li>
+                    <li class="flex items-center gap-2.5 text-[11px] text-on-surface-variant">
+                        <svg class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span>Al menos un número</span>
+                    </li>
+                    <li class="flex items-center gap-2.5 text-[11px] text-on-surface-variant/40">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>
+                        <span>Un carácter especial</span>
+                    </li>
+                </ul>
+            </div>
+
+            <button class="w-full py-3.5 px-6 bg-[#0f172a] hover:bg-black rounded-full flex items-center justify-center gap-3 transition-all transform active:scale-[0.98] group shadow-lg" type="submit">
+                <span class="text-white font-semibold text-xs font-headline">Restablecer contraseña</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="text-white w-4 h-4 group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+        </form>
+
+        <div class="mt-8 text-center">
+            <a class="inline-flex items-center gap-2 text-on-surface-variant/70 hover:text-primary font-medium text-xs transition-colors group" th:href="@{/login}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Volver al inicio de sesión
+            </a>
+        </div>
+    </div>
+</main>
+
+<footer class="mt-10 w-full max-w-4xl px-8 pb-8 flex flex-col items-center">
+    <div class="text-center space-y-3">
+        <p class="text-[9px] font-bold tracking-[0.1em] text-on-surface-variant/60 uppercase font-headline">
+            © 2024 THE CIRCULAR EDITORIAL. ALL RIGHTS RESERVED.
+        </p>
+    </div>
+</footer>
+</body>
+</html>

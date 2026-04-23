@@ -28,11 +28,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/login",
+                                "/post-login",
                                 "/registro/**",
                                 "/solicitud-enviada",
+                                "/password/**",
                                 "/css/**",
                                 "/js/**",
-                                "/images/**"
+                                "/images/**",
+                                "/webjars/**"
                         ).permitAll()
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN", "SUPERADMIN")
                         .requestMatchers("/socio/**").hasRole("SOCIO")
@@ -50,6 +53,9 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout=true")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
                 );
 
