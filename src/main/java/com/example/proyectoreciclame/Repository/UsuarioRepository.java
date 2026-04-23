@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
@@ -61,4 +62,22 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     boolean existsByCorreoIgnoreCase(String correo);
 
     boolean existsByDni(String dni);
+
+    @Query("""
+        SELECT u
+        FROM Usuario u
+        WHERE u.rol.id IN :rolIds
+          AND u.eliminadoEn IS NULL
+        ORDER BY u.fechaRegistro DESC
+    """)
+    Page<Usuario> findByRol_IdInAndEliminadoEnIsNull(List<Long> rolIds, Pageable pageable);
+
+    @Query("""
+        SELECT COUNT(u)
+        FROM Usuario u
+        WHERE u.rol.id IN :rolIds
+          AND u.eliminadoEn IS NULL
+    """)
+    long countByRol_IdInAndEliminadoEnIsNull(List<Long> rolIds);
+
 }

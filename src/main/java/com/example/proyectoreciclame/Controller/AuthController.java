@@ -51,13 +51,15 @@ public class AuthController {
 
     @GetMapping("/post-login")
     public String postLogin(Authentication authentication) {
+
         if (authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")
-                        || a.getAuthority().equals("ROLE_SUPERADMIN"))) {
+                .anyMatch(a -> a.getAuthority().equals("ROLE_SUPERADMIN"))) {
+            return "redirect:/superadmin/dashboard";
+        }
 
-
+        if (authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return "redirect:/admin/dashboard";
-
         }
 
         if (authentication.getAuthorities().stream()

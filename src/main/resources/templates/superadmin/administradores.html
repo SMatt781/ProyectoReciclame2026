@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#c3ecd7",
+                        "surface-container-high": "#dce9ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container": "#e5eeff",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "on-background": "#0b1c30",
+                        "inverse-surface": "#213145",
+                        "on-tertiary-container": "#3980f4",
+                        "on-secondary-container": "#476c5b",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f8f9ff",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#565e74",
+                        "background": "#f8f9ff",
+                        "surface-dim": "#cbdbf5",
+                        "on-tertiary-fixed-variant": "#004395",
+                        "tertiary-container": "#001a42",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#45464d",
+                        "primary-container": "#131b2e",
+                        "on-secondary-fixed": "#002115",
+                        "error": "#ba1a1a",
+                        "outline-variant": "#c6c6cd",
+                        "secondary-fixed-dim": "#a8cfbc",
+                        "on-primary-container": "#7c839b",
+                        "tertiary-fixed-dim": "#adc6ff",
+                        "primary": "#000000",
+                        "secondary": "#416656",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-tertiary-fixed": "#001a42",
+                        "surface-variant": "#d3e4fe",
+                        "surface-container-low": "#eff4ff",
+                        "primary-fixed-dim": "#bec6e0",
+                        "on-primary-fixed": "#131b2e",
+                        "on-secondary-fixed-variant": "#294e3f",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#dae2fd",
+                        "outline": "#76777d",
+                        "on-surface": "#0b1c30",
+                        "inverse-primary": "#bec6e0",
+                        "secondary-container": "#c3ecd7",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#d8e2ff",
+                        "surface": "#f8f9ff",
+                        "tertiary": "#000000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "sidebar-width": "260px",
+                        "stack-lg": "32px",
+                        "gutter-md": "24px",
+                        "container-padding": "40px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "title-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "body-sm": ["Plus Jakarta Sans"],
+                        "display-xl": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "title-lg": ["18px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased flex">
+<!-- Sidebar Wrapper -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-[#F2F4F7] border-r border-slate-200 flex flex-col z-50">
+    <div class="p-6">
+        <div class="flex items-center gap-3 mb-10">
+            <div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-white font-black">R</div>
+            <span class="font-black text-slate-900 tracking-tight text-xl">Reciclame</span>
+        </div>
+        <nav class="flex flex-col gap-2">
+            <!-- Active State: Dashboard -->
+            <a th:href="@{/superadmin/dashboard}" class="bg-[#D1FAE5] text-[#0F172A] rounded-lg px-4 py-2.5 flex items-center gap-3 transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+                <span class="text-sm font-bold">Dashboard</span>
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">group</span>
+                <span class="text-sm font-medium">Usuarios</span>
+            </a>
+            <a  th:href="@{/superadmin/administradores}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
+                <span class="text-sm font-medium">Administradores</span>
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">menu_book</span>
+                <span class="text-sm font-medium">Estudios</span>
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">gavel</span>
+                <span class="text-sm font-medium">Repositorio Normativo</span>
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">settings</span>
+                <span class="text-sm font-medium">Configuración</span>
+            </a>
+            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">monitor_heart</span>
+                <span class="text-sm font-medium">Estado del monitor</span>
+            </a>
+        </nav>
+    </div>
+    <div class="mt-auto p-6 border-t border-slate-200">
+        <button class="w-full flex items-center gap-3 px-4 py-2.5 text-slate-600 hover:text-error transition-colors text-sm font-medium">
+            <span class="material-symbols-outlined text-[20px]">logout</span>
+            Cerrar Sesión
+        </button>
+    </div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] flex-1 min-h-screen relative flex flex-col items-center">
+<!-- TopAppBar -->
+<header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200 flex w-full h-16 font-['Plus_Jakarta_Sans'] text-sm antialiased">
+<div class="w-full px-10 flex justify-between items-center">
+<div class="flex items-center gap-6">
+<span class="text-xl font-bold text-slate-900">Reciclame</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="h-8 w-[1px] bg-slate-200 mx-2"></div>
+<div class="flex items-center gap-3 cursor-pointer hover:bg-slate-50 p-1 rounded-lg transition-colors">
+<div class="text-right">
+<p class="text-sm font-semibold text-slate-900 leading-tight">Ana Flores</p>
+<p class="text-[10px] text-slate-500 font-bold uppercase">Super Admin</p>
+</div>
+<img alt="Ana Flores" class="w-8 h-8 rounded-full border border-slate-200 object-cover" data-alt="Professional headshot of a smiling Latina woman with dark hair in a corporate setting with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsACccVw7DZHetF5K99yO1hN6UBqPps0wFGOEbjPfRlWoNJi0t4BTwZg8qI7Rkjj4nA2h1hvksLCopM1MpQM3O3Mdk9xIFvtNIU9Z53AUGtdDdLxjo9CfgnjfCsg7LQnIoWKNZyla_QiqDh5C7HJFZ9SPa0626kCoa4vFOuwEjFqJfGuJLmBQYZF97aJa6fwwvBQWkvqIpPFa0tHAJxoH0DDm7-9X_DzLAAbDBZ_L5hAHrYSlNdW5NaRb93PAOPv3we3ihbSPoWg"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Content Container (Centered with Max Width) -->
+<div class="max-w-7xl w-full p-container-padding space-y-stack-lg pt-12">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+<div>
+<h2 class="text-slate-900 text-[52px] font-black leading-tight tracking-tight">Administradores</h2>
+<p class="text-body-md text-slate-500 max-w-2xl mt-2">Gestiona el acceso al núcleo del sistema, define niveles de autoridad y supervisa la actividad de los administradores del repositorio.</p>
+</div>
+<button class="bg-emerald-500 text-slate-950 font-bold px-8 py-3 rounded-xl hover:bg-emerald-400 transition-all flex items-center gap-2 active:scale-95 shadow-lg shadow-emerald-500/20">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span>Crear Administrador</span>
+</button>
+</div>
+<!-- Stats Bento Grid --><div class="bento-grid">
+    <!-- Card: Total de Administradores -->
+    <div class="col-span-3 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex items-start justify-between mb-6">
+            <div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-600">
+                <span class="material-symbols-outlined" data-icon="badge">badge</span>
+            </div>
+            <span class="text-label-md font-label-md text-emerald-600 uppercase tracking-widest">Total</span>
+        </div>
+        <!-- Mostrar el número de administradores registrados -->
+        <h3 class="text-4xl font-extrabold text-slate-900" th:text="${totalAdmins}">12</h3>
+        <p class="text-body-sm text-slate-500 mt-2">Admins registrados</p>
+    </div>
+
+    <!-- Card: Administradores Vigentes -->
+    <div class="col-span-3 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex items-start justify-between mb-6">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                <span class="material-symbols-outlined" data-icon="how_to_reg">how_to_reg</span>
+            </div>
+            <span class="text-label-md font-label-md text-emerald-600 uppercase tracking-widest">Vigentes</span>
+        </div>
+        <!-- Mostrar el número de administradores activos -->
+        <h3 class="text-4xl font-extrabold text-slate-900" th:text="${activeAdmins}">08</h3>
+        <p class="text-body-sm text-slate-500 mt-2">Actualmente activos</p>
+    </div>
+
+    <!-- Card: Administradores Pendientes -->
+    <div class="col-span-3 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex items-start justify-between mb-6">
+            <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
+                <span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+            </div>
+            <span class="text-label-md font-label-md text-amber-600 uppercase tracking-widest">Borradores</span>
+        </div>
+        <!-- Mostrar el número de administradores pendientes de activación -->
+        <h3 class="text-4xl font-extrabold text-slate-900" th:text="${pendingAdmins}">04</h3>
+        <p class="text-body-sm text-slate-500 mt-2">Pendientes de activación</p>
+    </div>
+</div>
+<div class="col-span-3 bg-emerald-900 p-8 rounded-3xl shadow-sm text-white flex flex-col">
+<div class="flex items-start justify-between mb-6">
+<div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-emerald-400">
+<span class="material-symbols-outlined" data-icon="verified_user">verified_user</span>
+</div>
+<span class="text-label-md font-label-md text-emerald-400 uppercase tracking-widest">Rating</span>
+</div>
+<h3 class="text-4xl font-extrabold text-white">A+</h3>
+<p class="text-body-sm text-emerald-300 mt-2">Estado de seguridad</p>
+</div>
+</div>
+<!-- Table Section -->
+<div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+<div class="p-6 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="relative w-full sm:w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 transition-all" placeholder="Filtrar por nombre o correo..." type="text"/>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-xl transition-all">
+<span class="material-symbols-outlined" data-icon="filter_list">filter_list</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-xl transition-all">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+    <table class="w-full text-left font-body-sm">
+        <thead>
+        <tr class="bg-slate-50/50">
+            <th class="px-8 py-5 text-label-md font-label-md text-slate-500 uppercase tracking-widest">Nombre Completo</th>
+            <th class="px-8 py-5 text-label-md font-label-md text-slate-500 uppercase tracking-widest">Correo Electrónico</th>
+            <th class="px-8 py-5 text-label-md font-label-md text-slate-500 uppercase tracking-widest">Estado</th>
+            <th class="px-8 py-5 text-label-md font-label-md text-slate-500 uppercase tracking-widest">Última Conexión</th>
+            <th class="px-8 py-5 text-label-md font-label-md text-slate-500 uppercase tracking-widest text-right">Acciones</th>
+        </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-50">
+        <!-- Recorrer la lista de administradores y mostrar los datos -->
+        <tr th:each="admin : ${administradores.content}" class="hover:bg-slate-50/50 transition-colors">
+            <td class="px-8 py-4">
+                <div class="flex items-center gap-3">
+                    <!-- Mostrar el nombre completo (nombres + apellido paterno + apellido materno) -->
+                    <span class="font-semibold text-slate-900" th:text="${admin.nombres} + ' ' + ${admin.apellidoPaterno} + ' ' + ${admin.apellidoMaterno}">Nombre Completo</span>
+                </div>
+            </td>
+            <td class="px-8 py-4 text-slate-500" th:text="${admin.correo}">Correo</td>
+            <td class="px-8 py-4">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700" th:text="${admin.estadoCuenta}">Vigente</span>
+            </td>
+            <td class="px-8 py-4 text-slate-500" th:text="${admin.ultimoAcceso != null ? admin.ultimoAcceso : 'Sin registro'}">Hace 15 min</td>
+            <td class="px-8 py-4 text-right">
+                <button class="p-2 text-slate-400 hover:text-emerald-600 transition-colors">
+                    <span class="material-symbols-outlined" data-icon="edit">edit</span>
+                </button>
+                <button class="p-2 text-slate-300 hover:text-slate-600 transition-colors">
+                    <span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!-- Footer Pagination -->
+<div class="px-8 py-5 bg-slate-50/30 border-t border-slate-50 flex items-center justify-between">
+<span class="text-body-sm text-slate-500">1-4 de 12 administradores</span>
+<div class="flex gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-400 bg-white cursor-not-allowed">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 active:bg-slate-100 transition-all">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB -->
+<button class="fixed bottom-10 right-10 w-16 h-16 bg-emerald-500 text-slate-950 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50 group">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+<span class="absolute right-full mr-4 bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Nuevo Administrador</span>
+</button>
+</body></html>
