@@ -49,7 +49,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     long countByEliminadoEnIsNull();
 
-    long countByEstadoCuentaAndEliminadoEnIsNull(String estadoCuenta);
+    long countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta estadoCuenta);
 
     long countByEstadoAprobacionAndEliminadoEnIsNull(String estadoAprobacion);
 

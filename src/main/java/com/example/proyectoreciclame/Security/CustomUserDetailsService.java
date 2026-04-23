@@ -23,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
         if (!"APROBADO".equalsIgnoreCase(usuario.getEstadoAprobacion())
-                || !"ACTIVO".equalsIgnoreCase(usuario.getEstadoCuenta())) {
+                || usuario.getEstadoCuenta() != Usuario.EstadoCuenta.ACTIVO) {
             throw new UsernameNotFoundException("Cuenta no habilitada");
         }
 

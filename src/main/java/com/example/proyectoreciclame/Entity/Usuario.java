@@ -45,7 +45,8 @@ public class Usuario {
     private String estadoAprobacion;
 
     @Column(name = "estado_cuenta")
-    private String estadoCuenta;
+    @Enumerated(EnumType.STRING)
+    private EstadoCuenta estadoCuenta;
 
     @Column(name = "ultimo_acceso")
     private LocalDateTime ultimoAcceso;
@@ -150,11 +151,11 @@ public class Usuario {
         this.estadoAprobacion = estadoAprobacion;
     }
 
-    public String getEstadoCuenta() {
+    public EstadoCuenta getEstadoCuenta() {
         return estadoCuenta;
     }
 
-    public void setEstadoCuenta(String estadoCuenta) {
+    public void setEstadoCuenta(EstadoCuenta estadoCuenta) {
         this.estadoCuenta = estadoCuenta;
     }
 
@@ -211,5 +212,10 @@ public class Usuario {
     @PreUpdate
     public void preUpdate() {
         actualizadoEn = LocalDateTime.now();
+    }
+
+    public enum EstadoCuenta {
+        ACTIVO,
+        BLOQUEADO
     }
 }

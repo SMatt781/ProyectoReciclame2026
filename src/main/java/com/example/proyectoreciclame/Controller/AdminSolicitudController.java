@@ -106,7 +106,7 @@ public class AdminSolicitudController {
 
         if (usuario != null) {
             usuario.setEstadoAprobacion("APROBADO");
-            usuario.setEstadoCuenta("ACTIVO");
+            usuario.setEstadoCuenta(Usuario.EstadoCuenta.ACTIVO);
             usuario.setActualizadoEn(LocalDateTime.now());
             usuarioRepository.save(usuario);
 
