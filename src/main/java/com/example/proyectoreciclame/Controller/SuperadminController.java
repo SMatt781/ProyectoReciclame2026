@@ -62,4 +62,20 @@ public class SuperadminController {
         return "superadmin/administradores"; // Vista de administradores
     }
 
+    // Nuevo método para el Estado del Monitor
+    @GetMapping("/estadoSistema")
+    public String showEstadoSistema(Model model) {
+        model.addAttribute("titulo", "Estado del Sistema");
+        // Aquí podrías agregar más lógica si necesitas información adicional
+        return "superadmin/estadoSistema"; // Vista del estado del sistema
+    }
+
+    // Nuevo método para la Configuración de Seguridad
+    @GetMapping("/confSeguridad")
+    public String showConfSeguridad(Model model) {
+        model.addAttribute("titulo", "Configuración de Seguridad");
+        // Lógica relacionada con la configuración de seguridad
+        return "superadmin/confSeguridad"; // Vista de configuración de seguridad
+    }
+
 }

@@ -139,7 +139,6 @@
 </head>
 <body class="bg-background text-on-background antialiased flex">
 <!-- Sidebar Wrapper -->
-<!-- Sidebar Wrapper -->
 <aside class="fixed left-0 top-0 h-full w-[260px] bg-[#F2F4F7] border-r border-slate-200 flex flex-col z-50">
     <div class="p-6">
         <div class="flex items-center gap-3 mb-10">
@@ -147,8 +146,8 @@
             <span class="font-black text-slate-900 tracking-tight text-xl">Reciclame</span>
         </div>
         <nav class="flex flex-col gap-2">
-            <!-- Estado cambiado: Dashboard -->
-            <a th:href="@{/superadmin/dashboard}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+            <!-- Active State: Dashboard -->
+            <a th:href="@{/superadmin/dashboard}" class="bg-[#D1FAE5] text-[#0F172A] rounded-lg px-4 py-2.5 flex items-center gap-3 transition-all" href="#">
                 <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">grid_view</span>
                 <span class="text-sm font-bold">Dashboard</span>
             </a>
@@ -156,8 +155,7 @@
                 <span class="material-symbols-outlined text-[20px]">group</span>
                 <span class="text-sm font-medium">Usuarios</span>
             </a>
-            <!-- Activado: Administradores -->
-            <a th:href="@{/superadmin/administradores}" class="bg-[#D1FAE5] text-[#0F172A] rounded-lg px-4 py-2.5 flex items-center gap-3 transition-all" href="#">
+            <a  th:href="@{/superadmin/administradores}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
                 <span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
                 <span class="text-sm font-medium">Administradores</span>
             </a>
@@ -169,13 +167,14 @@
                 <span class="material-symbols-outlined text-[20px]">gavel</span>
                 <span class="text-sm font-medium">Repositorio Normativo</span>
             </a>
-            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
-                <span class="material-symbols-outlined text-[20px]">settings</span>
-                <span class="text-sm font-medium">Configuración</span>
-            </a>
-            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+            <!-- Añadir enlaces a nuevas páginas -->
+            <a th:href="@{/superadmin/estadoSistema}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
                 <span class="material-symbols-outlined text-[20px]">monitor_heart</span>
-                <span class="text-sm font-medium">Estado del monitor</span>
+                <span class="text-sm font-medium">Estado del Monitor</span>
+            </a>
+            <a th:href="@{/superadmin/confSeguridad}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
+                <span class="material-symbols-outlined text-[20px]">security</span>
+                <span class="text-sm font-medium">Configuración de Seguridad</span>
             </a>
         </nav>
     </div>
