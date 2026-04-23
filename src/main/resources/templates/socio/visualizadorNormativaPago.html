@@ -164,14 +164,15 @@
                         <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                         </svg>
-                        <span>NORMATIVAS NACIONALES</span>
+                        <span>NORMATIVAS</span>
                         <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                         </svg>
-                        <span class="text-on-primary-fixed" th:text="${normativa.titulo}">LEY DE FOMENTO AL RECICLAJE Y RESPONSABILIDAD EXTENDIDA DEL PRODUCTOR</span>
+                        <span class="text-on-primary-fixed" th:text="${normativa.titulo}">LEY DE FOMENTO AL RECICLAJE Y
+                            RESPONSABILIDAD EXTENDIDA DEL PRODUCTOR</span>
                     </div>
                     <h1 th:text="${normativa.titulo}"
-                        class="font-headline text-[2.25rem] leading-tight font-bold text-on-primary-fixed mb-4 max-w-4xl tracking-tight">
+                        class="font-headline text-[2rem] leading-tight font-bold text-on-primary-fixed mb-4 max-w-4xl tracking-tight">
                         Ley de Fomento al Reciclaje y Responsabilidad Extendida del Productor
                     </h1>
                     <div class="flex items-center gap-3 mb-2">
@@ -179,7 +180,8 @@
                             th:classappend="${normativa.estado.name() == 'VIGENTE' ? 'bg-[#006c46]' : (normativa.estado.name() == 'DEROGADA' ? 'bg-[#e53935]' : (normativa.estado.name() == 'CONSULTA_PUBLICA' ? 'bg-[#2196f3]' : (normativa.estado.name() == 'PUBLICADA' ? 'bg-[#ffc107]' : 'bg-[#f49e0b]')))}"
                             class="inline-flex items-center gap-1.5 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase">
                         </span>
-                        <span class="inline-flex items-center gap-1.5 text-de-pago bg-[#fef3c7] px-4 py-1.5 rounded-full text-xs font-bold uppercase border border-de-pago">
+                        <span
+                            class="inline-flex items-center gap-1.5 text-de-pago bg-[#fef3c7] px-4 py-1.5 rounded-full text-xs font-bold uppercase border border-de-pago">
                             ACCESO DE PAGO
                         </span>
                         <span th:if="${normativa.categorias != null and !normativa.categorias.isEmpty()}"
@@ -201,7 +203,8 @@
                             <h4
                                 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
                                 DESCRIPCIÓN</h4>
-                            <p th:text="${normativa.descripcion}" class="font-body text-sm text-on-surface-variant leading-relaxed text-[#1a1a1a]">
+                            <p th:text="${normativa.descripcion}"
+                                class="font-body text-sm text-on-surface-variant leading-relaxed text-[#1a1a1a]">
                                 Establecer un marco jurídico...
                             </p>
                         </div>
@@ -212,7 +215,8 @@
                                 CAMPOS DE APLICACIÓN
                             </h4>
                             <div class="flex flex-wrap gap-3 justify-start">
-                                <span th:each="campo : ${#strings.arraySplit(normativa.campoAplicacion, ',')}" th:text="${campo.trim()}"
+                                <span th:each="campo : ${#strings.arraySplit(normativa.campoAplicacion, ',')}"
+                                    th:text="${campo.trim()}"
                                     class="px-4 py-2 bg-[#e3f2fd] text-[#1976d2] rounded-lg text-xs font-medium border border-[#bbdefb]">
                                     Campo
                                 </span>
@@ -223,7 +227,8 @@
                         <div class="mt-auto grid grid-cols-2 gap-6 pt-4 border-t border-surface-variant">
                             <div>
                                 <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">CÓDIGO</h3>
-                                <p th:text="${normativa.codigo != null ? normativa.codigo : 'No especificado'}" class="text-sm font-medium text-[#1a1a1a]">LEY-20920</p>
+                                <p th:text="${normativa.codigo != null ? normativa.codigo : 'No especificado'}"
+                                    class="text-sm font-medium text-[#1a1a1a]">LEY-20920</p>
                             </div>
                             <div>
                                 <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">AÑO DE
@@ -233,12 +238,14 @@
                             <div>
                                 <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">ORGANISMO EMISOR
                                 </h3>
-                                <p th:text="${normativa.organismoEmisor}" class="text-sm font-medium text-[#1a1a1a]">Ministerio del Medio Ambiente</p>
+                                <p th:text="${normativa.organismoEmisor}" class="text-sm font-medium text-[#1a1a1a]">
+                                    Ministerio del Medio Ambiente</p>
                             </div>
                             <div>
                                 <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">TIPO DE NORMA
                                 </h3>
-                                <p th:text="${normativa.tipoNorma.name().replace('_', ' ')}" class="text-sm font-medium text-[#1a1a1a]">Ley de la República</p>
+                                <p th:text="${normativa.tipoNorma.name().replace('_', ' ')}"
+                                    class="text-sm font-medium text-[#1a1a1a]">Ley de la República</p>
                             </div>
                         </div>
                     </section>
@@ -280,7 +287,8 @@
                                 CIRCULAR</h2>
 
                             <!-- Prioridad Alta -->
-                            <div class="flex items-center gap-3 pb-3 mb-3 border-b border-[#c2cee8]" th:if="${normativa.clasificacion != null}">
+                            <div class="flex items-center gap-3 pb-3 mb-3 border-b border-[#c2cee8]"
+                                th:if="${normativa.clasificacion != null}">
                                 <div
                                     class="w-9 h-9 rounded-lg bg-[#c8e6c9] flex items-center justify-center flex-shrink-0">
                                     <svg class="w-4 h-4 text-[#00743a]" fill="currentColor" viewBox="0 0 24 24">
@@ -290,7 +298,8 @@
                                 </div>
                                 <div class="flex flex-col">
                                     <p class="font-bold text-[#1a1a1a] text-sm leading-tight">Clasificación</p>
-                                    <p th:text="${normativa.clasificacion.name().replace('_', ' ')}" class="text-xs text-[#00743a] font-medium leading-tight">Prioridad Alta</p>
+                                    <p th:text="${normativa.clasificacion.name().replace('_', ' ')}"
+                                        class="text-xs text-[#00743a] font-medium leading-tight">Prioridad Alta</p>
                                 </div>
                             </div>
 
@@ -304,7 +313,8 @@
                                 </div>
                                 <div class="flex flex-col">
                                     <p class="font-bold text-[#1a1a1a] text-sm leading-tight">Obligatoriedad</p>
-                                    <p th:text="${normativa.obligatoriedad}" class="text-xs text-[#666] font-medium leading-tight">Legal Vinculante</p>
+                                    <p th:text="${normativa.obligatoriedad}"
+                                        class="text-xs text-[#666] font-medium leading-tight">Legal Vinculante</p>
                                 </div>
                             </div>
                         </section>
@@ -328,7 +338,9 @@
         </main>
     </div>
 </body>
-</html> </div>
+
+</html>
+</div>
 </body>
 
 </html>

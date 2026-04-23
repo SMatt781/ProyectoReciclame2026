@@ -37,14 +37,14 @@
                 </a>
 
                 <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                   th:classappend="${currentSection == 'admin-estudios'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+                   th:classappend="${currentPage == 'estudios'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
                    th:href="@{/estudios}">
                     <div th:replace="~{fragments/icons.html :: icon-estudios-sidebar}"></div>
                     Estudios
                 </a>
 
                 <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                   th:classappend="${currentSection == 'admin-normativas'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+                   th:classappend="${currentPage == 'repoNormativo'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
                    th:href="@{/normativas}">
                     <div th:replace="~{fragments/icons.html :: icon-normativas-sidebar}"></div>
                     Repositorio Normativo
@@ -92,7 +92,7 @@
         </nav>
 
         <button type="button"
-                th:if="${usuarioRol != null and #strings.equalsIgnoreCase(usuarioRol,'ADMIN') and currentSection == 'admin-estudios'}"
+                th:if="${usuarioRol != null and #strings.equalsIgnoreCase(usuarioRol,'ADMIN') and currentPage == 'estudios'}"
                 onclick="document.getElementById('modalNuevoEstudio').classList.remove('hidden')"
                 class="w-full bg-primary-container text-on-primary font-label font-bold text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-fixed-variant transition-colors ambient-shadow">
             <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
@@ -102,7 +102,7 @@
         </button>
 
         <button type="button"
-                th:if="${usuarioRol != null and #strings.equalsIgnoreCase(usuarioRol,'ADMIN') and currentSection == 'admin-normativas'}"
+                th:if="${usuarioRol != null and #strings.equalsIgnoreCase(usuarioRol,'ADMIN') and currentPage == 'repoNormativo'}"
                 onclick="document.getElementById('modalNuevaNormativa').classList.remove('hidden')"
                 class="w-full bg-primary-container text-on-primary font-label font-bold text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-fixed-variant transition-colors ambient-shadow">
             <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
@@ -116,14 +116,16 @@
             class="pt-4 space-y-2 relative before:absolute before:top-0 before:left-4 before:right-4 before:h-px before:bg-surface-variant">
 
 
-            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                href="#">
-                <svg class="w-5 h-5 text-current flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
-                </svg>
-                Cerrar Sesión
-            </a>
+            <form th:action="@{/logout}" method="post" class="w-full">
+                <button type="submit"
+                    class="w-full text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight">
+                    <svg class="w-5 h-5 text-current flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
+                    </svg>
+                    Cerrar Sesión
+                </button>
+            </form>
         </div>
     </aside>
 </body>

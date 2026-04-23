@@ -50,10 +50,7 @@ public class EstudioController {
         }
 
         model.addAttribute("estudios", estudios);
-        model.addAttribute("currentPage", "estudios"); // Para sidebar
-        model.addAttribute("usuarioNombre", "Paola Flores");
-        model.addAttribute("usuarioRol", "SOCIO");
-        model.addAttribute("usuarioAvatar", "/images/avatar.jpg");
+        model.addAttribute("currentPage", "estudios");
 
         return "socio/estudios";
     }
@@ -82,9 +79,6 @@ public class EstudioController {
         
         model.addAttribute("estudio", estudio);
         model.addAttribute("currentPage", "estudios");
-        model.addAttribute("usuarioNombre", "Paola Flores");
-        model.addAttribute("usuarioRol", "SOCIO");
-        model.addAttribute("usuarioAvatar", "/images/avatar.jpg");
 
         if (estudio.getTipoAcceso() == Estudio.TipoAcceso.DESCARGA) {
             return "socio/visualizadorEstudioDescargable";

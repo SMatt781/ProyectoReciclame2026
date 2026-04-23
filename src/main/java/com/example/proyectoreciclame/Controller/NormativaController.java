@@ -68,10 +68,7 @@ public class NormativaController {
                 .collect(Collectors.toList());
 
         model.addAttribute("normativas", normativasDTO);
-        model.addAttribute("currentPage", "repoNormativo"); // Para sidebar
-        model.addAttribute("usuarioNombre", "Paola Flores");
-        model.addAttribute("usuarioRol", "SOCIO");
-        model.addAttribute("usuarioAvatar", "/images/avatar.jpg");
+        model.addAttribute("currentPage", "repoNormativo");
 
         return "socio/repoNormativo";
     }
@@ -85,9 +82,6 @@ public class NormativaController {
         
         model.addAttribute("normativa", normativa);
         model.addAttribute("currentPage", "repoNormativo");
-        model.addAttribute("usuarioNombre", "Paola Flores");
-        model.addAttribute("usuarioRol", "SOCIO");
-        model.addAttribute("usuarioAvatar", "/images/avatar.jpg");
 
         if (normativa.getAcceso() == Normativa.AccesoNormativa.PAGO) {
             return "socio/visualizadorNormativaPago";

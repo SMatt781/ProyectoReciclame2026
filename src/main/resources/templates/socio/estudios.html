@@ -118,7 +118,7 @@
     <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
 
         <!-- TopAppBar -->
-        <div th:replace="~{fragments/header :: header}"></div>
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
 
 
 
@@ -129,7 +129,7 @@
                 <div class="mb-5">
                     <div>
                         <h2
-                            class="font-headline font-extrabold text-[2.75rem] text-on-primary-fixed leading-tight tracking-tight">
+                            class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
                             Estudios del Sector</h2>
                         <p class="font-body text-on-surface-variant text-base mt-2">
                             Explora nuestra colección curada de investigaciones, análisis y reportes sobre economía
@@ -200,7 +200,8 @@
                             class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
                             title="Limpiar filtros">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
                             </svg>
                             <span class="text-sm font-medium">Limpiar</span>
                         </a>
@@ -219,7 +220,6 @@
                             <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-
                                     d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                             </svg>
                         </button>
@@ -231,26 +231,35 @@
                     </div>
 
                     <!-- Cards Grid -->
-                    <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" th:if="${not #lists.isEmpty(estudios)}">
+                    <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                        th:if="${not #lists.isEmpty(estudios)}">
                         <!-- Card 1: Dynamic -->
                         <article th:each="estudio, stat : ${estudios}"
                             class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden"
                             th:classappend="${estudio.estado == 'DEROGADO' ? 'bg-opacity-80' : ''}">
-                            <div
-                                th:classappend="${estudio.estado == 'VIGENTE' ? 'bg-gradient-to-r from-secondary to-secondary-container' : (estudio.estado == 'BORRADOR' ? 'bg-gradient-to-r from-outline to-surface-variant' : 'bg-gradient-to-r from-error to-error-container')}"
+                            <div th:classappend="${estudio.estado == 'VIGENTE' ? 'bg-gradient-to-r from-secondary to-secondary-container' : (estudio.estado == 'BORRADOR' ? 'bg-gradient-to-r from-outline to-surface-variant' : 'bg-gradient-to-r from-error to-error-container')}"
                                 class="absolute top-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             </div>
-                            <div class="flex justify-between items-start mb-5" th:classappend="${estudio.estado == 'DEROGADO' ? 'opacity-70' : ''}">
+                            <div class="flex justify-between items-start mb-5"
+                                th:classappend="${estudio.estado == 'DEROGADO' ? 'opacity-70' : ''}">
                                 <div class="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm"
-                                     th:classappend="${estudio.formato == 'PDF' ? 'bg-error-container text-on-error-container' : 
+                                    th:classappend="${estudio.formato == 'PDF' ? 'bg-error-container text-on-error-container' : 
                                                     (estudio.formato == 'PPTX' ? 'bg-orange-100 text-orange-600' : 
                                                     (estudio.formato == 'XLSX' ? 'bg-emerald-100 text-emerald-700' : 
                                                     'bg-surface-container-high text-outline'))}">
                                     <th:block th:switch="${estudio.formato}">
-                                        <th:block th:case="'PDF'"><div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div></th:block>
-                                        <th:block th:case="'PPTX'"><div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div></th:block>
-                                        <th:block th:case="'XLSX'"><div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div></th:block>
-                                        <th:block th:case="*"><div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div></th:block>
+                                        <th:block th:case="'PDF'">
+                                            <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
+                                        </th:block>
+                                        <th:block th:case="'PPTX'">
+                                            <div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div>
+                                        </th:block>
+                                        <th:block th:case="'XLSX'">
+                                            <div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div>
+                                        </th:block>
+                                        <th:block th:case="*">
+                                            <div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div>
+                                        </th:block>
                                     </th:block>
                                 </div>
                                 <div
@@ -261,23 +270,27 @@
                                 </div>
                             </div>
                             <div class="flex-1" th:classappend="${estudio.estado == 'DEROGADO' ? 'opacity-70' : ''}">
-                                <h4
-                                    th:text="${estudio.titulo}"
+                                <h4 th:text="${estudio.titulo}"
                                     th:classappend="${estudio.estado == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}"
                                     class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
                                     Análisis de Ciclo de Vida de Envases PET en Perú</h4>
-                                <p th:text="${estudio.descripcion}" class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
+                                <p th:text="${estudio.descripcion}"
+                                    class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
                                     Estudio exhaustivo...</p>
                             </div>
                             <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
                                 <div class="flex items-center gap-1.5"
-                                     th:classappend="${estudio.estado == 'VIGENTE' ? 'text-secondary' : (estudio.estado == 'BORRADOR' ? 'text-outline' : 'text-error')}">
+                                    th:classappend="${estudio.estado == 'VIGENTE' ? 'text-secondary' : (estudio.estado == 'BORRADOR' ? 'text-outline' : 'text-error')}">
                                     <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                        <path th:if="${estudio.estado == 'VIGENTE'}" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
-                                        <path th:if="${estudio.estado == 'BORRADOR'}" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
-                                        <path th:if="${estudio.estado == 'DEROGADO'}" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                        <path th:if="${estudio.estado == 'VIGENTE'}"
+                                            d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                        <path th:if="${estudio.estado == 'BORRADOR'}"
+                                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                        <path th:if="${estudio.estado == 'DEROGADO'}"
+                                            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
                                     </svg>
-                                    <span th:text="${estudio.estado}" class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
+                                    <span th:text="${estudio.estado}"
+                                        class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
                                 </div>
                                 <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link"
                                     th:href="@{/estudios/{id}(id=${estudio.id})}">
@@ -307,35 +320,46 @@
                         <div th:each="estudio, stat : ${estudios}"
                             class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
                             <div class="col-span-6 lg:col-span-5 flex items-center gap-4 w-full">
-                                <h4
-                                    th:text="${estudio.titulo}"
+                                <h4 th:text="${estudio.titulo}"
                                     class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors line-clamp-2"
                                     th:classappend="${estudio.estado == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}">
                                     Análisis de Ciclo de Vida de Envases PET en Perú</h4>
                             </div>
                             <div class="col-span-2 flex justify-center w-full md:w-auto">
                                 <div class="flex items-center gap-1.5"
-                                     th:classappend="${estudio.estado == 'VIGENTE' ? 'text-secondary' : (estudio.estado == 'BORRADOR' ? 'text-outline' : 'text-error')}">
+                                    th:classappend="${estudio.estado == 'VIGENTE' ? 'text-secondary' : (estudio.estado == 'BORRADOR' ? 'text-outline' : 'text-error')}">
                                     <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                        <path th:if="${estudio.estado == 'VIGENTE'}" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
-                                        <path th:if="${estudio.estado == 'BORRADOR'}" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
-                                        <path th:if="${estudio.estado == 'DEROGADO'}" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                        <path th:if="${estudio.estado == 'VIGENTE'}"
+                                            d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                        <path th:if="${estudio.estado == 'BORRADOR'}"
+                                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                        <path th:if="${estudio.estado == 'DEROGADO'}"
+                                            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
                                     </svg>
-                                    <span th:text="${estudio.estado}" class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
+                                    <span th:text="${estudio.estado}"
+                                        class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
                                 </div>
                             </div>
                             <div class="col-span-1 flex justify-center w-full md:w-auto">
                                 <div class="flex items-center gap-2">
                                     <div class="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm shrink-0"
-                                         th:classappend="${estudio.formato == 'PDF' ? 'bg-error-container text-on-error-container' : 
+                                        th:classappend="${estudio.formato == 'PDF' ? 'bg-error-container text-on-error-container' : 
                                                         (estudio.formato == 'PPTX' ? 'bg-orange-100 text-orange-600' : 
                                                         (estudio.formato == 'XLSX' ? 'bg-emerald-100 text-emerald-700' : 
                                                         'bg-surface-container-high text-outline'))}">
                                         <th:block th:switch="${estudio.formato}">
-                                            <th:block th:case="'PDF'"><div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div></th:block>
-                                            <th:block th:case="'PPTX'"><div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div></th:block>
-                                            <th:block th:case="'XLSX'"><div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div></th:block>
-                                            <th:block th:case="*"><div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div></th:block>
+                                            <th:block th:case="'PDF'">
+                                                <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
+                                            </th:block>
+                                            <th:block th:case="'PPTX'">
+                                                <div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div>
+                                            </th:block>
+                                            <th:block th:case="'XLSX'">
+                                                <div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div>
+                                            </th:block>
+                                            <th:block th:case="*">
+                                                <div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div>
+                                            </th:block>
                                         </th:block>
                                     </div>
                                     <span th:text="${estudio.formato}"
@@ -343,7 +367,8 @@
                                 </div>
                             </div>
                             <div class="col-span-1 flex justify-center w-full md:w-auto">
-                                <span th:text="${estudio.anio}" class="text-sm font-body text-on-surface-variant font-medium">2024</span>
+                                <span th:text="${estudio.anio}"
+                                    class="text-sm font-body text-on-surface-variant font-medium">2024</span>
                             </div>
                             <div class="col-span-2 lg:col-span-3 flex justify-end w-full md:w-auto">
                                 <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link"
@@ -357,15 +382,24 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Controles de Paginación -->
-                    <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8 hidden" th:if="${not #lists.isEmpty(estudios)}">
-                        <button id="prevPageBtn" class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                    <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8 hidden"
+                        th:if="${not #lists.isEmpty(estudios)}">
+                        <button id="prevPageBtn"
+                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7" />
+                            </svg>
                         </button>
                         <div id="pageNumbers" class="flex gap-2"></div>
-                        <button id="nextPageBtn" class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                        <button id="nextPageBtn"
+                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
                         </button>
                     </div>
 
@@ -568,18 +602,18 @@
             filtersForm.addEventListener('submit', (e) => {
                 const checkedDateType = document.querySelector('input[name="dateType"]:checked');
                 const isRange = checkedDateType && checkedDateType.value === 'range';
-                
+
                 if (isRange) {
                     yearSelect.name = '';
                     if (!dateStart.value && !dateEnd.value) {
-                         checkedDateType.name = '';
+                        checkedDateType.name = '';
                     }
                 } else {
                     dateStart.name = '';
                     dateEnd.name = '';
                     if (!yearSelect.value) {
-                         if(checkedDateType) checkedDateType.name = '';
-                         yearSelect.name = '';
+                        if (checkedDateType) checkedDateType.name = '';
+                        yearSelect.name = '';
                     }
                 }
 

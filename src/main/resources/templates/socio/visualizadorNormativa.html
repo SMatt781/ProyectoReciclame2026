@@ -164,14 +164,15 @@
                         <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                         </svg>
-                        <span>NORMATIVAS NACIONALES</span>
+                        <span>NORMATIVAS</span>
                         <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                         </svg>
-                        <span class="text-on-primary-fixed" th:text="${normativa.titulo}">LEY DE FOMENTO AL RECICLAJE Y RESPONSABILIDAD EXTENDIDA DEL PRODUCTOR</span>
+                        <span class="text-on-primary-fixed" th:text="${normativa.titulo}">LEY DE FOMENTO AL RECICLAJE Y
+                            RESPONSABILIDAD EXTENDIDA DEL PRODUCTOR</span>
                     </div>
                     <h1 th:text="${normativa.titulo}"
-                        class="font-headline text-[2.25rem] leading-tight font-bold text-on-primary-fixed mb-4 max-w-4xl tracking-tight">
+                        class="font-headline text-[2rem] leading-tight font-bold text-on-primary-fixed mb-4 max-w-4xl tracking-tight">
                         Ley de Fomento al Reciclaje y Responsabilidad Extendida del Productor
                     </h1>
                     <div class="flex items-center gap-3 mb-2">
@@ -179,7 +180,8 @@
                             th:classappend="${normativa.estado.name() == 'VIGENTE' ? 'bg-[#006c46]' : (normativa.estado.name() == 'DEROGADA' ? 'bg-[#e53935]' : (normativa.estado.name() == 'CONSULTA_PUBLICA' ? 'bg-[#2196f3]' : (normativa.estado.name() == 'PUBLICADA' ? 'bg-[#ffc107]' : 'bg-[#f49e0b]')))}"
                             class="inline-flex items-center gap-1.5 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase">
                         </span>
-                        <span th:text="${normativa.acceso != null ? normativa.acceso.name().replace('_', ' ') : 'GRATUITO'}"
+                        <span
+                            th:text="${normativa.acceso != null ? normativa.acceso.name().replace('_', ' ') : 'GRATUITO'}"
                             th:classappend="${normativa.acceso != null and normativa.acceso.name() == 'PAGO' ? 'text-de-pago bg-[#fef3c7] border-de-pago' : 'text-gratuito bg-[#dcfce7] border-gratuito'}"
                             class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold uppercase border">
                         </span>
@@ -197,29 +199,37 @@
 
                 <!-- Columna Izquierda: PDF Viewer -->
                 <div class="w-full xl:flex-1 h-full flex flex-col">
-                    <section class="flex-1 bg-surface-container-lowest rounded-xl flex flex-col overflow-hidden min-w-0 shadow-sm border border-outline-variant/20">
+                    <section
+                        class="flex-1 bg-surface-container-lowest rounded-xl flex flex-col overflow-hidden min-w-0 shadow-sm border border-outline-variant/20">
                         <!-- Viewer Toolbar -->
-                        <div class="h-14 bg-white flex items-center justify-between px-6 border-b border-surface-variant/50">
+                        <div
+                            class="h-14 bg-white flex items-center justify-between px-6 border-b border-surface-variant/50">
                             <div class="flex items-center gap-3">
                                 <svg class="icon-md text-on-surface-variant" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
                                 </svg>
-                                <h3 class="font-headline font-semibold text-on-primary-fixed text-sm">Vista Previa del Documento</h3>
+                                <h3 class="font-headline font-semibold text-on-primary-fixed text-sm">Vista Previa del
+                                    Documento</h3>
                             </div>
                             <div class="flex items-center gap-4">
-                                <span class="text-xs font-medium text-on-surface-variant" th:text="${normativa.archivoNombre != null ? normativa.archivoNombre : 'documento.pdf'}">normativa.pdf</span>
+                                <span class="text-xs font-medium text-on-surface-variant"
+                                    th:text="${normativa.archivoNombre != null ? normativa.archivoNombre : 'documento.pdf'}">normativa.pdf</span>
                             </div>
                         </div>
 
                         <!-- Viewer Canvas (Simulado) -->
-                        <div class="flex-1 bg-surface-container/30 flex items-center justify-center p-8 overflow-y-auto">
-                            <div class="w-full max-w-2xl bg-white min-h-[700px] shadow-sm rounded-sm p-12 border border-outline-variant/10">
+                        <div
+                            class="flex-1 bg-surface-container/30 flex items-center justify-center p-8 overflow-y-auto">
+                            <div
+                                class="w-full max-w-2xl bg-white min-h-[700px] shadow-sm rounded-sm p-12 border border-outline-variant/10">
                                 <div class="h-8 w-3/4 bg-surface-container-high rounded mb-8"></div>
                                 <div class="h-4 w-full bg-surface-container rounded mb-4"></div>
                                 <div class="h-4 w-full bg-surface-container rounded mb-4"></div>
                                 <div class="h-4 w-5/6 bg-surface-container rounded mb-12"></div>
-                                <div class="h-48 w-full bg-surface-container-high rounded-lg mb-12 flex items-center justify-center text-on-surface-variant">
-                                    <svg class="icon-xl opacity-20 text-current" fill="currentColor" viewBox="0 0 24 24">
+                                <div
+                                    class="h-48 w-full bg-surface-container-high rounded-lg mb-12 flex items-center justify-center text-on-surface-variant">
+                                    <svg class="icon-xl opacity-20 text-current" fill="currentColor"
+                                        viewBox="0 0 24 24">
                                         <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z" />
                                     </svg>
                                 </div>
@@ -232,11 +242,12 @@
 
                 <!-- Columna Derecha: Información -->
                 <div class="w-full xl:w-[420px] flex flex-col h-full min-h-0 gap-4 overflow-y-auto pr-1">
-                    
+
                     <!-- Acceso a Fuente Original -->
                     <section class="bg-primary-container rounded-xl p-6 text-center space-y-4 shadow-sm">
                         <div class="flex justify-center">
-                            <div class="w-12 h-12 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary">
+                            <div
+                                class="w-12 h-12 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary">
                                 <div th:replace="~{fragments/icons.html :: icon-acceso-gratuito}"></div>
                             </div>
                         </div>
@@ -261,16 +272,20 @@
                     <!-- Detalle Técnico -->
                     <section class="bg-white rounded-xl p-5 shadow-sm space-y-6">
                         <div>
-                            <h4 class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">DESCRIPCIÓN</h4>
-                            <p th:text="${normativa.descripcion}" class="text-sm text-on-surface-variant leading-relaxed line-clamp-6">
+                            <h4 class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">
+                                DESCRIPCIÓN</h4>
+                            <p th:text="${normativa.descripcion}"
+                                class="text-sm text-on-surface-variant leading-relaxed line-clamp-6">
                                 Descripción de la normativa...
                             </p>
                         </div>
 
                         <div th:if="${normativa.campoAplicacion != null}">
-                            <h4 class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">CAMPOS DE APLICACIÓN</h4>
+                            <h4 class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">
+                                CAMPOS DE APLICACIÓN</h4>
                             <div class="flex flex-wrap gap-2">
-                                <span th:each="campo : ${#strings.arraySplit(normativa.campoAplicacion, ',')}" th:text="${campo.trim()}"
+                                <span th:each="campo : ${#strings.arraySplit(normativa.campoAplicacion, ',')}"
+                                    th:text="${campo.trim()}"
                                     class="px-3 py-1 bg-surface-container text-on-surface-variant rounded-md text-[11px] font-semibold border border-outline-variant/20">
                                     Campo
                                 </span>
@@ -281,36 +296,47 @@
                         <div class="grid grid-cols-2 gap-y-4 pt-4 border-t border-surface-variant/50">
                             <div>
                                 <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">CÓDIGO</h3>
-                                <p th:text="${normativa.codigo != null ? normativa.codigo : 'N/A'}" class="text-xs font-bold text-on-surface">LEY-20920</p>
+                                <p th:text="${normativa.codigo != null ? normativa.codigo : 'N/A'}"
+                                    class="text-xs font-bold text-on-surface">LEY-20920</p>
                             </div>
                             <div>
                                 <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">AÑO</h3>
                                 <p th:text="${normativa.anio}" class="text-xs font-bold text-on-surface">2016</p>
                             </div>
                             <div class="col-span-2">
-                                <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">ORGANISMO EMISOR</h3>
-                                <p th:text="${normativa.organismoEmisor}" class="text-xs font-bold text-on-surface">Ministerio del Medio Ambiente</p>
+                                <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">ORGANISMO EMISOR
+                                </h3>
+                                <p th:text="${normativa.organismoEmisor}" class="text-xs font-bold text-on-surface">
+                                    Ministerio del Medio Ambiente</p>
                             </div>
                             <div>
                                 <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">TIPO</h3>
-                                <p th:text="${normativa.tipoNorma.name().replace('_', ' ')}" class="text-xs font-bold text-on-surface">Ley de la República</p>
+                                <p th:text="${normativa.tipoNorma.name().replace('_', ' ')}"
+                                    class="text-xs font-bold text-on-surface">Ley de la República</p>
                             </div>
                             <div>
-                                <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">OBLIGATORIEDAD</h3>
-                                <p th:text="${normativa.obligatoriedad}" class="text-xs font-bold text-on-surface">Vinculante</p>
+                                <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">OBLIGATORIEDAD
+                                </h3>
+                                <p th:text="${normativa.obligatoriedad}" class="text-xs font-bold text-on-surface">
+                                    Vinculante</p>
                             </div>
                         </div>
 
                         <!-- Clasificación Circular -->
                         <div class="pt-4 border-t border-surface-variant/50" th:if="${normativa.clasificacion != null}">
-                            <h4 class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-3">CLASIFICACIÓN CIRCULAR</h4>
-                            <div class="flex items-center gap-3 bg-tertiary-fixed/30 p-3 rounded-lg border border-tertiary-fixed-dim/20">
-                                <div class="w-8 h-8 rounded bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
+                            <h4 class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-3">
+                                CLASIFICACIÓN CIRCULAR</h4>
+                            <div
+                                class="flex items-center gap-3 bg-tertiary-fixed/30 p-3 rounded-lg border border-tertiary-fixed-dim/20">
+                                <div
+                                    class="w-8 h-8 rounded bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                                        <path
+                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                                     </svg>
                                 </div>
-                                <span th:text="${normativa.clasificacion.name().replace('_', ' ')}" class="text-xs font-bold text-on-tertiary-fixed-variant">Prioridad Alta</span>
+                                <span th:text="${normativa.clasificacion.name().replace('_', ' ')}"
+                                    class="text-xs font-bold text-on-tertiary-fixed-variant">Prioridad Alta</span>
                             </div>
                         </div>
                     </section>
@@ -319,4 +345,5 @@
         </main>
     </div>
 </body>
+
 </html>
