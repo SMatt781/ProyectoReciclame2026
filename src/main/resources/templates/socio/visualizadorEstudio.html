@@ -174,8 +174,8 @@
                         Análisis de la Cadena de Valor del Plástico 2024
                     </h1>
                     <div class="flex items-center gap-3 mb-2">
-                        <span th:text="${estudio.estado}" 
-                            th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'bg-[#00743a] text-white' : (estudio.estado.name() == 'BORRADOR' ? 'bg-[#e0e0e0] text-[#666]' : 'bg-[#e53935] text-white')}"
+                        <span th:text="${estudio.estado.name().replace('_', ' ')}" 
+                            th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'bg-[#006d37] text-white' : (estudio.estado.name() == 'BORRADOR' ? 'bg-[#e0e0e0] text-[#666]' : 'bg-[#ba1a1a] text-white')}"
                             class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold uppercase">
                             VIGENTE
                         </span>

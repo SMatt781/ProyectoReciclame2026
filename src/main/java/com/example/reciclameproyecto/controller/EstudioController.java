@@ -58,20 +58,20 @@ public class EstudioController {
         return "socio/estudios";
     }
 
-        @GetMapping("/panelSocio")
-    public String panelSocio() {
-        return "socio/panelPrincipal";
-    }
-
-    @GetMapping("/normativas")
-    public String normativas() {
-        return "socio/repoNormativo";
-    }
-
-    @GetMapping("/normativasVisu")
-    public String normativasVisu() {
-        return "socio/visualizadorNormativa";
-    }
+//        @GetMapping("/panelSocio")
+//    public String panelSocio() {
+//        return "socio/panelPrincipal";
+//    }
+//
+//    @GetMapping("/normativas")
+//    public String normativas() {
+//        return "socio/repoNormativo";
+//    }
+//
+//    @GetMapping("/normativasVisu")
+//    public String normativasVisu() {
+//        return "socio/visualizadorNormativa";
+//    }
 
     @GetMapping("/{id}")
     public String verEstudio(@PathVariable Long id, Model model) {

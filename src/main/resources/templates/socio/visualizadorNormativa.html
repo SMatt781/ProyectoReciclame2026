@@ -168,26 +168,25 @@
                         <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                         </svg>
-                        <span class="text-on-primary-fixed">LEY DE FOMENTO AL RECICLAJE Y RESPONSABILIDAD EXTENDIDA DEL
-                            PRODUCTOR</span>
+                        <span class="text-on-primary-fixed" th:text="${normativa.titulo}">LEY DE FOMENTO AL RECICLAJE Y RESPONSABILIDAD EXTENDIDA DEL PRODUCTOR</span>
                     </div>
-                    <h1
+                    <h1 th:text="${normativa.titulo}"
                         class="font-headline text-[2.25rem] leading-tight font-bold text-on-primary-fixed mb-4 max-w-4xl tracking-tight">
                         Ley de Fomento al Reciclaje y Responsabilidad Extendida del Productor
                     </h1>
                     <div class="flex items-center gap-3 mb-2">
-                        <span
-                            class="inline-flex items-center gap-1.5 bg-[#00743a] text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase">
-                            VIGENTE
+                        <span th:text="${normativa.estado.name().replace('_', ' ')}"
+                            th:classappend="${normativa.estado.name() == 'VIGENTE' ? 'bg-[#006c46]' : (normativa.estado.name() == 'DEROGADA' ? 'bg-[#e53935]' : (normativa.estado.name() == 'CONSULTA_PUBLICA' ? 'bg-[#2196f3]' : (normativa.estado.name() == 'PUBLICADA' ? 'bg-[#ffc107]' : 'bg-[#f49e0b]')))}"
+                            class="inline-flex items-center gap-1.5 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase">
                         </span>
-                        <span
-                            class="inline-flex items-center gap-1.5 text-de-pago bg-[#fef3c7] px-4 py-1.5 rounded-full text-xs font-bold uppercase border border-de-pago">
-                            <div th:replace="~{fragments/icons.html :: icon-acceso-pago}"></div>
-                            ACCESO DE PAGO
+                        <span th:text="${normativa.acceso != null ? normativa.acceso.name().replace('_', ' ') : 'GRATUITO'}"
+                            th:classappend="${normativa.acceso != null and normativa.acceso.name() == 'PAGO' ? 'text-de-pago bg-[#fef3c7] border-de-pago' : 'text-gratuito bg-[#dcfce7] border-gratuito'}"
+                            class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold uppercase border">
                         </span>
-                        <span
-                            class="inline-flex items-center gap-1.5 text-[#1976d2] px-4 py-1.5 rounded-full text-xs font-bold uppercase border border-[#1976d2]">
-                            GESTIÓN DE RESIDUOS
+                        <span th:if="${normativa.categorias != null and !normativa.categorias.isEmpty()}"
+                            th:text="${normativa.categorias[0].nombre}"
+                            th:classappend="${normativa.categorias[0].nombre == 'ECONOMIA CIRCULAR' ? 'bg-[#e3f2fd] text-[#1e88e5] border-[#1e88e5]' : (normativa.categorias[0].nombre == 'GESTION DE RESIDUOS' ? 'bg-[#e8f5e9] text-[#2e7d32] border-[#2e7d32]' : (normativa.categorias[0].nombre == 'EFICIENCIA ENERGETICA' ? 'bg-[#fff3e0] text-[#ef6c00] border-[#ef6c00]' : (normativa.categorias[0].nombre == 'REP' ? 'bg-[#f3e5f5] text-[#8e24aa] border-[#8e24aa]' : 'bg-[#e0e7ff] text-[#4338ca] border-[#4338ca]')))}"
+                            class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold uppercase border">
                         </span>
                     </div>
                 </header>
@@ -196,151 +195,128 @@
             <!-- CONTENEDOR PADRE (GRID) -->
             <div class="w-full flex-1 min-h-0 h-full overflow-hidden flex flex-col xl:flex-row gap-6">
 
-                <!-- Columna Izquierda -->
-                <div class="w-full xl:w-1/2 h-full flex flex-col">
-                    <section class="flex-1 flex flex-col bg-white rounded-xl p-5 shadow-sm">
-                        <div>
-                            <h4
-                                class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
-                                OBJETO DE LA NORMA</h4>
-                            <p class="font-body text-sm text-on-surface-variant leading-relaxed text-[#1a1a1a]">
-                                Establecer un marco jurídico para la gestión de residuos, la responsabilidad extendida
-                                del productor y el
-                                fomento al reciclaje, con el fin de disminuir la generación de residuos y fomentar su
-                                valorización, mediante
-                                la determinación de obligaciones para los productores de productos prioritarios.
-                            </p>
-                        </div>
-
-                        <div class="mt-6 -mx-5 px-5">
-                            <h4
-                                class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
-                                CAMPOS DE APLICACIÓN
-                            </h4>
-                            <div class="flex flex-wrap gap-3 justify-start">
-                                <span
-                                    class="px-4 py-2 bg-[#e3f2fd] text-[#1976d2] rounded-lg text-xs font-medium border border-[#bbdefb]">
-                                    Aceites Lubricantes
-                                </span>
-                                <span
-                                    class="px-4 py-2 bg-[#e3f2fd] text-[#1976d2] rounded-lg text-xs font-medium border border-[#bbdefb]">
-                                    Aparatos Eléctricos y Electrónicos
-                                </span>
-                                <span
-                                    class="px-4 py-2 bg-[#e3f2fd] text-[#1976d2] rounded-lg text-xs font-medium border border-[#bbdefb]">
-                                    Baterías
-                                </span>
+                <!-- Columna Izquierda: PDF Viewer -->
+                <div class="w-full xl:flex-1 h-full flex flex-col">
+                    <section class="flex-1 bg-surface-container-lowest rounded-xl flex flex-col overflow-hidden min-w-0 shadow-sm border border-outline-variant/20">
+                        <!-- Viewer Toolbar -->
+                        <div class="h-14 bg-white flex items-center justify-between px-6 border-b border-surface-variant/50">
+                            <div class="flex items-center gap-3">
+                                <svg class="icon-md text-on-surface-variant" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
+                                </svg>
+                                <h3 class="font-headline font-semibold text-on-primary-fixed text-sm">Vista Previa del Documento</h3>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="text-xs font-medium text-on-surface-variant" th:text="${normativa.archivoNombre != null ? normativa.archivoNombre : 'documento.pdf'}">normativa.pdf</span>
                             </div>
                         </div>
 
-                        <!-- METADATA GRID -->
-                        <div class="mt-auto grid grid-cols-2 gap-6 pt-4 border-t border-surface-variant">
-                            <div>
-                                <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">CÓDIGO</h3>
-                                <p class="text-sm font-medium text-[#1a1a1a]">LEY-20920</p>
-                            </div>
-                            <div>
-                                <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">AÑO DE
-                                    PUBLICACIÓN</h3>
-                                <p class="text-sm font-medium text-[#1a1a1a]">2016</p>
-                            </div>
-                            <div>
-                                <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">ORGANISMO EMISOR
-                                </h3>
-                                <p class="text-sm font-medium text-[#1a1a1a]">Ministerio del Medio Ambiente</p>
-                            </div>
-                            <div>
-                                <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">TIPO DE NORMA
-                                </h3>
-                                <p class="text-sm font-medium text-[#1a1a1a]">Ley de la República</p>
+                        <!-- Viewer Canvas (Simulado) -->
+                        <div class="flex-1 bg-surface-container/30 flex items-center justify-center p-8 overflow-y-auto">
+                            <div class="w-full max-w-2xl bg-white min-h-[700px] shadow-sm rounded-sm p-12 border border-outline-variant/10">
+                                <div class="h-8 w-3/4 bg-surface-container-high rounded mb-8"></div>
+                                <div class="h-4 w-full bg-surface-container rounded mb-4"></div>
+                                <div class="h-4 w-full bg-surface-container rounded mb-4"></div>
+                                <div class="h-4 w-5/6 bg-surface-container rounded mb-12"></div>
+                                <div class="h-48 w-full bg-surface-container-high rounded-lg mb-12 flex items-center justify-center text-on-surface-variant">
+                                    <svg class="icon-xl opacity-20 text-current" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z" />
+                                    </svg>
+                                </div>
+                                <div class="h-4 w-full bg-surface-container rounded mb-4"></div>
+                                <div class="h-4 w-4/5 bg-surface-container rounded mb-4"></div>
                             </div>
                         </div>
                     </section>
                 </div>
 
-                <!-- Columna Derecha -->
-                <div class="w-full xl:w-1/2 flex flex-col h-full min-h-0 gap-4">
-
-                    <!-- Documento Protegido -->
-                    <div
-                        class="flex-1 flex flex-col justify-center bg-[#041533] rounded-xl p-6 text-center space-y-4 shadow-sm overflow-y-auto">
-
+                <!-- Columna Derecha: Información -->
+                <div class="w-full xl:w-[420px] flex flex-col h-full min-h-0 gap-4 overflow-y-auto pr-1">
+                    
+                    <!-- Acceso a Fuente Original -->
+                    <section class="bg-primary-container rounded-xl p-6 text-center space-y-4 shadow-sm">
+                        <div class="flex justify-center">
+                            <div class="w-12 h-12 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary">
+                                <div th:replace="~{fragments/icons.html :: icon-acceso-gratuito}"></div>
+                            </div>
+                        </div>
                         <div>
-                            <h3 class="text-lg font-bold text-white mb-2">DOCUMENTO PROTEGIDO </h3>
-                            <p class="text-[13px] text-[#b0b0b0] leading-relaxed">
-                                No hay vista previa disponible para este documento. Esta norma forma parte del catálogo
-                                de pago y debe ser adquirida a través de la plataforma oficial externa para acceder a su
-                                contenido completo.
+                            <h3 class="text-lg font-bold text-white mb-2">Acceso a la fuente original</h3>
+                            <p class="text-[13px] text-white/70 leading-relaxed">
+                                ¿Deseas consultar esta norma directamente en el portal oficial del organismo emisor?
                             </p>
                         </div>
                         <div>
-                            <button
-                                class="inline-flex items-center gap-2 bg-white text-[#041533] px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-[#f0f0f0] transition">
-                                Acceder al enlace de compra
+                            <a th:href="${normativa.enlaceExterno}" target="_blank"
+                                class="inline-flex items-center gap-2 bg-white text-primary-container px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-surface-container transition w-full justify-center">
+                                Ver enlace externo
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                 </svg>
-                            </button>
+                            </a>
                         </div>
-                    </div>
+                    </section>
 
-                    <!-- Clasificación Circular -->
-                    <div class="grid grid-cols-2 gap-4">
-
-                        <!-- SECCIÓN 1: Clasificación Circular -->
-                        <section class="shrink-0 bg-[#dce2f3] rounded-xl px-5 py-4">
-                            <h2 class="text-[13px] font-bold text-[#1a1a1a] uppercase tracking-wider mb-4">CLASIFICACIÓN
-                                CIRCULAR</h2>
-
-                            <!-- Prioridad Alta -->
-                            <div class="flex items-center gap-3 pb-3 mb-3 border-b border-[#c2cee8]">
-                                <div
-                                    class="w-9 h-9 rounded-lg bg-[#c8e6c9] flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-4 h-4 text-[#00743a]" fill="currentColor" viewBox="0 0 24 24">
-                                        <path
-                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                                    </svg>
-                                </div>
-                                <div class="flex flex-col">
-                                    <p class="font-bold text-[#1a1a1a] text-sm leading-tight">Prioridad Alta</p>
-                                    <p class="text-xs text-[#00743a] font-medium leading-tight">Fomento de Reciclaje</p>
-                                </div>
-                            </div>
-
-                            <!-- Obligatoriedad -->
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-9 h-9 rounded-lg bg-white border border-[#1a1a1a] flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-4 h-4 text-[#1a1a1a]" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
-                                    </svg>
-                                </div>
-                                <div class="flex flex-col">
-                                    <p class="font-bold text-[#1a1a1a] text-sm leading-tight">Obligatoriedad</p>
-                                    <p class="text-xs text-[#666] font-medium leading-tight">Legal Vinculante</p>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- SECCIÓN 2: Nueva Sección (tu nueva sección aquí) -->
-                        <section class="shrink-0 bg-[#f0f4ff] rounded-xl px-5 py-4">
-                            <h2 class="text-[13px] font-bold text-[#1a1a1a] uppercase tracking-wider mb-4">INFORMACIÓN
-                                DE ADQUISICIÓN
-                            </h2>
-
-                            <!-- Contenido aquí -->
-                            <p class="text-xs text-[#666] leading-relaxed">
-                                Este documento es propiedad intelectual de su emisor y requiere el pago de una tasa por
-                                derechos de autor o acceso comercial.
+                    <!-- Detalle Técnico -->
+                    <section class="bg-white rounded-xl p-5 shadow-sm space-y-6">
+                        <div>
+                            <h4 class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">DESCRIPCIÓN</h4>
+                            <p th:text="${normativa.descripcion}" class="text-sm text-on-surface-variant leading-relaxed line-clamp-6">
+                                Descripción de la normativa...
                             </p>
-                        </section>
+                        </div>
 
-                    </div>
+                        <div th:if="${normativa.campoAplicacion != null}">
+                            <h4 class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">CAMPOS DE APLICACIÓN</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span th:each="campo : ${#strings.arraySplit(normativa.campoAplicacion, ',')}" th:text="${campo.trim()}"
+                                    class="px-3 py-1 bg-surface-container text-on-surface-variant rounded-md text-[11px] font-semibold border border-outline-variant/20">
+                                    Campo
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- METADATA GRID -->
+                        <div class="grid grid-cols-2 gap-y-4 pt-4 border-t border-surface-variant/50">
+                            <div>
+                                <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">CÓDIGO</h3>
+                                <p th:text="${normativa.codigo != null ? normativa.codigo : 'N/A'}" class="text-xs font-bold text-on-surface">LEY-20920</p>
+                            </div>
+                            <div>
+                                <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">AÑO</h3>
+                                <p th:text="${normativa.anio}" class="text-xs font-bold text-on-surface">2016</p>
+                            </div>
+                            <div class="col-span-2">
+                                <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">ORGANISMO EMISOR</h3>
+                                <p th:text="${normativa.organismoEmisor}" class="text-xs font-bold text-on-surface">Ministerio del Medio Ambiente</p>
+                            </div>
+                            <div>
+                                <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">TIPO</h3>
+                                <p th:text="${normativa.tipoNorma.name().replace('_', ' ')}" class="text-xs font-bold text-on-surface">Ley de la República</p>
+                            </div>
+                            <div>
+                                <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">OBLIGATORIEDAD</h3>
+                                <p th:text="${normativa.obligatoriedad}" class="text-xs font-bold text-on-surface">Vinculante</p>
+                            </div>
+                        </div>
+
+                        <!-- Clasificación Circular -->
+                        <div class="pt-4 border-t border-surface-variant/50" th:if="${normativa.clasificacion != null}">
+                            <h4 class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-3">CLASIFICACIÓN CIRCULAR</h4>
+                            <div class="flex items-center gap-3 bg-tertiary-fixed/30 p-3 rounded-lg border border-tertiary-fixed-dim/20">
+                                <div class="w-8 h-8 rounded bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                                    </svg>
+                                </div>
+                                <span th:text="${normativa.clasificacion.name().replace('_', ' ')}" class="text-xs font-bold text-on-tertiary-fixed-variant">Prioridad Alta</span>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
         </main>
     </div>
 </body>
-
 </html>
