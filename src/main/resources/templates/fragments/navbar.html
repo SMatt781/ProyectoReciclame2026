@@ -10,17 +10,34 @@
     <div class="flex items-center gap-6 ml-auto">
 
         <!-- Notifications -->
-        <button type="button" class="text-slate-500 dark:text-slate-400 hover:text-[#2ECC71] transition-colors relative">
-            <span class="material-symbols-outlined text-2xl">notifications</span>
-            <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border border-surface-container-lowest"></span>
-        </button>
+        <a th:href="@{/admin/notificaciones}"
+           class="text-slate-500 dark:text-slate-400 hover:text-[#2ECC71] transition-colors relative inline-flex items-center justify-center">
+            <svg class="w-6 h-6 text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V2c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 3.36 6 5.92 6 9v5l-2 2v1h16v-1l-2-2z"/>
+            </svg>
+
+            <span th:if="${notificacionesNoLeidas != null and notificacionesNoLeidas > 0}"
+                  th:text="${notificacionesNoLeidas}"
+                  class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center border border-surface-container-lowest">
+    </span>
+        </a>
 
         <!-- Profile Card -->
-        <div class="flex items-center gap-3 cursor-pointer p-1 rounded-full hover:bg-surface-container-low transition-colors">
-            <img th:src="@{${usuarioAvatar}}" alt="Usuario" class="w-10 h-10 rounded-full object-cover ring-2 ring-surface-container-lowest shadow-sm" />
+        <div class="flex items-center gap-3 p-1 rounded-full hover:bg-surface-container-low transition-colors">
+            <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm ring-2 ring-surface-container-lowest shadow-sm"
+                 th:text="${sessionUser != null ? sessionUser.iniciales : 'US'}">
+                US
+            </div>
+
             <div class="hidden md:flex flex-col justify-center">
-                <span class="font-['Inter'] font-medium text-sm text-[#001B2E] dark:text-white leading-tight" th:text="${usuarioNombre}">Usuario</span>
-                <span class="text-[10px] font-bold text-on-secondary-fixed bg-secondary-fixed px-2 py-0.5 rounded-full w-max mt-0.5 tracking-wider" th:text="${usuarioRol}">SOCIO</span>
+                <span class="font-['Inter'] font-medium text-sm text-[#001B2E] dark:text-white leading-tight"
+                      th:text="${sessionUser != null ? sessionUser.nombreCompleto : 'Usuario'}">
+                    Usuario
+                </span>
+                <span class="text-[10px] font-bold text-on-secondary-fixed bg-secondary-fixed px-2 py-0.5 rounded-full w-max mt-0.5 tracking-wider uppercase"
+                      th:text="${sessionUser != null ? sessionUser.rol : 'ROL'}">
+                    ROL
+                </span>
             </div>
         </div>
 

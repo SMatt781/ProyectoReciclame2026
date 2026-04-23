@@ -12,12 +12,12 @@ import java.util.Optional;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     @Query("""
-        SELECT u
-        FROM Usuario u
-        LEFT JOIN FETCH u.rol
-        WHERE u.correo = :correo
-          AND u.eliminadoEn IS NULL
-    """)
+    SELECT u
+    FROM Usuario u
+    LEFT JOIN FETCH u.rol
+    WHERE LOWER(u.correo) = LOWER(:correo)
+      AND u.eliminadoEn IS NULL
+""")
     Optional<Usuario> findByCorreoWithRol(@Param("correo") String correo);
 
     @Query("""
@@ -61,4 +61,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     boolean existsByCorreoIgnoreCase(String correo);
 
     boolean existsByDni(String dni);
+
 }

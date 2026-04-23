@@ -75,7 +75,6 @@
         };
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" rel="stylesheet" />
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
@@ -103,10 +102,11 @@
         }
     </style>
 </head>
+
 <body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
 
-<!-- SideNavBar -->
 <aside class="hidden md:flex flex-col h-full w-72 p-6 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50">
+    <!-- Brand / Header -->
     <div class="flex items-center gap-3 mb-10 pl-2">
         <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
             <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -119,43 +119,51 @@
         </div>
     </div>
 
+    <!-- Navigation Tabs -->
     <nav class="flex-1 space-y-2">
-        <a th:href="@{/admin/dashboard}" class="bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 font-headline font-bold text-sm tracking-tight scale-95 active:scale-100 transition-transform">
+        <a class="bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 font-headline font-bold text-sm tracking-tight scale-95 active:scale-100 transition-transform"
+           th:href="@{/admin/dashboard}">
             <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
             Dashboard
         </a>
 
-        <a th:href="@{/admin/usuarios/gestion}" class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]">
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]"
+           th:href="@{/admin/usuarios/gestion}">
             <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.98 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
             Usuarios
         </a>
 
-        <a th:href="@{/admin/estudios}" class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]">
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]"
+           th:href="@{/admin/estudios}">
             <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
             </svg>
             Estudios
         </a>
 
-        <a th:href="@{/admin/normativas}" class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]">
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]"
+           th:href="@{/admin/normativas}">
             <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M3 13h2v8H3zm4-8h2v16H7zm4-2h2v18h-2zm4 4h2v14h-2zm4-2h2v16h-2z"/>
             </svg>
             Repositorio Normativo
         </a>
 
-        <a href="#" class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]">
+        <a th:href="@{/admin/registros/actividad}"
+           class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]">
+
             <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/>
             </svg>
             Registros de actividad
         </a>
 
-        <a href="#" class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]">
+        <a th:href="@{/admin/registros/descargas}"
+           class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]">
             <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M21 5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5zm-2 0l-6.5 4L5 5h14zm0 13H5V7l6.5 4L19 7v11z"/>
             </svg>
@@ -163,256 +171,302 @@
         </a>
     </nav>
 
-
+    <!-- Footer Tabs -->
     <div class="pt-4 space-y-2 relative before:absolute before:top-0 before:left-4 before:right-4 before:h-px before:bg-surface-variant">
-        <a href="#" class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]">
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]"
+           href="#">
             <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.62l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.09-.47 0-.59.22L2.74 8.87c-.12.21-.08.48.1.62l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.62l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.04.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.09.47 0 .59-.22l1.92-3.32c.12-.22.07-.48-.1-.62l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
             </svg>
             Configuración
         </a>
 
-        <a href="#" class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]">
-            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
-            </svg>
-            Cerrar Sesión
-        </a>
+
+        <form th:action="@{/logout}" method="post">
+            <button type="submit"
+                    class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0] w-full text-left">
+                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                </svg>
+                Cerrar Sesión
+            </button>
+        </form>
+
     </div>
 </aside>
 
-<!-- Main Content Canvas -->
 <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
-    <!-- TopAppBar -->
-    <header class="flex justify-between items-center px-8 py-4 w-full h-20 sticky top-0 z-40 bg-[#f7f9fb]/80 dark:bg-slate-950/80 backdrop-blur-xl">
-        <div class="flex-shrink-0">
-            <div class="text-2xl font-headline font-bold text-primary-container">Reciclame</div>
-        </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-        <div class="flex items-center gap-6 ml-auto">
-            <button class="text-slate-500 dark:text-slate-400 hover:text-[#2ECC71] transition-colors relative">
-                <svg class="w-6 h-6 text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V2c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 3.36 6 5.92 6 9v5l-2 2v1h16v-1l-2-2z"/>
-                </svg>
-                <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border border-surface-container-lowest"></span>
-            </button>
 
-            <div class="flex items-center gap-3 cursor-pointer p-1 rounded-full hover:bg-surface-container-low transition-colors">
-                <img alt="Paola Flores" class="w-10 h-10 rounded-full object-cover ring-2 ring-surface-container-lowest shadow-sm" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23E8C4A0'/%3E%3Ccircle cx='50' cy='35' r='15' fill='%23D4A574'/%3E%3Cellipse cx='50' cy='65' rx='20' ry='25' fill='%23D4A574'/%3E%3C/svg%3E" />
-                <div class="hidden md:flex flex-col justify-center">
-                    <span class="font-label font-medium text-sm text-[#001B2E] dark:text-white leading-tight">Paola Flores</span>
-                    <span class="text-[10px] font-bold text-on-secondary-fixed bg-secondary-fixed px-2 py-0.5 rounded-full w-max mt-0.5 tracking-wider">ADMIN</span>
+    <main class="flex-1 overflow-y-auto px-8 py-3">
+        <div class="w-full">
+            <div class="mb-5">
+                <div>
+                    <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                        Dashboard
+                    </h2>
+                    <p class="font-body text-on-surface-variant text-base mt-2">
+                        Control central para la gestión y supervisión del repositorio circular.
+                    </p>
+
                 </div>
             </div>
-        </div>
-    </header>
 
-    <!-- Main Scrollable Content -->
-    <main class="flex-1 overflow-y-auto px-6 md:px-10 py-8 pb-24">
-        <div class="max-w-7xl mx-auto">
-            <header class="mb-10">
-                <h1 class="font-headline text-3xl md:text-4xl font-extrabold text-on-primary-fixed tracking-tight mb-2">Dashboard</h1>
-                <p class="font-body text-sm md:text-base text-on-surface-variant max-w-2xl leading-relaxed">
-                    Control central para la gestión y supervisión del repositorio circular.
-                </p>
-            </header>
+            <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
+                <section class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4 mb-8">
+                    <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="bg-emerald-50 text-secondary rounded-lg w-10 h-10 flex items-center justify-center shadow-sm">
+                                <span class="material-symbols-outlined text-xl">verified</span>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                Vigente
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
+                                Normativas vigentes
+                            </h4>
+                            <div class="text-4xl font-extrabold text-on-primary-fixed mb-4">84</div>
+                            <div class="flex gap-6 text-sm">
+                                <div>
+                                    <p class="text-on-surface-variant font-medium">Nacional</p>
+                                    <p class="font-bold text-on-surface">52</p>
+                                </div>
+                                <div>
+                                    <p class="text-on-surface-variant font-medium">Internacional</p>
+                                    <p class="font-bold text-on-surface">32</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
 
-            <section class="mb-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <article class="relative overflow-hidden rounded-xl border border-emerald-200 bg-surface-container-lowest p-6 ambient-shadow">
-                    <div class="mb-4 flex items-start justify-between">
-                        <span class="rounded-full bg-emerald-50 px-2 py-1 text-[0.65rem] font-bold uppercase tracking-widest text-secondary">VIGENTE</span>
-                        <span class="material-symbols-outlined text-xl text-secondary">verified</span>
-                    </div>
-                    <div class="mb-4 text-4xl font-black text-on-primary-fixed">84</div>
-                    <div class="flex gap-4 border-t border-surface-variant pt-4">
-                        <div>
-                            <p class="text-[0.6rem] font-bold uppercase text-on-surface-variant">Nacional</p>
-                            <p class="font-bold text-on-surface">52</p>
+                    <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="bg-orange-100 text-orange-600 rounded-lg w-10 h-10 flex items-center justify-center shadow-sm">
+                                <span class="material-symbols-outlined text-xl">publish</span>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                Publicado
+                            </div>
                         </div>
-                        <div>
-                            <p class="text-[0.6rem] font-bold uppercase text-on-surface-variant">Internacional</p>
-                            <p class="font-bold text-on-surface">32</p>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
+                                Proyectos publicados
+                            </h4>
+                            <div class="text-4xl font-extrabold text-on-primary-fixed mb-4">28</div>
+                            <div class="flex gap-6 text-sm">
+                                <div>
+                                    <p class="text-on-surface-variant font-medium">Nacional</p>
+                                    <p class="font-bold text-on-surface">15</p>
+                                </div>
+                                <div>
+                                    <p class="text-on-surface-variant font-medium">Internacional</p>
+                                    <p class="font-bold text-on-surface">13</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="absolute bottom-0 right-0 w-24 h-24 rounded-full bg-emerald-50 -mr-12 -mb-12"></div>
-                </article>
+                    </article>
 
-                <article class="relative overflow-hidden rounded-xl border border-orange-200 bg-surface-container-lowest p-6 ambient-shadow">
-                    <div class="mb-4 flex items-start justify-between">
-                        <span class="rounded-full bg-orange-100 px-2 py-1 text-[0.65rem] font-bold uppercase tracking-widest text-orange-600">PROYECTO PUBLICADO</span>
-                        <span class="material-symbols-outlined text-xl text-orange-500">publish</span>
-                    </div>
-                    <div class="mb-4 text-4xl font-black text-on-primary-fixed">28</div>
-                    <div class="flex gap-4 border-t border-surface-variant pt-4">
-                        <div>
-                            <p class="text-[0.6rem] font-bold uppercase text-on-surface-variant">Nacional</p>
-                            <p class="font-bold text-on-surface">15</p>
+                    <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="bg-blue-100 text-blue-600 rounded-lg w-10 h-10 flex items-center justify-center shadow-sm">
+                                <span class="material-symbols-outlined text-xl">forum</span>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                Consulta
+                            </div>
                         </div>
-                        <div>
-                            <p class="text-[0.6rem] font-bold uppercase text-on-surface-variant">Internacional</p>
-                            <p class="font-bold text-on-surface">13</p>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
+                                Consulta pública
+                            </h4>
+                            <div class="text-4xl font-extrabold text-on-primary-fixed mb-4">16</div>
+                            <div class="flex gap-6 text-sm">
+                                <div>
+                                    <p class="text-on-surface-variant font-medium">Nacional</p>
+                                    <p class="font-bold text-on-surface">10</p>
+                                </div>
+                                <div>
+                                    <p class="text-on-surface-variant font-medium">Internacional</p>
+                                    <p class="font-bold text-on-surface">06</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="absolute bottom-0 right-0 w-24 h-24 rounded-full bg-orange-50 -mr-12 -mb-12"></div>
-                </article>
+                    </article>
 
-                <article class="relative overflow-hidden rounded-xl border border-blue-200 bg-surface-container-lowest p-6 ambient-shadow">
-                    <div class="mb-4 flex items-start justify-between">
-                        <span class="rounded-full bg-blue-100 px-2 py-1 text-[0.65rem] font-bold uppercase tracking-widest text-blue-600">CONSULTA PÚBLICA</span>
-                        <span class="material-symbols-outlined text-xl text-blue-500">forum</span>
-                    </div>
-                    <div class="mb-4 text-4xl font-black text-on-primary-fixed">16</div>
-                    <div class="flex gap-4 border-t border-surface-variant pt-4">
-                        <div>
-                            <p class="text-[0.6rem] font-bold uppercase text-on-surface-variant">Nacional</p>
-                            <p class="font-bold text-on-surface">10</p>
+                    <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="bg-error-container text-error rounded-lg w-10 h-10 flex items-center justify-center shadow-sm">
+                                <span class="material-symbols-outlined text-xl">cancel</span>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                Derogada
+                            </div>
                         </div>
-                        <div>
-                            <p class="text-[0.6rem] font-bold uppercase text-on-surface-variant">Internacional</p>
-                            <p class="font-bold text-on-surface">06</p>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
+                                Normativas derogadas
+                            </h4>
+                            <div class="text-4xl font-extrabold text-on-primary-fixed mb-4">14</div>
+                            <div class="flex gap-6 text-sm">
+                                <div>
+                                    <p class="text-on-surface-variant font-medium">Nacional</p>
+                                    <p class="font-bold text-on-surface">09</p>
+                                </div>
+                                <div>
+                                    <p class="text-on-surface-variant font-medium">Internacional</p>
+                                    <p class="font-bold text-on-surface">05</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="absolute bottom-0 right-0 w-24 h-24 rounded-full bg-blue-50 -mr-12 -mb-12"></div>
-                </article>
+                    </article>
+                </section>
 
-                <article class="relative overflow-hidden rounded-xl border border-rose-200 bg-surface-container-lowest p-6 ambient-shadow">
-                    <div class="mb-4 flex items-start justify-between">
-                        <span class="rounded-full bg-rose-100 px-2 py-1 text-[0.65rem] font-bold uppercase tracking-widest text-rose-600">DEROGADA</span>
-                        <span class="material-symbols-outlined text-xl text-rose-500">cancel</span>
-                    </div>
-                    <div class="mb-4 text-4xl font-black text-on-primary-fixed">14</div>
-                    <div class="flex gap-4 border-t border-surface-variant pt-4">
-                        <div>
-                            <p class="text-[0.6rem] font-bold uppercase text-on-surface-variant">Nacional</p>
-                            <p class="font-bold text-on-surface">09</p>
-                        </div>
-                        <div>
-                            <p class="text-[0.6rem] font-bold uppercase text-on-surface-variant">Internacional</p>
-                            <p class="font-bold text-on-surface">05</p>
-                        </div>
-                    </div>
-                    <div class="absolute bottom-0 right-0 w-24 h-24 rounded-full bg-rose-50 -mr-12 -mb-12"></div>
-                </article>
-            </section>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <section class="lg:col-span-2 bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border">
+                        <h3 class="font-headline text-lg font-bold text-on-primary-fixed mb-6">
+                            Distribución por temática
+                        </h3>
 
-            <div class="grid grid-cols-1 gap-10 lg:grid-cols-3">
-                <section class="rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-8 ambient-shadow lg:col-span-2">
-                    <h3 class="font-headline mb-8 text-xl font-bold text-on-primary-fixed">Distribución por temática</h3>
-                    <div class="flex flex-col items-center justify-around gap-10 md:flex-row">
-                        <div class="relative h-48 w-48">
-                            <svg class="h-full w-full -rotate-90 transform" viewBox="0 0 36 36">
-                                <circle class="text-surface-container" cx="18" cy="18" fill="transparent" r="16" stroke="currentColor" stroke-width="3"></circle>
-                                <circle class="donut-segment" cx="18" cy="18" fill="transparent" r="16" stroke="#006d42" stroke-dasharray="40 100" stroke-width="4"></circle>
-                                <circle class="donut-segment" cx="18" cy="18" fill="transparent" r="16" stroke="#f59e0b" stroke-dasharray="25 100" stroke-dashoffset="-40" stroke-width="4"></circle>
-                                <circle class="donut-segment" cx="18" cy="18" fill="transparent" r="16" stroke="#3b82f6" stroke-dasharray="20 100" stroke-dashoffset="-65" stroke-width="4"></circle>
-                                <circle class="donut-segment" cx="18" cy="18" fill="transparent" r="16" stroke="#ef4444" stroke-dasharray="15 100" stroke-dashoffset="-85" stroke-width="4"></circle>
-                            </svg>
-                            <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                                <span class="text-2xl font-black text-on-primary-fixed">142</span>
-                                <span class="text-[0.65rem] font-bold uppercase tracking-tighter text-on-surface-variant">NORMAS</span>
+                        <div class="flex flex-col md:flex-row items-center justify-around gap-10">
+                            <div class="relative h-48 w-48">
+                                <svg class="h-full w-full -rotate-90 transform" viewBox="0 0 36 36">
+                                    <circle class="text-surface-container" cx="18" cy="18" fill="transparent" r="16" stroke="currentColor" stroke-width="3"></circle>
+                                    <circle class="donut-segment" cx="18" cy="18" fill="transparent" r="16" stroke="#006d42" stroke-dasharray="40 100" stroke-width="4"></circle>
+                                    <circle class="donut-segment" cx="18" cy="18" fill="transparent" r="16" stroke="#f59e0b" stroke-dasharray="25 100" stroke-dashoffset="-40" stroke-width="4"></circle>
+                                    <circle class="donut-segment" cx="18" cy="18" fill="transparent" r="16" stroke="#3b82f6" stroke-dasharray="20 100" stroke-dashoffset="-65" stroke-width="4"></circle>
+                                    <circle class="donut-segment" cx="18" cy="18" fill="transparent" r="16" stroke="#ef4444" stroke-dasharray="15 100" stroke-dashoffset="-85" stroke-width="4"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                                    <span class="text-2xl font-black text-on-primary-fixed">142</span>
+                                    <span class="text-[0.65rem] font-bold uppercase tracking-tighter text-on-surface-variant">Normas</span>
+                                </div>
+                            </div>
+
+                            <div class="grid w-full md:w-auto gap-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-3 w-3 rounded-full bg-secondary"></div>
+                                    <span class="flex-grow text-sm font-bold text-on-surface-variant">Envases y Embalajes</span>
+                                    <span class="text-sm font-black text-on-primary-fixed">56</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="h-3 w-3 rounded-full bg-orange-500"></div>
+                                    <span class="flex-grow text-sm font-bold text-on-surface-variant">Residuos Sólidos</span>
+                                    <span class="text-sm font-black text-on-primary-fixed">35</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="h-3 w-3 rounded-full bg-blue-500"></div>
+                                    <span class="flex-grow text-sm font-bold text-on-surface-variant">Responsabilidad Extendida</span>
+                                    <span class="text-sm font-black text-on-primary-fixed">28</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="h-3 w-3 rounded-full bg-error"></div>
+                                    <span class="flex-grow text-sm font-bold text-on-surface-variant">Otros</span>
+                                    <span class="text-sm font-black text-on-primary-fixed">23</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border">
+                        <h3 class="font-headline text-lg font-bold text-on-primary-fixed mb-6">
+                            Últimas actualizaciones
+                        </h3>
+
+                        <div class="flex flex-col gap-5">
+                            <div class="group flex items-start gap-4 cursor-pointer">
+                                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-container text-on-surface-variant transition-colors group-hover:bg-secondary group-hover:text-white">
+                                    <span class="material-symbols-outlined">description</span>
+                                </div>
+                                <div class="flex-grow">
+                                    <h4 class="text-sm font-bold leading-tight text-on-surface group-hover:text-secondary transition-colors">
+                                        Ley de Envases y Embalajes - Perú
+                                    </h4>
+                                    <p class="mt-1 mb-2 text-[0.7rem] font-medium text-on-surface-variant">Hace 2 horas</p>
+                                    <span class="rounded-md bg-secondary-container/20 px-2 py-0.5 text-[0.6rem] font-bold text-on-secondary-container">
+                                            MODIFICADO
+                                        </span>
+                                </div>
+                            </div>
+
+                            <div class="group flex items-start gap-4 cursor-pointer">
+                                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-container text-on-surface-variant transition-colors group-hover:bg-secondary group-hover:text-white">
+                                    <span class="material-symbols-outlined">article</span>
+                                </div>
+                                <div class="flex-grow">
+                                    <h4 class="text-sm font-bold leading-tight text-on-surface group-hover:text-secondary transition-colors">
+                                        Guía de Ecodiseño Circular 2024
+                                    </h4>
+                                    <p class="mt-1 mb-2 text-[0.7rem] font-medium text-on-surface-variant">Hace 5 horas</p>
+                                    <span class="rounded-md bg-tertiary-fixed px-2 py-0.5 text-[0.6rem] font-bold text-on-tertiary-container">
+                                            AÑADIDO
+                                        </span>
+                                </div>
+                            </div>
+
+                            <div class="group flex items-start gap-4 cursor-pointer">
+                                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-container text-on-surface-variant transition-colors group-hover:bg-secondary group-hover:text-white">
+                                    <span class="material-symbols-outlined">edit_note</span>
+                                </div>
+                                <div class="flex-grow">
+                                    <h4 class="text-sm font-bold leading-tight text-on-surface group-hover:text-secondary transition-colors">
+                                        Reglamento sobre Plásticos
+                                    </h4>
+                                    <p class="mt-1 mb-2 text-[0.7rem] font-medium text-on-surface-variant">Ayer</p>
+                                    <span class="rounded-md bg-secondary-container/20 px-2 py-0.5 text-[0.6rem] font-bold text-on-secondary-container">
+                                            MODIFICADO
+                                        </span>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="grid w-full grid-cols-1 gap-4 md:w-auto">
-                            <div class="flex items-center gap-3">
-                                <div class="h-3 w-3 rounded-full bg-secondary"></div>
-                                <span class="flex-grow text-sm font-bold text-on-surface-variant">Envases y Embalajes</span>
-                                <span class="text-sm font-black text-on-primary-fixed">56</span>
+                        <button class="mt-6 w-full border-t border-surface-variant pt-4 text-sm font-bold text-on-surface-variant transition-colors hover:text-secondary">
+                            Ver todos los registros
+                        </button>
+                    </section>
+                </div>
+
+                <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="group relative overflow-hidden rounded-[1.5rem] bg-primary-container p-8 ambient-shadow">
+                        <div class="relative z-10">
+                            <h3 class="font-headline text-2xl font-extrabold text-white mb-3">
+                                Estudios Reciclame
+                            </h3>
+                            <p class="text-sm font-medium text-on-primary-container max-w-xs mb-6">
+                                Accede a investigaciones y reportes técnicos sobre economía circular.
+                            </p>
+                            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-primary-container transition-transform group-hover:scale-110">
+                                <span class="material-symbols-outlined">arrow_forward</span>
                             </div>
-                            <div class="flex items-center gap-3">
-                                <div class="h-3 w-3 rounded-full bg-orange-500"></div>
-                                <span class="flex-grow text-sm font-bold text-on-surface-variant">Residuos Sólidos</span>
-                                <span class="text-sm font-black text-on-primary-fixed">35</span>
+                        </div>
+                        <div class="absolute right-0 top-0 h-48 w-48 rounded-full bg-white/5 blur-3xl -mr-16 -mt-16"></div>
+                    </div>
+
+                    <div class="group relative overflow-hidden rounded-[1.5rem] bg-surface-container-lowest p-8 ambient-shadow ghost-border">
+                        <div class="relative z-10">
+                            <div class="mb-3 flex items-center gap-2">
+                                <div class="h-2 w-2 rounded-full bg-secondary"></div>
+                                <span class="text-xs font-bold uppercase tracking-widest text-secondary">Repositorio</span>
                             </div>
-                            <div class="flex items-center gap-3">
-                                <div class="h-3 w-3 rounded-full bg-blue-500"></div>
-                                <span class="flex-grow text-sm font-bold text-on-surface-variant">Responsabilidad Extendida</span>
-                                <span class="text-sm font-black text-on-primary-fixed">28</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <div class="h-3 w-3 rounded-full bg-error"></div>
-                                <span class="flex-grow text-sm font-bold text-on-surface-variant">Otros</span>
-                                <span class="text-sm font-black text-on-primary-fixed">23</span>
+                            <h3 class="font-headline text-2xl font-extrabold text-on-primary-fixed mb-3">
+                                Normativas
+                            </h3>
+                            <p class="text-sm font-medium text-on-surface-variant max-w-xs mb-6">
+                                Base de datos legal actualizada sobre sostenibilidad y reciclaje.
+                            </p>
+                            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-container text-white transition-transform group-hover:scale-110">
+                                <span class="material-symbols-outlined">arrow_forward</span>
                             </div>
                         </div>
                     </div>
                 </section>
-
-                <section class="rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-8 ambient-shadow">
-                    <h3 class="font-headline mb-6 text-xl font-bold text-on-primary-fixed">Últimas actualizaciones</h3>
-                    <div class="flex flex-col gap-6">
-                        <div class="group flex cursor-pointer items-start gap-4">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container text-on-surface-variant transition-colors group-hover:bg-secondary group-hover:text-white">
-                                <span class="material-symbols-outlined">description</span>
-                            </div>
-                            <div class="flex-grow">
-                                <h4 class="mb-1 text-sm font-bold leading-tight text-on-surface transition-colors group-hover:text-secondary">Ley de Envases y Embalajes - Perú</h4>
-                                <p class="mb-2 text-[0.7rem] font-medium text-on-surface-variant">Hace 2 horas</p>
-                                <span class="rounded-md bg-secondary-container/20 px-2 py-0.5 text-[0.6rem] font-bold text-on-secondary-container">MODIFICADO</span>
-                            </div>
-                        </div>
-
-                        <div class="group flex cursor-pointer items-start gap-4">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container text-on-surface-variant transition-colors group-hover:bg-secondary group-hover:text-white">
-                                <span class="material-symbols-outlined">article</span>
-                            </div>
-                            <div class="flex-grow">
-                                <h4 class="mb-1 text-sm font-bold leading-tight text-on-surface transition-colors group-hover:text-secondary">Guía de Ecodiseño Circular 2024</h4>
-                                <p class="mb-2 text-[0.7rem] font-medium text-on-surface-variant">Hace 5 horas</p>
-                                <span class="rounded-md bg-tertiary-fixed px-2 py-0.5 text-[0.6rem] font-bold text-on-tertiary-container">AÑADIDO</span>
-                            </div>
-                        </div>
-
-                        <div class="group flex cursor-pointer items-start gap-4">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container text-on-surface-variant transition-colors group-hover:bg-secondary group-hover:text-white">
-                                <span class="material-symbols-outlined">edit_note</span>
-                            </div>
-                            <div class="flex-grow">
-                                <h4 class="mb-1 text-sm font-bold leading-tight text-on-surface transition-colors group-hover:text-secondary">Reglamento sobre Plásticos</h4>
-                                <p class="mb-2 text-[0.7rem] font-medium text-on-surface-variant">Ayer</p>
-                                <span class="rounded-md bg-secondary-container/20 px-2 py-0.5 text-[0.6rem] font-bold text-on-secondary-container">MODIFICADO</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button class="mt-8 w-full border-t border-surface-variant py-3 text-sm font-bold text-on-surface-variant transition-colors hover:text-secondary">
-                        Ver todos los registros
-                    </button>
-                </section>
             </div>
-
-            <section class="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2">
-                <div class="group relative cursor-pointer overflow-hidden rounded-[2.5rem] bg-primary-container p-10 shadow-xl">
-                    <div class="relative z-10">
-                        <h3 class="font-headline mb-4 text-3xl font-extrabold text-white">Estudios Reciclame</h3>
-                        <p class="mb-8 max-w-xs text-sm font-medium text-on-primary-container">Accede a investigaciones y reportes técnicos sobre economía circular.</p>
-                        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-primary-container transition-transform group-hover:scale-110">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </div>
-                    </div>
-                    <div class="absolute right-0 top-0 h-64 w-64 rounded-full bg-white/5 blur-3xl -mr-20 -mt-20"></div>
-                    <div class="pointer-events-none absolute bottom-0 right-10 translate-y-4 transform opacity-20 transition-transform group-hover:translate-y-0">
-                        <span class="material-symbols-outlined text-[10rem] text-white" style="font-variation-settings: 'FILL' 1;">analytics</span>
-                    </div>
-                </div>
-
-                <div class="group relative cursor-pointer overflow-hidden rounded-[2.5rem] border border-outline-variant/30 bg-surface-container-lowest p-10 ambient-shadow">
-                    <div class="relative z-10">
-                        <div class="mb-4 flex items-center gap-2">
-                            <div class="h-2 w-2 rounded-full bg-secondary"></div>
-                            <span class="text-xs font-bold uppercase tracking-widest text-secondary">Repositorio</span>
-                        </div>
-                        <h3 class="font-headline mb-4 text-3xl font-extrabold text-on-primary-fixed">Normativas</h3>
-                        <p class="mb-8 max-w-xs text-sm font-medium text-on-surface-variant">Base de datos legal actualizada sobre sostenibilidad y reciclaje.</p>
-                        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-container text-white transition-transform group-hover:scale-110">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </div>
-                    </div>
-                    <div class="pointer-events-none absolute bottom-0 right-10 translate-y-4 transform opacity-10 transition-transform group-hover:translate-y-0">
-                        <span class="material-symbols-outlined text-[10rem] text-primary-container" style="font-variation-settings: 'FILL' 1;">gavel</span>
-                    </div>
-                </div>
-            </section>
         </div>
     </main>
 </div>
