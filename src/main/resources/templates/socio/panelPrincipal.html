@@ -112,116 +112,12 @@
 <body
     class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
     <!-- SideNavBar -->
-    <aside class="hidden md:flex flex-col h-full w-64 p-5 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50">
-        <!-- Brand / Header -->
-        <div class="flex items-center gap-3 mb-10 pl-2">
-            <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
-                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M7 19c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-8h4V9h-4V7c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H3v2h4v8zm2-8h6V7H9v4z" />
-                </svg>
-            </div>
-            <div class="flex flex-col">
-                <h1 class="text-[#001B2E] dark:text-white font-black text-xl font-headline tracking-tight">Reciclame
-                </h1>
-                <span class="text-xs text-on-surface-variant font-medium">Economía Circular</span>
-            </div>
-        </div>
-
-        <!-- Navigation Tabs -->
-        <nav class="flex-1 space-y-2">
-            <a class="bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 font-headline font-bold text-sm tracking-tight scale-95 active:scale-100 transition-transform"
-                href="#">
-                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-                </svg>
-                Inicio
-            </a>
-
-            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                href="#">
-                <div th:replace="~{fragments/icons.html :: icon-estudios-sidebar}"></div>
-                Estudios
-            </a>
-
-            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                href="#">
-                <div th:replace="~{fragments/icons.html :: icon-normativas-sidebar}"></div>
-                Repositorio Normativo
-            </a>
-
-            <!-- <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                href="#">
-                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z" />
-                </svg>
-                Indicadores
-            </a>
-
-            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                href="#">
-                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M21 5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5zm-2 0l-6.5 4L5 5h14zm0 13H5V7l6.5 4L19 7v11z" />
-                </svg>
-                Publicaciones
-            </a> -->
-        </nav>
-
-
-
-        <!-- Footer Tabs -->
-        <div
-            class="pt-4 space-y-2 relative before:absolute before:top-0 before:left-4 before:right-4 before:h-px before:bg-surface-variant">
-
-
-            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                href="#">
-                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
-                </svg>
-                Cerrar Sesión
-            </a>
-        </div>
-    </aside>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
     <!-- Main Content Canvas -->
     <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
         <!-- TopAppBar -->
-        <header class="bg-surface flex items-center justify-between px-8 py-4 w-full h-auto sticky top-0 z-40">
-            <!-- Left Side: Brand -->
-            <div class="flex items-center h-full">
-                <img alt="Reciclame Logo" src="../../static/images/logo-reciclame.png"
-                    th:src="@{/images/logo-reciclame.png}" class="h-9 object-contain" />
-            </div>
-
-            <!-- Right Side: Actions & Profile -->
-            <div class="flex items-center gap-6">
-                <button
-                    class="text-on-surface-variant hover:bg-surface-container rounded-full p-2 transition-colors scale-95 active:scale-90 relative">
-                    <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                        <path
-                            d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V2c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 3.36 6 5.92 6 9v5l-2 2v1h16v-1l-2-2z" />
-                    </svg>
-                    <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
-                </button>
-
-                <div class="flex items-center gap-3 pl-4 border-l border-outline-variant/30">
-                    <div class="flex flex-col items-end">
-                        <span class="font-headline font-bold text-sm text-on-primary-fixed">Paola Flores</span>
-                        <span
-                            class="font-label font-medium text-[10px] bg-secondary text-on-secondary px-2 py-0.5 rounded-full tracking-wider">SOCIO</span>
-                    </div>
-                    <svg class="w-10 h-10 rounded-full border-2 border-surface-container-lowest shadow-sm text-primary-container"
-                        fill="currentColor" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="50" fill="#E8C4A0" />
-                        <circle cx="50" cy="35" r="15" fill="#D4A574" />
-                        <ellipse cx="50" cy="65" rx="20" ry="25" fill="#D4A574" />
-                    </svg>
-                </div>
-            </div>
-        </header>
+        <div th:replace="~{fragments/header :: header}"></div>
 
         <!-- Scrollable Canvas -->
         <div class="flex-1 overflow-y-auto px-8 py-3">

@@ -112,120 +112,13 @@
 <body
     class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
     <!-- SideNavBar -->
-    <aside class="hidden md:flex flex-col h-full w-64 p-5 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50">
-        <!-- Brand / Header -->
-        <div class="flex items-center gap-3 mb-10 pl-2">
-            <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
-                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M7 19c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-8h4V9h-4V7c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H3v2h4v8zm2-8h6V7H9v4z" />
-                </svg>
-            </div>
-            <div class="flex flex-col">
-                <h1 class="text-[#001B2E] dark:text-white font-black text-xl font-headline tracking-tight">Reciclame
-                </h1>
-                <span class="text-xs text-on-surface-variant font-medium">Economía Circular</span>
-            </div>
-        </div>
-
-        <!-- Navigation Tabs -->
-        <nav class="flex-1 space-y-2">
-            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                href="#">
-                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-                </svg>
-                Inicio
-            </a>
-
-            <a class="bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 font-headline font-bold text-sm tracking-tight scale-95 active:scale-100 transition-transform"
-                href="#">
-                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-                </svg>
-                Estudios
-            </a>
-
-            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                href="#">
-                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M3 13h2v8H3zm4-8h2v16H7zm4-2h2v18h-2zm4 4h2v14h-2zm4-2h2v16h-2z" />
-                </svg>
-                Repositorio Normativo
-            </a>
-
-            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                href="#">
-                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z" />
-                </svg>
-                Indicadores
-            </a>
-
-            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                href="#">
-                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M21 5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5zm-2 0l-6.5 4L5 5h14zm0 13H5V7l6.5 4L19 7v11z" />
-                </svg>
-                Publicaciones
-            </a>
-        </nav>
-
-
-
-        <!-- Footer Tabs -->
-        <div
-            class="pt-4 space-y-2 relative before:absolute before:top-0 before:left-4 before:right-4 before:h-px before:bg-surface-variant">
-
-            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                href="#">
-                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
-                </svg>
-                Cerrar Sesión
-            </a>
-        </div>
-    </aside>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
     <!-- Main Content Canvas -->
     <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
 
         <!-- TopAppBar -->
-        <header class="bg-surface flex items-center justify-between px-8 py-4 w-full h-auto sticky top-0 z-40">
-            <!-- Left Side: Brand -->
-            <div class="flex items-center h-full">
-                <img alt="Reciclame Logo" src="../../static/images/logo-reciclame.png"
-                    th:src="@{/images/logo-reciclame.png}" class="h-9 object-contain" />
-            </div>
-
-            <!-- Right Side: Actions & Profile -->
-            <div class="flex items-center gap-6">
-                <button
-                    class="text-on-surface-variant hover:bg-surface-container rounded-full p-2 transition-colors scale-95 active:scale-90 relative">
-                    <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                        <path
-                            d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V2c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 3.36 6 5.92 6 9v5l-2 2v1h16v-1l-2-2z" />
-                    </svg>
-                    <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
-                </button>
-
-                <div class="flex items-center gap-3 pl-4 border-l border-outline-variant/30">
-                    <div class="flex flex-col items-end">
-                        <span class="font-headline font-bold text-sm text-on-primary-fixed">Paola Flores</span>
-                        <span
-                            class="font-label font-medium text-[10px] bg-secondary text-on-secondary px-2 py-0.5 rounded-full tracking-wider">SOCIO</span>
-                    </div>
-                    <svg class="w-10 h-10 rounded-full border-2 border-surface-container-lowest shadow-sm text-primary-container"
-                        fill="currentColor" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="50" fill="#E8C4A0" />
-                        <circle cx="50" cy="35" r="15" fill="#D4A574" />
-                        <ellipse cx="50" cy="65" rx="20" ry="25" fill="#D4A574" />
-                    </svg>
-                </div>
-            </div>
-        </header>
+        <div th:replace="~{fragments/header :: header}"></div>
 
 
 
@@ -293,22 +186,30 @@
 
                 <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
                     <!-- Search Bar -->
-                    <div class="flex gap-4 mb-6">
+                    <form action="/estudios" method="GET" class="flex gap-4 mb-6 w-full">
                         <div class="flex-1 relative">
                             <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
-                            <input type="text" placeholder="Buscar en el repositorio..."
+                            <input type="text" name="search" placeholder="Buscar en el repositorio..."
                                 class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
                         </div>
-                        <button id="openFiltersModal"
+                        <a href="/estudios"
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
+                            title="Limpiar filtros">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            <span class="text-sm font-medium">Limpiar</span>
+                        </a>
+                        <button type="button" id="openFiltersModal"
                             class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
                             <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
                             <span class="text-sm font-medium">Filtros avanzados</span>
                         </button>
-                        <button id="toggleViewBtn"
+                        <button type="button" id="toggleViewBtn"
                             class="h-12 w-12 flex items-center justify-center bg-white text-slate-700 rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors"
                             title="Cambiar vista">
                             <svg id="icon-list" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -318,187 +219,68 @@
                             <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+
                                     d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                             </svg>
                         </button>
+                    </form>
+
+                    <!-- Mensaje No hay documentos -->
+                    <div th:if="${#lists.isEmpty(estudios)}" class="text-center py-10">
+                        <p class="text-lg font-bold text-on-surface-variant">No hay documentos disponibles</p>
                     </div>
 
                     <!-- Cards Grid -->
-                    <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Card 1: Vigente -->
-                        <article
-                            class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden">
+                    <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" th:if="${not #lists.isEmpty(estudios)}">
+                        <!-- Card 1: Dynamic -->
+                        <article th:each="estudio, stat : ${estudios}"
+                            class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden"
+                            th:classappend="${estudio.estado == 'DEROGADO' ? 'bg-opacity-80' : ''}">
                             <div
-                                class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container opacity-0 group-hover:opacity-100 transition-opacity">
+                                th:classappend="${estudio.estado == 'VIGENTE' ? 'bg-gradient-to-r from-secondary to-secondary-container' : (estudio.estado == 'BORRADOR' ? 'bg-gradient-to-r from-outline to-surface-variant' : 'bg-gradient-to-r from-error to-error-container')}"
+                                class="absolute top-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             </div>
-                            <div class="flex justify-between items-start mb-5">
-                                <div
-                                    class="w-10 h-10 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shadow-sm">
-                                    <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
+                            <div class="flex justify-between items-start mb-5" th:classappend="${estudio.estado == 'DEROGADO' ? 'opacity-70' : ''}">
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm"
+                                     th:classappend="${estudio.formato == 'PDF' ? 'bg-error-container text-on-error-container' : 
+                                                    (estudio.formato == 'PPTX' ? 'bg-orange-100 text-orange-600' : 
+                                                    (estudio.formato == 'XLSX' ? 'bg-emerald-100 text-emerald-700' : 
+                                                    'bg-surface-container-high text-outline'))}">
+                                    <th:block th:switch="${estudio.formato}">
+                                        <th:block th:case="'PDF'"><div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div></th:block>
+                                        <th:block th:case="'PPTX'"><div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div></th:block>
+                                        <th:block th:case="'XLSX'"><div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div></th:block>
+                                        <th:block th:case="*"><div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div></th:block>
+                                    </th:block>
                                 </div>
                                 <div
                                     class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
-                                    <span>2024</span>
+                                    <span th:text="${estudio.anio}">2024</span>
                                     <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                                    <span>PDF</span>
+                                    <span th:text="${estudio.formato}">PDF</span>
                                 </div>
                             </div>
-                            <div class="flex-1">
+                            <div class="flex-1" th:classappend="${estudio.estado == 'DEROGADO' ? 'opacity-70' : ''}">
                                 <h4
+                                    th:text="${estudio.titulo}"
+                                    th:classappend="${estudio.estado == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}"
                                     class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
                                     Análisis de Ciclo de Vida de Envases PET en Perú</h4>
-                                <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
-                                    Estudio
-                                    exhaustivo sobre el impacto ambiental y las tasas de recuperación de envases de
-                                    tereftalato de polietileno en la región costa, destacando oportunidades de mejora en
-                                    la
-                                    cadena de reciclaje.</p>
+                                <p th:text="${estudio.descripcion}" class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
+                                    Estudio exhaustivo...</p>
                             </div>
                             <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
-                                <div class="flex items-center gap-1.5 text-secondary">
+                                <div class="flex items-center gap-1.5"
+                                     th:classappend="${estudio.estado == 'VIGENTE' ? 'text-secondary' : (estudio.estado == 'BORRADOR' ? 'text-outline' : 'text-error')}">
                                     <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                        <path th:if="${estudio.estado == 'VIGENTE'}" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                        <path th:if="${estudio.estado == 'BORRADOR'}" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                        <path th:if="${estudio.estado == 'DEROGADO'}" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
                                     </svg>
-                                    <span class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
+                                    <span th:text="${estudio.estado}" class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
                                 </div>
                                 <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link"
-                                    href="#">
-                                    Ver Estudio
-                                    <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
-                                        fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
-                                    </svg>
-                                </a>
-                            </div>
-                        </article>
-
-                        <!-- Card 2: Borrador -->
-                        <article
-                            class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden">
-                            <div
-                                class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-outline to-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">
-                            </div>
-                            <div class="flex justify-between items-start mb-5">
-                                <div
-                                    class="w-10 h-10 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shadow-sm">
-                                    <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
-                                </div>
-                                <div
-                                    class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
-                                    <span>2024</span>
-                                    <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                                    <span>PDF</span>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <h4
-                                    class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-primary transition-colors">
-                                    Mapeo de Actores del Reciclaje Inclusivo</h4>
-                                <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
-                                    Documento
-                                    de trabajo preliminar que identifica asociaciones de recicladores de base y su nivel
-                                    de
-                                    integración en los sistemas de gestión municipal a nivel nacional.</p>
-                            </div>
-                            <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
-                                <div class="flex items-center gap-1.5 text-outline">
-                                    <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
-                                    </svg>
-                                    <span class="font-label text-xs font-bold uppercase tracking-wide">Borrador</span>
-                                </div>
-                                <a class="font-label text-sm font-semibold text-primary-container hover:text-primary transition-colors flex items-center gap-1 group/link"
-                                    href="#">
-                                    Ver Estudio
-                                    <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
-                                        fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
-                                    </svg>
-                                </a>
-                            </div>
-                        </article>
-
-                        <!-- Card 3: Archivada -->
-                        <article
-                            class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden bg-opacity-80">
-                            <div
-                                class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container opacity-0 group-hover:opacity-100 transition-opacity">
-                            </div>
-                            <div class="flex justify-between items-start mb-5 opacity-70">
-                                <div
-                                    class="w-10 h-10 rounded-lg bg-surface-container-high text-outline flex items-center justify-center shadow-sm">
-                                    <div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div>
-                                </div>
-                                <div
-                                    class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
-                                    <span>2019</span>
-                                    <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                                    <span>DOCX</span>
-                                </div>
-                            </div>
-                            <div class="flex-1 opacity-70">
-                                <h4
-                                    class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight line-through decoration-outline-variant">
-                                    Estudio Base de Residuos Sólidos Urbanos</h4>
-                                <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
-                                    Diagnóstico situacional reemplazado por la actualización del año 2022. Mantenido en
-                                    el
-                                    archivo únicamente para fines comparativos e históricos.</p>
-                            </div>
-                            <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
-                                <div class="flex items-center gap-1.5 text-error">
-                                    <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
-                                    </svg>
-                                    <span class="font-label text-xs font-bold uppercase tracking-wide">Archivado</span>
-                                </div>
-                                <a class="font-label text-sm font-semibold text-outline hover:text-primary-container transition-colors flex items-center gap-1 group/link"
-                                    href="#">
-                                    Ver Estudio
-                                    <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
-                                        fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
-                                    </svg>
-                                </a>
-                            </div>
-                        </article>
-
-                        <!-- Card 4: Vigente -->
-                        <article
-                            class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden">
-                            <div
-                                class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container opacity-0 group-hover:opacity-100 transition-opacity">
-                            </div>
-                            <div class="flex justify-between items-start mb-5">
-                                <div
-                                    class="w-10 h-10 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shadow-sm">
-                                    <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
-                                </div>
-                                <div
-                                    class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
-                                    <span>2023</span>
-                                    <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                                    <span>PDF</span>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <h4
-                                    class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
-                                    Guía Técnica de Ecodiseño para Pymes</h4>
-                                <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">Manual
-                                    práctico orientado a pequeñas y medianas empresas para la integración de principios
-                                    de
-                                    economía circular desde la fase de concepción de sus productos.</p>
-                            </div>
-                            <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
-                                <div class="flex items-center gap-1.5 text-secondary">
-                                    <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
-                                    </svg>
-                                    <span class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
-                                </div>
-                                <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link"
-                                    href="#">
+                                    th:href="@{/estudios/{id}(id=${estudio.id})}">
                                     Ver Estudio
                                     <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
                                         fill="currentColor" viewBox="0 0 24 24">
@@ -510,7 +292,8 @@
                     </div>
 
                     <!-- List View (Hidden by Default) -->
-                    <div id="listView" class="hidden flex-col gap-4">
+                    <!-- List View (Hidden by Default) -->
+                    <div id="listView" class="hidden flex-col gap-4" th:if="${not #lists.isEmpty(estudios)}">
                         <!-- Header -->
                         <div
                             class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
@@ -521,161 +304,50 @@
                             <div class="col-span-2 lg:col-span-3 text-right">Acción</div>
                         </div>
 
-                        <!-- Item 1: Vigente -->
-                        <div
-                            class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                        <div th:each="estudio, stat : ${estudios}"
+                            class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
                             <div class="col-span-6 lg:col-span-5 flex items-center gap-4 w-full">
                                 <h4
-                                    class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors line-clamp-2">
+                                    th:text="${estudio.titulo}"
+                                    class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors line-clamp-2"
+                                    th:classappend="${estudio.estado == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}">
                                     Análisis de Ciclo de Vida de Envases PET en Perú</h4>
                             </div>
                             <div class="col-span-2 flex justify-center w-full md:w-auto">
-                                <div class="flex items-center gap-1.5 text-secondary">
+                                <div class="flex items-center gap-1.5"
+                                     th:classappend="${estudio.estado == 'VIGENTE' ? 'text-secondary' : (estudio.estado == 'BORRADOR' ? 'text-outline' : 'text-error')}">
                                     <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                        <path th:if="${estudio.estado == 'VIGENTE'}" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                        <path th:if="${estudio.estado == 'BORRADOR'}" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                        <path th:if="${estudio.estado == 'DEROGADO'}" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
                                     </svg>
-                                    <span class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
+                                    <span th:text="${estudio.estado}" class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
                                 </div>
                             </div>
                             <div class="col-span-1 flex justify-center w-full md:w-auto">
                                 <div class="flex items-center gap-2">
-                                    <div
-                                        class="w-8 h-8 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shadow-sm shrink-0">
-                                        <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm shrink-0"
+                                         th:classappend="${estudio.formato == 'PDF' ? 'bg-error-container text-on-error-container' : 
+                                                        (estudio.formato == 'PPTX' ? 'bg-orange-100 text-orange-600' : 
+                                                        (estudio.formato == 'XLSX' ? 'bg-emerald-100 text-emerald-700' : 
+                                                        'bg-surface-container-high text-outline'))}">
+                                        <th:block th:switch="${estudio.formato}">
+                                            <th:block th:case="'PDF'"><div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div></th:block>
+                                            <th:block th:case="'PPTX'"><div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div></th:block>
+                                            <th:block th:case="'XLSX'"><div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div></th:block>
+                                            <th:block th:case="*"><div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div></th:block>
+                                        </th:block>
                                     </div>
-                                    <span
+                                    <span th:text="${estudio.formato}"
                                         class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">PDF</span>
                                 </div>
                             </div>
                             <div class="col-span-1 flex justify-center w-full md:w-auto">
-                                <span class="text-sm font-body text-on-surface-variant font-medium">2024</span>
+                                <span th:text="${estudio.anio}" class="text-sm font-body text-on-surface-variant font-medium">2024</span>
                             </div>
                             <div class="col-span-2 lg:col-span-3 flex justify-end w-full md:w-auto">
                                 <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link"
-                                    href="#">
-                                    Ver Estudio <svg
-                                        class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
-                                        fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Item 2: Borrador -->
-                        <div
-                            class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
-                            <div class="col-span-6 lg:col-span-5 flex items-center gap-4 w-full">
-                                <h4
-                                    class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-primary transition-colors line-clamp-2">
-                                    Mapeo de Actores del Reciclaje Inclusivo</h4>
-                            </div>
-                            <div class="col-span-2 flex justify-center w-full md:w-auto">
-                                <div class="flex items-center gap-1.5 text-outline">
-                                    <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
-                                    </svg>
-                                    <span class="font-label text-xs font-bold uppercase tracking-wide">Borrador</span>
-                                </div>
-                            </div>
-                            <div class="col-span-1 flex justify-center w-full md:w-auto">
-                                <div class="flex items-center gap-2">
-                                    <div
-                                        class="w-8 h-8 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shadow-sm shrink-0">
-                                        <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
-                                    </div>
-                                    <span
-                                        class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">PDF</span>
-                                </div>
-                            </div>
-                            <div class="col-span-1 flex justify-center w-full md:w-auto">
-                                <span class="text-sm font-body text-on-surface-variant font-medium">2024</span>
-                            </div>
-                            <div class="col-span-2 lg:col-span-3 flex justify-end w-full md:w-auto">
-                                <a class="font-label text-sm font-semibold text-primary-container hover:text-primary transition-colors flex items-center gap-1 group/link"
-                                    href="#">
-                                    Ver Estudio <svg
-                                        class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
-                                        fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Item 3: Archivado -->
-                        <div
-                            class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30 opacity-70">
-                            <div class="col-span-6 lg:col-span-5 flex items-center gap-4 w-full">
-                                <h4
-                                    class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-primary transition-colors line-clamp-2 line-through decoration-outline-variant">
-                                    Estudio Base de Residuos Sólidos Urbanos</h4>
-                            </div>
-                            <div class="col-span-2 flex justify-center w-full md:w-auto">
-                                <div class="flex items-center gap-1.5 text-error">
-                                    <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
-                                    </svg>
-                                    <span class="font-label text-xs font-bold uppercase tracking-wide">Archivado</span>
-                                </div>
-                            </div>
-                            <div class="col-span-1 flex justify-center w-full md:w-auto">
-                                <div class="flex items-center gap-2">
-                                    <div
-                                        class="w-8 h-8 rounded-lg bg-surface-container-high text-outline flex items-center justify-center shadow-sm shrink-0">
-                                        <div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div>
-                                    </div>
-                                    <span
-                                        class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">DOCX</span>
-                                </div>
-                            </div>
-                            <div class="col-span-1 flex justify-center w-full md:w-auto">
-                                <span class="text-sm font-body text-on-surface-variant font-medium">2019</span>
-                            </div>
-                            <div class="col-span-2 lg:col-span-3 flex justify-end w-full md:w-auto">
-                                <a class="font-label text-sm font-semibold text-outline hover:text-primary-container transition-colors flex items-center gap-1 group/link"
-                                    href="#">
-                                    Ver Estudio <svg
-                                        class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
-                                        fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Item 4: Vigente 2023 -->
-                        <div
-                            class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
-                            <div class="col-span-6 lg:col-span-5 flex items-center gap-4 w-full">
-                                <h4
-                                    class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors line-clamp-2">
-                                    Guía Técnica de Ecodiseño para Pymes</h4>
-                            </div>
-                            <div class="col-span-2 flex justify-center w-full md:w-auto">
-                                <div class="flex items-center gap-1.5 text-secondary">
-                                    <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
-                                    </svg>
-                                    <span class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
-                                </div>
-                            </div>
-                            <div class="col-span-1 flex justify-center w-full md:w-auto">
-                                <div class="flex items-center gap-2">
-                                    <div
-                                        class="w-8 h-8 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shadow-sm shrink-0">
-                                        <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
-                                    </div>
-                                    <span
-                                        class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">PDF</span>
-                                </div>
-                            </div>
-                            <div class="col-span-1 flex justify-center w-full md:w-auto">
-                                <span class="text-sm font-body text-on-surface-variant font-medium">2023</span>
-                            </div>
-                            <div class="col-span-2 lg:col-span-3 flex justify-end w-full md:w-auto">
-                                <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link"
-                                    href="#">
+                                    th:href="@{/estudios/{id}(id=${estudio.id})}">
                                     Ver Estudio <svg
                                         class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
                                         fill="currentColor" viewBox="0 0 24 24">
@@ -685,34 +357,19 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Minimalist Pagination -->
-                    <div class="mt-12 flex justify-center items-center gap-2">
-                        <button
-                            class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container hover:text-on-surface transition-colors disabled:opacity-50"
-                            disabled="">
-                            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
-                            </svg>
+                    
+                    <!-- Controles de Paginación -->
+                    <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8 hidden" th:if="${not #lists.isEmpty(estudios)}">
+                        <button id="prevPageBtn" class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
                         </button>
-                        <div class="flex items-center gap-1 font-label text-sm font-semibold">
-                            <button
-                                class="w-10 h-10 rounded-full flex items-center justify-center bg-secondary text-on-secondary shadow-md">1</button>
-                            <button
-                                class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">2</button>
-                            <button
-                                class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">3</button>
-                            <span class="px-2 text-outline-variant">...</span>
-                            <button
-                                class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">8</button>
-                        </div>
-                        <button
-                            class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors">
-                            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
-                            </svg>
+                        <div id="pageNumbers" class="flex gap-2"></div>
+                        <button id="nextPageBtn" class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                         </button>
                     </div>
+
+
 
                 </div>
 
@@ -736,7 +393,7 @@
 
             <h2 class="text-2xl font-headline font-bold text-on-primary-fixed mb-6">Filtros Avanzados</h2>
 
-            <form id="filtersForm" class="space-y-6">
+            <form id="filtersForm" action="/estudios" method="GET" class="space-y-6">
                 <!-- Fecha -->
                 <section>
                     <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Fecha</h3>
@@ -756,7 +413,7 @@
 
                         <!-- Año Select -->
                         <div id="yearContainer">
-                            <select id="yearSelect"
+                            <select id="yearSelect" name="yearSelect"
                                 class="w-full sm:w-1/2 appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
                                 <option value="">Seleccione un año</option>
                                 <!-- JS will populate 1990 - Current Year -->
@@ -769,14 +426,14 @@
                                 <label
                                     class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
                                     Inicio</label>
-                                <input type="date" id="dateStart"
+                                <input type="date" id="dateStart" name="dateStart"
                                     class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
                             </div>
                             <div class="flex-1">
                                 <label
                                     class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
                                     Fin</label>
-                                <input type="date" id="dateEnd"
+                                <input type="date" id="dateEnd" name="dateEnd"
                                     class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
                             </div>
                         </div>
@@ -839,10 +496,6 @@
                 </section>
 
                 <div class="pt-6 mt-4 flex justify-end gap-3 border-t border-outline-variant/30">
-                    <button type="button" id="clearFilters"
-                        class="px-5 py-2.5 rounded-lg text-on-surface-variant font-bold text-sm hover:bg-surface-container transition-colors">
-                        Limpiar
-                    </button>
                     <button type="submit"
                         class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary font-bold text-sm hover:bg-[#00210c] transition-colors shadow-sm cursor-pointer">
                         Aplicar Filtros
@@ -913,55 +566,153 @@
             const filtersForm = document.getElementById('filtersForm');
 
             filtersForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const isRange = document.querySelector('input[name="dateType"]:checked').value === 'range';
+                const checkedDateType = document.querySelector('input[name="dateType"]:checked');
+                const isRange = checkedDateType && checkedDateType.value === 'range';
+                
+                if (isRange) {
+                    yearSelect.name = '';
+                    if (!dateStart.value && !dateEnd.value) {
+                         checkedDateType.name = '';
+                    }
+                } else {
+                    dateStart.name = '';
+                    dateEnd.name = '';
+                    if (!yearSelect.value) {
+                         if(checkedDateType) checkedDateType.name = '';
+                         yearSelect.name = '';
+                    }
+                }
+
                 if (isRange && dateStart.value && dateEnd.value) {
                     if (new Date(dateStart.value) > new Date(dateEnd.value)) {
+                        e.preventDefault(); // Bloqueamos el envío porque hay error
                         dateError.classList.remove('hidden');
-                        return; // Block submission
+                        return;
                     } else {
                         dateError.classList.add('hidden');
                     }
                 }
-
-                // Si pasa validación (o no es rango), cierra el modal
-                console.log('Filtros aplicados correctamente');
-                closeModal();
             });
 
-            // Clear Filters
-            document.getElementById('clearFilters').addEventListener('click', () => {
-                filtersForm.reset();
-                yearContainer.classList.remove('hidden');
-                rangeContainer.classList.add('hidden');
-                dateError.classList.add('hidden');
-            });
 
-            // Toggle View Logic
+            // Toggle View & Pagination Logic
             const toggleViewBtn = document.getElementById('toggleViewBtn');
             const gridView = document.getElementById('gridView');
             const listView = document.getElementById('listView');
             const iconList = document.getElementById('icon-list');
             const iconGrid = document.getElementById('icon-grid');
 
-            let isGridView = true;
+            const gridItems = document.querySelectorAll('.grid-item');
+            const listItems = document.querySelectorAll('.list-item');
+            const paginationContainer = document.getElementById('paginationContainer');
+            const pageNumbersContainer = document.getElementById('pageNumbers');
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
 
-            toggleViewBtn.addEventListener('click', () => {
-                isGridView = !isGridView;
-                if (isGridView) {
-                    gridView.classList.remove('hidden');
-                    listView.classList.add('hidden');
-                    listView.classList.remove('flex');
-                    iconList.classList.remove('hidden');
-                    iconGrid.classList.add('hidden');
+            let isGridView = true;
+            let currentPage = 1;
+
+            function renderPagination() {
+                if (!paginationContainer) return;
+
+                const totalItems = isGridView ? gridItems.length : listItems.length;
+                const pageSize = isGridView ? 6 : 5;
+                const totalPages = Math.ceil(totalItems / pageSize) || 1;
+
+                if (currentPage > totalPages) currentPage = 1;
+
+                if (totalPages <= 1) {
+                    paginationContainer.classList.add('hidden');
+                    paginationContainer.classList.remove('flex');
                 } else {
-                    gridView.classList.add('hidden');
-                    listView.classList.remove('hidden');
-                    listView.classList.add('flex');
-                    iconList.classList.add('hidden');
-                    iconGrid.classList.remove('hidden');
+                    paginationContainer.classList.remove('hidden');
+                    paginationContainer.classList.add('flex');
                 }
-            });
+
+                const startIndex = (currentPage - 1) * pageSize;
+                const endIndex = startIndex + pageSize;
+
+                if (isGridView) {
+                    gridItems.forEach((item, index) => {
+                        if (index >= startIndex && index < endIndex) {
+                            item.classList.remove('hidden');
+                            item.classList.add('flex');
+                        } else {
+                            item.classList.add('hidden');
+                            item.classList.remove('flex');
+                        }
+                    });
+                } else {
+                    listItems.forEach((item, index) => {
+                        if (index >= startIndex && index < endIndex) {
+                            item.classList.remove('hidden');
+                            item.classList.add('flex', 'md:grid');
+                        } else {
+                            item.classList.add('hidden');
+                            item.classList.remove('flex', 'md:grid');
+                        }
+                    });
+                }
+
+                prevPageBtn.disabled = currentPage === 1;
+                nextPageBtn.disabled = currentPage === totalPages;
+
+                pageNumbersContainer.innerHTML = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    const btn = document.createElement('button');
+                    btn.textContent = i;
+                    btn.className = `w-10 h-10 rounded-lg text-sm font-bold transition-colors ${i === currentPage ? 'bg-secondary text-on-secondary' : 'text-on-surface-variant hover:bg-surface-container'}`;
+                    btn.addEventListener('click', () => {
+                        currentPage = i;
+                        renderPagination();
+                    });
+                    pageNumbersContainer.appendChild(btn);
+                }
+            }
+
+            if (toggleViewBtn) {
+                toggleViewBtn.addEventListener('click', () => {
+                    isGridView = !isGridView;
+                    if (isGridView) {
+                        gridView.classList.remove('hidden');
+                        listView.classList.add('hidden');
+                        listView.classList.remove('flex');
+                        iconList.classList.remove('hidden');
+                        iconGrid.classList.add('hidden');
+                    } else {
+                        gridView.classList.add('hidden');
+                        listView.classList.remove('hidden');
+                        listView.classList.add('flex');
+                        iconList.classList.add('hidden');
+                        iconGrid.classList.remove('hidden');
+                    }
+                    currentPage = 1;
+                    renderPagination();
+                });
+            }
+
+            if (prevPageBtn) {
+                prevPageBtn.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderPagination();
+                    }
+                });
+            }
+
+            if (nextPageBtn) {
+                nextPageBtn.addEventListener('click', () => {
+                    const totalItems = isGridView ? gridItems.length : listItems.length;
+                    const pageSize = isGridView ? 6 : 5;
+                    if (currentPage < Math.ceil(totalItems / pageSize)) {
+                        currentPage++;
+                        renderPagination();
+                    }
+                });
+            }
+
+            // Inicializar paginación
+            renderPagination();
         });
     </script>
 </body>

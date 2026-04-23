@@ -1,49 +1,64 @@
 package com.example.reciclameproyecto.controller;
 
+import com.example.reciclameproyecto.DTO.EstudioDTO;
+import com.example.reciclameproyecto.repository.EstudioRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/estudios")
 public class EstudioController {
 
+    @Autowired
+    private EstudioRepository estudioRepository;
+
     @GetMapping
     public String listar(
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false, name = "yearSelect") Integer anio,
+            @RequestParam(required = false, name = "dateStart") String dateStartStr,
+            @RequestParam(required = false, name = "dateEnd") String dateEndStr,
+            @RequestParam(required = false) List<String> format,
+            @RequestParam(required = false) List<String> estado,
             Model model) {
 
-        // Datos de ejemplo (REEMPLAZAR con datos reales de BD)
-        List<Map<String, Object>> estudios = List.of(
-                Map.of(
-                        "id", 1L,
-                        "titulo", "Análisis de Ciclo de Vida de Envases PET en Perú",
-                        "descripcion", "Estudio exhaustivo sobre el impacto ambiental...",
-                        "estado", "VIGENTE",
-                        "formato", "PDF",
-                        "fechaPublicacion", LocalDate.of(2024, 1, 15)),
-                Map.of(
-                        "id", 2L,
-                        "titulo", "Mapeo de Actores del Reciclaje Inclusivo",
-                        "descripcion", "Documento de trabajo preliminar que identifica...",
-                        "estado", "BORRADOR",
-                        "formato", "DOCX",
-                        "fechaPublicacion", LocalDate.of(2024, 2, 20)));
+        List<EstudioDTO> estudios;
+
+        if (search != null && !search.trim().isEmpty()) {
+            estudios = estudioRepository.findByTituloContainingIgnoreCaseDTO(search);
+        } else if (anio != null || dateStartStr != null || dateEndStr != null || format != null || estado != null) {
+            LocalDate dateStart = (dateStartStr != null && !dateStartStr.isEmpty()) ? LocalDate.parse(dateStartStr)
+                    : null;
+            LocalDate dateEnd = (dateEndStr != null && !dateEndStr.isEmpty()) ? LocalDate.parse(dateEndStr) : null;
+
+            boolean hasFormatos = format != null && !format.isEmpty();
+            boolean hasEstados = estado != null && !estado.isEmpty();
+
+            estudios = estudioRepository.findWithAdvancedFiltersDTO(
+                    anio,
+                    dateStart,
+                    dateEnd,
+                    hasFormatos, format,
+                    hasEstados, estado);
+        } else {
+            estudios = estudioRepository.findAllEstudioDTO();
+        }
 
         model.addAttribute("estudios", estudios);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", 5);
         model.addAttribute("currentPage", "estudios"); // Para sidebar
         model.addAttribute("usuarioNombre", "Paola Flores");
         model.addAttribute("usuarioRol", "SOCIO");
         model.addAttribute("usuarioAvatar", "/images/avatar.jpg");
 
-        return "estudios";
+        return "socio/estudios";
     }
 
-    @GetMapping("/panelSocio")
+        @GetMapping("/panelSocio")
     public String panelSocio() {
         return "socio/panelPrincipal";
     }
@@ -58,19 +73,24 @@ public class EstudioController {
         return "socio/visualizadorNormativa";
     }
 
-    @GetMapping("/estudiosPagina")
-    public String estudios() {
-        return "socio/estudios";
-    }
+    @GetMapping("/{id}")
+    public String verEstudio(@PathVariable Long id, Model model) {
+        com.example.reciclameproyecto.entity.Estudio estudio = estudioRepository.findById(id).orElse(null);
+        if (estudio == null) {
+            return "redirect:/estudios";
+        }
+        
+        model.addAttribute("estudio", estudio);
+        model.addAttribute("currentPage", "estudios");
+        model.addAttribute("usuarioNombre", "Paola Flores");
+        model.addAttribute("usuarioRol", "SOCIO");
+        model.addAttribute("usuarioAvatar", "/images/avatar.jpg");
 
-    @GetMapping("/estudiosPaginaVisualizador")
-    public String estudiosPaginaVisualizador() {
-        return "socio/visualizadorEstudio";
-    }
-
-    @GetMapping("/estudiosPaginaVisualizadorDescargable")
-    public String estudiosPaginaVisualizadorDescargable() {
-        return "socio/visualizadorEstudioDescargable";
+        if (estudio.getTipoAcceso() == com.example.reciclameproyecto.entity.Estudio.TipoAcceso.DESCARGA) {
+            return "socio/visualizadorEstudioDescargable";
+        } else {
+            return "socio/visualizadorEstudio";
+        }
     }
 
 }
