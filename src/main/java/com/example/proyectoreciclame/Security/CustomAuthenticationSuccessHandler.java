@@ -26,17 +26,28 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         String correo = authentication.getName();
         loginAuditoriaService.registrarIntentoExitoso(correo, request);
 
+        boolean esSuperadmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_SUPERADMIN"));
+
         boolean esAdmin = authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ROLE_SUPERADMIN"));
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
         boolean esSocio = authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_SOCIO"));
 
-        if (esAdmin) {
+        boolean esVisualizador = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_VISUALIZADOR"));
+
+        if (esSuperadmin) {
+            response.sendRedirect("/superadmin/dashboard");
+        } else if (esAdmin) {
             response.sendRedirect("/admin/dashboard");
         } else if (esSocio) {
             response.sendRedirect("/socio");
-        } else {
+        } else if (esVisualizador) {
             response.sendRedirect("/estudios");
+        } else {
+            response.sendRedirect("/login");
         }
     }
 }

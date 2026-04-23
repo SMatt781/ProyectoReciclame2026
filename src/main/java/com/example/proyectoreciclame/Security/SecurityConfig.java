@@ -49,7 +49,8 @@ public class SecurityConfig {
                                 "/images/**",
                                 "/webjars/**"
                         ).permitAll()
-                        .requestMatchers("/admin/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                        .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/socio/**").hasRole("SOCIO")
                         .requestMatchers("/visualizador/**").hasRole("VISUALIZADOR")
                         .anyRequest().authenticated()
