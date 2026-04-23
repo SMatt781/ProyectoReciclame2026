@@ -198,6 +198,11 @@ public class AuthController {
         return "auth/solicitud-enviada";
     }
 
+    @GetMapping("/")
+    public String root() {
+        return "redirect:/login";
+    }
+
     private void validarRegistroSocio(RegistroSocioForm form, BindingResult br) {
         if (usuarioRepository.existsByCorreoIgnoreCase(form.getCorreo().trim())) {
             br.rejectValue("correo", "correo.exists", "El correo ya está registrado");

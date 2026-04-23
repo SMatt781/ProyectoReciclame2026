@@ -98,6 +98,7 @@ public class AdminUsuarioController {
 
         model.addAttribute("usuarios", lista);
         model.addAttribute("texto", texto);
+        model.addAttribute("currentSection", "admin-usuarios");
 
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", paginaUsuarios.getTotalPages());
@@ -105,8 +106,8 @@ public class AdminUsuarioController {
         model.addAttribute("hasNext", paginaUsuarios.hasNext());
 
         model.addAttribute("totalUsuarios", usuarioRepository.countByEliminadoEnIsNull());
-        model.addAttribute("usuariosActivos", usuarioRepository.countByEstadoCuentaAndEliminadoEnIsNull("ACTIVO"));
-        model.addAttribute("usuariosBloqueados", usuarioRepository.countByEstadoCuentaAndEliminadoEnIsNull("BLOQUEADO"));
+        model.addAttribute("usuariosActivos", usuarioRepository.countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta.ACTIVO));
+        model.addAttribute("usuariosBloqueados", usuarioRepository.countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta.BLOQUEADO));
         model.addAttribute("usuariosPendientes", usuarioRepository.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE"));
 
         model.addAttribute("modal", modal);
@@ -198,7 +199,7 @@ public class AdminUsuarioController {
             return "redirect:/admin/usuarios/gestion?page=" + page;
         }
 
-        usuario.setEstadoCuenta("BLOQUEADO");
+        usuario.setEstadoCuenta(Usuario.EstadoCuenta.BLOQUEADO);
         usuario.setActualizadoEn(LocalDateTime.now());
         usuarioRepository.save(usuario);
 
@@ -219,7 +220,7 @@ public class AdminUsuarioController {
             return "redirect:/admin/usuarios/gestion?page=" + page;
         }
 
-        usuario.setEstadoCuenta("ACTIVO");
+        usuario.setEstadoCuenta(Usuario.EstadoCuenta.ACTIVO);
         usuario.setEstadoAprobacion("APROBADO");
         usuario.setActualizadoEn(LocalDateTime.now());
         usuarioRepository.save(usuario);
@@ -315,14 +316,15 @@ public class AdminUsuarioController {
 
         model.addAttribute("usuarios", lista);
         model.addAttribute("texto", texto);
+        model.addAttribute("currentSection", "admin-usuarios");
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", paginaUsuarios.getTotalPages());
         model.addAttribute("hasPrevious", paginaUsuarios.hasPrevious());
         model.addAttribute("hasNext", paginaUsuarios.hasNext());
 
         model.addAttribute("totalUsuarios", usuarioRepository.countByEliminadoEnIsNull());
-        model.addAttribute("usuariosActivos", usuarioRepository.countByEstadoCuentaAndEliminadoEnIsNull("ACTIVO"));
-        model.addAttribute("usuariosBloqueados", usuarioRepository.countByEstadoCuentaAndEliminadoEnIsNull("BLOQUEADO"));
+        model.addAttribute("usuariosActivos", usuarioRepository.countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta.ACTIVO));
+        model.addAttribute("usuariosBloqueados", usuarioRepository.countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta.BLOQUEADO));
         model.addAttribute("usuariosPendientes", usuarioRepository.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE"));
     }
 
@@ -375,11 +377,12 @@ public class AdminUsuarioController {
     }
 
     private String obtenerEstadoVisible(Usuario u) {
-        if ("BLOQUEADO".equalsIgnoreCase(u.getEstadoCuenta())) return "Bloqueado";
+        if (u.getEstadoCuenta() == Usuario.EstadoCuenta.BLOQUEADO) return "Bloqueado";
         if ("PENDIENTE".equalsIgnoreCase(u.getEstadoAprobacion())) return "Pendiente";
         if ("RECHAZADO".equalsIgnoreCase(u.getEstadoAprobacion())) return "Rechazado";
-        if ("ACTIVO".equalsIgnoreCase(u.getEstadoCuenta())) return "Activo";
+        if (u.getEstadoCuenta() == Usuario.EstadoCuenta.ACTIVO) return "Activo";
         if ("APROBADO".equalsIgnoreCase(u.getEstadoAprobacion())) return "Activo";
         return "Sin estado";
     }
 }
+

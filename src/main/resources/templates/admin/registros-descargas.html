@@ -35,71 +35,14 @@
     </style>
 </head>
 
-<body class="h-screen overflow-hidden bg-surface-soft text-text-main">
-<div class="flex h-screen">
-    <aside class="fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-slate-100 bg-white px-5 py-6 shadow-[4px_0_18px_rgba(0,0,0,0.02)]">
-        <div class="mb-8 flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white">
-                <span class="font-bold">R</span>
-            </div>
-            <div>
-                <h1 class="text-xl font-extrabold leading-none text-slate-900">Recíclame</h1>
-                <p class="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Gestión Circular</p>
-            </div>
-        </div>
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+<div class="flex h-screen w-full">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
-        <nav class="flex-1 space-y-1">
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
-                Dashboard
-            </a>
+    <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-            <a th:href="@{/admin/usuarios/gestion}"
-               class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
-                Usuarios
-            </a>
-
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
-                Estudios
-            </a>
-
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
-                Repositorio Normativo
-            </a>
-
-            <a th:href="@{/admin/registros/actividad}"
-               class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900">
-                Registros de actividad
-            </a>
-
-            <a th:href="@{/admin/registros/descargas}"
-               class="flex items-center gap-3 rounded-full bg-primary/5 px-4 py-3 text-sm font-semibold text-primary">
-                Registros de descargas
-            </a>
-        </nav>
-
-        <div class="mt-auto space-y-1 border-t border-slate-100 pt-5">
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-danger">
-                Cerrar Sesión
-            </a>
-        </div>
-    </aside>
-
-    <div class="ml-64 flex-1">
-        <header class="sticky top-0 z-40 flex h-14 items-center justify-between bg-white/80 px-6 backdrop-blur-md shadow-sm">
-            <span class="text-xl font-bold tracking-tight text-primary">Recíclame</span>
-
-            <div class="flex items-center gap-4">
-                <div class="text-right">
-                    <p class="text-sm font-bold text-slate-900">Ana Flores</p>
-                    <p class="text-[10px] font-bold uppercase tracking-wider text-primary">Admin</p>
-                </div>
-                <div class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-emerald-100 bg-emerald-100 text-xs font-bold text-emerald-700">
-                    AF
-                </div>
-            </div>
-        </header>
-
-        <main class="mx-auto max-w-6xl space-y-4 p-4">
+        <main class="flex-1 overflow-y-auto px-8 py-3">
             <section>
                 <h1 class="mb-1 text-3xl font-extrabold tracking-tight text-primary-dark">Registros de Descargas</h1>
                 <p class="text-sm font-medium text-slate-500">

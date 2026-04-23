@@ -75,6 +75,7 @@ public class AdminSolicitudController {
         }
 
         model.addAttribute("solicitudes", solicitudes);
+        model.addAttribute("currentSection", "admin-usuarios");
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", pagina.getTotalPages());
         model.addAttribute("hasPrevious", pagina.hasPrevious());
@@ -96,6 +97,7 @@ public class AdminSolicitudController {
 
         model.addAttribute("usuario", usuario);
         model.addAttribute("solicitudExtra", solicitudOpt.orElse(null));
+        model.addAttribute("currentSection", "admin-usuarios");
 
         return "admin/detalle-solicitud";
     }
@@ -106,7 +108,7 @@ public class AdminSolicitudController {
 
         if (usuario != null) {
             usuario.setEstadoAprobacion("APROBADO");
-            usuario.setEstadoCuenta("ACTIVO");
+            usuario.setEstadoCuenta(Usuario.EstadoCuenta.ACTIVO);
             usuario.setActualizadoEn(LocalDateTime.now());
             usuarioRepository.save(usuario);
 

@@ -12,10 +12,15 @@
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-[#1e293b] min-h-screen flex items-center justify-center p-0 sm:p-4 md:p-10 overflow-y-auto">
-<!-- Modal Container -->
-<!-- BEGIN: Main Modal Container -->
-<main class="w-full max-w-[800px] bg-white rounded-none sm:rounded-2xl shadow-2xl flex flex-col max-h-screen sm:max-h-[90vh] overflow-hidden relative" data-purpose="modal-container">
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden">
+  <div class="flex h-screen w-full">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div class="flex-1 flex flex-col min-w-0 bg-[#1e293b] overflow-y-auto">
+      <div th:replace="~{fragments/navbar :: navbar}"></div>
+      <div class="flex-1 flex items-center justify-center p-0 sm:p-4 md:p-10">
+        <!-- Modal Container -->
+        <!-- BEGIN: Main Modal Container -->
+        <main class="w-full max-w-[800px] bg-white rounded-none sm:rounded-2xl shadow-2xl flex flex-col max-h-screen sm:max-h-[90vh] overflow-hidden relative" data-purpose="modal-container">
   <!-- BEGIN: Modal Header -->
   <header class="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-white sticky top-0 z-30">
     <div class="flex items-center gap-4">
@@ -170,5 +175,8 @@
     </button>
   </div>
 </div>
+      </div>
+    </div>
+  </div>
 
 </body></html>

@@ -1,12 +1,14 @@
 package com.example.proyectoreciclame.Repository;
 
 import com.example.proyectoreciclame.Entity.RegistroSesion;
+import com.example.proyectoreciclame.Entity.Usuario;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, Long> {
 
@@ -47,4 +49,6 @@ public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, 
                                         @Param("fechaFin") LocalDateTime fechaFin,
                                         @Param("rol") String rol,
                                         Pageable pageable);
+
+    Optional<RegistroSesion> findTopByUsuarioAndEstadoOrderByFechaInicioDesc(Usuario usuario, String estado);
 }

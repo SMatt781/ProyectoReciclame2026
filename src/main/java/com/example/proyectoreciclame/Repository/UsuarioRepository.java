@@ -13,12 +13,12 @@ import java.util.Optional;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     @Query("""
-        SELECT u
-        FROM Usuario u
-        LEFT JOIN FETCH u.rol
-        WHERE u.correo = :correo
-          AND u.eliminadoEn IS NULL
-    """)
+    SELECT u
+    FROM Usuario u
+    LEFT JOIN FETCH u.rol
+    WHERE LOWER(u.correo) = LOWER(:correo)
+      AND u.eliminadoEn IS NULL
+""")
     Optional<Usuario> findByCorreoWithRol(@Param("correo") String correo);
 
     @Query("""
@@ -43,7 +43,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
             OR LOWER(COALESCE(u.apellidoMaterno, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
             OR LOWER(u.dni) LIKE LOWER(CONCAT('%', :texto, '%'))
             OR LOWER(COALESCE(ue.razonSocial, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
-            OR LOWER(u.correo) LIKE LOWER(CONCAT('%', :texto, '%'))
+            OR LOWER(u.correo) LIKE LOWER(CONCAT('%', :texto, '%'))    
           )
         ORDER BY u.fechaRegistro DESC
     """)
@@ -51,7 +51,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     long countByEliminadoEnIsNull();
 
-    long countByEstadoCuentaAndEliminadoEnIsNull(String estadoCuenta);
+    long countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta estadoCuenta);
 
     long countByEstadoAprobacionAndEliminadoEnIsNull(String estadoAprobacion);
 
@@ -64,28 +64,29 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     boolean existsByDni(String dni);
 
+
     @Query("""
-        SELECT u
-        FROM Usuario u
-        WHERE u.rol.id IN :rolIds
-          AND u.eliminadoEn IS NULL
-        ORDER BY u.fechaRegistro DESC
-    """)
+    SELECT u
+    FROM Usuario u
+    WHERE u.rol.idRol IN :rolIds
+      AND u.eliminadoEn IS NULL
+    ORDER BY u.fechaRegistro DESC
+""")
     Page<Usuario> findByRol_IdInAndEliminadoEnIsNull(List<Long> rolIds, Pageable pageable);
 
     @Query("""
-        SELECT COUNT(u)
-        FROM Usuario u
-        WHERE u.rol.id IN :rolIds
-          AND u.eliminadoEn IS NULL
-    """)
+    SELECT COUNT(u)
+    FROM Usuario u
+    WHERE u.rol.idRol IN :rolIds
+      AND u.eliminadoEn IS NULL
+""")
     long countByRol_IdInAndEliminadoEnIsNull(List<Long> rolIds);
 
     @Query("""
     SELECT COUNT(u)
     FROM Usuario u
     LEFT JOIN u.rol r
-    WHERE r.id IN :rolIds
+    WHERE r.idRol IN :rolIds
       AND u.estadoCuenta = 'ACTIVO'
       AND u.eliminadoEn IS NULL
 """)
@@ -95,11 +96,10 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     SELECT COUNT(u)
     FROM Usuario u
     LEFT JOIN u.rol r
-    WHERE r.id IN :rolIds
+    WHERE r.idRol IN :rolIds
       AND u.estadoCuenta = 'BLOQUEADO'
       AND u.eliminadoEn IS NULL
 """)
     long countBlockedAdminsByRole(List<Long> rolIds);
-
 
 }

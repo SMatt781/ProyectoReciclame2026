@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Repositorio Normativo - Reciclame</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7f9fb",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#cfe9d9",
+                        "tertiary-container": "#092016",
+                        "primary-container": "#021d30",
+                        "on-secondary-container": "#00743a",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#b1c9e2",
+                        "on-surface-variant": "#43474c",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "outline-variant": "#c3c7cd",
+                        "on-secondary-fixed": "#00210c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006d37",
+                        "surface-variant": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#354c40",
+                        "on-secondary": "#ffffff",
+                        "outline": "#73777d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-container": "#71897c",
+                        "tertiary-fixed-dim": "#b3ccbd",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#496177",
+                        "on-secondary-fixed-variant": "#005228",
+                        "on-primary-container": "#6f869e",
+                        "secondary-container": "#6bfe9c",
+                        "on-tertiary-fixed": "#092016",
+                        "secondary-fixed": "#6bfe9c",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#021d30",
+                        "on-primary-fixed-variant": "#31495e",
+                        "primary-fixed": "#cde5ff",
+                        "secondary-fixed-dim": "#4ae183",
+                        "primary-fixed-dim": "#b1c9e2",
+                        "back-tabla-normativas": "#e2e8f8",
+                        "de-pago": "#b45309",
+                        "gratuito": "#047857"
+
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+
+        /* SVG Icon utility */
+        .icon-sm {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .icon-md {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .icon-lg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .icon-xl {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+    <!-- SideNavBar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Main Content Canvas -->
+    <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+        <!-- TopAppBar -->
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+        <!-- Main Scrollable Content -->
+        <main class="flex-1 overflow-y-auto px-8 py-3">
+            <div class="w-full">
+                <!-- Page Header -->
+                <div class="mb-5">
+                    <div>
+                        <h2
+                            class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                            Repositorio Normativo Nacional</h2>
+                        <p class="font-body text-on-surface-variant text-base mt-2">
+                            Acceda a la base de datos centralizada de marcos legales, reglamentos técnicos y proyectos
+                            en consulta sobre economía circular y gestión de residuos.
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- STATS SECTION -->
+                <div class="grid grid-cols-3 gap-8 mb-12 bg-white rounded-xl p-6 w-full md:w-1/2 mx-auto">
+                    <!-- Donut Chart -->
+                    <div class="col-span-1">
+                        <h3 class="text-lg font-bold text-[#1a1a1a] mb-6">Distribución por temática</h3>
+                        <div class="flex flex-col items-center">
+                            <!-- SVG Donut Chart -->
+                            <svg viewBox="0 0 120 120" class="w-32 h-32">
+                                <!-- Center circle (white) -->
+                                <circle cx="60" cy="60" r="35" fill="white" />
+                                <!-- Donut segments -->
+                                <circle cx="60" cy="60" r="45" fill="none" stroke="#006c46" stroke-width="18"
+                                    stroke-dasharray="70.7 282.7" transform="rotate(0 60 60)" />
+                                <circle cx="60" cy="60" r="45" fill="none" stroke="#f49e0b" stroke-width="18"
+                                    stroke-dasharray="52.9 282.7" transform="rotate(89 60 60)" />
+                                <circle cx="60" cy="60" r="45" fill="none" stroke="#ba1a1a" stroke-width="18"
+                                    stroke-dasharray="46.8 282.7" transform="rotate(156 60 60)" />
+                                <circle cx="60" cy="60" r="45" fill="none" stroke="#3b82f6" stroke-width="18"
+                                    stroke-dasharray="111.5 282.7" transform="rotate(222 60 60)" />
+                            </svg>
+                            <p class="text-4xl font-bold text-[#1a1a1a] mt-4">142</p>
+                            <p class="text-xs text-[#999] uppercase tracking-wider">NORMAS</p>
+                        </div>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="col-span-2 flex flex-col justify-center space-y-4">
+                        <!-- Economía Circular -->
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 rounded-full bg-[#006c46]"></div>
+                                <span class="text-sm font-medium text-[#666]">Economía circular (EC)</span>
+                            </div>
+                            <div class="flex items-baseline gap-3 pl-6">
+                                <span class="text-2xl font-bold text-[#1a1a1a]">57</span>
+                                <span class="text-xs text-[#999]">40%</span>
+                            </div>
+                        </div>
+
+                        <!-- Gesti. Residuos -->
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 rounded-full bg-[#3b82f6]"></div>
+                                <span class="text-sm font-medium text-[#666]">Gesti. Residuos (GR)</span>
+                            </div>
+                            <div class="flex items-baseline gap-3 pl-6">
+                                <span class="text-2xl font-bold text-[#1a1a1a]">35</span>
+                                <span class="text-xs text-[#999]">25%</span>
+                            </div>
+                        </div>
+
+                        <!-- Eficien. Energé. -->
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 rounded-full bg-[#f49e0b]"></div>
+                                <span class="text-sm font-medium text-[#666]">Eficien. Energé. (EE)</span>
+                            </div>
+                            <div class="flex items-baseline gap-3 pl-6">
+                                <span class="text-2xl font-bold text-[#1a1a1a]">21</span>
+                                <span class="text-xs text-[#999]">15%</span>
+                            </div>
+                        </div>
+
+                        <!-- Ley REP -->
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 rounded-full bg-[#ba1a1a]"></div>
+                                <span class="text-sm font-medium text-[#666]">Ley REP</span>
+                            </div>
+                            <div class="flex items-baseline gap-3 pl-6">
+                                <span class="text-2xl font-bold text-[#1a1a1a]">17</span>
+                                <span class="text-xs text-[#999]">12%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEARCH & FILTERS -->
+                <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
+                    <!-- Search Bar -->
+                    <!-- Search Bar -->
+                    <form action="/normativas" method="GET" class="flex gap-4 mb-6">
+                        <div class="flex-1 relative">
+                            <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <input type="text" name="search" placeholder="Buscar por nombre, código o palabra clave"
+                                class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
+                        </div>
+                        <a href="/normativas"
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
+                            title="Limpiar filtros">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            <span class="text-sm font-medium">Limpiar</span>
+                        </a>
+                        <button type="button" id="openFiltersModal"
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                            <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
+                            <span class="text-sm font-medium">Filtros avanzados</span>
+                        </button>
+                        <button type="button"
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                            <div th:replace="~{fragments/icons.html :: icon-exportar-excel}"></div>
+                            <span class="text-sm font-medium">Exportar</span>
+                        </button>
+                    </form>
+
+                    <!-- LIST VIEW -->
+                    <div class="overflow-x-auto w-full pb-4" th:if="${not #lists.isEmpty(normativas)}">
+                        <div class="flex flex-col gap-4 min-w-[1600px] w-full">
+                            <!-- Header -->
+                            <div
+                                class="hidden md:grid grid-cols-[300px_120px_180px_150px_120px_150px_80px_160px_140px] gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                                <div>Nombre</div>
+                                <div>Código</div>
+                                <div>Tema</div>
+                                <div>Estado</div>
+                                <div>Acceso</div>
+                                <div>Tipo</div>
+                                <div>Año</div>
+                                <div>Obligatoriedad</div>
+                                <div class="text-right">Ver Normativa</div>
+                            </div>
+
+                            <!-- Row Dynamic -->
+                            <div th:each="normativa : ${normativas}"
+                                class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[300px_120px_180px_150px_120px_150px_80px_160px_140px] gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                                <div class="flex flex-col w-full text-left pr-4">
+                                    <h4 th:text="${normativa.titulo}"
+                                        class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors">
+                                        Ley de Plásticos de un solo uso</h4>
+                                    <p th:text="${normativa.organismo}" class="text-xs text-on-surface-variant mt-1">
+                                        Min. medio Ambiente</p>
+                                </div>
+                                <div th:text="${normativa.codigo}"
+                                    class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant">
+                                    LEY - 21368
+                                </div>
+                                <div class="flex justify-start w-full md:w-auto">
+                                    <span th:text="${normativa.categoria}"
+                                        class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center text-white"
+                                        th:classappend="${#strings.equalsIgnoreCase(normativa.categoria, 'Economía circular') ? 'bg-[#006C46]' : (#strings.equalsIgnoreCase(normativa.categoria, 'Gestión de residuos') ? 'bg-[#3B82F6]' : (#strings.equalsIgnoreCase(normativa.categoria, 'Eficiencia Energética') ? 'bg-[#F49E0B]' : (#strings.equalsIgnoreCase(normativa.categoria, 'Ley REP') ? 'bg-[#BA1A1A]' : 'bg-[#888780]')))}">ECONOMÍA
+                                        CIRCULAR</span>
+                                </div>
+                                <div class="flex justify-start w-full md:w-auto">
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full shrink-0"
+                                            th:classappend="${normativa.estado == 'VIGENTE' ? 'bg-[#006c46]' : (normativa.estado == 'DEROGADA' ? 'bg-[#e53935]' : (normativa.estado == 'PUBLICADA' ? 'bg-[#ffc107]' : (normativa.estado == 'CONSULTA PUBLICA' ? 'bg-[#2196f3]' : 'bg-[#e53935]')))}"></span>
+                                        <span th:text="${normativa.estado}"
+                                            class="text-on-surface text-xs font-bold whitespace-normal">Vigente</span>
+                                    </span>
+                                </div>
+                                <div class="flex justify-start w-full md:w-auto">
+                                    <span th:if="${normativa.acceso == 'GRATIS'}"
+                                        class="inline-flex items-center gap-1 text-gratuito text-xs font-bold uppercase tracking-wider">
+                                        <div th:replace="~{fragments/icons.html :: icon-acceso-gratuito}"></div>
+                                        GRATUITO
+                                    </span>
+                                    <span th:if="${normativa.acceso == 'PAGO'}"
+                                        class="inline-flex items-center gap-1 text-de-pago text-xs font-bold uppercase tracking-wider">
+                                        <div th:replace="~{fragments/icons.html :: icon-acceso-pago}"></div>
+                                        DE PAGO
+                                    </span>
+                                </div>
+                                <div th:text="${normativa.tipo}"
+                                    class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant whitespace-normal">
+                                    Ley Nacional
+                                </div>
+                                <div th:text="${normativa.anio}"
+                                    class="flex justify-start w-full md:w-auto text-sm font-body text-on-surface-variant font-medium">
+                                    2021
+                                </div>
+                                <div class="flex justify-start w-full md:w-auto">
+                                    <span th:if="${normativa.obligatoriedad == 'Legal Vinculante'}"
+                                        class="inline-block px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-tertiary-fixed text-on-tertiary-fixed border border-tertiary-fixed-dim">
+                                        Legal Vinculante
+                                    </span>
+                                    <span th:if="${normativa.obligatoriedad == 'No vinculante'}"
+                                        class="inline-block px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-surface-container-high text-on-surface-variant border border-outline-variant/30">
+                                        No vinculante
+                                    </span>
+                                    <span
+                                        th:if="${normativa.obligatoriedad != 'Legal Vinculante' and normativa.obligatoriedad != 'No vinculante'}"
+                                        th:text="${normativa.obligatoriedad}"
+                                        class="inline-block px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-surface-container text-on-surface-variant border border-outline-variant/30">
+                                    </span>
+                                </div>
+                                <div class="flex justify-end w-full md:w-auto">
+                                    <a th:href="@{/normativas/{id}(id=${normativa.id})}"
+                                        class="font-label text-sm font-semibold text-outline hover:text-primary-container transition-colors flex items-center gap-1 group/link">
+                                        Ver Normativa
+                                        <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform shrink-0"
+                                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mensaje vacío -->
+                    <div th:if="${#lists.isEmpty(normativas)}"
+                        class="py-12 flex flex-col items-center justify-center text-center bg-surface-container-lowest rounded-xl border border-outline-variant/30 border-dashed mt-6">
+                        <svg class="w-16 h-16 text-outline-variant mb-4" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        <h3 class="text-lg font-bold text-on-surface mb-2">No hay documentos disponibles</h3>
+                        <p class="text-sm text-on-surface-variant max-w-md">No se encontraron normativas que coincidan
+                            con los filtros de búsqueda aplicados.</p>
+                    </div>
+
+                    <!-- Minimalist Pagination -->
+                    <div id="paginationContainer" class="mt-12 flex justify-center items-center gap-2 hidden">
+                        <button id="prevPageBtn"
+                            class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container hover:text-on-surface transition-colors disabled:opacity-50"
+                            disabled="">
+                            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                            </svg>
+                        </button>
+                        <div id="pageNumbers" class="flex items-center gap-1 font-label text-sm font-semibold">
+                            <!-- Números generados por JS -->
+                        </div>
+                        <button id="nextPageBtn"
+                            class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors disabled:opacity-50">
+                            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Filtros Avanzados Modal -->
+    <div id="filtersModal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 transition-opacity opacity-0 pointer-events-none duration-300">
+        <div
+            class="bg-surface text-on-surface w-full max-w-2xl rounded-[1.5rem] p-6 sm:p-8 flex flex-col relative scale-95 transition-transform duration-300 shadow-xl max-h-[90vh] overflow-y-auto">
+            <!-- Close button -->
+            <button type="button" id="closeFiltersModal"
+                class="absolute top-6 right-6 p-2 rounded-full hover:bg-surface-container text-on-surface-variant transition-colors">
+                <svg class="icon-md" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                </svg>
+            </button>
+
+            <h2 class="text-2xl font-headline font-bold text-on-primary-fixed mb-6">Filtros Avanzados</h2>
+
+            <form id="filtersForm" action="/normativas" method="GET" class="space-y-6">
+                <!-- Fecha -->
+                <section>
+                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Fecha</h3>
+                    <div class="space-y-4">
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="dateType" value="year"
+                                    class="text-secondary focus:ring-secondary form-radio" checked>
+                                <span class="text-sm font-semibold">Año</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="dateType" value="range"
+                                    class="text-secondary focus:ring-secondary form-radio">
+                                <span class="text-sm font-semibold">Rango de fechas</span>
+                            </label>
+                        </div>
+
+                        <!-- Año Select -->
+                        <div id="yearContainer">
+                            <select id="yearSelect" name="yearSelect"
+                                class="w-full sm:w-1/2 appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
+                                <option value="">Seleccione un año</option>
+                                <!-- JS will populate 1990 - Current Year -->
+                            </select>
+                        </div>
+
+                        <!-- Rango Input -->
+                        <div id="rangeContainer" class="hidden flex flex-col sm:flex-row gap-4">
+                            <div class="flex-1">
+                                <label
+                                    class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
+                                    Inicio</label>
+                                <input type="date" id="dateStart" name="dateStart"
+                                    class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
+                            </div>
+                            <div class="flex-1">
+                                <label
+                                    class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
+                                    Fin</label>
+                                <input type="date" id="dateEnd" name="dateEnd"
+                                    class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
+                            </div>
+                        </div>
+                        <p id="dateError" class="text-error text-xs font-semibold hidden">La Fecha Inicial no puede ser
+                            mayor que la Fecha Final.</p>
+                    </div>
+                </section>
+
+                <hr class="border-outline-variant/30">
+
+                <!-- Tema -->
+                <section>
+                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Tema</h3>
+                    <div class="flex flex-wrap gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="categoria" value="Economía circular"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body">Economía circular</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="categoria" value="Gestión de residuos"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body">Gestión de residuos</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="categoria" value="Eficiencia Energética"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body">Eficiencia energética</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="categoria" value="Ley REP"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body">Ley REP</span>
+                        </label>
+                    </div>
+                </section>
+
+                <hr class="border-outline-variant/30">
+
+                <!-- Estado -->
+                <section>
+                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Estado</h3>
+                    <div class="flex flex-wrap gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="estado" value="VIGENTE"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Vigente</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="estado" value="CONSULTA PUBLICA"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Consulta Pública</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="estado" value="PUBLICADA"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Publicada</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="estado" value="BORRADOR EN PROCESO"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Borrador en Proceso</span>
+                        </label>
+                    </div>
+                </section>
+
+                <hr class="border-outline-variant/30">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Acceso -->
+                    <section>
+                        <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Acceso
+                        </h3>
+                        <div class="flex flex-wrap gap-6">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="acceso" value="GRATIS"
+                                    class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                                <span class="text-sm font-body uppercase tracking-wide">Gratuito</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="acceso" value="PAGO"
+                                    class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                                <span class="text-sm font-body uppercase tracking-wide">De Pago</span>
+                            </label>
+                        </div>
+                    </section>
+
+                    <!-- Obligatoriedad -->
+                    <section>
+                        <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">
+                            Obligatoriedad</h3>
+                        <div class="flex flex-wrap gap-6">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="obligatoriedad" value="Legal Vinculante"
+                                    class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                                <span class="text-sm font-body uppercase tracking-wide">Legal Vinculante</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="obligatoriedad" value="No vinculante"
+                                    class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                                <span class="text-sm font-body uppercase tracking-wide">No Vinculante</span>
+                            </label>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="pt-6 mt-4 flex justify-end gap-3 border-t border-outline-variant/30">
+                    <button type="submit"
+                        class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary font-bold text-sm hover:bg-[#00210c] transition-colors shadow-sm cursor-pointer">
+                        Aplicar Filtros
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script de Paginación y Modal -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Modal Logic
+            const openFiltersBtn = document.getElementById('openFiltersModal');
+            const closeFiltersBtn = document.getElementById('closeFiltersModal');
+            const filtersModal = document.getElementById('filtersModal');
+            if (filtersModal) {
+                const modalContent = filtersModal.querySelector('div');
+
+                // Populating years
+                const yearSelect = document.getElementById('yearSelect');
+                const currentYear = new Date().getFullYear();
+                for (let y = currentYear; y >= 1990; y--) {
+                    const opt = document.createElement('option');
+                    opt.value = y;
+                    opt.textContent = y;
+                    yearSelect.appendChild(opt);
+                }
+
+                const openModal = () => {
+                    filtersModal.classList.remove('opacity-0', 'pointer-events-none');
+                    modalContent.classList.remove('scale-95');
+                    modalContent.classList.add('scale-100');
+                };
+
+                const closeModal = () => {
+                    filtersModal.classList.add('opacity-0', 'pointer-events-none');
+                    modalContent.classList.remove('scale-100');
+                    modalContent.classList.add('scale-95');
+                };
+
+                openFiltersBtn.addEventListener('click', openModal);
+                closeFiltersBtn.addEventListener('click', closeModal);
+                filtersModal.addEventListener('click', (e) => {
+                    if (e.target === filtersModal) closeModal();
+                });
+
+                // Toggle Logic
+                const dateTypeRadios = document.querySelectorAll('input[name="dateType"]');
+                const yearContainer = document.getElementById('yearContainer');
+                const rangeContainer = document.getElementById('rangeContainer');
+                const dateError = document.getElementById('dateError');
+
+                dateTypeRadios.forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        if (e.target.value === 'year') {
+                            yearContainer.classList.remove('hidden');
+                            rangeContainer.classList.add('hidden');
+                            dateError.classList.add('hidden');
+                        } else {
+                            yearContainer.classList.add('hidden');
+                            rangeContainer.classList.remove('hidden');
+                        }
+                    });
+                });
+
+                // Validation
+                const dateStart = document.getElementById('dateStart');
+                const dateEnd = document.getElementById('dateEnd');
+                const filtersForm = document.getElementById('filtersForm');
+
+                filtersForm.addEventListener('submit', (e) => {
+                    const checkedDateType = document.querySelector('input[name="dateType"]:checked');
+                    const isRange = checkedDateType && checkedDateType.value === 'range';
+
+                    if (isRange) {
+                        yearSelect.name = '';
+                        if (!dateStart.value && !dateEnd.value) {
+                            checkedDateType.name = '';
+                        }
+                    } else {
+                        dateStart.name = '';
+                        dateEnd.name = '';
+                        if (!yearSelect.value) {
+                            if (checkedDateType) checkedDateType.name = '';
+                            yearSelect.name = '';
+                        }
+                    }
+
+                    if (isRange && dateStart.value && dateEnd.value) {
+                        if (new Date(dateStart.value) > new Date(dateEnd.value)) {
+                            e.preventDefault();
+                            dateError.classList.remove('hidden');
+                            return;
+                        } else {
+                            dateError.classList.add('hidden');
+                        }
+                    }
+                });
+            }
+
+            // Pagination Logic
+            const listItems = document.querySelectorAll('.list-item');
+            const paginationContainer = document.getElementById('paginationContainer');
+            const pageNumbersContainer = document.getElementById('pageNumbers');
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+
+            let currentPage = 1;
+            const pageSize = 5;
+
+            function renderPagination() {
+                if (!paginationContainer) return;
+
+                const totalItems = listItems.length;
+                const totalPages = Math.ceil(totalItems / pageSize) || 1;
+
+                if (currentPage > totalPages) currentPage = 1;
+
+                if (totalPages <= 1) {
+                    paginationContainer.classList.add('hidden');
+                    paginationContainer.classList.remove('flex');
+                } else {
+                    paginationContainer.classList.remove('hidden');
+                    paginationContainer.classList.add('flex');
+                }
+
+                const startIndex = (currentPage - 1) * pageSize;
+                const endIndex = startIndex + pageSize;
+
+                listItems.forEach((item, index) => {
+                    if (index >= startIndex && index < endIndex) {
+                        item.classList.remove('hidden');
+                        item.classList.add('flex', 'md:grid');
+                    } else {
+                        item.classList.add('hidden');
+                        item.classList.remove('flex', 'md:grid');
+                    }
+                });
+
+                if (prevPageBtn) prevPageBtn.disabled = currentPage === 1;
+                if (nextPageBtn) nextPageBtn.disabled = currentPage === totalPages;
+
+                if (pageNumbersContainer) {
+                    pageNumbersContainer.innerHTML = '';
+                    for (let i = 1; i <= totalPages; i++) {
+                        const btn = document.createElement('button');
+                        btn.textContent = i;
+                        btn.className = `w-10 h-10 rounded-full flex items-center justify-center transition-colors font-label text-sm font-semibold ${i === currentPage ? 'bg-secondary text-on-secondary shadow-md' : 'text-on-surface-variant hover:bg-surface-container'}`;
+                        btn.addEventListener('click', () => {
+                            currentPage = i;
+                            renderPagination();
+                        });
+                        pageNumbersContainer.appendChild(btn);
+                    }
+                }
+            }
+
+            if (prevPageBtn) {
+                prevPageBtn.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderPagination();
+                    }
+                });
+            }
+
+            if (nextPageBtn) {
+                nextPageBtn.addEventListener('click', () => {
+                    const totalItems = listItems.length;
+                    if (currentPage < Math.ceil(totalItems / pageSize)) {
+                        currentPage++;
+                        renderPagination();
+                    }
+                });
+            }
+
+            // Inicializar paginación
+            renderPagination();
+        });
+    </script>
+</body>
+
+</html>

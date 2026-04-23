@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html class="light" lang="es">
+
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -85,15 +86,36 @@
             box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
         }
 
-        /* SVG Icon utility */
-        .icon-sm { width: 1.25rem; height: 1.25rem; }
-        .icon-md { width: 1.5rem; height: 1.5rem; }
-        .icon-lg { width: 2rem; height: 2rem; }
-        .icon-xl { width: 2.5rem; height: 2.5rem; }
+        .icon-sm {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .icon-md {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .icon-lg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .icon-xl {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
     </style>
 </head>
-<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
-<!-- SideNavBar -->
+
+<body
+        class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+
+<!-- Sidebar real del proyecto -->
 <aside class="hidden md:flex flex-col h-full w-72 p-6 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50">
     <!-- Brand / Header -->
     <div class="flex items-center gap-3 mb-10 pl-2">
@@ -138,14 +160,14 @@
             Repositorio Normativo
         </a>
 
-        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/usuarios/gestion}">
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/registros/actividad}">
             <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/>
             </svg>
             Registros de actividad
         </a>
 
-        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/estudios}">
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/registros/descargas}">
             <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M21 5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5zm-2 0l-6.5 4L5 5h14zm0 13H5V7l6.5 4L19 7v11z"/>
             </svg>
@@ -183,337 +205,471 @@
 
 <!-- Main Content Canvas -->
 <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
-    <!-- TopAppBar -->
-    <header class="flex justify-between items-center px-8 py-4 w-full h-20 sticky top-0 z-40 bg-[#f7f9fb]/80 dark:bg-slate-950/80 backdrop-blur-xl">
-        <!-- Logo Header Area -->
-        <div class="flex-shrink-0">
-            <div class="text-2xl font-headline font-bold text-primary-container">Reciclame</div>
-        </div>
 
-        <!-- Right Side / Actions & Profile -->
-        <div class="flex items-center gap-6 ml-auto">
-            <button class="text-slate-500 dark:text-slate-400 hover:text-[#2ECC71] transition-colors relative">
-                <svg class="w-6 h-6 text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V2c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 3.36 6 5.92 6 9v5l-2 2v1h16v-1l-2-2z"/>
-                </svg>
-                <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border border-surface-container-lowest"></span>
-            </button>
-
-            <div class="flex items-center gap-3 cursor-pointer p-1 rounded-full hover:bg-surface-container-low transition-colors">
-                <img alt="Paola Flores" class="w-10 h-10 rounded-full object-cover ring-2 ring-surface-container-lowest shadow-sm" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23E8C4A0'/%3E%3Ccircle cx='50' cy='35' r='15' fill='%23D4A574'/%3E%3Cellipse cx='50' cy='65' rx='20' ry='25' fill='%23D4A574'/%3E%3C/svg%3E" />
-                <div class="hidden md:flex flex-col justify-center">
-                    <span class="font-label font-medium text-sm text-[#001B2E] dark:text-white leading-tight">Paola Flores</span>
-                    <span class="text-[10px] font-bold text-on-secondary-fixed bg-secondary-fixed px-2 py-0.5 rounded-full w-max mt-0.5 tracking-wider">ADMIN</span>
-                </div>
-            </div>
-        </div>
-    </header>
+    <!-- Navbar real del proyecto -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <!-- Main Scrollable Content -->
-    <main class="flex-1 overflow-y-auto px-6 md:px-10 py-8 pb-24">
-        <div class="max-w-7xl mx-auto">
+    <main class="flex-1 overflow-y-auto px-8 py-3">
+        <div class="w-full">
+
             <!-- Page Header -->
-            <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div class="mb-5">
                 <div>
-                    <h2 class="font-headline text-3xl md:text-4xl font-extrabold text-on-primary-fixed tracking-tight mb-2">Estudios del Sector</h2>
-                    <p class="font-body text-sm md:text-base text-on-surface-variant max-w-2xl leading-relaxed">
-                        Explora nuestra colección curada de investigaciones, análisis y reportes sobre economía circular y gestión de residuos.
+                    <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                        Estudios del Sector
+                    </h2>
+                    <p class="font-body text-on-surface-variant text-base mt-2">
+                        Explora nuestra colección curada de investigaciones, análisis y reportes sobre economía
+                        circular y gestión de residuos.
                     </p>
                 </div>
-                <div class="flex gap-3">
-                    <button class="px-4 py-2 bg-surface-container rounded-lg font-label text-sm font-semibold text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-2">
-                        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2z M11 3L5.5 8.5l1.42 1.41L11 5.83V15h2V5.83l4.08 4.08L18.5 8.5 12 3z"/>
-                        </svg>
-                        Exportar
-                    </button>
-                </div>
             </div>
 
-            <!-- Search Bar -->
-            <div class="mb-6 w-full focus-within:ring-2 focus-within:ring-[#2ECC71]/30 rounded-xl transition-shadow">
-                <div class="relative flex items-center w-full h-12 rounded-xl bg-surface-container-lowest border border-outline-variant/30 overflow-hidden group ambient-shadow">
-                    <div class="grid place-items-center h-full w-14 text-outline group-focus-within:text-secondary transition-colors">
-                        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            <!-- Bloque principal igual al original -->
+            <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
+
+                <!-- Search bar + acciones -->
+                <form action="/estudios" method="GET" class="flex flex-col xl:flex-row gap-4 mb-6 w-full">
+                    <div class="flex-1 relative">
+                        <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                    </div>
-                    <input class="peer h-full w-full outline-none text-base text-on-surface bg-transparent pr-4 font-body placeholder-outline-variant" id="search" placeholder="Buscar en el repositorio..." type="text" />
-                </div>
-            </div>
-
-            <!-- Filters Section -->
-            <section class="bg-surface-container-lowest rounded-xl p-6 ambient-shadow mb-8 ghost-border relative z-10">
-                <h3 class="font-label text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-4 flex items-center gap-2">
-                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M6 13c1.65 0 3-1.35 3-3s-1.35-3-3-3-3 1.35-3 3 1.35 3 3 3zm0 2c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zm6 7c1.65 0 3-1.35 3-3s-1.35-3-3-3-3 1.35-3 3 1.35 3 3 3zm0 2c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm6-9h-2v3h-3v2h3v3h2v-3h3v-2h-3z"/>
-                    </svg>
-                    Filtros de Búsqueda
-                </h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                    <!-- Year Dropdown -->
-                    <div class="md:col-span-2 relative">
-                        <label class="block text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 pl-1">Año</label>
-                        <div class="relative">
-                            <select class="w-full appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-outline-variant/30 transition-all cursor-pointer">
-                                <option value="">Todos</option>
-                                <option value="2024">2024</option>
-                                <option value="2023">2023</option>
-                                <option value="2022">2022</option>
-                            </select>
-                            <svg class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-outline icon-sm" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M7 10l5 5 5-5z"/>
-                            </svg>
-                        </div>
+                        <input type="text" name="search" placeholder="Buscar en el repositorio..."
+                               class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
                     </div>
 
-                    <!-- Date Range Inputs -->
-                    <div class="md:col-span-4 flex items-end gap-3">
-                        <div class="flex-1 relative">
-                            <label class="block text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 pl-1">Desde</label>
-                            <div class="relative flex items-center w-full bg-surface-container-low rounded-lg focus-within:bg-surface-container-lowest focus-within:ring-1 focus-within:ring-outline-variant/30 transition-all">
-                                <svg class="pl-3 text-outline icon-md" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>
-                                </svg>
-                                <input class="w-full bg-transparent border-none focus:ring-0 text-sm font-body px-3 py-2.5 text-on-surface placeholder-outline-variant" placeholder="DD/MM/AAAA" type="text" />
-                            </div>
-                        </div>
-                        <div class="pb-3 text-outline-variant font-bold">-</div>
-                        <div class="flex-1 relative">
-                            <label class="block text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 pl-1">Hasta</label>
-                            <div class="relative flex items-center w-full bg-surface-container-low rounded-lg focus-within:bg-surface-container-lowest focus-within:ring-1 focus-within:ring-outline-variant/30 transition-all">
-                                <svg class="pl-3 text-outline icon-md" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>
-                                </svg>
-                                <input class="w-full bg-transparent border-none focus:ring-0 text-sm font-body px-3 py-2.5 text-on-surface placeholder-outline-variant" placeholder="DD/MM/AAAA" type="text" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Formato Dropdown -->
-                    <details class="group relative md:col-span-2">
-                        <summary class="list-none w-full appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-outline-variant/30 transition-all cursor-pointer flex justify-between items-center mt-[22px]">
-                            <span>Formato</span>
-                            <svg class="text-outline pointer-events-none icon-sm" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M7 10l5 5 5-5z"/>
+                    <div class="flex flex-wrap gap-3 shrink-0">
+                        <a href="/estudios"
+                           class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
+                           title="Limpiar filtros">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M6 18L18 6M6 6l12 12" />
                             </svg>
-                        </summary>
-                        <div class="absolute top-full left-0 w-full mt-1 bg-surface-container-lowest border border-outline-variant/30 rounded-lg shadow-lg z-50 p-2 hidden group-open:block">
-                            <label class="flex items-center gap-2 p-2 hover:bg-surface-container-low rounded cursor-pointer">
-                                <input class="rounded border-outline-variant text-secondary focus:ring-secondary form-checkbox h-4 w-4" type="checkbox" />
-                                <span class="text-sm font-body">PDF</span>
-                            </label>
-                            <label class="flex items-center gap-2 p-2 hover:bg-surface-container-low rounded cursor-pointer">
-                                <input class="rounded border-outline-variant text-secondary focus:ring-secondary form-checkbox h-4 w-4" type="checkbox" />
-                                <span class="text-sm font-body">DOCX</span>
-                            </label>
-                            <label class="flex items-center gap-2 p-2 hover:bg-surface-container-low rounded cursor-pointer">
-                                <input class="rounded border-outline-variant text-secondary focus:ring-secondary form-checkbox h-4 w-4" type="checkbox" />
-                                <span class="text-sm font-body">PPT</span>
-                            </label>
-                        </div>
-                    </details>
+                            <span class="text-sm font-medium">Limpiar</span>
+                        </a>
 
-                    <!-- Estado Dropdown -->
-                    <details class="group relative md:col-span-2">
-                        <summary class="list-none w-full appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-outline-variant/30 transition-all cursor-pointer flex justify-between items-center mt-[22px]">
-                            <span>Estado</span>
-                            <svg class="text-outline pointer-events-none icon-sm" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M7 10l5 5 5-5z"/>
+                        <button type="button" id="openFiltersModal"
+                                class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                            <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M3 4a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9zm7-7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm7 0a1 1 0 011-1h2a1 1 0 011 1v16a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm-7 12a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 01-1-1v-4z" />
                             </svg>
-                        </summary>
-                        <div class="absolute top-full left-0 w-full mt-1 bg-surface-container-lowest border border-outline-variant/30 rounded-lg shadow-lg z-50 p-2 hidden group-open:block">
-                            <label class="flex items-center gap-2 p-2 hover:bg-surface-container-low rounded cursor-pointer">
-                                <input class="rounded border-outline-variant text-secondary focus:ring-secondary form-checkbox h-4 w-4" type="checkbox" />
-                                <span class="text-sm font-body">Vigente</span>
-                            </label>
-                            <label class="flex items-center gap-2 p-2 hover:bg-surface-container-low rounded cursor-pointer">
-                                <input class="rounded border-outline-variant text-secondary focus:ring-secondary form-checkbox h-4 w-4" type="checkbox" />
-                                <span class="text-sm font-body">Borrador</span>
-                            </label>
-                            <label class="flex items-center gap-2 p-2 hover:bg-surface-container-low rounded cursor-pointer">
-                                <input class="rounded border-outline-variant text-secondary focus:ring-secondary form-checkbox h-4 w-4" type="checkbox" />
-                                <span class="text-sm font-body">Derogada</span>
-                            </label>
-                        </div>
-                    </details>
+                            <span class="text-sm font-medium">Filtros avanzados</span>
+                        </button>
 
-                    <!-- Apply Button -->
-                    <div class="md:col-span-2 flex items-end">
-                        <button class="w-full bg-secondary text-on-secondary font-label font-bold text-sm py-2.5 px-4 rounded-lg hover:bg-secondary-fixed-dim transition-colors ambient-shadow flex justify-center items-center gap-2">
-                            Aplicar
+                        <button type="button" id="toggleViewBtn"
+                                class="h-12 w-12 flex items-center justify-center bg-white text-slate-700 rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors"
+                                title="Cambiar vista">
+                            <svg id="icon-list" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                            </svg>
                         </button>
                     </div>
+                </form>
+
+                <!-- Grid view -->
+                <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    <!-- Card 1 -->
+                    <article class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="w-10 h-10 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54h3.54l4.96-6.71h.75V6.5h-4.63v2.02h2.91l-3.78 5.27z" />
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
+                                <span>2024</span>
+                                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                                <span>PDF</span>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
+                                Análisis de Ciclo de Vida de Envases PET en Perú
+                            </h4>
+                            <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
+                                Estudio exhaustivo sobre el impacto ambiental y las tasas de recuperación de envases de tereftalato de polietileno en la región costa, destacando oportunidades de mejora en la cadena de reciclaje.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
+                            <div class="flex items-center gap-1.5 text-secondary">
+                                <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                </svg>
+                                <span class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
+                            </div>
+                            <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link" href="#">
+                                Ver Estudio
+                                <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                     fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- Card 2 -->
+                    <article class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-outline to-surface-variant opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="w-10 h-10 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54h3.54l4.96-6.71h.75V6.5h-4.63v2.02h2.91l-3.78 5.27z" />
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
+                                <span>2024</span>
+                                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                                <span>PDF</span>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-primary transition-colors">
+                                Mapeo de Actores del Reciclaje Inclusivo
+                            </h4>
+                            <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
+                                Documento de trabajo preliminar que identifica asociaciones de recicladores de base y su nivel de integración en los sistemas de gestión municipal a nivel nacional.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
+                            <div class="flex items-center gap-1.5 text-outline">
+                                <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                </svg>
+                                <span class="font-label text-xs font-bold uppercase tracking-wide">Borrador</span>
+                            </div>
+                            <a class="font-label text-sm font-semibold text-primary-container hover:text-primary transition-colors flex items-center gap-1 group/link" href="#">
+                                Ver Estudio
+                                <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                     fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- Card 3 -->
+                    <article class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden bg-opacity-80">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="flex justify-between items-start mb-5 opacity-70">
+                            <div class="w-10 h-10 rounded-lg bg-surface-container-high text-outline flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
+                                <span>2019</span>
+                                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                                <span>DOCX</span>
+                            </div>
+                        </div>
+                        <div class="flex-1 opacity-70">
+                            <h4 class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight line-through decoration-outline-variant">
+                                Estudio Base de Residuos Sólidos Urbanos
+                            </h4>
+                            <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
+                                Diagnóstico situacional reemplazado por la actualización del año 2022. Mantenido en el archivo únicamente para fines comparativos e históricos.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
+                            <div class="flex items-center gap-1.5 text-error">
+                                <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                </svg>
+                                <span class="font-label text-xs font-bold uppercase tracking-wide">Archivado</span>
+                            </div>
+                            <a class="font-label text-sm font-semibold text-outline hover:text-primary-container transition-colors flex items-center gap-1 group/link" href="#">
+                                Ver Estudio
+                                <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                     fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- Card 4 -->
+                    <article class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="w-10 h-10 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54h3.54l4.96-6.71h.75V6.5h-4.63v2.02h2.91l-3.78 5.27z" />
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
+                                <span>2023</span>
+                                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                                <span>PDF</span>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
+                                Guía Técnica de Ecodiseño para Pymes
+                            </h4>
+                            <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
+                                Manual práctico orientado a pequeñas y medianas empresas para la integración de principios de economía circular desde la fase de concepción de sus productos.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
+                            <div class="flex items-center gap-1.5 text-secondary">
+                                <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                </svg>
+                                <span class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
+                            </div>
+                            <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link" href="#">
+                                Ver Estudio
+                                <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                     fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </article>
                 </div>
-            </section>
 
-            <!-- Cards Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Card 1: Vigente -->
-                <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="flex justify-between items-start mb-5">
-                        <div class="w-10 h-10 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shadow-sm">
-                            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54h3.54l4.96-6.71h.75V6.5h-4.63v2.02h2.91l-3.78 5.27z"/>
-                            </svg>
-                        </div>
-                        <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
-                            <span>2024</span>
-                            <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                            <span>PDF</span>
-                        </div>
+                <!-- List view -->
+                <div id="listView" class="hidden flex-col gap-4">
+                    <div class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                        <div class="col-span-6 lg:col-span-5">Nombre</div>
+                        <div class="col-span-2 text-center">Estado</div>
+                        <div class="col-span-1 text-center">Formato</div>
+                        <div class="col-span-1 text-center">Año</div>
+                        <div class="col-span-2 lg:col-span-3 text-right">Acción</div>
                     </div>
-                    <div class="flex-1">
-                        <h4 class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">Análisis de Ciclo de Vida de Envases PET en Perú</h4>
-                        <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">Estudio exhaustivo sobre el impacto ambiental y las tasas de recuperación de envases de tereftalato de polietileno en la región costa, destacando oportunidades de mejora en la cadena de reciclaje.</p>
-                    </div>
-                    <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
-                        <div class="flex items-center gap-1.5 text-secondary">
-                            <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
-                            </svg>
-                            <span class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
-                        </div>
-                        <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link" href="#">
-                            Ver Estudio
-                            <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"/>
-                            </svg>
-                        </a>
-                    </div>
-                </article>
 
-                <!-- Card 2: Borrador -->
-                <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-outline to-surface-variant opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="flex justify-between items-start mb-5">
-                        <div class="w-10 h-10 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shadow-sm">
-                            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54h3.54l4.96-6.71h.75V6.5h-4.63v2.02h2.91l-3.78 5.27z"/>
-                            </svg>
+                    <div class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                        <div class="col-span-6 lg:col-span-5 flex items-center gap-4 w-full">
+                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors line-clamp-2">
+                                Análisis de Ciclo de Vida de Envases PET en Perú
+                            </h4>
                         </div>
-                        <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
-                            <span>2024</span>
-                            <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                            <span>PDF</span>
+                        <div class="col-span-2 flex justify-center w-full md:w-auto">
+                            <div class="flex items-center gap-1.5 text-secondary">
+                                <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                </svg>
+                                <span class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex-1">
-                        <h4 class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-primary transition-colors">Mapeo de Actores del Reciclaje Inclusivo</h4>
-                        <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">Documento de trabajo preliminar que identifica asociaciones de recicladores de base y su nivel de integración en los sistemas de gestión municipal a nivel nacional.</p>
-                    </div>
-                    <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
-                        <div class="flex items-center gap-1.5 text-outline">
-                            <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/>
-                            </svg>
-                            <span class="font-label text-xs font-bold uppercase tracking-wide">Borrador</span>
+                        <div class="col-span-1 flex justify-center w-full md:w-auto">
+                            <span class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">PDF</span>
                         </div>
-                        <a class="font-label text-sm font-semibold text-primary-container hover:text-primary transition-colors flex items-center gap-1 group/link" href="#">
-                            Ver Estudio
-                            <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"/>
-                            </svg>
-                        </a>
-                    </div>
-                </article>
-
-                <!-- Card 3: Archivada -->
-                <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden bg-opacity-80">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="flex justify-between items-start mb-5 opacity-70">
-                        <div class="w-10 h-10 rounded-lg bg-surface-container-high text-outline flex items-center justify-center shadow-sm">
-                            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/>
-                            </svg>
+                        <div class="col-span-1 flex justify-center w-full md:w-auto">
+                            <span class="text-sm font-body text-on-surface-variant font-medium">2024</span>
                         </div>
-                        <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
-                            <span>2019</span>
-                            <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                            <span>DOCX</span>
+                        <div class="col-span-2 lg:col-span-3 flex justify-end w-full md:w-auto">
+                            <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link" href="#">
+                                Ver Estudio
+                                <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                     fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
+                                </svg>
+                            </a>
                         </div>
                     </div>
-                    <div class="flex-1 opacity-70">
-                        <h4 class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight line-through decoration-outline-variant">Estudio Base de Residuos Sólidos Urbanos</h4>
-                        <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">Diagnóstico situacional reemplazado por la actualización del año 2022. Mantenido en el archivo únicamente para fines comparativos e históricos.</p>
-                    </div>
-                    <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
-                        <div class="flex items-center gap-1.5 text-error">
-                            <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
-                            </svg>
-                            <span class="font-label text-xs font-bold uppercase tracking-wide">Archivado</span>
-                        </div>
-                        <a class="font-label text-sm font-semibold text-outline hover:text-primary-container transition-colors flex items-center gap-1 group/link" href="#">
-                            Ver Estudio
-                            <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"/>
-                            </svg>
-                        </a>
-                    </div>
-                </article>
-
-                <!-- Card 4: Vigente -->
-                <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="flex justify-between items-start mb-5">
-                        <div class="w-10 h-10 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shadow-sm">
-                            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54h3.54l4.96-6.71h.75V6.5h-4.63v2.02h2.91l-3.78 5.27z"/>
-                            </svg>
-                        </div>
-                        <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
-                            <span>2023</span>
-                            <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                            <span>PDF</span>
-                        </div>
-                    </div>
-                    <div class="flex-1">
-                        <h4 class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">Guía Técnica de Ecodiseño para Pymes</h4>
-                        <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">Manual práctico orientado a pequeñas y medianas empresas para la integración de principios de economía circular desde la fase de concepción de sus productos.</p>
-                    </div>
-                    <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
-                        <div class="flex items-center gap-1.5 text-secondary">
-                            <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
-                            </svg>
-                            <span class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
-                        </div>
-                        <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link" href="#">
-                            Ver Estudio
-                            <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"/>
-                            </svg>
-                        </a>
-                    </div>
-                </article>
-            </div>
-
-            <!-- Minimalist Pagination -->
-            <div class="mt-12 flex justify-center items-center gap-2">
-                <button class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container hover:text-on-surface transition-colors disabled:opacity-50" disabled="">
-                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-                    </svg>
-                </button>
-                <div class="flex items-center gap-1 font-label text-sm font-semibold">
-                    <button class="w-10 h-10 rounded-full flex items-center justify-center bg-secondary text-on-secondary shadow-md">1</button>
-                    <button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">2</button>
-                    <button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">3</button>
-                    <span class="px-2 text-outline-variant">...</span>
-                    <button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">8</button>
                 </div>
-                <button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors">
-                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
-                    </svg>
-                </button>
+
+                <!-- Pagination -->
+                <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8">
+                    <button id="prevPageBtn"
+                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+
+                    <div id="pageNumbers" class="flex gap-2">
+                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors bg-secondary text-on-secondary">1</button>
+                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors text-on-surface-variant hover:bg-surface-container">2</button>
+                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors text-on-surface-variant hover:bg-surface-container">3</button>
+                        <span class="w-10 h-10 flex items-center justify-center text-outline-variant font-bold">...</span>
+                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors text-on-surface-variant hover:bg-surface-container">8</button>
+                    </div>
+
+                    <button id="nextPageBtn"
+                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
     </main>
 </div>
+
+<!-- Modal Filtros Avanzados -->
+<div id="filtersModal"
+     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 transition-opacity opacity-0 pointer-events-none duration-300">
+    <div
+            class="bg-surface text-on-surface w-full max-w-2xl rounded-[1.5rem] p-6 sm:p-8 flex flex-col relative scale-95 transition-transform duration-300 shadow-xl max-h-full overflow-y-auto">
+        <button id="closeFiltersModal"
+                class="absolute top-6 right-6 p-2 rounded-full hover:bg-surface-container text-on-surface-variant transition-colors">
+            <svg class="icon-md" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+            </svg>
+        </button>
+
+        <h2 class="text-2xl font-headline font-bold text-on-primary-fixed mb-6">Filtros Avanzados</h2>
+
+        <form class="space-y-6">
+            <section>
+                <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Fecha</h3>
+                <div class="space-y-4">
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="dateType" value="year"
+                                   class="text-secondary focus:ring-secondary form-radio" checked>
+                            <span class="text-sm font-semibold">Año</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="dateType" value="range"
+                                   class="text-secondary focus:ring-secondary form-radio">
+                            <span class="text-sm font-semibold">Rango de fechas</span>
+                        </label>
+                    </div>
+
+                    <div>
+                        <select
+                                class="w-full sm:w-1/2 appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
+                            <option value="">Seleccione un año</option>
+                            <option>2025</option>
+                            <option>2024</option>
+                            <option>2023</option>
+                            <option>2022</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="border-outline-variant/30">
+
+            <section>
+                <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Formato</h3>
+                <div class="flex flex-wrap gap-6">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body">PDF</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body">DOCX</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body">PPT</span>
+                    </label>
+                </div>
+            </section>
+
+            <hr class="border-outline-variant/30">
+
+            <section>
+                <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Estado</h3>
+                <div class="flex flex-wrap gap-6">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body uppercase tracking-wide">Vigente</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body uppercase tracking-wide">Borrador</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body uppercase tracking-wide">Derogada</span>
+                    </label>
+                </div>
+            </section>
+
+            <div class="pt-6 mt-4 flex justify-end gap-3 border-t border-outline-variant/30">
+                <button type="button" id="closeFiltersModalBtn"
+                        class="px-6 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-on-surface font-bold text-sm hover:bg-surface-container transition-colors">
+                    Cancelar
+                </button>
+                <button type="submit"
+                        class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary font-bold text-sm hover:bg-[#00210c] transition-colors shadow-sm cursor-pointer">
+                    Aplicar Filtros
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const openFiltersBtn = document.getElementById('openFiltersModal');
+        const closeFiltersBtn = document.getElementById('closeFiltersModal');
+        const closeFiltersModalBtn = document.getElementById('closeFiltersModalBtn');
+        const filtersModal = document.getElementById('filtersModal');
+        const modalContent = filtersModal.querySelector('div');
+
+        const openModal = () => {
+            filtersModal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+        };
+
+        const closeModal = () => {
+            filtersModal.classList.add('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+        };
+
+        if (openFiltersBtn) openFiltersBtn.addEventListener('click', openModal);
+        if (closeFiltersBtn) closeFiltersBtn.addEventListener('click', closeModal);
+        if (closeFiltersModalBtn) closeFiltersModalBtn.addEventListener('click', closeModal);
+
+        filtersModal.addEventListener('click', (e) => {
+            if (e.target === filtersModal) closeModal();
+        });
+
+        const toggleViewBtn = document.getElementById('toggleViewBtn');
+        const gridView = document.getElementById('gridView');
+        const listView = document.getElementById('listView');
+        const iconList = document.getElementById('icon-list');
+        const iconGrid = document.getElementById('icon-grid');
+
+        let isGridView = true;
+
+        if (toggleViewBtn) {
+            toggleViewBtn.addEventListener('click', () => {
+                isGridView = !isGridView;
+
+                if (isGridView) {
+                    gridView.classList.remove('hidden');
+                    listView.classList.add('hidden');
+                    listView.classList.remove('flex');
+                    iconList.classList.remove('hidden');
+                    iconGrid.classList.add('hidden');
+                } else {
+                    gridView.classList.add('hidden');
+                    listView.classList.remove('hidden');
+                    listView.classList.add('flex');
+                    iconList.classList.add('hidden');
+                    iconGrid.classList.remove('hidden');
+                }
+            });
+        }
+    });
+</script>
 <div id="modalNuevoEstudio" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="w-full max-w-[800px] bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden relative">
 
@@ -626,5 +782,5 @@
     </div>
 </div>
 </body>
-</html>
 
+</html>
