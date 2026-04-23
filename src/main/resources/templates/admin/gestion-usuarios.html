@@ -96,574 +96,498 @@
 
 <body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
 
-<aside class="hidden md:flex flex-col h-full w-72 p-6 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50">
-    <div class="flex items-center gap-3 mb-10 pl-2">
-        <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
-            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M7 19c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-8h4V9h-4V7c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H3v2h4v8zm2-8h6V7H9v4z"/>
-            </svg>
-        </div>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
-        <div class="flex flex-col">
-            <h1 class="text-[#001B2E] dark:text-white font-black text-xl font-headline tracking-tight">Reciclame</h1>
-            <span class="text-xs text-on-surface-variant font-medium">Economía Circular</span>
-        </div>
-    </div>
+    <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-    <nav class="flex-1 space-y-2">
-        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/dashboard}">
-            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-            </svg>
-            Dashboard
-        </a>
-
-        <a class="bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 font-headline font-bold text-sm tracking-tight scale-95 active:scale-100 transition-transform" th:href="@{/admin/usuarios/gestion}">
-            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-            </svg>
-            Usuarios
-        </a>
-
-        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/estudios}">
-            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-            </svg>
-            Estudios
-        </a>
-
-        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/normativas}">
-            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M3 13h2v8H3zm4-8h2v16H7zm4-2h2v18h-2zm4 4h2v14h-2zm4-2h2v16h-2z"/>
-            </svg>
-            Repositorio Normativo
-        </a>
-
-        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/registros/actividad}">
-            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/>
-            </svg>
-            Registros de actividad
-        </a>
-
-        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/registros/descargas}">
-            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M21 5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5zm-2 0l-6.5 4L5 5h14zm0 13H5V7l6.5 4L19 7v11z"/>
-            </svg>
-            Registros de descarga
-        </a>
-    </nav>
-
-    <div class="pt-4 space-y-2 relative before:absolute before:top-0 before:left-4 before:right-4 before:h-px before:bg-surface-variant">
-        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" href="#">
-            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.62l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.09-.47 0-.59.22L2.74 8.87c-.12.21-.08.48.1.62l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.62l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.04.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.09.47 0 .59-.22l1.92-3.32c.12-.22.07-.48-.1-.62l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
-            </svg>
-            Configuración
-        </a>
-
-        <form th:action="@{/logout}" method="post">
-            <button type="submit"
-                    class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0] w-full text-left">
-                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
-                </svg>
-                Cerrar Sesión
-            </button>
-        </form>
-    </div>
-</aside>
-
-<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
-    <div th:replace="~{fragments/navbar :: navbar}"></div>
-
-    <main class="flex-1 overflow-y-auto px-6 py-2">
-        <div class="w-full h-full">
-            <div class="mb-3">
-                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
-                    <div>
-                        <h2 class="font-headline font-extrabold text-[1.75rem] text-on-primary-fixed leading-tight tracking-tight">
-                            Gestión de Usuarios
-                        </h2>
-                        <p class="font-body text-on-surface-variant text-sm mt-1 max-w-3xl">
-                            Administra accesos, roles y el ciclo de vida de los integrantes de la red de economía circular.
-                        </p>
-                    </div>
-
-                    <section class="bg-primary-container text-on-primary rounded-xl px-4 py-3 ambient-shadow min-w-[300px] max-w-[390px]">
-                        <div class="flex items-start justify-between gap-3">
-                            <div class="flex items-start gap-3">
-                                <div class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-white font-bold text-sm shrink-0">
-                                    !
-                                </div>
-                                <div>
-                                    <h3 class="font-headline text-sm font-bold">Solicitudes Pendientes</h3>
-                                    <p class="text-[11px] text-on-primary-container mt-1 leading-relaxed">
-                                        Hay <span th:text="${usuariosPendientes}" class="font-bold text-white"></span> nuevos usuarios esperando validación para ingresar a la plataforma.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <a th:href="@{/admin/usuarios/solicitudes}"
-                               class="shrink-0 px-3 py-2 rounded-lg bg-secondary text-on-secondary text-[11px] font-bold hover:bg-[#005a3d] transition-colors">
-                                Revisar
-                            </a>
+        <main class="flex-1 overflow-y-auto px-6 py-2">
+            <div class="w-full h-full">
+                <div class="mb-3">
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
+                        <div>
+                            <h2 class="font-headline font-extrabold text-[1.75rem] text-on-primary-fixed leading-tight tracking-tight">
+                                Gestión de Usuarios
+                            </h2>
+                            <p class="font-body text-on-surface-variant text-sm mt-1 max-w-3xl">
+                                Administra accesos, roles y el ciclo de vida de los integrantes de la red de economía circular.
+                            </p>
                         </div>
-                    </section>
+
+                        <section class="bg-primary-container text-on-primary rounded-xl px-4 py-3 ambient-shadow min-w-[300px] max-w-[390px]">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                                        !
+                                    </div>
+                                    <div>
+                                        <h3 class="font-headline text-sm font-bold">Solicitudes Pendientes</h3>
+                                        <p class="text-[11px] text-on-primary-container mt-1 leading-relaxed">
+                                            Hay <span th:text="${usuariosPendientes}" class="font-bold text-white"></span> nuevos usuarios esperando validación para ingresar a la plataforma.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <a th:href="@{/admin/usuarios/solicitudes}"
+                                   class="shrink-0 px-3 py-2 rounded-lg bg-secondary text-on-secondary text-[11px] font-bold hover:bg-[#005a3d] transition-colors">
+                                    Revisar
+                                </a>
+                            </div>
+                        </section>
+                    </div>
                 </div>
-            </div>
 
-            <div class="bg-transparent border border-outline-variant/30 rounded-xl p-4 mb-4 flex flex-col">
-                <!-- KPIs -->
-                <section class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
-                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-outline to-surface-variant"></div>
-                        <div class="flex justify-between items-start mb-3">
-                            <div class="w-9 h-9 rounded-lg bg-surface-container text-on-surface-variant flex items-center justify-center shadow-sm">
-                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.98 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-                                </svg>
+                <div class="bg-transparent border border-outline-variant/30 rounded-xl p-4 mb-4 flex flex-col">
+                    <!-- KPIs -->
+                    <section class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
+                        <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-outline to-surface-variant"></div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="w-9 h-9 rounded-lg bg-surface-container text-on-surface-variant flex items-center justify-center shadow-sm">
+                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.98 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                                    </svg>
+                                </div>
+                                <div class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                    Total
+                                </div>
                             </div>
-                            <div class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                Total
+                            <div>
+                                <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                                    Total Usuarios
+                                </h4>
+                                <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalUsuarios}"></div>
                             </div>
-                        </div>
-                        <div>
-                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                                Total Usuarios
-                            </h4>
-                            <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalUsuarios}"></div>
-                        </div>
-                    </article>
+                        </article>
 
-                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
-                        <div class="flex justify-between items-start mb-3">
-                            <div class="w-9 h-9 rounded-lg bg-secondary-container/30 text-secondary flex items-center justify-center shadow-sm">
-                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
-                                </svg>
+                        <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="w-9 h-9 rounded-lg bg-secondary-container/30 text-secondary flex items-center justify-center shadow-sm">
+                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                                    </svg>
+                                </div>
+                                <div class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                    Activo
+                                </div>
                             </div>
-                            <div class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                Activo
+                            <div>
+                                <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                                    Usuarios Activos
+                                </h4>
+                                <div class="text-3xl font-extrabold text-secondary" th:text="${usuariosActivos}"></div>
                             </div>
-                        </div>
-                        <div>
-                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                                Usuarios Activos
-                            </h4>
-                            <div class="text-3xl font-extrabold text-secondary" th:text="${usuariosActivos}"></div>
-                        </div>
-                    </article>
+                        </article>
 
-                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container"></div>
-                        <div class="flex justify-between items-start mb-3">
-                            <div class="w-9 h-9 rounded-lg bg-error-container text-error flex items-center justify-center shadow-sm">
-                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
-                                </svg>
+                        <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container"></div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="w-9 h-9 rounded-lg bg-error-container text-error flex items-center justify-center shadow-sm">
+                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
+                                    </svg>
+                                </div>
+                                <div class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                    Bloqueado
+                                </div>
                             </div>
-                            <div class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                Bloqueado
+                            <div>
+                                <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                                    Usuarios Bloqueados
+                                </h4>
+                                <div class="text-3xl font-extrabold text-error" th:text="${usuariosBloqueados}"></div>
                             </div>
-                        </div>
-                        <div>
-                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                                Usuarios Bloqueados
-                            </h4>
-                            <div class="text-3xl font-extrabold text-error" th:text="${usuariosBloqueados}"></div>
-                        </div>
-                    </article>
+                        </article>
 
-                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-amber-200"></div>
-                        <div class="flex justify-between items-start mb-3">
-                            <div class="w-9 h-9 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center shadow-sm">
-                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
-                                </svg>
+                        <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-amber-200"></div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="w-9 h-9 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center shadow-sm">
+                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                                    </svg>
+                                </div>
+                                <div class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                    Nuevo
+                                </div>
                             </div>
-                            <div class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                Nuevo
+                            <div>
+                                <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                                    Pendientes
+                                </h4>
+                                <div class="text-3xl font-extrabold text-amber-600" th:text="${usuariosPendientes}"></div>
                             </div>
-                        </div>
-                        <div>
-                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                                Pendientes
-                            </h4>
-                            <div class="text-3xl font-extrabold text-amber-600" th:text="${usuariosPendientes}"></div>
-                        </div>
-                    </article>
-                </section>
+                        </article>
+                    </section>
 
-                <!-- Barra superior tabla -->
-                <section class="mb-4">
-                    <div class="flex flex-col xl:flex-row gap-3 w-full">
-                        <form th:action="@{/admin/usuarios/gestion}" method="get" class="flex-1 relative">
-                            <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                            <input type="text"
-                                   name="texto"
-                                   th:value="${texto}"
-                                   placeholder="Buscar usuario por nombre, DNI o empresa..."
-                                   class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
-                        </form>
-
-                        <div class="flex flex-wrap gap-3 shrink-0">
-                            <button type="button"
-                                    class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                                <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <!-- Barra superior tabla -->
+                    <section class="mb-4">
+                        <div class="flex flex-col xl:flex-row gap-3 w-full">
+                            <form th:action="@{/admin/usuarios/gestion}" method="get" class="flex-1 relative">
+                                <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M3 4a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9zm7-7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm7 0a1 1 0 011-1h2a1 1 0 011 1v16a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm-7 12a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 01-1-1v-4z" />
+                                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
-                                <span class="text-sm font-medium">Filtros avanzados</span>
-                            </button>
+                                <input type="text"
+                                       name="texto"
+                                       th:value="${texto}"
+                                       placeholder="Buscar usuario por nombre, DNI o empresa..."
+                                       class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
+                            </form>
 
-                            <button type="button"
-                                    class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                                <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M12 5v14m7-7H5" />
-                                </svg>
-                                <span class="text-sm font-medium">Exportar</span>
-                            </button>
-                        </div>
-                    </div>
-                </section>
+                            <div class="flex flex-wrap gap-3 shrink-0">
+                                <button type="button"
+                                        class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                                    <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M3 4a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9zm7-7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm7 0a1 1 0 011-1h2a1 1 0 011 1v16a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm-7 12a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 01-1-1v-4z" />
+                                    </svg>
+                                    <span class="text-sm font-medium">Filtros avanzados</span>
+                                </button>
 
-                <!-- Tabla + paginación -->
-                <div class="flex flex-col">
-                    <section class="bg-surface-container-lowest rounded-[1.25rem] ambient-shadow ghost-border overflow-hidden flex-1 min-h-0">
-                        <div class="overflow-x-auto overflow-y-auto max-h-[420px]">
-                            <table class="w-full border-collapse text-left">
-                                <thead>
-                                <tr class="border-b border-surface-variant bg-surface-container-low/40">
-                                    <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Nombre</th>
-                                    <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Identificación</th>
-                                    <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Empresa</th>
-                                    <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Rol</th>
-                                    <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Estado</th>
-                                    <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Registro</th>
-                                    <th class="px-4 py-3 text-right text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Acciones</th>
-                                </tr>
-                                </thead>
-
-                                <tbody class="divide-y divide-surface-variant/60">
-                                <tr th:each="u : ${usuarios}" class="hover:bg-surface-container-low/30 transition-colors">
-                                    <td class="px-4 py-3">
-                                        <div class="flex items-center gap-3">
-                                            <div class="flex h-9 w-9 items-center justify-center rounded-full bg-secondary-container/30 text-sm font-bold text-secondary"
-                                                 th:text="${u.iniciales}">
-                                            </div>
-                                            <div>
-                                                <p class="text-sm font-bold leading-tight text-on-primary-fixed" th:text="${u.nombreCompleto}"></p>
-                                                <p class="text-[11px] leading-tight text-on-surface-variant" th:text="${u.correo}"></p>
-                                            </div>
-                                        </div>
-                                    </td>
-
-                                    <td class="px-4 py-3 text-sm font-medium text-on-surface-variant" th:text="${u.dni}"></td>
-                                    <td class="px-4 py-3 text-sm italic text-on-surface-variant" th:text="${u.empresa}"></td>
-
-                                    <td class="px-4 py-3">
-                                        <span class="rounded-full bg-secondary-container/20 px-3 py-1 text-[10px] font-extrabold uppercase text-secondary"
-                                              th:text="${u.rol}">
-                                        </span>
-                                    </td>
-
-                                    <td class="px-4 py-3">
-                                        <div class="flex items-center gap-2" th:if="${u.estado == 'Activo'}">
-                                            <div class="h-2 w-2 rounded-full bg-secondary"></div>
-                                            <span class="text-sm font-bold text-secondary" th:text="${u.estado}"></span>
-                                        </div>
-
-                                        <div class="flex items-center gap-2" th:if="${u.estado == 'Bloqueado'}">
-                                            <div class="h-2 w-2 rounded-full bg-error"></div>
-                                            <span class="text-sm font-bold text-error" th:text="${u.estado}"></span>
-                                        </div>
-
-                                        <div class="flex items-center gap-2" th:if="${u.estado == 'Pendiente'}">
-                                            <div class="h-2 w-2 rounded-full bg-amber-500"></div>
-                                            <span class="text-sm font-bold text-amber-600" th:text="${u.estado}"></span>
-                                        </div>
-
-                                        <div class="flex items-center gap-2" th:if="${u.estado == 'Rechazado'}">
-                                            <div class="h-2 w-2 rounded-full bg-outline"></div>
-                                            <span class="text-sm font-bold text-outline" th:text="${u.estado}"></span>
-                                        </div>
-                                    </td>
-
-                                    <td class="px-4 py-3 text-sm text-on-surface-variant" th:text="${u.fechaRegistro}"></td>
-
-                                    <td class="px-4 py-3 text-right">
-                                        <div class="flex justify-end gap-1.5 flex-wrap">
-                                            <a th:if="${u.estado != 'Bloqueado'}"
-                                               th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, modal='edit', id=${u.idUsuario})}"
-                                               class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
-                                                Editar
-                                            </a>
-
-                                            <a th:if="${u.estado == 'Activo'}"
-                                               th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, modal='block', id=${u.idUsuario})}"
-                                               class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-error-container hover:text-error transition-colors">
-                                                Bloquear
-                                            </a>
-
-                                            <a th:if="${u.estado == 'Bloqueado'}"
-                                               th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, modal='unblock', id=${u.idUsuario})}"
-                                               class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
-                                                Desbloquear
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <tr th:if="${#lists.isEmpty(usuarios)}">
-                                    <td colspan="7" class="px-6 py-8 text-center text-sm text-on-surface-variant">
-                                        No hay usuarios para mostrar
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
+                                <button type="button"
+                                        class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                                    <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M12 5v14m7-7H5" />
+                                    </svg>
+                                    <span class="text-sm font-medium">Exportar</span>
+                                </button>
+                            </div>
                         </div>
                     </section>
 
-                    <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-4">
+                    <!-- Tabla + paginación -->
+                    <div class="flex flex-col">
+                        <section class="bg-surface-container-lowest rounded-[1.25rem] ambient-shadow ghost-border overflow-hidden flex-1 min-h-0">
+                            <div class="overflow-x-auto overflow-y-auto max-h-[420px]">
+                                <table class="w-full border-collapse text-left">
+                                    <thead>
+                                    <tr class="border-b border-surface-variant bg-surface-container-low/40">
+                                        <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Nombre</th>
+                                        <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Identificación</th>
+                                        <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Empresa</th>
+                                        <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Rol</th>
+                                        <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Estado</th>
+                                        <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Registro</th>
+                                        <th class="px-4 py-3 text-right text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Acciones</th>
+                                    </tr>
+                                    </thead>
 
-                        <!-- Botón anterior -->
-                        <a th:if="${hasPrevious}"
-                           th:href="@{/admin/usuarios/gestion(page=${currentPage - 1}, texto=${texto})}"
-                           class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M15 19l-7-7 7-7" />
-                            </svg>
-                        </a>
+                                    <tbody class="divide-y divide-surface-variant/60">
+                                    <tr th:each="u : ${usuarios}" class="hover:bg-surface-container-low/30 transition-colors">
+                                        <td class="px-4 py-3">
+                                            <div class="flex items-center gap-3">
+                                                <div class="flex h-9 w-9 items-center justify-center rounded-full bg-secondary-container/30 text-sm font-bold text-secondary"
+                                                     th:text="${u.iniciales}">
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-bold leading-tight text-on-primary-fixed" th:text="${u.nombreCompleto}"></p>
+                                                    <p class="text-[11px] leading-tight text-on-surface-variant" th:text="${u.correo}"></p>
+                                                </div>
+                                            </div>
+                                        </td>
 
-                        <span th:if="${!hasPrevious}"
-                              class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+                                        <td class="px-4 py-3 text-sm font-medium text-on-surface-variant" th:text="${u.dni}"></td>
+                                        <td class="px-4 py-3 text-sm italic text-on-surface-variant" th:text="${u.empresa}"></td>
+
+                                        <td class="px-4 py-3">
+                                            <span class="rounded-full bg-secondary-container/20 px-3 py-1 text-[10px] font-extrabold uppercase text-secondary"
+                                                  th:text="${u.rol}">
+                                            </span>
+                                        </td>
+
+                                        <td class="px-4 py-3">
+                                            <div class="flex items-center gap-2" th:if="${u.estado == 'Activo'}">
+                                                <div class="h-2 w-2 rounded-full bg-secondary"></div>
+                                                <span class="text-sm font-bold text-secondary" th:text="${u.estado}"></span>
+                                            </div>
+
+                                            <div class="flex items-center gap-2" th:if="${u.estado == 'Bloqueado'}">
+                                                <div class="h-2 w-2 rounded-full bg-error"></div>
+                                                <span class="text-sm font-bold text-error" th:text="${u.estado}"></span>
+                                            </div>
+
+                                            <div class="flex items-center gap-2" th:if="${u.estado == 'Pendiente'}">
+                                                <div class="h-2 w-2 rounded-full bg-amber-500"></div>
+                                                <span class="text-sm font-bold text-amber-600" th:text="${u.estado}"></span>
+                                            </div>
+
+                                            <div class="flex items-center gap-2" th:if="${u.estado == 'Rechazado'}">
+                                                <div class="h-2 w-2 rounded-full bg-outline"></div>
+                                                <span class="text-sm font-bold text-outline" th:text="${u.estado}"></span>
+                                            </div>
+                                        </td>
+
+                                        <td class="px-4 py-3 text-sm text-on-surface-variant" th:text="${u.fechaRegistro}"></td>
+
+                                        <td class="px-4 py-3 text-right">
+                                            <div class="flex justify-end gap-1.5 flex-wrap">
+                                                <a th:if="${u.estado != 'Bloqueado'}"
+                                                   th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, modal='edit', id=${u.idUsuario})}"
+                                                   class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
+                                                    Editar
+                                                </a>
+
+                                                <a th:if="${u.estado == 'Activo'}"
+                                                   th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, modal='block', id=${u.idUsuario})}"
+                                                   class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-error-container hover:text-error transition-colors">
+                                                    Bloquear
+                                                </a>
+
+                                                <a th:if="${u.estado == 'Bloqueado'}"
+                                                   th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, modal='unblock', id=${u.idUsuario})}"
+                                                   class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
+                                                    Desbloquear
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr th:if="${#lists.isEmpty(usuarios)}">
+                                        <td colspan="7" class="px-6 py-8 text-center text-sm text-on-surface-variant">
+                                            No hay usuarios para mostrar
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-4">
+
+                            <!-- Botón anterior -->
+                            <a th:if="${hasPrevious}"
+                               th:href="@{/admin/usuarios/gestion(page=${currentPage - 1}, texto=${texto})}"
+                               class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </a>
+
+                            <span th:if="${!hasPrevious}"
+                                  class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M15 19l-7-7 7-7" />
         </svg>
     </span>
 
-                        <!-- Números -->
-                        <div id="pageNumbers" class="flex gap-2">
-                            <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-                               th:href="@{/admin/usuarios/gestion(page=${i}, texto=${texto})}"
-                               th:text="${i + 1}"
-                               th:class="${i == currentPage} ?
+                            <!-- Números -->
+                            <div id="pageNumbers" class="flex gap-2">
+                                <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                   th:href="@{/admin/usuarios/gestion(page=${i}, texto=${texto})}"
+                                   th:text="${i + 1}"
+                                   th:class="${i == currentPage} ?
                 'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
                 :
                 'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container transition'">
+                                </a>
+                            </div>
+
+                            <!-- Botón siguiente -->
+                            <a th:if="${hasNext}"
+                               th:href="@{/admin/usuarios/gestion(page=${currentPage + 1}, texto=${texto})}"
+                               class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M9 5l7 7-7 7" />
+                                </svg>
                             </a>
-                        </div>
 
-                        <!-- Botón siguiente -->
-                        <a th:if="${hasNext}"
-                           th:href="@{/admin/usuarios/gestion(page=${currentPage + 1}, texto=${texto})}"
-                           class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M9 5l7 7-7 7" />
-                            </svg>
-                        </a>
-
-                        <span th:if="${!hasNext}"
-                              class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+                            <span th:if="${!hasNext}"
+                                  class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M9 5l7 7-7 7" />
         </svg>
     </span>
 
+                        </div>
                     </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL EDITAR -->
+    <div th:if="${modal == 'edit'}"
+         class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+        <div class="w-full max-w-3xl bg-surface text-on-surface rounded-[1.5rem] ambient-shadow overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-5 border-b border-outline-variant/30">
+                <div>
+                    <h3 class="text-2xl font-headline font-bold text-on-primary-fixed">Editar usuario</h3>
+                    <p class="text-sm text-on-surface-variant mt-1">Actualiza la información principal del usuario.</p>
                 </div>
 
-            </div>
-        </div>
-    </main>
-</div>
-
-<!-- MODAL EDITAR -->
-<div th:if="${modal == 'edit'}"
-     class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-    <div class="w-full max-w-3xl bg-surface text-on-surface rounded-[1.5rem] ambient-shadow overflow-hidden">
-        <div class="flex items-center justify-between px-6 py-5 border-b border-outline-variant/30">
-            <div>
-                <h3 class="text-2xl font-headline font-bold text-on-primary-fixed">Editar usuario</h3>
-                <p class="text-sm text-on-surface-variant mt-1">Actualiza la información principal del usuario.</p>
-            </div>
-
-            <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto})}"
-               class="px-4 py-2 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
-                Cerrar
-            </a>
-        </div>
-
-        <form th:action="@{/admin/usuarios/editar(page=${currentPage}, texto=${texto})}"
-              th:object="${editForm}"
-              method="post"
-              class="grid grid-cols-1 md:grid-cols-2 gap-4 px-6 py-6">
-
-            <input type="hidden" th:field="*{idUsuario}">
-
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Nombres</label>
-                <input type="text" th:field="*{nombres}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                <p th:if="${fieldErrors != null and fieldErrors.nombres != null}" th:text="${fieldErrors.nombres}" class="mt-1 text-xs font-medium text-error"></p>
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Apellido paterno</label>
-                <input type="text" th:field="*{apellidoPaterno}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                <p th:if="${fieldErrors != null and fieldErrors.apellidoPaterno != null}" th:text="${fieldErrors.apellidoPaterno}" class="mt-1 text-xs font-medium text-error"></p>
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Apellido materno</label>
-                <input type="text" th:field="*{apellidoMaterno}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">DNI</label>
-                <input type="text" th:field="*{dni}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                <p th:if="${fieldErrors != null and fieldErrors.dni != null}" th:text="${fieldErrors.dni}" class="mt-1 text-xs font-medium text-error"></p>
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Correo</label>
-                <input type="email" th:field="*{correo}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                <p th:if="${fieldErrors != null and fieldErrors.correo != null}" th:text="${fieldErrors.correo}" class="mt-1 text-xs font-medium text-error"></p>
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Teléfono</label>
-                <input type="text" th:field="*{telefono}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                <p th:if="${fieldErrors != null and fieldErrors.telefono != null}" th:text="${fieldErrors.telefono}" class="mt-1 text-xs font-medium text-error"></p>
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Rol</label>
-                <select th:field="*{idRol}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                    <option value="">Seleccione un rol</option>
-                    <option th:each="rol : ${roles}" th:value="${rol.idRol}" th:text="${rol.nombre}"></option>
-                </select>
-                <p th:if="${fieldErrors != null and fieldErrors.idRol != null}" th:text="${fieldErrors.idRol}" class="mt-1 text-xs font-medium text-error"></p>
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Empresa</label>
-                <input type="text" th:field="*{razonSocial}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Cargo</label>
-                <input type="text" th:field="*{cargo}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-            </div>
-
-            <div th:if="${mostrarSelectorPendiente}">
-                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Estado de evaluación</label>
-                <select th:field="*{estadoAprobacion}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                    <option value="PENDIENTE">Pendiente</option>
-                </select>
-                <p class="mt-2 text-xs text-on-surface-variant">
-                    Este usuario fue rechazado. Aquí solo puede volver a estado pendiente.
-                </p>
-            </div>
-
-            <div class="md:col-span-2 flex justify-end gap-3 pt-2">
                 <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto})}"
-                   class="px-6 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
-                    Cancelar
+                   class="px-4 py-2 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+                    Cerrar
                 </a>
-                <button type="submit"
-                        class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary text-sm font-bold hover:bg-[#00210c] transition-colors shadow-sm">
-                    Guardar cambios
-                </button>
             </div>
-        </form>
+
+            <form th:action="@{/admin/usuarios/editar(page=${currentPage}, texto=${texto})}"
+                  th:object="${editForm}"
+                  method="post"
+                  class="grid grid-cols-1 md:grid-cols-2 gap-4 px-6 py-6">
+
+                <input type="hidden" th:field="*{idUsuario}">
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Nombres</label>
+                    <input type="text" th:field="*{nombres}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                    <p th:if="${fieldErrors != null and fieldErrors.nombres != null}" th:text="${fieldErrors.nombres}" class="mt-1 text-xs font-medium text-error"></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Apellido paterno</label>
+                    <input type="text" th:field="*{apellidoPaterno}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                    <p th:if="${fieldErrors != null and fieldErrors.apellidoPaterno != null}" th:text="${fieldErrors.apellidoPaterno}" class="mt-1 text-xs font-medium text-error"></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Apellido materno</label>
+                    <input type="text" th:field="*{apellidoMaterno}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">DNI</label>
+                    <input type="text" th:field="*{dni}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                    <p th:if="${fieldErrors != null and fieldErrors.dni != null}" th:text="${fieldErrors.dni}" class="mt-1 text-xs font-medium text-error"></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Correo</label>
+                    <input type="email" th:field="*{correo}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                    <p th:if="${fieldErrors != null and fieldErrors.correo != null}" th:text="${fieldErrors.correo}" class="mt-1 text-xs font-medium text-error"></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Teléfono</label>
+                    <input type="text" th:field="*{telefono}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                    <p th:if="${fieldErrors != null and fieldErrors.telefono != null}" th:text="${fieldErrors.telefono}" class="mt-1 text-xs font-medium text-error"></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Rol</label>
+                    <select th:field="*{idRol}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                        <option value="">Seleccione un rol</option>
+                        <option th:each="rol : ${roles}" th:value="${rol.idRol}" th:text="${rol.nombre}"></option>
+                    </select>
+                    <p th:if="${fieldErrors != null and fieldErrors.idRol != null}" th:text="${fieldErrors.idRol}" class="mt-1 text-xs font-medium text-error"></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Empresa</label>
+                    <input type="text" th:field="*{razonSocial}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Cargo</label>
+                    <input type="text" th:field="*{cargo}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                </div>
+
+                <div th:if="${mostrarSelectorPendiente}">
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Estado de evaluación</label>
+                    <select th:field="*{estadoAprobacion}" class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                        <option value="PENDIENTE">Pendiente</option>
+                    </select>
+                    <p class="mt-2 text-xs text-on-surface-variant">
+                        Este usuario fue rechazado. Aquí solo puede volver a estado pendiente.
+                    </p>
+                </div>
+
+                <div class="md:col-span-2 flex justify-end gap-3 pt-2">
+                    <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto})}"
+                       class="px-6 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+                        Cancelar
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary text-sm font-bold hover:bg-[#00210c] transition-colors shadow-sm">
+                        Guardar cambios
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<!-- MODAL BLOQUEAR / DESBLOQUEAR -->
-<div th:if="${modal == 'block' or modal == 'unblock'}"
-     class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-    <div class="w-full max-w-xl bg-surface text-on-surface rounded-[1.5rem] ambient-shadow overflow-hidden">
-        <div class="border-b border-outline-variant/30 px-6 py-5">
-            <h3 class="text-2xl font-headline font-bold text-on-primary-fixed"
-                th:text="${modoBloqueo == 'bloquear' ? 'Bloquear usuario' : 'Desbloquear usuario'}"></h3>
-            <p class="text-sm text-on-surface-variant mt-1"
-               th:text="${modoBloqueo == 'bloquear' ? 'Confirma la acción antes de bloquear el acceso.' : 'Confirma la acción para restaurar el acceso del usuario.'}"></p>
+    <!-- MODAL BLOQUEAR / DESBLOQUEAR -->
+    <div th:if="${modal == 'block' or modal == 'unblock'}"
+         class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+        <div class="w-full max-w-xl bg-surface text-on-surface rounded-[1.5rem] ambient-shadow overflow-hidden">
+            <div class="border-b border-outline-variant/30 px-6 py-5">
+                <h3 class="text-2xl font-headline font-bold text-on-primary-fixed"
+                    th:text="${modoBloqueo == 'bloquear' ? 'Bloquear usuario' : 'Desbloquear usuario'}"></h3>
+                <p class="text-sm text-on-surface-variant mt-1"
+                   th:text="${modoBloqueo == 'bloquear' ? 'Confirma la acción antes de bloquear el acceso.' : 'Confirma la acción para restaurar el acceso del usuario.'}"></p>
+            </div>
+
+            <form th:if="${modoBloqueo == 'bloquear'}"
+                  th:action="@{/admin/usuarios/bloquear(page=${currentPage}, texto=${texto})}"
+                  th:object="${blockForm}"
+                  method="post"
+                  class="px-6 py-6">
+
+                <input type="hidden" th:field="*{idUsuario}" />
+
+                <div class="mb-5 rounded-xl bg-error-container/50 p-4">
+                    <p class="text-sm text-on-surface-variant">Usuario</p>
+                    <p class="text-lg font-extrabold text-on-primary-fixed" th:text="${usuarioBloqueoNombre}"></p>
+                    <p class="text-sm text-on-surface-variant" th:text="${usuarioBloqueoCorreo}"></p>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Motivo del bloqueo</label>
+                    <textarea th:field="*{motivo}"
+                              rows="4"
+                              class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-error/20"
+                              placeholder="Escribe el motivo del bloqueo..."></textarea>
+                </div>
+
+                <div class="flex justify-end gap-3">
+                    <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto})}"
+                       class="px-6 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+                        Cancelar
+                    </a>
+
+                    <button type="submit"
+                            class="px-6 py-2.5 rounded-lg bg-error text-on-error text-sm font-bold hover:bg-[#991b1b] transition-colors shadow-sm">
+                        Confirmar bloqueo
+                    </button>
+                </div>
+            </form>
+
+            <form th:if="${modoBloqueo == 'desbloquear'}"
+                  th:action="@{/admin/usuarios/desbloquear(page=${currentPage}, texto=${texto})}"
+                  th:object="${blockForm}"
+                  method="post"
+                  class="px-6 py-6">
+
+                <input type="hidden" th:field="*{idUsuario}" />
+
+                <div class="mb-5 rounded-xl bg-secondary-container/20 p-4">
+                    <p class="text-sm text-on-surface-variant">Usuario</p>
+                    <p class="text-lg font-extrabold text-on-primary-fixed" th:text="${usuarioBloqueoNombre}"></p>
+                    <p class="text-sm text-on-surface-variant" th:text="${usuarioBloqueoCorreo}"></p>
+                </div>
+
+                <div class="flex justify-end gap-3">
+                    <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto})}"
+                       class="px-6 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+                        Cancelar
+                    </a>
+
+                    <button type="submit"
+                            class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary text-sm font-bold hover:bg-[#005a3d] transition-colors shadow-sm">
+                        Confirmar desbloqueo
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <form th:if="${modoBloqueo == 'bloquear'}"
-              th:action="@{/admin/usuarios/bloquear(page=${currentPage}, texto=${texto})}"
-              th:object="${blockForm}"
-              method="post"
-              class="px-6 py-6">
-
-            <input type="hidden" th:field="*{idUsuario}" />
-
-            <div class="mb-5 rounded-xl bg-error-container/50 p-4">
-                <p class="text-sm text-on-surface-variant">Usuario</p>
-                <p class="text-lg font-extrabold text-on-primary-fixed" th:text="${usuarioBloqueoNombre}"></p>
-                <p class="text-sm text-on-surface-variant" th:text="${usuarioBloqueoCorreo}"></p>
-            </div>
-
-            <div class="mb-6">
-                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Motivo del bloqueo</label>
-                <textarea th:field="*{motivo}"
-                          rows="4"
-                          class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-error/20"
-                          placeholder="Escribe el motivo del bloqueo..."></textarea>
-            </div>
-
-            <div class="flex justify-end gap-3">
-                <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto})}"
-                   class="px-6 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
-                    Cancelar
-                </a>
-
-                <button type="submit"
-                        class="px-6 py-2.5 rounded-lg bg-error text-on-error text-sm font-bold hover:bg-[#991b1b] transition-colors shadow-sm">
-                    Confirmar bloqueo
-                </button>
-            </div>
-        </form>
-
-        <form th:if="${modoBloqueo == 'desbloquear'}"
-              th:action="@{/admin/usuarios/desbloquear(page=${currentPage}, texto=${texto})}"
-              th:object="${blockForm}"
-              method="post"
-              class="px-6 py-6">
-
-            <input type="hidden" th:field="*{idUsuario}" />
-
-            <div class="mb-5 rounded-xl bg-secondary-container/20 p-4">
-                <p class="text-sm text-on-surface-variant">Usuario</p>
-                <p class="text-lg font-extrabold text-on-primary-fixed" th:text="${usuarioBloqueoNombre}"></p>
-                <p class="text-sm text-on-surface-variant" th:text="${usuarioBloqueoCorreo}"></p>
-            </div>
-
-            <div class="flex justify-end gap-3">
-                <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto})}"
-                   class="px-6 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
-                    Cancelar
-                </a>
-
-                <button type="submit"
-                        class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary text-sm font-bold hover:bg-[#005a3d] transition-colors shadow-sm">
-                    Confirmar desbloqueo
-                </button>
-            </div>
-        </form>
     </div>
-</div>
 
 </body>
 </html>

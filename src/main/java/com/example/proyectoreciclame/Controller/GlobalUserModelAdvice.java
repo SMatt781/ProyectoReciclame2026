@@ -44,4 +44,10 @@ public class GlobalUserModelAdvice {
 
         return notificacionRepository.countByUsuarioAndLeidoFalse(usuario);
     }
+
+    @ModelAttribute("usuarioRol")
+    public String usuarioRol() {
+        SessionUserDto sessionUser = authenticatedUserService.obtenerUsuarioSesion();
+        return sessionUser != null ? sessionUser.getRol() : null;
+    }
 }

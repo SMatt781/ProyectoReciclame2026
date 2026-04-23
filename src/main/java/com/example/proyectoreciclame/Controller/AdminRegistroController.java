@@ -49,6 +49,7 @@ public class AdminRegistroController {
         );
 
         model.addAttribute("sesiones", pagina.getContent());
+        model.addAttribute("currentSection", "admin-registros-actividad");
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", pagina.getTotalPages());
         model.addAttribute("hasPrevious", pagina.hasPrevious());
@@ -81,6 +82,7 @@ public class AdminRegistroController {
         );
 
         model.addAttribute("descargas", pagina.getContent());
+        model.addAttribute("currentSection", "admin-registros-descargas");
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", pagina.getTotalPages());
         model.addAttribute("hasPrevious", pagina.hasPrevious());

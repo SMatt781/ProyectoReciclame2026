@@ -98,6 +98,7 @@ public class AdminUsuarioController {
 
         model.addAttribute("usuarios", lista);
         model.addAttribute("texto", texto);
+        model.addAttribute("currentSection", "admin-usuarios");
 
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", paginaUsuarios.getTotalPages());
@@ -315,6 +316,7 @@ public class AdminUsuarioController {
 
         model.addAttribute("usuarios", lista);
         model.addAttribute("texto", texto);
+        model.addAttribute("currentSection", "admin-usuarios");
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", paginaUsuarios.getTotalPages());
         model.addAttribute("hasPrevious", paginaUsuarios.hasPrevious());
@@ -383,3 +385,4 @@ public class AdminUsuarioController {
         return "Sin estado";
     }
 }
+

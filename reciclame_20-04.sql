@@ -1421,3 +1421,11 @@ COMMIT;
 -- Chatbot:
 -- chat_sesion, chat_mensaje
 -- ============================================================
+
+UPDATE usuarios
+SET contrasena_hash = '$2a$10$HD..tOqvIDKnRxRTPamcrOtp.IUyB8Dx9ys/jaZ2LY79l2O.Qk/A.'
+WHERE correo = 'carlos.ramirez@reciclame.pe';
+
+UPDATE usuarios
+SET contrasena_hash = '$2a$10$HD..tOqvIDKnRxRTPamcrOtp.IUyB8Dx9ys/jaZ2LY79l2O.Qk/A.'
+WHERE correo = 'paola.flores@cicla.pe';

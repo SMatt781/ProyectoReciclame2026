@@ -19,48 +19,97 @@
 
         <!-- Navigation Tabs -->
         <nav class="flex-1 space-y-2">
-            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                th:classappend="${currentPage == 'inicio'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
-                th:href="@{/socio}">
-                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-                </svg>
-                Inicio
-            </a>
+            <div th:if="${usuarioRol != null and #strings.equalsIgnoreCase(usuarioRol,'ADMIN')}">
+                <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                   th:classappend="${currentSection == 'admin-dashboard'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+                   th:href="@{/admin/dashboard}">
+                    <svg class="w-5 h-5 text-current flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                    </svg>
+                    Dashboard
+                </a>
 
-            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                th:classappend="${currentPage == 'estudios'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
-                th:href="@{/estudios}">
-                <div th:replace="~{fragments/icons.html :: icon-estudios-sidebar}"></div>
-                Estudios
-            </a>
+                <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                   th:classappend="${currentSection == 'admin-usuarios'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+                   th:href="@{/admin/usuarios/gestion}">
+                    <div th:replace="~{fragments/icons.html :: icon-usuarios-sidebar}"></div>
+                    Usuarios
+                </a>
 
-            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                th:classappend="${currentPage == 'repoNormativo'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
-                th:href="@{/normativas}">
-                <div th:replace="~{fragments/icons.html :: icon-normativas-sidebar}"></div>
-                Repositorio Normativo
-            </a>
+                <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                   th:classappend="${currentSection == 'admin-estudios'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+                   th:href="@{/estudios}">
+                    <div th:replace="~{fragments/icons.html :: icon-estudios-sidebar}"></div>
+                    Estudios
+                </a>
 
-            <!-- <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                href="#">
-                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z" />
-                </svg>
-                Indicadores
-            </a>
+                <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                   th:classappend="${currentSection == 'admin-normativas'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+                   th:href="@{/normativas}">
+                    <div th:replace="~{fragments/icons.html :: icon-normativas-sidebar}"></div>
+                    Repositorio Normativo
+                </a>
 
-            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-                href="#">
-                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M21 5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5zm-2 0l-6.5 4L5 5h14zm0 13H5V7l6.5 4L19 7v11z" />
-                </svg>
-                Publicaciones
-            </a> -->
+                <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                   th:classappend="${currentSection == 'admin-registros-actividad'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+                   th:href="@{/admin/registros/actividad}">
+                    <div th:replace="~{fragments/icons.html :: icon-registros-actividad-sidebar}"></div>
+                    Registros de actividad
+                </a>
+
+                <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                   th:classappend="${currentSection == 'admin-registros-descargas'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+                   th:href="@{/admin/registros/descargas}">
+                    <div th:replace="~{fragments/icons.html :: icon-registros-descarga-sidebar}"></div>
+                    Registros de descarga
+                </a>
+            </div>
+
+            <div th:if="${usuarioRol == null or #strings.equalsIgnoreCase(usuarioRol,'SOCIO') or #strings.equalsIgnoreCase(usuarioRol,'VISUALIZADOR')}">
+                <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                    th:classappend="${currentPage == 'inicio'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+                    th:href="@{/socio}">
+                    <svg class="w-5 h-5 text-current flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                    </svg>
+                    Inicio
+                </a>
+
+                <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                    th:classappend="${currentPage == 'estudios'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+                    th:href="@{/estudios}">
+                    <div th:replace="~{fragments/icons.html :: icon-estudios-sidebar}"></div>
+                    Estudios
+                </a>
+
+                <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+                    th:classappend="${currentPage == 'repoNormativo'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+                    th:href="@{/normativas}">
+                    <div th:replace="~{fragments/icons.html :: icon-normativas-sidebar}"></div>
+                    Repositorio Normativo
+                </a>
+            </div>
         </nav>
 
+        <button type="button"
+                th:if="${usuarioRol != null and #strings.equalsIgnoreCase(usuarioRol,'ADMIN') and currentSection == 'admin-estudios'}"
+                onclick="document.getElementById('modalNuevoEstudio').classList.remove('hidden')"
+                class="w-full bg-primary-container text-on-primary font-label font-bold text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-fixed-variant transition-colors ambient-shadow">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
+            Anadir Estudio
+        </button>
 
+        <button type="button"
+                th:if="${usuarioRol != null and #strings.equalsIgnoreCase(usuarioRol,'ADMIN') and currentSection == 'admin-normativas'}"
+                onclick="document.getElementById('modalNuevaNormativa').classList.remove('hidden')"
+                class="w-full bg-primary-container text-on-primary font-label font-bold text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-fixed-variant transition-colors ambient-shadow">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
+            Anadir Normativa
+        </button>
 
         <!-- Footer Tabs -->
         <div
@@ -69,7 +118,7 @@
 
             <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
                 href="#">
-                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-current flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                     <path
                         d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
                 </svg>
