@@ -26,6 +26,7 @@ public class SuperadminController {
     public String showDashboard(Model model) {
         // Puedes añadir algún dato aquí si quieres
         model.addAttribute("titulo", "Dashboard");
+        model.addAttribute("currentSection", "superadmin-dashboard");
         return "superadmin/dashboard"; // Este es el nombre del archivo HTML de tu vista
     }
 
@@ -54,6 +55,8 @@ public class SuperadminController {
 
         // Pasar los datos al modelo para los cards
         model.addAttribute("titulo", "Administradores");
+        model.addAttribute("currentSection", "superadmin-administradores");
+
         model.addAttribute("administradores", administradores);
         model.addAttribute("totalAdmins", totalAdmins);
         model.addAttribute("activeAdmins", activeAdmins);
@@ -66,6 +69,7 @@ public class SuperadminController {
     @GetMapping("/estadoSistema")
     public String showEstadoSistema(Model model) {
         model.addAttribute("titulo", "Estado del Sistema");
+        model.addAttribute("currentSection", "superadmin-estado-sistema");
         // Aquí podrías agregar más lógica si necesitas información adicional
         return "superadmin/estadoSistema"; // Vista del estado del sistema
     }
@@ -74,6 +78,7 @@ public class SuperadminController {
     @GetMapping("/confSeguridad")
     public String showConfSeguridad(Model model) {
         model.addAttribute("titulo", "Configuración de Seguridad");
+        model.addAttribute("currentSection", "superadmin-conf-seguridad");
         // Lógica relacionada con la configuración de seguridad
         return "superadmin/confSeguridad"; // Vista de configuración de seguridad
     }
