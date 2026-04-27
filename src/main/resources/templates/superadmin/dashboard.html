@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 
-<html class="light" lang="es"><head>
+<html class="light" lang="es">
+<head>
     <meta charset="utf-8"/>
+    <title>Recíclame - Dashboard- Superadmin</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -96,17 +98,21 @@
     </script>
 </head>
 
-<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
-
+<body class="bg-surface text-on-surface font-body h-screen flex selection:bg-secondary-container selection:text-on-secondary-container">
 <div th:replace="~{fragments/sidebar_superadmin :: sidebar}"></div>
-
-<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative h-screen overflow-y-auto">
     <div th:replace="~{fragments/navbar :: navbar}"></div>
     <main class="p-10 max-w-[1440px] mx-auto w-full">
-        <header class="mb-10">
-            <h1 class="text-[52px] font-black tracking-tight text-[#0F172A] leading-tight">Dashboard</h1>
-            <p class="text-slate-500 mt-2 font-medium">Resumen general de operaciones y estado del sistema.</p>
-        </header>
+        <div class="mb-5">
+            <div>
+                <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                    Dashboard
+                </h2>
+                <p class="font-body text-on-surface-variant text-base mt-2">
+                    Resumen general de operaciones y estado del sistema
+                </p>
+            </div>
+        </div>
         <!-- Bento Grid -->
         <div class="bento-grid">
             <!-- Row 1: Statistics -->
