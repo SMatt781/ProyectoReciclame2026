@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" class="h-full">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recíclame - Detalle de solicitud</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7f9fb",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#cfe9d9",
+                        "tertiary-container": "#092016",
+                        "primary-container": "#021d30",
+                        "on-secondary-container": "#00743a",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#b1c9e2",
+                        "on-surface-variant": "#43474c",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "outline-variant": "#c3c7cd",
+                        "on-secondary-fixed": "#00210c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006d37",
+                        "surface-variant": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#354c40",
+                        "on-secondary": "#ffffff",
+                        "outline": "#73777d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-container": "#71897c",
+                        "tertiary-fixed-dim": "#b3ccbd",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#496177",
+                        "on-secondary-fixed-variant": "#005228",
+                        "on-primary-container": "#6f869e",
+                        "secondary-container": "#6bfe9c",
+                        "on-tertiary-fixed": "#092016",
+                        "secondary-fixed": "#6bfe9c",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#021d30",
+                        "on-primary-fixed-variant": "#31495e",
+                        "primary-fixed": "#cde5ff",
+                        "secondary-fixed-dim": "#4ae183",
+                        "primary-fixed-dim": "#b1c9e2"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+
+        .icon-sm { width: 1.25rem; height: 1.25rem; }
+        .icon-md { width: 1.5rem; height: 1.5rem; }
+        .icon-lg { width: 2rem; height: 2rem; }
+        .icon-xl { width: 2.5rem; height: 2.5rem; }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="flex-1 overflow-y-auto px-8 py-3">
+        <div class="w-full">
+
+            <!-- Header igual al dashboard -->
+            <div class="mb-5">
+                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">
+                            Gestión de usuarios &gt; Solicitudes pendientes &gt; Detalle
+                        </p>
+                        <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                            Detalle de solicitud
+                        </h2>
+                        <p class="font-body text-on-surface-variant text-base mt-2">
+                            Revisión completa de la solicitud de acceso del usuario.
+                        </p>
+                    </div>
+
+                    <a th:href="@{/admin/usuarios/solicitudes}"
+                       class="self-start flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                        <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span class="text-sm font-medium">Volver</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Contenedor principal igual al dashboard -->
+            <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
+                <div class="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
+
+                    <!-- Perfil -->
+                    <aside class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border h-fit">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-secondary-container/30 text-3xl font-extrabold text-secondary">
+                                <span th:text="|${#strings.substring(usuario.nombres,0,1)}${#strings.substring(usuario.apellidoPaterno,0,1)}|"></span>
+                            </div>
+
+                            <h3 class="text-2xl font-headline font-extrabold text-on-primary-fixed leading-tight"
+                                th:text="|${usuario.nombres} ${usuario.apellidoPaterno} ${usuario.apellidoMaterno != null ? usuario.apellidoMaterno : ''}|">
+                            </h3>
+
+                            <p class="mt-2 text-sm text-on-surface-variant" th:text="|DNI: ${usuario.dni}|"></p>
+
+                            <div class="mt-6 w-full space-y-4">
+                                <div class="bg-surface-container-low rounded-[1.25rem] p-4">
+                                    <p class="text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant mb-2">Estado</p>
+                                    <span class="rounded-full bg-amber-100 px-3 py-1 text-[10px] font-bold uppercase text-amber-700"
+                                          th:text="${usuario.estadoAprobacion}">
+                                    </span>
+                                </div>
+
+                                <div class="bg-surface-container-low rounded-[1.25rem] p-4">
+                                    <p class="text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant mb-2">Rol</p>
+                                    <span class="rounded-full bg-secondary-container/20 px-3 py-1 text-[10px] font-bold uppercase text-secondary"
+                                          th:text="${usuario.rol != null ? usuario.rol.nombre : 'Sin rol'}">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- Panel derecho -->
+                    <section class="space-y-6">
+
+                        <!-- Datos del solicitante -->
+                        <section class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border">
+                            <div class="mb-6">
+                                <h3 class="font-headline text-lg font-bold text-on-primary-fixed">
+                                    Datos del solicitante
+                                </h3>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Nombres</label>
+                                    <div class="rounded-lg bg-surface-container-low px-4 py-3 font-medium text-on-primary-fixed" th:text="${usuario.nombres}"></div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Apellido paterno</label>
+                                    <div class="rounded-lg bg-surface-container-low px-4 py-3 font-medium text-on-primary-fixed" th:text="${usuario.apellidoPaterno}"></div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Apellido materno</label>
+                                    <div class="rounded-lg bg-surface-container-low px-4 py-3 font-medium text-on-primary-fixed"
+                                         th:text="${usuario.apellidoMaterno != null ? usuario.apellidoMaterno : '-'}"></div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">DNI</label>
+                                    <div class="rounded-lg bg-surface-container-low px-4 py-3 font-medium text-on-primary-fixed" th:text="${usuario.dni}"></div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Correo</label>
+                                    <div class="rounded-lg bg-surface-container-low px-4 py-3 font-medium text-on-primary-fixed" th:text="${usuario.correo}"></div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Teléfono</label>
+                                    <div class="rounded-lg bg-surface-container-low px-4 py-3 font-medium text-on-primary-fixed"
+                                         th:text="${usuario.telefono != null ? usuario.telefono : '-'}"></div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">RUC</label>
+                                    <div class="rounded-lg bg-surface-container-low px-4 py-3 font-medium text-on-primary-fixed"
+                                         th:text="${solicitudExtra != null and solicitudExtra.ruc != null ? solicitudExtra.ruc : '-'}"></div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Fecha de solicitud</label>
+                                    <div class="rounded-lg bg-surface-container-low px-4 py-3 font-medium text-on-primary-fixed"
+                                         th:text="${solicitudExtra != null and solicitudExtra.fechaSolicitud != null ? #temporals.format(solicitudExtra.fechaSolicitud, 'dd/MM/yyyy HH:mm') : (usuario.fechaRegistro != null ? #temporals.format(usuario.fechaRegistro, 'dd/MM/yyyy HH:mm') : '-')}">
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Evaluación -->
+                        <section class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border">
+                            <div class="mb-6">
+                                <h3 class="font-headline text-lg font-bold text-on-primary-fixed">
+                                    Evaluación de acceso
+                                </h3>
+                            </div>
+
+                            <form th:action="@{'/admin/usuarios/solicitudes/' + ${usuario.idUsuario} + '/denegar'}"
+                                  method="post"
+                                  class="space-y-5">
+                                <div>
+                                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">
+                                        Motivo de rechazo
+                                    </label>
+                                    <textarea name="motivo"
+                                              rows="5"
+                                              class="w-full rounded-lg bg-surface-container-low px-4 py-3 font-medium text-on-primary-fixed placeholder:text-on-surface-variant border border-outline-variant/30 focus:outline-none focus:ring-2 focus:ring-error/20 resize-none"
+                                              placeholder="Ingrese el motivo del rechazo si corresponde..."></textarea>
+                                </div>
+
+                                <div class="flex items-center justify-end gap-3">
+                                    <button type="submit"
+                                            class="px-6 py-2.5 rounded-lg border border-error/20 bg-error-container text-error text-sm font-bold hover:bg-[#ffe9e6] transition-colors">
+                                        Rechazar solicitud
+                                    </button>
+                                </div>
+                            </form>
+
+                            <form th:action="@{'/admin/usuarios/solicitudes/' + ${usuario.idUsuario} + '/aceptar'}"
+                                  method="post"
+                                  class="mt-4 flex justify-end">
+                                <button type="submit"
+                                        class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary text-sm font-bold hover:bg-[#005a3d] transition-colors shadow-sm">
+                                    Aprobar acceso
+                                </button>
+                            </form>
+                        </section>
+
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

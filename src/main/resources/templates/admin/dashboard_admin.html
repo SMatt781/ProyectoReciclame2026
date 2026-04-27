@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Recíclame - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7f9fb",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#cfe9d9",
+                        "tertiary-container": "#092016",
+                        "primary-container": "#021d30",
+                        "on-secondary-container": "#00743a",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#b1c9e2",
+                        "on-surface-variant": "#43474c",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "outline-variant": "#c3c7cd",
+                        "on-secondary-fixed": "#00210c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006d37",
+                        "surface-variant": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#354c40",
+                        "on-secondary": "#ffffff",
+                        "outline": "#73777d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-container": "#71897c",
+                        "tertiary-fixed-dim": "#b3ccbd",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#496177",
+                        "on-secondary-fixed-variant": "#005228",
+                        "on-primary-container": "#6f869e",
+                        "secondary-container": "#6bfe9c",
+                        "on-tertiary-fixed": "#092016",
+                        "secondary-fixed": "#6bfe9c",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#021d30",
+                        "on-primary-fixed-variant": "#31495e",
+                        "primary-fixed": "#cde5ff",
+                        "secondary-fixed-dim": "#4ae183",
+                        "primary-fixed-dim": "#b1c9e2"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" rel="stylesheet" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+
+        .icon-sm { width: 1.25rem; height: 1.25rem; }
+        .icon-md { width: 1.5rem; height: 1.5rem; }
+        .icon-lg { width: 2rem; height: 2rem; }
+        .icon-xl { width: 2.5rem; height: 2.5rem; }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .donut-segment {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+
+        <main class="flex-1 overflow-y-auto px-8 py-3">
+            <div class="w-full">
+                <div class="mb-5">
+                    <div>
+                        <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                            Dashboard
+                        </h2>
+                        <p class="font-body text-on-surface-variant text-base mt-2">
+                            Control central para la gestión y supervisión del repositorio circular.
+                        </p>
+
+                    </div>
+                </div>
+
+                <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
+                    <section class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4 mb-8">
+                        <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
+                            <div class="flex justify-between items-start mb-5">
+                                <div class="bg-emerald-50 text-secondary rounded-lg w-10 h-10 flex items-center justify-center flex-shrink-0">
+                                    <span class="material-symbols-outlined text-xl">verified</span>
+                                </div>
+                                <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                    Vigente
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
+                                    Normativas vigentes
+                                </h4>
+                                <div class="text-4xl font-extrabold text-on-primary-fixed mb-4">84</div>
+                                <div class="flex gap-6 text-sm">
+                                    <div>
+                                        <p class="text-on-surface-variant font-medium">Nacional</p>
+                                        <p class="font-bold text-on-surface">52</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-on-surface-variant font-medium">Internacional</p>
+                                        <p class="font-bold text-on-surface">32</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200"></div>
+                            <div class="flex justify-between items-start mb-5">
+                                <div class="bg-orange-100 text-orange-600 rounded-lg w-10 h-10 flex items-center justify-center shadow-sm">
+                                    <span class="material-symbols-outlined text-xl">publish</span>
+                                </div>
+                                <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                    Publicado
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
+                                    Proyectos publicados
+                                </h4>
+                                <div class="text-4xl font-extrabold text-on-primary-fixed mb-4">28</div>
+                                <div class="flex gap-6 text-sm">
+                                    <div>
+                                        <p class="text-on-surface-variant font-medium">Nacional</p>
+                                        <p class="font-bold text-on-surface">15</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-on-surface-variant font-medium">Internacional</p>
+                                        <p class="font-bold text-on-surface">13</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200"></div>
+                            <div class="flex justify-between items-start mb-5">
+                                <div class="bg-blue-100 text-blue-600 rounded-lg w-10 h-10 flex items-center justify-center shadow-sm">
+                                    <span class="material-symbols-outlined text-xl">forum</span>
+                                </div>
+                                <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                    Consulta
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
+                                    Consulta pública
+                                </h4>
+                                <div class="text-4xl font-extrabold text-on-primary-fixed mb-4">16</div>
+                                <div class="flex gap-6 text-sm">
+                                    <div>
+                                        <p class="text-on-surface-variant font-medium">Nacional</p>
+                                        <p class="font-bold text-on-surface">10</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-on-surface-variant font-medium">Internacional</p>
+                                        <p class="font-bold text-on-surface">06</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container"></div>
+                            <div class="flex justify-between items-start mb-5">
+                                <div class="bg-error-container text-error rounded-lg w-10 h-10 flex items-center justify-center shadow-sm">
+                                    <span class="material-symbols-outlined text-xl">cancel</span>
+                                </div>
+                                <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                    Derogada
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
+                                    Normativas derogadas
+                                </h4>
+                                <div class="text-4xl font-extrabold text-on-primary-fixed mb-4">14</div>
+                                <div class="flex gap-6 text-sm">
+                                    <div>
+                                        <p class="text-on-surface-variant font-medium">Nacional</p>
+                                        <p class="font-bold text-on-surface">09</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-on-surface-variant font-medium">Internacional</p>
+                                        <p class="font-bold text-on-surface">05</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    </section>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                        <section class="lg:col-span-2 bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border">
+                            <h3 class="font-headline text-lg font-bold text-on-primary-fixed mb-6">
+                                Distribución por temática
+                            </h3>
+
+                            <div class="flex flex-col md:flex-row items-center justify-around gap-10">
+                                <div class="relative h-48 w-48">
+                                    <svg class="h-full w-full -rotate-90 transform" viewBox="0 0 36 36">
+                                        <circle class="text-surface-container" cx="18" cy="18" fill="transparent" r="16" stroke="currentColor" stroke-width="3"></circle>
+                                        <circle class="donut-segment" cx="18" cy="18" fill="transparent" r="16" stroke="#006d42" stroke-dasharray="40 100" stroke-width="4"></circle>
+                                        <circle class="donut-segment" cx="18" cy="18" fill="transparent" r="16" stroke="#f59e0b" stroke-dasharray="25 100" stroke-dashoffset="-40" stroke-width="4"></circle>
+                                        <circle class="donut-segment" cx="18" cy="18" fill="transparent" r="16" stroke="#3b82f6" stroke-dasharray="20 100" stroke-dashoffset="-65" stroke-width="4"></circle>
+                                        <circle class="donut-segment" cx="18" cy="18" fill="transparent" r="16" stroke="#ef4444" stroke-dasharray="15 100" stroke-dashoffset="-85" stroke-width="4"></circle>
+                                    </svg>
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                                        <span class="text-2xl font-black text-on-primary-fixed">142</span>
+                                        <span class="text-[0.65rem] font-bold uppercase tracking-tighter text-on-surface-variant">Normas</span>
+                                    </div>
+                                </div>
+
+                                <div class="grid w-full md:w-auto gap-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="h-3 w-3 rounded-full bg-secondary"></div>
+                                        <span class="flex-grow text-sm font-bold text-on-surface-variant">Envases y Embalajes</span>
+                                        <span class="text-sm font-black text-on-primary-fixed">56</span>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="h-3 w-3 rounded-full bg-orange-500"></div>
+                                        <span class="flex-grow text-sm font-bold text-on-surface-variant">Residuos Sólidos</span>
+                                        <span class="text-sm font-black text-on-primary-fixed">35</span>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="h-3 w-3 rounded-full bg-blue-500"></div>
+                                        <span class="flex-grow text-sm font-bold text-on-surface-variant">Responsabilidad Extendida</span>
+                                        <span class="text-sm font-black text-on-primary-fixed">28</span>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="h-3 w-3 rounded-full bg-error"></div>
+                                        <span class="flex-grow text-sm font-bold text-on-surface-variant">Otros</span>
+                                        <span class="text-sm font-black text-on-primary-fixed">23</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border">
+                            <h3 class="font-headline text-lg font-bold text-on-primary-fixed mb-6">
+                                Últimas actualizaciones
+                            </h3>
+
+                            <div class="flex flex-col gap-5">
+                                <div class="group flex items-start gap-4 cursor-pointer">
+                                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-container text-on-surface-variant transition-colors group-hover:bg-secondary group-hover:text-white">
+                                        <span class="material-symbols-outlined">description</span>
+                                    </div>
+                                    <div class="flex-grow">
+                                        <h4 class="text-sm font-bold leading-tight text-on-surface group-hover:text-secondary transition-colors">
+                                            Ley de Envases y Embalajes - Perú
+                                        </h4>
+                                        <p class="mt-1 mb-2 text-[0.7rem] font-medium text-on-surface-variant">Hace 2 horas</p>
+                                        <span class="rounded-md bg-secondary-container/20 px-2 py-0.5 text-[0.6rem] font-bold text-on-secondary-container">
+                                                MODIFICADO
+                                            </span>
+                                    </div>
+                                </div>
+
+                                <div class="group flex items-start gap-4 cursor-pointer">
+                                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-container text-on-surface-variant transition-colors group-hover:bg-secondary group-hover:text-white">
+                                        <span class="material-symbols-outlined">article</span>
+                                    </div>
+                                    <div class="flex-grow">
+                                        <h4 class="text-sm font-bold leading-tight text-on-surface group-hover:text-secondary transition-colors">
+                                            Guía de Ecodiseño Circular 2024
+                                        </h4>
+                                        <p class="mt-1 mb-2 text-[0.7rem] font-medium text-on-surface-variant">Hace 5 horas</p>
+                                        <span class="rounded-md bg-tertiary-fixed px-2 py-0.5 text-[0.6rem] font-bold text-on-tertiary-container">
+                                                AÑADIDO
+                                            </span>
+                                    </div>
+                                </div>
+
+                                <div class="group flex items-start gap-4 cursor-pointer">
+                                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-container text-on-surface-variant transition-colors group-hover:bg-secondary group-hover:text-white">
+                                        <span class="material-symbols-outlined">edit_note</span>
+                                    </div>
+                                    <div class="flex-grow">
+                                        <h4 class="text-sm font-bold leading-tight text-on-surface group-hover:text-secondary transition-colors">
+                                            Reglamento sobre Plásticos
+                                        </h4>
+                                        <p class="mt-1 mb-2 text-[0.7rem] font-medium text-on-surface-variant">Ayer</p>
+                                        <span class="rounded-md bg-secondary-container/20 px-2 py-0.5 text-[0.6rem] font-bold text-on-secondary-container">
+                                                MODIFICADO
+                                            </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="mt-6 w-full border-t border-surface-variant pt-4 text-sm font-bold text-on-surface-variant transition-colors hover:text-secondary">
+                                Ver todos los registros
+                            </button>
+                        </section>
+                    </div>
+
+                    <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="group relative overflow-hidden rounded-[1.5rem] bg-primary-container p-8 ambient-shadow">
+                            <div class="relative z-10">
+                                <h3 class="font-headline text-2xl font-extrabold text-white mb-3">
+                                    Estudios Reciclame
+                                </h3>
+                                <p class="text-sm font-medium text-on-primary-container max-w-xs mb-6">
+                                    Accede a investigaciones y reportes técnicos sobre economía circular.
+                                </p>
+                                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-primary-container transition-transform group-hover:scale-110">
+                                    <span class="material-symbols-outlined">arrow_forward</span>
+                                </div>
+                            </div>
+                            <div class="absolute right-0 top-0 h-48 w-48 rounded-full bg-white/5 blur-3xl -mr-16 -mt-16"></div>
+                        </div>
+
+                        <div class="group relative overflow-hidden rounded-[1.5rem] bg-surface-container-lowest p-8 ambient-shadow ghost-border">
+                            <div class="relative z-10">
+                                <div class="mb-3 flex items-center gap-2">
+                                    <div class="h-2 w-2 rounded-full bg-secondary"></div>
+                                    <span class="text-xs font-bold uppercase tracking-widest text-secondary">Repositorio</span>
+                                </div>
+                                <h3 class="font-headline text-2xl font-extrabold text-on-primary-fixed mb-3">
+                                    Normativas
+                                </h3>
+                                <p class="text-sm font-medium text-on-surface-variant max-w-xs mb-6">
+                                    Base de datos legal actualizada sobre sostenibilidad y reciclaje.
+                                </p>
+                                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-container text-white transition-transform group-hover:scale-110">
+                                    <span class="material-symbols-outlined">arrow_forward</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
