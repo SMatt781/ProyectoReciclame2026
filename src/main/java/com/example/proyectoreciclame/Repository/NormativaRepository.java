@@ -26,6 +26,7 @@ public interface NormativaRepository extends JpaRepository<Normativa, Long> {
            "AND (cast(:fechaFin as timestamp) IS NULL OR n.fechaCreacion <= :fechaFin) " +
            "AND (:hasEstado = false OR CAST(n.estado AS string) IN :estados) " +
            "AND (:hasAcceso = false OR CAST(n.acceso AS string) IN :accesos) " +
+           "AND (:hasAlcance = false OR CAST(n.alcance AS string) IN :alcances) " +
            "AND (:hasObligatoriedad = false OR n.obligatoriedad IN :obligatoriedades) " +
            "AND (:hasCategoria = false OR EXISTS (SELECT 1 FROM n.categorias c WHERE c.nombre IN :categorias))")
     List<Normativa> findWithAdvancedFilters(
@@ -34,6 +35,7 @@ public interface NormativaRepository extends JpaRepository<Normativa, Long> {
             @Param("fechaFin") java.time.LocalDateTime fechaFin,
             @Param("hasEstado") boolean hasEstado, @Param("estados") List<String> estados,
             @Param("hasAcceso") boolean hasAcceso, @Param("accesos") List<String> accesos,
+            @Param("hasAlcance") boolean hasAlcance, @Param("alcances") List<String> alcances,
             @Param("hasObligatoriedad") boolean hasObligatoriedad, @Param("obligatoriedades") List<String> obligatoriedades,
             @Param("hasCategoria") boolean hasCategoria, @Param("categorias") List<String> categorias
     );

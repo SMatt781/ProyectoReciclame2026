@@ -863,7 +863,7 @@ INSERT INTO rol (id_rol, nombre, descripcion, estado) VALUES
 INSERT INTO categoria (id_categoria, nombre, descripcion, color_hex, tipo, codigo, estado) VALUES
 (1,  'Economía Circular',         'Normativas de economía circular',              '#3CC68A', 'NORMATIVA', 'EC',   1),
 (2,  'Gestión de Residuos',       'Normativas de gestión y tratamiento',          '#378ADD', 'NORMATIVA', 'GR',   1),
-(3,  'Eficiencia Energética',     'Normativas de eficiencia energética',          '#F59E0B', 'NORMATIVA', 'EE',   1),
+(3,  'Envases y Embalajes',     'Normativas relacionadas a envases y embalajes',  '#F59E0B', 'NORMATIVA', 'EE',   1),
 (4,  'Responsabilidad Extendida', 'Normativas REP del productor',                 '#EF4444', 'NORMATIVA', 'REP',  1),
 (5,  'Otro',                      'Otras temáticas normativas',                   '#888780', 'NORMATIVA', 'OTRO', 1),
 (6,  'Mercado de residuos',       'Estudios sobre oferta y demanda de residuos',  '#2F855A', 'ESTUDIO',   'MR',   1),
@@ -1168,7 +1168,7 @@ VALUES
 (5, 3, 1),  (6, 3, 5),
 (7, 4, 2),
 (8, 5, 1),  (9, 5, 5),
-(10,6, 3),
+(10,6, 5),
 (11,7, 5),
 (12,8, 2),  (13,8, 4),
 (14,9, 1),  (15,9, 5),

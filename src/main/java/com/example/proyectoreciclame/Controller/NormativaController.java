@@ -29,19 +29,27 @@ public class NormativaController {
             @RequestParam(required = false) List<String> categoria,
             @RequestParam(required = false) List<String> estado,
             @RequestParam(required = false) List<String> acceso,
+            @RequestParam(required = false) List<String> alcance,
             @RequestParam(required = false) List<String> obligatoriedad,
             Model model) {
 
         List<Normativa> normativas;
 
+        boolean hasCategoriaParam = categoria != null && !categoria.isEmpty();
+        boolean hasEstadoParam = estado != null && !estado.isEmpty();
+        boolean hasAccesoParam = acceso != null && !acceso.isEmpty();
+        boolean hasAlcanceParam = alcance != null && !alcance.isEmpty();
+        boolean hasObligatoriedadParam = obligatoriedad != null && !obligatoriedad.isEmpty();
+
         if (search != null && !search.trim().isEmpty()) {
             normativas = normativaRepository.findByKeyword(search);
-        } else if (anio != null || estado != null || acceso != null || categoria != null || obligatoriedad != null || dateStart != null || dateEnd != null) {
+        } else if (anio != null || hasEstadoParam || hasAccesoParam || hasAlcanceParam || hasCategoriaParam || hasObligatoriedadParam || dateStart != null || dateEnd != null) {
             boolean hasAnio = anio != null;
-            boolean hasEstados = estado != null && !estado.isEmpty();
-            boolean hasAccesos = acceso != null && !acceso.isEmpty();
-            boolean hasObligatoriedad = obligatoriedad != null && !obligatoriedad.isEmpty();
-            boolean hasCategoria = categoria != null && !categoria.isEmpty();
+            boolean hasEstados = hasEstadoParam;
+            boolean hasAccesos = hasAccesoParam;
+            boolean hasAlcance = hasAlcanceParam;
+            boolean hasObligatoriedad = hasObligatoriedadParam;
+            boolean hasCategoria = hasCategoriaParam;
 
             java.time.LocalDateTime fechaInicio = null;
             java.time.LocalDateTime fechaFin = null;
@@ -58,7 +66,7 @@ public class NormativaController {
             }
 
             normativas = normativaRepository.findWithAdvancedFilters(hasAnio, anio, fechaInicio, fechaFin, hasEstados, estado, hasAccesos,
-                    acceso, hasObligatoriedad, obligatoriedad, hasCategoria, categoria);
+                    acceso, hasAlcance, alcance, hasObligatoriedad, obligatoriedad, hasCategoria, categoria);
         } else {
             normativas = normativaRepository.findAllNormativas();
         }
@@ -67,8 +75,88 @@ public class NormativaController {
                 .map(NormativaDTO::fromEntity)
                 .collect(Collectors.toList());
 
+        int totalNormas = normativasDTO.size();
+        long countEc = normativasDTO.stream()
+                .filter(n -> n.categorias() != null && n.categorias().stream()
+                        .anyMatch(c -> c.equalsIgnoreCase("Economía circular")))
+                .count();
+        long countGr = normativasDTO.stream()
+                .filter(n -> n.categorias() != null && n.categorias().stream()
+                        .anyMatch(c -> c.equalsIgnoreCase("Gestión de residuos")))
+                .count();
+        long countEe = normativasDTO.stream()
+                .filter(n -> n.categorias() != null && n.categorias().stream()
+                        .anyMatch(c -> c.equalsIgnoreCase("Envases y Embalajes")))
+                .count();
+        long countRep = normativasDTO.stream()
+                .filter(n -> n.categorias() != null && n.categorias().stream()
+                        .anyMatch(c -> c.equalsIgnoreCase("Ley REP") || c.equalsIgnoreCase("Responsabilidad Extendida")))
+                .count();
+        long countOtro = normativasDTO.stream()
+                .filter(n -> n.categorias() != null && n.categorias().stream()
+                        .anyMatch(c -> c.equalsIgnoreCase("Otro")))
+                .count();
+
+        double pctEc = totalNormas > 0 ? (countEc * 100.0) / totalNormas : 0.0;
+        double pctGr = totalNormas > 0 ? (countGr * 100.0) / totalNormas : 0.0;
+        double pctEe = totalNormas > 0 ? (countEe * 100.0) / totalNormas : 0.0;
+        double pctRep = totalNormas > 0 ? (countRep * 100.0) / totalNormas : 0.0;
+        double pctOtro = totalNormas > 0 ? (countOtro * 100.0) / totalNormas : 0.0;
+
+        long totalCategorias = countEc + countGr + countEe + countRep + countOtro;
+        double donutPctEc = totalCategorias > 0 ? (countEc * 100.0) / totalCategorias : 0.0;
+        double donutPctGr = totalCategorias > 0 ? (countGr * 100.0) / totalCategorias : 0.0;
+        double donutPctEe = totalCategorias > 0 ? (countEe * 100.0) / totalCategorias : 0.0;
+        double donutPctRep = totalCategorias > 0 ? (countRep * 100.0) / totalCategorias : 0.0;
+        double donutPctOtro = totalCategorias > 0 ? (countOtro * 100.0) / totalCategorias : 0.0;
+
+        double angleEc = donutPctEc * 3.6;
+        double angleGr = donutPctGr * 3.6;
+        double angleEe = donutPctEe * 3.6;
+        double angleRep = donutPctRep * 3.6;
+        double angleOtro = donutPctOtro * 3.6;
+
+        double startEc = 0.0;
+        double startGr = startEc + angleEc;
+        double startEe = startGr + angleGr;
+        double startRep = startEe + angleEe;
+        double startOtro = startRep + angleRep;
+
+        double circumference = 2 * Math.PI * 45;
+        String dashEc = (donutPctEc / 100.0 * circumference) + " " + (circumference - (donutPctEc / 100.0 * circumference));
+        String dashGr = (donutPctGr / 100.0 * circumference) + " " + (circumference - (donutPctGr / 100.0 * circumference));
+        String dashEe = (donutPctEe / 100.0 * circumference) + " " + (circumference - (donutPctEe / 100.0 * circumference));
+        String dashRep = (donutPctRep / 100.0 * circumference) + " " + (circumference - (donutPctRep / 100.0 * circumference));
+        String dashOtro = (donutPctOtro / 100.0 * circumference) + " " + (circumference - (donutPctOtro / 100.0 * circumference));
+
         model.addAttribute("normativas", normativasDTO);
         model.addAttribute("currentPage", "repoNormativo");
+        model.addAttribute("totalNormas", totalNormas);
+        model.addAttribute("countEc", countEc);
+        model.addAttribute("countGr", countGr);
+        model.addAttribute("countEe", countEe);
+        model.addAttribute("countRep", countRep);
+        model.addAttribute("countOtro", countOtro);
+        model.addAttribute("pctEc", pctEc);
+        model.addAttribute("pctGr", pctGr);
+        model.addAttribute("pctEe", pctEe);
+        model.addAttribute("pctRep", pctRep);
+        model.addAttribute("pctOtro", pctOtro);
+        model.addAttribute("angleEc", angleEc);
+        model.addAttribute("angleGr", angleGr);
+        model.addAttribute("angleEe", angleEe);
+        model.addAttribute("angleRep", angleRep);
+        model.addAttribute("angleOtro", angleOtro);
+        model.addAttribute("startEc", startEc);
+        model.addAttribute("startGr", startGr);
+        model.addAttribute("startEe", startEe);
+        model.addAttribute("startRep", startRep);
+        model.addAttribute("startOtro", startOtro);
+        model.addAttribute("dashEc", dashEc);
+        model.addAttribute("dashGr", dashGr);
+        model.addAttribute("dashEe", dashEe);
+        model.addAttribute("dashRep", dashRep);
+        model.addAttribute("dashOtro", dashOtro);
 
         return "socio/repoNormativo";
     }
