@@ -152,20 +152,11 @@ public class RegistroSesion {
 
     @Transient
     public String getDuracionTexto() {
-        Integer minutosTotales = duracionMinutos;
-
-        if (minutosTotales == null && fechaInicio != null) {
-            LocalDateTime fin = fechaFin != null ? fechaFin : LocalDateTime.now();
-            minutosTotales = (int) Duration.between(fechaInicio, fin).toMinutes();
-        }
-
-        if (minutosTotales == null || minutosTotales < 0) {
+        if (duracionMinutos == null) {
             return "-";
         }
-
-        long horas = minutosTotales / 60;
-        long minutos = minutosTotales % 60;
-
+        long horas = duracionMinutos / 60;
+        long minutos = duracionMinutos % 60;
         return String.format("%02dh %02dm", horas, minutos);
     }
 }

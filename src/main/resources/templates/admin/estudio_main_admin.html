@@ -86,7 +86,6 @@
             box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
         }
 
-        /* SVG Icon utility */
         .icon-sm {
             width: 1.25rem;
             height: 1.25rem;
@@ -106,203 +105,332 @@
             width: 2.5rem;
             height: 2.5rem;
         }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
     </style>
 </head>
 
 <body
         class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
-<!-- SideNavBar -->
-<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<!-- Sidebar real del proyecto -->
+<aside class="hidden md:flex flex-col h-full w-72 p-6 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50">
+    <!-- Brand / Header -->
+    <div class="flex items-center gap-3 mb-10 pl-2">
+        <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M7 19c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-8h4V9h-4V7c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H3v2h4v8zm2-8h6V7H9v4z"/>
+            </svg>
+        </div>
+        <div class="flex flex-col">
+            <h1 class="text-[#001B2E] dark:text-white font-black text-xl font-headline tracking-tight">Reciclame</h1>
+            <span class="text-xs text-on-surface-variant font-medium">Economía Circular</span>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="flex-1 space-y-2">
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/dashboard}">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            Dashboard
+        </a>
+
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/usuarios/gestion}">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            Usuarios
+        </a>
+
+        <a class="bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 font-headline font-bold text-sm tracking-tight scale-95 active:scale-100 transition-transform" th:href="@{/admin/estudios}">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            Estudios
+        </a>
+
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/normativas}">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M3 13h2v8H3zm4-8h2v16H7zm4-2h2v18h-2zm4 4h2v14h-2zm4-2h2v16h-2z"/>
+            </svg>
+            Repositorio Normativo
+        </a>
+
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/registros/actividad}">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/>
+            </svg>
+            Registros de actividad
+        </a>
+
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/registros/descargas}">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M21 5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5zm-2 0l-6.5 4L5 5h14zm0 13H5V7l6.5 4L19 7v11z"/>
+            </svg>
+            Registros de descarga
+        </a>
+    </nav>
+
+    <!-- CTA -->
+    <button type="button"
+            onclick="document.getElementById('modalNuevoEstudio').classList.remove('hidden')"
+            class="w-full bg-primary-container text-on-primary font-label font-bold text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-fixed-variant transition-colors ambient-shadow">
+        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+        </svg>
+        Añadir Estudio
+    </button>
+
+    <!-- Footer Tabs -->
+    <div class="pt-4 space-y-2 relative before:absolute before:top-0 before:left-4 before:right-4 before:h-px before:bg-surface-variant">
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" href="#">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.62l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.09-.47 0-.59.22L2.74 8.87c-.12.21-.08.48.1.62l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.62l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.04.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.09.47 0 .59-.22l1.92-3.32c.12-.22.07-.48-.1-.62l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+            </svg>
+            Configuración
+        </a>
+
+        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" href="#">
+            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+            </svg>
+            Cerrar Sesión
+        </a>
+    </div>
+</aside>
 
 <!-- Main Content Canvas -->
 <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
 
-    <!-- TopAppBar -->
+    <!-- Navbar real del proyecto -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
-
-
 
     <!-- Main Scrollable Content -->
     <main class="flex-1 overflow-y-auto px-8 py-3">
         <div class="w-full">
+
             <!-- Page Header -->
             <div class="mb-5">
                 <div>
-                    <h2
-                            class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
-                        Estudios del Sector</h2>
+                    <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                        Estudios del Sector
+                    </h2>
                     <p class="font-body text-on-surface-variant text-base mt-2">
                         Explora nuestra colección curada de investigaciones, análisis y reportes sobre economía
                         circular y gestión de residuos.
                     </p>
                 </div>
-                <!-- <div class="flex gap-3">
-                    <button
-                        class="px-4 py-2 bg-surface-container rounded-lg font-label text-sm font-semibold text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-2">
-                        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2z M11 3L5.5 8.5l1.42 1.41L11 5.83V15h2V5.83l4.08 4.08L18.5 8.5 12 3z" />
-                        </svg>
-                        Exportar
-                    </button>
-                </div> -->
             </div>
 
-            <!-- Search Bar and Filter Button -->
-            <!-- <div class="mb-8 flex flex-col sm:flex-row gap-4 w-full">
-                <div class="flex-1 focus-within:ring-2 focus-within:ring-[#2ECC71]/30 rounded-xl transition-shadow">
-                    <div
-                        class="relative flex items-center w-full h-12 rounded-xl bg-surface-container-lowest border border-outline-variant/30 overflow-hidden group ambient-shadow">
-                        <div
-                            class="grid place-items-center h-full w-14 text-outline group-focus-within:text-secondary transition-colors">
-                            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-                            </svg>
-                        </div>
-                        <input
-                            class="peer h-full w-full outline-none text-base text-on-surface bg-transparent pr-4 font-body placeholder-outline-variant"
-                            id="search" placeholder="Buscar en el repositorio..." type="text" />
-                    </div>
-                </div>
-                <div class="flex gap-2 shrink-0">
-                    <button id="openFiltersModal"
-                        class="h-12 px-6 flex items-center justify-center gap-2 bg-white text-slate-700 font-bold rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors">
-                        <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
-                        Filtros Avanzados
-                    </button>
-                    <button id="toggleViewBtn"
-                        class="h-12 w-12 flex items-center justify-center bg-white text-slate-700 rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors"
-                        title="Cambiar vista">
-                        <svg id="icon-list" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                        <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                        </svg>
-                    </button>
-                </div>
-            </div> -->
-
+            <!-- Bloque principal igual al original -->
             <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
-                <!-- Search Bar -->
-                <form action="/admin/estudios" method="GET" class="flex gap-4 mb-6 w-full">
+
+                <!-- Search bar + acciones -->
+                <form action="/estudios" method="GET" class="flex flex-col xl:flex-row gap-4 mb-6 w-full">
                     <div class="flex-1 relative">
                         <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
                              viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        <input type="text" name="search" th:value="${search}" placeholder="Buscar en el repositorio..."
+                        <input type="text" name="search" placeholder="Buscar en el repositorio..."
                                class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
                     </div>
-                    <a href="/admin/estudios"
-                       class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
-                       title="Limpiar filtros">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        <span class="text-sm font-medium">Limpiar</span>
-                    </a>
-                    <button type="button" id="openFiltersModal"
-                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                        <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
-                        <span class="text-sm font-medium">Filtros avanzados</span>
-                    </button>
-                    <button type="button" id="toggleViewBtn"
-                            class="h-12 w-12 flex items-center justify-center bg-white text-slate-700 rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors"
-                            title="Cambiar vista">
-                        <svg id="icon-list" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                        <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
-                             viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                        </svg>
-                    </button>
-                    <button type="button"
-                            onclick="window.location.href='/admin/estudios/exportar'"
-                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                        <div th:replace="~{fragments/icons.html :: icon-exportar-excel}"></div>
-                        Exportar
-                    </button>
 
+                    <div class="flex flex-wrap gap-3 shrink-0">
+                        <a href="/estudios"
+                           class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
+                           title="Limpiar filtros">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            <span class="text-sm font-medium">Limpiar</span>
+                        </a>
+
+                        <button type="button" id="openFiltersModal"
+                                class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                            <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M3 4a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9zm7-7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm7 0a1 1 0 011-1h2a1 1 0 011 1v16a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm-7 12a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 01-1-1v-4z" />
+                            </svg>
+                            <span class="text-sm font-medium">Filtros avanzados</span>
+                        </button>
+
+                        <button type="button" id="toggleViewBtn"
+                                class="h-12 w-12 flex items-center justify-center bg-white text-slate-700 rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors"
+                                title="Cambiar vista">
+                            <svg id="icon-list" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                            </svg>
+                        </button>
+                    </div>
                 </form>
 
+                <!-- Grid view -->
+                <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-
-
-                <!-- Mensaje No hay documentos -->
-                <div th:if="${#lists.isEmpty(estudios)}" class="text-center py-10">
-                    <p class="text-lg font-bold text-on-surface-variant">No hay documentos disponibles</p>
-                </div>
-
-                <!-- Cards Grid -->
-                <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                     th:if="${not #lists.isEmpty(estudios)}">
-                    <!-- Card 1: Dynamic -->
-                    <article th:each="estudio, stat : ${estudios}"
-                             class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden"
-                             th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'bg-opacity-80' : ''}">
-                        <div th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'bg-gradient-to-r from-secondary to-secondary-container' : (estudio.estado.name() == 'BORRADOR' ? 'bg-gradient-to-r from-outline to-surface-variant' : 'bg-gradient-to-r from-error to-error-container')}"
-                             class="absolute top-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        </div>
-                        <div class="flex justify-between items-start mb-5"
-                             th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'opacity-70' : ''}">
-                            <div class="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm"
-                                 th:classappend="${estudio.formato.name() == 'PDF' ? 'bg-error-container text-on-error-container' :
-                                                    (estudio.formato.name() == 'PPTX' ? 'bg-orange-100 text-orange-600' :
-                                                    (estudio.formato.name() == 'XLSX' ? 'bg-emerald-100 text-emerald-700' :
-                                                    'bg-surface-container-high text-outline'))}">
-                                <th:block th:switch="${estudio.formato.name()}">
-                                    <th:block th:case="'PDF'">
-                                        <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
-                                    </th:block>
-                                    <th:block th:case="'PPTX'">
-                                        <div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div>
-                                    </th:block>
-                                    <th:block th:case="'XLSX'">
-                                        <div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div>
-                                    </th:block>
-                                    <th:block th:case="*">
-                                        <div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div>
-                                    </th:block>
-                                </th:block>
+                    <!-- Card 1 -->
+                    <article class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="w-10 h-10 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54h3.54l4.96-6.71h.75V6.5h-4.63v2.02h2.91l-3.78 5.27z" />
+                                </svg>
                             </div>
-                            <div
-                                    class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
-                                <span th:text="${estudio.anio}">2024</span>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
+                                <span>2024</span>
                                 <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                                <span th:text="${estudio.formato.name()}">PDF</span>
+                                <span>PDF</span>
                             </div>
                         </div>
-                        <div class="flex-1" th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'opacity-70' : ''}">
-                            <h4 th:text="${estudio.titulo}"
-                                th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}"
-                                class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
-                                Análisis de Ciclo de Vida de Envases PET en Perú</h4>
-                            <p th:text="${estudio.descripcion}"
-                               class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
-                                Estudio exhaustivo...</p>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
+                                Análisis de Ciclo de Vida de Envases PET en Perú
+                            </h4>
+                            <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
+                                Estudio exhaustivo sobre el impacto ambiental y las tasas de recuperación de envases de tereftalato de polietileno en la región costa, destacando oportunidades de mejora en la cadena de reciclaje.
+                            </p>
                         </div>
                         <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
-                            <div class="flex items-center gap-1.5"
-                                 th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'text-secondary' : (estudio.estado.name() == 'BORRADOR' ? 'text-outline' : 'text-error')}">
+                            <div class="flex items-center gap-1.5 text-secondary">
                                 <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                    <path th:if="${estudio.estado.name() == 'VIGENTE'}"
-                                          d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
-                                    <path th:if="${estudio.estado.name() == 'BORRADOR'}"
-                                          d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
-                                    <path th:if="${estudio.estado.name() == 'DEROGADO'}"
-                                          d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
                                 </svg>
-                                <span th:text="${estudio.estado.name()}"
-                                      class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
+                                <span class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
                             </div>
-                            <a th:href="@{/admin/estudios/{id}(id=${estudio.idEstudio})}">
+                            <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link" href="#">
+                                Ver Estudio
+                                <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                     fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- Card 2 -->
+                    <article class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-outline to-surface-variant opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="w-10 h-10 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54h3.54l4.96-6.71h.75V6.5h-4.63v2.02h2.91l-3.78 5.27z" />
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
+                                <span>2024</span>
+                                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                                <span>PDF</span>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-primary transition-colors">
+                                Mapeo de Actores del Reciclaje Inclusivo
+                            </h4>
+                            <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
+                                Documento de trabajo preliminar que identifica asociaciones de recicladores de base y su nivel de integración en los sistemas de gestión municipal a nivel nacional.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
+                            <div class="flex items-center gap-1.5 text-outline">
+                                <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                </svg>
+                                <span class="font-label text-xs font-bold uppercase tracking-wide">Borrador</span>
+                            </div>
+                            <a class="font-label text-sm font-semibold text-primary-container hover:text-primary transition-colors flex items-center gap-1 group/link" href="#">
+                                Ver Estudio
+                                <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                     fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- Card 3 -->
+                    <article class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden bg-opacity-80">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="flex justify-between items-start mb-5 opacity-70">
+                            <div class="w-10 h-10 rounded-lg bg-surface-container-high text-outline flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
+                                <span>2019</span>
+                                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                                <span>DOCX</span>
+                            </div>
+                        </div>
+                        <div class="flex-1 opacity-70">
+                            <h4 class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight line-through decoration-outline-variant">
+                                Estudio Base de Residuos Sólidos Urbanos
+                            </h4>
+                            <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
+                                Diagnóstico situacional reemplazado por la actualización del año 2022. Mantenido en el archivo únicamente para fines comparativos e históricos.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
+                            <div class="flex items-center gap-1.5 text-error">
+                                <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                </svg>
+                                <span class="font-label text-xs font-bold uppercase tracking-wide">Archivado</span>
+                            </div>
+                            <a class="font-label text-sm font-semibold text-outline hover:text-primary-container transition-colors flex items-center gap-1 group/link" href="#">
+                                Ver Estudio
+                                <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                     fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- Card 4 -->
+                    <article class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="w-10 h-10 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54h3.54l4.96-6.71h.75V6.5h-4.63v2.02h2.91l-3.78 5.27z" />
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
+                                <span>2023</span>
+                                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                                <span>PDF</span>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
+                                Guía Técnica de Ecodiseño para Pymes
+                            </h4>
+                            <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
+                                Manual práctico orientado a pequeñas y medianas empresas para la integración de principios de economía circular desde la fase de concepción de sus productos.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
+                            <div class="flex items-center gap-1.5 text-secondary">
+                                <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                </svg>
+                                <span class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
+                            </div>
+                            <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link" href="#">
                                 Ver Estudio
                                 <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
                                      fill="currentColor" viewBox="0 0 24 24">
@@ -313,12 +441,9 @@
                     </article>
                 </div>
 
-                <!-- List View (Hidden by Default) -->
-                <!-- List View (Hidden by Default) -->
-                <div id="listView" class="hidden flex-col gap-4" th:if="${not #lists.isEmpty(estudios)}">
-                    <!-- Header -->
-                    <div
-                            class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                <!-- List view -->
+                <div id="listView" class="hidden flex-col gap-4">
+                    <div class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
                         <div class="col-span-6 lg:col-span-5">Nombre</div>
                         <div class="col-span-2 text-center">Estado</div>
                         <div class="col-span-1 text-center">Formato</div>
@@ -326,119 +451,85 @@
                         <div class="col-span-2 lg:col-span-3 text-right">Acción</div>
                     </div>
 
-                    <div th:each="estudio, stat : ${estudios}"
-                         class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                    <div class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
                         <div class="col-span-6 lg:col-span-5 flex items-center gap-4 w-full">
-                            <h4 th:text="${estudio.titulo}"
-                                class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors line-clamp-2"
-                                th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}">
-                                Análisis de Ciclo de Vida de Envases PET en Perú</h4>
+                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors line-clamp-2">
+                                Análisis de Ciclo de Vida de Envases PET en Perú
+                            </h4>
                         </div>
                         <div class="col-span-2 flex justify-center w-full md:w-auto">
-                            <div class="flex items-center gap-1.5"
-                                 th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'text-secondary' : (estudio.estado.name() == 'BORRADOR' ? 'text-outline' : 'text-error')}">
+                            <div class="flex items-center gap-1.5 text-secondary">
                                 <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                    <path th:if="${estudio.estado.name() == 'VIGENTE'}"
-                                          d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
-                                    <path th:if="${estudio.estado.name() == 'BORRADOR'}"
-                                          d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
-                                    <path th:if="${estudio.estado.name() == 'DEROGADO'}"
-                                          d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
                                 </svg>
-                                <span th:text="${estudio.estado.name()}"
-                                      class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
+                                <span class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
                             </div>
                         </div>
                         <div class="col-span-1 flex justify-center w-full md:w-auto">
-                            <div class="flex items-center gap-2">
-                                <div class="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm shrink-0"
-                                     th:classappend="${estudio.formato.name() == 'PDF' ? 'bg-error-container text-on-error-container' :
-                                                        (estudio.formato.name() == 'PPTX' ? 'bg-orange-100 text-orange-600' :
-                                                        (estudio.formato.name() == 'XLSX' ? 'bg-emerald-100 text-emerald-700' :
-                                                        'bg-surface-container-high text-outline'))}">
-                                    <th:block th:switch="${estudio.formato.name()}">
-                                        <th:block th:case="'PDF'">
-                                            <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
-                                        </th:block>
-                                        <th:block th:case="'PPTX'">
-                                            <div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div>
-                                        </th:block>
-                                        <th:block th:case="'XLSX'">
-                                            <div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div>
-                                        </th:block>
-                                        <th:block th:case="*">
-                                            <div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div>
-                                        </th:block>
-                                    </th:block>
-                                </div>
-                                <span th:text="${estudio.formato.name()}"
-                                      class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">PDF</span>
-                            </div>
+                            <span class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">PDF</span>
                         </div>
                         <div class="col-span-1 flex justify-center w-full md:w-auto">
-                                <span th:text="${estudio.anio}"
-                                      class="text-sm font-body text-on-surface-variant font-medium">2024</span>
+                            <span class="text-sm font-body text-on-surface-variant font-medium">2024</span>
                         </div>
                         <div class="col-span-2 lg:col-span-3 flex justify-end w-full md:w-auto">
-                            <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link"
-                               th:href="@{/admin/estudios/{id}(id=${estudio.idEstudio})}">
+                            <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link" href="#">
                                 Ver Estudio
-                            <svg
-                                    class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
-                                    fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
-                            </svg>
+                                <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                     fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
+                                </svg>
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Controles de Paginación -->
-                <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8 hidden"
-                     th:if="${not #lists.isEmpty(estudios)}">
+                <!-- Pagination -->
+                <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8">
                     <button id="prevPageBtn"
-                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
+                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled>
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
-                    <div id="pageNumbers" class="flex gap-2"></div>
+
+                    <div id="pageNumbers" class="flex gap-2">
+                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors bg-secondary text-on-secondary">1</button>
+                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors text-on-surface-variant hover:bg-surface-container">2</button>
+                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors text-on-surface-variant hover:bg-surface-container">3</button>
+                        <span class="w-10 h-10 flex items-center justify-center text-outline-variant font-bold">...</span>
+                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors text-on-surface-variant hover:bg-surface-container">8</button>
+                    </div>
+
                     <button id="nextPageBtn"
-                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
+                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M9 5l7 7-7 7" />
                         </svg>
                     </button>
                 </div>
-
-
-
             </div>
-
-
         </div>
     </main>
 </div>
-<!-- Filtros Avanzados Modal -->
+
+<!-- Modal Filtros Avanzados -->
 <div id="filtersModal"
      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 transition-opacity opacity-0 pointer-events-none duration-300">
     <div
             class="bg-surface text-on-surface w-full max-w-2xl rounded-[1.5rem] p-6 sm:p-8 flex flex-col relative scale-95 transition-transform duration-300 shadow-xl max-h-full overflow-y-auto">
-        <!-- Close button -->
         <button id="closeFiltersModal"
                 class="absolute top-6 right-6 p-2 rounded-full hover:bg-surface-container text-on-surface-variant transition-colors">
             <svg class="icon-md" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
             </svg>
         </button>
 
         <h2 class="text-2xl font-headline font-bold text-on-primary-fixed mb-6">Filtros Avanzados</h2>
 
-        <form id="filtersForm" action="/admin/estudios" method="GET" class="space-y-6">
-            <!-- Fecha -->
+        <form class="space-y-6">
             <section>
                 <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Fecha</h3>
                 <div class="space-y-4">
@@ -455,98 +546,64 @@
                         </label>
                     </div>
 
-                    <!-- Año Select -->
-                    <div id="yearContainer">
-                        <select id="yearSelect" name="yearSelect"
+                    <div>
+                        <select
                                 class="w-full sm:w-1/2 appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
                             <option value="">Seleccione un año</option>
-                            <!-- JS will populate 1990 - Current Year -->
+                            <option>2025</option>
+                            <option>2024</option>
+                            <option>2023</option>
+                            <option>2022</option>
                         </select>
                     </div>
-
-                    <!-- Rango Input -->
-                    <div id="rangeContainer" class="hidden flex flex-col sm:flex-row gap-4">
-                        <div class="flex-1">
-                            <label
-                                    class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
-                                Inicio</label>
-                            <input type="date" id="dateStart" name="dateStart"
-                                   class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
-                        </div>
-                        <div class="flex-1">
-                            <label
-                                    class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
-                                Fin</label>
-                            <input type="date" id="dateEnd" name="dateEnd"
-                                   class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
-                        </div>
-                    </div>
-                    <p id="dateError" class="text-error text-xs font-semibold hidden">La Fecha Incial no puede ser
-                        mayor que la Fecha Final.</p>
                 </div>
             </section>
 
             <hr class="border-outline-variant/30">
 
-            <!-- Formato -->
             <section>
                 <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Formato</h3>
                 <div class="flex flex-wrap gap-6">
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="format" value="PDF"
-                               th:checked="${formatosSeleccionados != null and formatosSeleccionados.contains('PDF')}"
-                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <input type="checkbox" class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
                         <span class="text-sm font-body">PDF</span>
                     </label>
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="format" value="PPTX"
-                               th:checked="${formatosSeleccionados != null and formatosSeleccionados.contains('PPTX')}"
-                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
-                        <span class="text-sm font-body">PPTX</span>
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="format" value="DOC"
-                               th:checked="${formatosSeleccionados != null and formatosSeleccionados.contains('DOC')}"
-                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <input type="checkbox" class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
                         <span class="text-sm font-body">DOCX</span>
                     </label>
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="format" value="XLSX"
-                               th:checked="${formatosSeleccionados != null and formatosSeleccionados.contains('XLSX')}"
-                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
-                        <span class="text-sm font-body">.XLSX</span>
+                        <input type="checkbox" class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body">PPT</span>
                     </label>
                 </div>
             </section>
 
             <hr class="border-outline-variant/30">
 
-            <!-- Estado -->
             <section>
                 <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Estado</h3>
                 <div class="flex flex-wrap gap-6">
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="estado" value="VIGENTE"
-                               th:checked="${estadosSeleccionados != null and estadosSeleccionados.contains('VIGENTE')}"
-                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <input type="checkbox" class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
                         <span class="text-sm font-body uppercase tracking-wide">Vigente</span>
                     </label>
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="estado" value="DEROGADO"
-                               th:checked="${estadosSeleccionados != null and estadosSeleccionados.contains('DEROGADO')}"
-                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
-                        <span class="text-sm font-body uppercase tracking-wide">Derogado</span>
+                        <input type="checkbox" class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body uppercase tracking-wide">Borrador</span>
                     </label>
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="estado" value="BORRADOR"
-                               th:checked="${estadosSeleccionados != null and estadosSeleccionados.contains('BORRADOR')}"
-                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
-                        <span class="text-sm font-body uppercase tracking-wide">Borrador</span>
+                        <input type="checkbox" class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body uppercase tracking-wide">Derogada</span>
                     </label>
                 </div>
             </section>
 
             <div class="pt-6 mt-4 flex justify-end gap-3 border-t border-outline-variant/30">
+                <button type="button" id="closeFiltersModalBtn"
+                        class="px-6 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-on-surface font-bold text-sm hover:bg-surface-container transition-colors">
+                    Cancelar
+                </button>
                 <button type="submit"
                         class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary font-bold text-sm hover:bg-[#00210c] transition-colors shadow-sm cursor-pointer">
                     Aplicar Filtros
@@ -556,229 +613,6 @@
     </div>
 </div>
 
-<!-- Script de Lógica para el Modal -->
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const openFiltersBtn = document.getElementById('openFiltersModal');
-        const closeFiltersBtn = document.getElementById('closeFiltersModal');
-        const filtersModal = document.getElementById('filtersModal');
-        const modalContent = filtersModal.querySelector('div');
-
-        // Populating years
-        const yearSelect = document.getElementById('yearSelect');
-        const currentYear = new Date().getFullYear();
-        for (let y = currentYear; y >= 1990; y--) {
-            const opt = document.createElement('option');
-            opt.value = y;
-            opt.textContent = y;
-            yearSelect.appendChild(opt);
-        }
-
-        const openModal = () => {
-            filtersModal.classList.remove('opacity-0', 'pointer-events-none');
-            modalContent.classList.remove('scale-95');
-            modalContent.classList.add('scale-100');
-        };
-
-        const closeModal = () => {
-            filtersModal.classList.add('opacity-0', 'pointer-events-none');
-            modalContent.classList.remove('scale-100');
-            modalContent.classList.add('scale-95');
-        };
-
-        openFiltersBtn.addEventListener('click', openModal);
-        closeFiltersBtn.addEventListener('click', closeModal);
-        filtersModal.addEventListener('click', (e) => {
-            if (e.target === filtersModal) closeModal();
-        });
-
-        // Toggle Logic
-        const dateTypeRadios = document.querySelectorAll('input[name="dateType"]');
-        const yearContainer = document.getElementById('yearContainer');
-        const rangeContainer = document.getElementById('rangeContainer');
-        const dateError = document.getElementById('dateError');
-
-        dateTypeRadios.forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                if (e.target.value === 'year') {
-                    yearContainer.classList.remove('hidden');
-                    rangeContainer.classList.add('hidden');
-                    dateError.classList.add('hidden');
-                } else {
-                    yearContainer.classList.add('hidden');
-                    rangeContainer.classList.remove('hidden');
-                }
-            });
-        });
-
-        // Validation
-        const dateStart = document.getElementById('dateStart');
-        const dateEnd = document.getElementById('dateEnd');
-        const filtersForm = document.getElementById('filtersForm');
-
-        filtersForm.addEventListener('submit', (e) => {
-            const checkedDateType = document.querySelector('input[name="dateType"]:checked');
-            const isRange = checkedDateType && checkedDateType.value === 'range';
-
-            if (isRange) {
-                yearSelect.name = '';
-                if (!dateStart.value && !dateEnd.value) {
-                    checkedDateType.name = '';
-                }
-            } else {
-                dateStart.name = '';
-                dateEnd.name = '';
-                if (!yearSelect.value) {
-                    if (checkedDateType) checkedDateType.name = '';
-                    yearSelect.name = '';
-                }
-            }
-
-            if (isRange && dateStart.value && dateEnd.value) {
-                if (new Date(dateStart.value) > new Date(dateEnd.value)) {
-                    e.preventDefault(); // Bloqueamos el envío porque hay error
-                    dateError.classList.remove('hidden');
-                    return;
-                } else {
-                    dateError.classList.add('hidden');
-                }
-            }
-        });
-
-
-        // Toggle View & Pagination Logic
-        const toggleViewBtn = document.getElementById('toggleViewBtn');
-        const gridView = document.getElementById('gridView');
-        const listView = document.getElementById('listView');
-        const iconList = document.getElementById('icon-list');
-        const iconGrid = document.getElementById('icon-grid');
-
-        const gridItems = document.querySelectorAll('.grid-item');
-        const listItems = document.querySelectorAll('.list-item');
-        const paginationContainer = document.getElementById('paginationContainer');
-        const pageNumbersContainer = document.getElementById('pageNumbers');
-        const prevPageBtn = document.getElementById('prevPageBtn');
-        const nextPageBtn = document.getElementById('nextPageBtn');
-
-        let isGridView = localStorage.getItem('estudiosViewMode') !== 'list';
-        let currentPage = 1;
-
-        function renderPagination() {
-            if (!paginationContainer) return;
-
-            const totalItems = isGridView ? gridItems.length : listItems.length;
-            const pageSize = isGridView ? 6 : 5;
-            const totalPages = Math.ceil(totalItems / pageSize) || 1;
-
-            if (currentPage > totalPages) currentPage = 1;
-
-            if (totalPages <= 1) {
-                paginationContainer.classList.add('hidden');
-                paginationContainer.classList.remove('flex');
-            } else {
-                paginationContainer.classList.remove('hidden');
-                paginationContainer.classList.add('flex');
-            }
-
-            const startIndex = (currentPage - 1) * pageSize;
-            const endIndex = startIndex + pageSize;
-
-            if (isGridView) {
-                gridItems.forEach((item, index) => {
-                    if (index >= startIndex && index < endIndex) {
-                        item.classList.remove('hidden');
-                        item.classList.add('flex');
-                    } else {
-                        item.classList.add('hidden');
-                        item.classList.remove('flex');
-                    }
-                });
-            } else {
-                listItems.forEach((item, index) => {
-                    if (index >= startIndex && index < endIndex) {
-                        item.classList.remove('hidden');
-                        item.classList.add('flex', 'md:grid');
-                    } else {
-                        item.classList.add('hidden');
-                        item.classList.remove('flex', 'md:grid');
-                    }
-                });
-            }
-
-            prevPageBtn.disabled = currentPage === 1;
-            nextPageBtn.disabled = currentPage === totalPages;
-
-            pageNumbersContainer.innerHTML = '';
-            for (let i = 1; i <= totalPages; i++) {
-                const btn = document.createElement('button');
-                btn.textContent = i;
-                btn.className = `w-10 h-10 rounded-lg text-sm font-bold transition-colors ${i === currentPage ? 'bg-secondary text-on-secondary' : 'text-on-surface-variant hover:bg-surface-container'}`;
-                btn.addEventListener('click', () => {
-                    currentPage = i;
-                    renderPagination();
-                });
-                pageNumbersContainer.appendChild(btn);
-            }
-        }
-
-        if (toggleViewBtn) {
-            toggleViewBtn.addEventListener('click', () => {
-                isGridView = !isGridView;
-                localStorage.setItem('estudiosViewMode', isGridView ? 'grid' : 'list');
-                if (isGridView) {
-                    gridView.classList.remove('hidden');
-                    listView.classList.add('hidden');
-                    listView.classList.remove('flex');
-                    iconList.classList.remove('hidden');
-                    iconGrid.classList.add('hidden');
-                } else {
-                    gridView.classList.add('hidden');
-                    listView.classList.remove('hidden');
-                    listView.classList.add('flex');
-                    iconList.classList.add('hidden');
-                    iconGrid.classList.remove('hidden');
-                }
-                currentPage = 1;
-                renderPagination();
-            });
-        }
-
-        if (prevPageBtn) {
-            prevPageBtn.addEventListener('click', () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    renderPagination();
-                }
-            });
-        }
-
-        if (nextPageBtn) {
-            nextPageBtn.addEventListener('click', () => {
-                const totalItems = isGridView ? gridItems.length : listItems.length;
-                const pageSize = isGridView ? 6 : 5;
-                if (currentPage < Math.ceil(totalItems / pageSize)) {
-                    currentPage++;
-                    renderPagination();
-                }
-            });
-        }
-        if (!isGridView) {
-            gridView.classList.add('hidden');
-            listView.classList.remove('hidden');
-            listView.classList.add('flex');
-            iconList.classList.add('hidden');
-            iconGrid.classList.remove('hidden');
-        } else {
-            gridView.classList.remove('hidden');
-            listView.classList.add('hidden');
-            listView.classList.remove('flex');
-            iconList.classList.remove('hidden');
-            iconGrid.classList.add('hidden');
-        }
-        // Inicializar paginación
-        renderPagination();
-    });
-</script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const openFiltersBtn = document.getElementById('openFiltersModal');
@@ -861,7 +695,7 @@
             </button>
         </header>
 
-        <form th:action="@{/admin/estudio_new}" method="post" enctype="multipart/form-data" class="flex flex-col max-h-[90vh] overflow-hidden">
+        <form th:action="@{/admin/estudio_new}" method="post" class="flex flex-col max-h-[90vh] overflow-hidden">
             <div class="overflow-y-auto px-6 py-8 flex flex-col gap-10">
 
                 <section class="space-y-4">
@@ -947,7 +781,6 @@
         </form>
     </div>
 </div>
-</body>
 </body>
 
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">model.addAttribute("estudios", estudioRepository.findAll());
+<html xmlns:th="http://www.thymeleaf.org">
 <body>
     <aside th:fragment="sidebar" class="hidden md:flex flex-col h-full w-64 p-5 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50">
         <!-- Brand / Header -->
@@ -38,7 +38,7 @@
 
                 <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
                    th:classappend="${currentPage == 'estudios'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
-                   th:href="@{/admin/estudios}">
+                   th:href="@{/estudios}">
                     <div th:replace="~{fragments/icons.html :: icon-estudios-sidebar}"></div>
                     Estudios
                 </a>

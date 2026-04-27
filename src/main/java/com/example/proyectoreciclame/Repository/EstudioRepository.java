@@ -33,28 +33,4 @@ public interface EstudioRepository extends JpaRepository<Estudio, Long> {
                      @Param("formatos") List<String> formatos,
                      @Param("hasEstados") boolean hasEstados,
                      @Param("estados") List<String> estados);
-
-    @Query("""
-    SELECT e
-    FROM Estudio e
-    WHERE e.eliminadoEn IS NULL
-      AND (:search IS NULL OR LOWER(e.titulo) LIKE LOWER(CONCAT('%', :search, '%')))
-      AND (:anio IS NULL OR e.anio = :anio)
-      AND (:fechaInicio IS NULL OR e.fechaPublicacion >= :fechaInicio)
-      AND (:fechaFin IS NULL OR e.fechaPublicacion <= :fechaFin)
-      AND (:hasFormatos = false OR CAST(e.formato AS string) IN :formatos)
-      AND (:hasEstados = false OR CAST(e.estado AS string) IN :estados)
-    ORDER BY e.fechaCreacion DESC
-""")
-    List<Estudio> filtrarAdmin(
-            @Param("search") String search,
-            @Param("anio") Integer anio,
-            @Param("fechaInicio") LocalDate fechaInicio,
-            @Param("fechaFin") LocalDate fechaFin,
-            @Param("hasFormatos") boolean hasFormatos,
-            @Param("formatos") List<String> formatos,
-            @Param("hasEstados") boolean hasEstados,
-            @Param("estados") List<String> estados
-    );
-
 }

@@ -12,17 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.List;
 
 import java.io.PrintWriter;
 import java.time.LocalDate;
@@ -127,45 +116,29 @@ public class AdminRegistroController {
                 textoLimpio, inicio, fin, rolLimpio, PageRequest.of(0, 10000)
         );
 
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Actividad");
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=registros_actividad.csv");
 
-        Row header = sheet.createRow(0);
-        header.createCell(0).setCellValue("Usuario");
-        header.createCell(1).setCellValue("Rol");
-        header.createCell(2).setCellValue("Fecha");
-        header.createCell(3).setCellValue("Hora Entrada");
-        header.createCell(4).setCellValue("Duración");
-        header.createCell(5).setCellValue("Estado");
-
-        int rowNum = 1;
+        PrintWriter writer = response.getWriter();
+        writer.println("Usuario,Rol,Fecha,Hora Entrada,Duración,Estado");
 
         for (RegistroSesion r : pagina.getContent()) {
             String nombre = r.getUsuarioNombreCompleto();
-
             String nombreRol = r.getUsuario() != null && r.getUsuario().getRol() != null
                     ? r.getUsuario().getRol().getNombre()
                     : "";
-
-            Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(nombre);
-            row.createCell(1).setCellValue(nombreRol);
-            row.createCell(2).setCellValue(r.getFechaTexto());
-            row.createCell(3).setCellValue(r.getHoraEntradaTexto());
-            row.createCell(4).setCellValue(r.getDuracionTexto());
-            row.createCell(5).setCellValue(r.getEstado());
+            writer.printf("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"%n",
+                    nombre,
+                    nombreRol,
+                    r.getFechaTexto(),
+                    r.getHoraEntradaTexto(),
+                    r.getDuracionTexto(),
+                    r.getEstado()
+            );
         }
-
-        for (int i = 0; i < 6; i++) {
-            sheet.autoSizeColumn(i);
-        }
-
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=registros_actividad.xlsx");
-
-        workbook.write(response.getOutputStream());
-        workbook.close();
+        writer.flush();
     }
+
     @GetMapping("/descargas/exportar")
     public void exportarDescargas(@RequestParam(required = false) String texto,
                                   @RequestParam(required = false) String tipo,
@@ -183,36 +156,22 @@ public class AdminRegistroController {
                 textoLimpio, tipoLimpio, inicio, fin, PageRequest.of(0, 10000)
         );
 
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Descargas");
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=registros_descargas.csv");
 
-        Row header = sheet.createRow(0);
-        header.createCell(0).setCellValue("Usuario");
-        header.createCell(1).setCellValue("Documento");
-        header.createCell(2).setCellValue("Sección");
-        header.createCell(3).setCellValue("Fecha");
-        header.createCell(4).setCellValue("Hora");
-
-        int rowNum = 1;
+        PrintWriter writer = response.getWriter();
+        writer.println("Usuario,Documento,Sección,Fecha,Hora");
 
         for (RegistroDescarga r : pagina.getContent()) {
-            Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(r.getUsuarioNombreCompleto());
-            row.createCell(1).setCellValue(r.getNombreDocumento());
-            row.createCell(2).setCellValue(r.getTipoDocumento());
-            row.createCell(3).setCellValue(r.getFechaTexto());
-            row.createCell(4).setCellValue(r.getHoraTexto());
+            writer.printf("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"%n",
+                    r.getUsuarioNombreCompleto(),
+                    r.getNombreDocumento(),
+                    r.getTipoDocumento(),
+                    r.getFechaTexto(),
+                    r.getHoraTexto()
+            );
         }
-
-        for (int i = 0; i < 5; i++) {
-            sheet.autoSizeColumn(i);
-        }
-
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=registros_descargas.xlsx");
-
-        workbook.write(response.getOutputStream());
-        workbook.close();
+        writer.flush();
     }
 
     private String limpiar(String valor) {

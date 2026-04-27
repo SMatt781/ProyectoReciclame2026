@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 
-<html class="light" lang="es"><head>
+<html class="light" lang="es">
+<head>
+    <title>Recíclame - Estado del sistema</title>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -111,75 +113,13 @@
         }
     </style>
 </head>
-<body class="font-body-md text-on-background">
-<aside class="fixed left-0 top-0 h-full w-[260px] bg-[#F2F4F7] border-r border-slate-200 flex flex-col z-50">
-    <div class="p-6">
-        <div class="flex items-center gap-3 mb-10">
-            <div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-white font-black">R</div>
-            <span class="font-black text-slate-900 tracking-tight text-xl">Reciclame</span>
-        </div>
-        <nav class="flex flex-col gap-2">
-            <!-- Active State: Dashboard -->
-            <a th:href="@{/superadmin/dashboard}" class="bg-[#D1FAE5] text-[#0F172A] rounded-lg px-4 py-2.5 flex items-center gap-3 transition-all" href="#">
-                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">grid_view</span>
-                <span class="text-sm font-bold">Dashboard</span>
-            </a>
-            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
-                <span class="material-symbols-outlined text-[20px]">group</span>
-                <span class="text-sm font-medium">Usuarios</span>
-            </a>
-            <a  th:href="@{/superadmin/administradores}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
-                <span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
-                <span class="text-sm font-medium">Administradores</span>
-            </a>
-            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
-                <span class="material-symbols-outlined text-[20px]">menu_book</span>
-                <span class="text-sm font-medium">Estudios</span>
-            </a>
-            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
-                <span class="material-symbols-outlined text-[20px]">gavel</span>
-                <span class="text-sm font-medium">Repositorio Normativo</span>
-            </a>
-            <!-- Añadir enlaces a nuevas páginas -->
-            <a th:href="@{/superadmin/estadoSistema}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
-                <span class="material-symbols-outlined text-[20px]">monitor_heart</span>
-                <span class="text-sm font-medium">Estado del Monitor</span>
-            </a>
-            <a th:href="@{/superadmin/confSeguridad}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
-                <span class="material-symbols-outlined text-[20px]">security</span>
-                <span class="text-sm font-medium">Configuración de Seguridad</span>
-            </a>
-        </nav>
-    </div>
-    <div class="mt-auto p-6 border-t border-slate-200">
-        <button class="w-full flex items-center gap-3 px-4 py-2.5 text-slate-600 hover:text-error transition-colors text-sm font-medium">
-            <span class="material-symbols-outlined text-[20px]">logout</span>
-            Cerrar Sesión
-        </button>
-    </div>
-</aside>
-<!-- TopNavBar -->
-<header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none flex justify-between items-center h-16 px-6 ml-[260px] w-[calc(100%-260px)]">
-<div class="flex items-center">
-<span class="text-3xl font-black tracking-tight text-[#0F172A] dark:text-white font-title-lg">Reciclame</span>
-</div>
-<div class="flex items-center gap-6">
-<div class="flex gap-4">
-<span class="material-symbols-outlined text-slate-500 cursor-pointer active:opacity-70" data-icon="notifications">notifications</span>
-<span class="material-symbols-outlined text-slate-500 cursor-pointer active:opacity-70" data-icon="settings">settings</span>
-</div>
-<div class="flex items-center gap-3 border-l pl-6 border-slate-200">
-<div class="text-right">
-<p class="text-sm font-semibold text-[#0F172A] font-title-lg">Administrator</p>
-<p class="text-[10px] text-slate-500 uppercase tracking-wider font-label-md">Super User</p>
-</div>
-<div class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden">
-<img alt="Administrator" data-alt="close-up portrait of a professional male administrator in a light blue shirt with a neutral friendly expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBQ83qRmJwQWtFJwnUiG9OiHryDI7mchen33ADAgE6P0HIem_-9z0_VPzviQMCAZzXxrKxQ5Ixg6hPL8nodVRv3DpvIAip51NIKdmx7dtUfUuskmJggRmNeoY9xC4wvNqAVQ0ZqcA2jvSIjc-xxwrnaFFYtdTWT3xGJwUNjWj0oqwSiSkaCghspeoGyw5o1w6-B9M6EkJH7mdxHxoKnzxTBpn93T4nKs4VIQMo2pyNeA1EcpM7i9EEmdYpla7P2NuvrZaGzd5WxQ"/>
-</div>
-</div>
-</div>
-</header>
-<!-- Main Content -->
+
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+
+<div th:replace="~{fragments/sidebar_superadmin :: sidebar}"></div>
+
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 <main class="ml-[260px] p-10 min-h-[calc(100vh-64px)]">
 <div class="max-w-6xl mx-auto space-y-8">
 <header class="flex flex-col gap-1">
