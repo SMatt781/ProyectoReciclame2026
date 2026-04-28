@@ -10,8 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/superadmin")
@@ -32,28 +36,34 @@ public class SuperadminController {
 
     // Nuevo método para mostrar administradores
     @GetMapping("/administradores")
-    public String showAdministradores(Model model, @RequestParam(value = "texto", required = false) String texto) {
-        // ID de los roles que corresponde a "ADMIN" (id=2) y "SUPERADMIN" (id=1) en la base de datos
-        List<Long> rolIds = Arrays.asList(1L, 2L); // 1 = SUPERADMIN, 2 = ADMIN
+    public String showAdministradores(
+            Model model,
+            @RequestParam(value = "texto", required = false) String texto,
+            @RequestParam(value = "page", defaultValue = "0") int page
+    ) {
+        List<Long> rolIds = Arrays.asList(1L, 2L);
 
-        // Si hay texto de búsqueda, realizar búsqueda con filtros
+        int size = 3;
+
         Page<Usuario> administradores;
         if (texto != null && !texto.isEmpty()) {
-            administradores = usuarioRepository.buscarEnGestion(texto, PageRequest.of(0, 10)); // Buscar por texto
+            administradores = usuarioRepository.buscarEnGestion(texto, PageRequest.of(page, size));
         } else {
-            administradores = usuarioRepository.findByRol_IdInAndEliminadoEnIsNull(rolIds, PageRequest.of(0, 10));
+            administradores = usuarioRepository.findByRol_IdInAndEliminadoEnIsNull(rolIds, PageRequest.of(page, size));
         }
 
-        // Contar administradores registrados (usuarios con rol ADMIN o SUPERADMIN)
         long totalAdmins = usuarioRepository.countByRol_IdInAndEliminadoEnIsNull(rolIds);
-
-        // Contar administradores activos (con estado de cuenta "ACTIVO")
         long activeAdmins = usuarioRepository.countActiveAdminsByRole(rolIds);
-
-        // Contar administradores bloqueados (con estado de cuenta "BLOQUEADO")
         long blockedAdmins = usuarioRepository.countBlockedAdminsByRole(rolIds);
 
-        // Pasar los datos al modelo para los cards
+        Map<Long, String> ultimoAccesoTexto = administradores.getContent().stream()
+                .collect(Collectors.toMap(
+                        Usuario::getIdUsuario,
+                        admin -> formatearUltimoAcceso(admin.getUltimoAcceso())
+                ));
+
+        model.addAttribute("ultimoAccesoTexto", ultimoAccesoTexto);
+
         model.addAttribute("titulo", "Administradores");
         model.addAttribute("currentSection", "superadmin-administradores");
 
@@ -62,8 +72,40 @@ public class SuperadminController {
         model.addAttribute("activeAdmins", activeAdmins);
         model.addAttribute("blockedAdmins", blockedAdmins);
 
-        return "superadmin/administradores"; // Vista de administradores
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", administradores.getTotalPages());
+        model.addAttribute("hasPrevious", administradores.hasPrevious());
+        model.addAttribute("hasNext", administradores.hasNext());
+        model.addAttribute("texto", texto);
+
+
+
+        return "superadmin/administradores";
     }
+
+    private String formatearUltimoAcceso(LocalDateTime ultimoAcceso) {
+        if (ultimoAcceso == null) {
+            return "Sin registro";
+        }
+
+        Duration duracion = Duration.between(ultimoAcceso, LocalDateTime.now());
+
+        long minutos = duracion.toMinutes();
+        long horas = duracion.toHours();
+        long dias = duracion.toDays();
+
+        if (minutos < 1) {
+            return "Hace unos segundos";
+        } else if (minutos < 60) {
+            return "Hace " + minutos + (minutos == 1 ? " minuto" : " minutos");
+        } else if (horas < 24) {
+            return "Hace " + horas + (horas == 1 ? " hora" : " horas");
+        } else {
+            return "Hace " + dias + (dias == 1 ? " día" : " días");
+        }
+    }
+
+
 
     // Nuevo método para el Estado del Monitor
     @GetMapping("/estadoSistema")
