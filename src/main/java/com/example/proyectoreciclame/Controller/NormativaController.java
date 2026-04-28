@@ -130,14 +130,14 @@ public class NormativaController {
         String dashOtro = (donutPctOtro / 100.0 * circumference) + " " + (circumference - (donutPctOtro / 100.0 * circumference));
 
         // CHarts logic
-        
+
         long nacVigente = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "VIGENTE".equalsIgnoreCase(n.estado())).count();
         long nacPublicada = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "PUBLICADA".equalsIgnoreCase(n.estado())).count();
         long nacConsulta = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "CONSULTA PUBLICA".equalsIgnoreCase(n.estado())).count();
         long nacBorrador = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "BORRADOR EN PROCESO".equalsIgnoreCase(n.estado())).count();
         long nacDerogada = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "DEROGADA".equalsIgnoreCase(n.estado())).count();
         long nacTotal = nacVigente + nacPublicada + nacConsulta + nacBorrador + nacDerogada;
-        
+
         long intVigente = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "VIGENTE".equalsIgnoreCase(n.estado())).count();
         long intPublicada = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "PUBLICADA".equalsIgnoreCase(n.estado())).count();
         long intConsulta = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "CONSULTA PUBLICA".equalsIgnoreCase(n.estado())).count();
@@ -181,14 +181,14 @@ public class NormativaController {
         model.addAttribute("dashEe", dashEe);
         model.addAttribute("dashRep", dashRep);
         model.addAttribute("dashOtro", dashOtro);
-        
+
         model.addAttribute("nacVigente", nacVigente);
         model.addAttribute("nacPublicada", nacPublicada);
         model.addAttribute("nacConsulta", nacConsulta);
         model.addAttribute("nacBorrador", nacBorrador);
         model.addAttribute("nacDerogada", nacDerogada);
         model.addAttribute("nacTotal", nacTotal);
-        
+
         model.addAttribute("intVigente", intVigente);
         model.addAttribute("intPublicada", intPublicada);
         model.addAttribute("intConsulta", intConsulta);
@@ -203,7 +203,7 @@ public class NormativaController {
         model.addAttribute("pagoNac", pagoNac);
         model.addAttribute("pagoInt", pagoInt);
         model.addAttribute("pagoTotal", pagoTotal);
-        
+
         // Return filter params so we can retain them in the UI
         model.addAttribute("searchQuery", search);
         model.addAttribute("selectedYear", anio);

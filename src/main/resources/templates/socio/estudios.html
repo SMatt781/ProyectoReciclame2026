@@ -231,11 +231,11 @@
                     </div>
 
                     <!-- Cards Grid -->
-                    <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+                    <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                         th:if="${not #lists.isEmpty(estudios)}">
                         <!-- Card 1: Dynamic -->
                         <article th:each="estudio, stat : ${estudios}"
-                            class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-5 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden"
+                            class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden"
                             th:classappend="${estudio.estado == 'DEROGADO' ? 'bg-opacity-80' : ''}">
                             <div th:classappend="${estudio.estado == 'VIGENTE' ? 'bg-gradient-to-r from-secondary to-secondary-container' : (estudio.estado == 'BORRADOR' ? 'bg-gradient-to-r from-outline to-surface-variant' : 'bg-gradient-to-r from-error to-error-container')}"
                                 class="absolute top-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -272,13 +272,13 @@
                             <div class="flex-1" th:classappend="${estudio.estado == 'DEROGADO' ? 'opacity-70' : ''}">
                                 <h4 th:text="${estudio.titulo}"
                                     th:classappend="${estudio.estado == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}"
-                                    class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight group-hover:text-secondary transition-colors">
+                                    class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
                                     Análisis de Ciclo de Vida de Envases PET en Perú</h4>
                                 <p th:text="${estudio.descripcion}"
-                                    class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-2">
+                                    class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
                                     Estudio exhaustivo...</p>
                             </div>
-                            <div class="mt-4 pt-4 border-t border-surface-variant flex justify-between items-center">
+                            <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
                                 <div class="flex items-center gap-1.5"
                                     th:classappend="${estudio.estado == 'VIGENTE' ? 'text-secondary' : (estudio.estado == 'BORRADOR' ? 'text-outline' : 'text-error')}">
                                     <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">

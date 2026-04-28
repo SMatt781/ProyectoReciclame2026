@@ -142,7 +142,7 @@
 
                 <!-- STATS SECTION -->
                 <div class="flex flex-col xl:flex-row gap-8 mb-12 bg-white rounded-xl p-6 w-full shadow-sm border border-outline-variant/30">
-                    
+
                     <!-- LEFT: Donut Chart & Legend -->
                     <div class="flex-1 flex flex-col min-w-0 xl:min-w-[400px]">
                         <h3 class="text-lg font-bold text-[#1a1a1a] mb-6">Distribución por temática</h3>
@@ -248,28 +248,28 @@
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                                     <div class="w-32 text-sm font-bold text-[#666] shrink-0">NACIONAL</div>
                                     <div class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
-                                        <div th:if="${nacVigente != null and nacVigente > 0}" 
-                                             th:style="'width: ' + (${nacVigente} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'" 
+                                        <div th:if="${nacVigente != null and nacVigente > 0}"
+                                             th:style="'width: ' + (${nacVigente} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
                                              class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Vigente">
                                             <span th:text="${nacVigente}"></span>
                                         </div>
-                                        <div th:if="${nacPublicada != null and nacPublicada > 0}" 
-                                             th:style="'width: ' + (${nacPublicada} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'" 
+                                        <div th:if="${nacPublicada != null and nacPublicada > 0}"
+                                             th:style="'width: ' + (${nacPublicada} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
                                              class="bg-[#EF9F27] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Publicada">
                                             <span th:text="${nacPublicada}"></span>
                                         </div>
-                                        <div th:if="${nacConsulta != null and nacConsulta > 0}" 
-                                             th:style="'width: ' + (${nacConsulta} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'" 
+                                        <div th:if="${nacConsulta != null and nacConsulta > 0}"
+                                             th:style="'width: ' + (${nacConsulta} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
                                              class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Consulta Pública">
                                             <span th:text="${nacConsulta}"></span>
                                         </div>
-                                        <div th:if="${nacBorrador != null and nacBorrador > 0}" 
-                                             th:style="'width: ' + (${nacBorrador} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'" 
+                                        <div th:if="${nacBorrador != null and nacBorrador > 0}"
+                                             th:style="'width: ' + (${nacBorrador} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
                                              class="bg-[#888780] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Borrador en Proceso">
                                             <span th:text="${nacBorrador}"></span>
                                         </div>
-                                        <div th:if="${nacDerogada != null and nacDerogada > 0}" 
-                                             th:style="'width: ' + (${nacDerogada} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'" 
+                                        <div th:if="${nacDerogada != null and nacDerogada > 0}"
+                                             th:style="'width: ' + (${nacDerogada} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
                                              class="bg-[#E24B4A] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Derogada">
                                             <span th:text="${nacDerogada}"></span>
                                         </div>
@@ -281,35 +281,35 @@
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                                     <div class="w-32 text-sm font-bold text-[#666] shrink-0">INTERNACIONAL</div>
                                     <div class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
-                                        <div th:if="${intVigente != null and intVigente > 0}" 
-                                             th:style="'width: ' + (${intVigente} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'" 
+                                        <div th:if="${intVigente != null and intVigente > 0}"
+                                             th:style="'width: ' + (${intVigente} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
                                              class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Vigente">
                                             <span th:text="${intVigente}"></span>
                                         </div>
-                                        <div th:if="${intPublicada != null and intPublicada > 0}" 
-                                             th:style="'width: ' + (${intPublicada} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'" 
+                                        <div th:if="${intPublicada != null and intPublicada > 0}"
+                                             th:style="'width: ' + (${intPublicada} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
                                              class="bg-[#EF9F27] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Publicada">
                                             <span th:text="${intPublicada}"></span>
                                         </div>
-                                        <div th:if="${intConsulta != null and intConsulta > 0}" 
-                                             th:style="'width: ' + (${intConsulta} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'" 
+                                        <div th:if="${intConsulta != null and intConsulta > 0}"
+                                             th:style="'width: ' + (${intConsulta} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
                                              class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Consulta Pública">
                                             <span th:text="${intConsulta}"></span>
                                         </div>
-                                        <div th:if="${intBorrador != null and intBorrador > 0}" 
-                                             th:style="'width: ' + (${intBorrador} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'" 
+                                        <div th:if="${intBorrador != null and intBorrador > 0}"
+                                             th:style="'width: ' + (${intBorrador} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
                                              class="bg-[#888780] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Borrador en Proceso">
                                             <span th:text="${intBorrador}"></span>
                                         </div>
-                                        <div th:if="${intDerogada != null and intDerogada > 0}" 
-                                             th:style="'width: ' + (${intDerogada} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'" 
+                                        <div th:if="${intDerogada != null and intDerogada > 0}"
+                                             th:style="'width: ' + (${intDerogada} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
                                              class="bg-[#E24B4A] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Derogada">
                                             <span th:text="${intDerogada}"></span>
                                         </div>
                                     </div>
                                     <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0" th:text="${intTotal ?: 0}">0</div>
                                 </div>
-                                
+
                                 <!-- Legend for Chart 1 -->
                                 <div class="flex flex-wrap gap-4 mt-3">
                                     <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#1D9E75]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Vigente</span></div>
@@ -329,13 +329,13 @@
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                                     <div class="w-32 text-sm font-bold text-[#666] shrink-0">GRATUITO</div>
                                     <div class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
-                                        <div th:if="${gratisNac != null and gratisNac > 0}" 
-                                             th:style="'width: ' + (${gratisNac} * 100.0 / ${gratisTotal != null and gratisTotal > 0 ? gratisTotal : 1}) + '%'" 
+                                        <div th:if="${gratisNac != null and gratisNac > 0}"
+                                             th:style="'width: ' + (${gratisNac} * 100.0 / ${gratisTotal != null and gratisTotal > 0 ? gratisTotal : 1}) + '%'"
                                              class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Nacional">
                                             <span th:text="${gratisNac}"></span>
                                         </div>
-                                        <div th:if="${gratisInt != null and gratisInt > 0}" 
-                                             th:style="'width: ' + (${gratisInt} * 100.0 / ${gratisTotal != null and gratisTotal > 0 ? gratisTotal : 1}) + '%'" 
+                                        <div th:if="${gratisInt != null and gratisInt > 0}"
+                                             th:style="'width: ' + (${gratisInt} * 100.0 / ${gratisTotal != null and gratisTotal > 0 ? gratisTotal : 1}) + '%'"
                                              class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Internacional">
                                             <span th:text="${gratisInt}"></span>
                                         </div>
@@ -347,20 +347,20 @@
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                                     <div class="w-32 text-sm font-bold text-[#666] shrink-0">DE PAGO</div>
                                     <div class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
-                                        <div th:if="${pagoNac != null and pagoNac > 0}" 
-                                             th:style="'width: ' + (${pagoNac} * 100.0 / ${pagoTotal != null and pagoTotal > 0 ? pagoTotal : 1}) + '%'" 
+                                        <div th:if="${pagoNac != null and pagoNac > 0}"
+                                             th:style="'width: ' + (${pagoNac} * 100.0 / ${pagoTotal != null and pagoTotal > 0 ? pagoTotal : 1}) + '%'"
                                              class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Nacional">
                                             <span th:text="${pagoNac}"></span>
                                         </div>
-                                        <div th:if="${pagoInt != null and pagoInt > 0}" 
-                                             th:style="'width: ' + (${pagoInt} * 100.0 / ${pagoTotal != null and pagoTotal > 0 ? pagoTotal : 1}) + '%'" 
+                                        <div th:if="${pagoInt != null and pagoInt > 0}"
+                                             th:style="'width: ' + (${pagoInt} * 100.0 / ${pagoTotal != null and pagoTotal > 0 ? pagoTotal : 1}) + '%'"
                                              class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Internacional">
                                             <span th:text="${pagoInt}"></span>
                                         </div>
                                     </div>
                                     <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0" th:text="${pagoTotal ?: 0}">0</div>
                                 </div>
-                                
+
                                 <!-- Legend for Chart 2 -->
                                 <div class="flex flex-wrap gap-4 mt-3">
                                     <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#1D9E75]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Nacional</span></div>
@@ -409,6 +409,7 @@
 
                     <!-- LIST VIEW -->
                     <div class="overflow-x-auto w-full pb-4" th:if="${not #lists.isEmpty(normativas)}">
+
                         <div class="flex flex-col gap-4 min-w-[1640px] w-full">
                             <!-- Header -->
                             <div
@@ -774,9 +775,9 @@
             const openFiltersBtn = document.getElementById('openFiltersModal');
             const closeFiltersBtn = document.getElementById('closeFiltersModal');
             const filtersModal = document.getElementById('filtersModal');
-            
+
             const selectedYear = /*[[${selectedYear}]]*/ null;
-            
+
             if (filtersModal) {
                 const modalContent = filtersModal.querySelector('div');
 

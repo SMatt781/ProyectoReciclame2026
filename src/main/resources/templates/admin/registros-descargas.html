@@ -191,14 +191,20 @@
                                     </svg>
                                 </div>
                                 <div class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                    Sesion
+                                    Accion
                                 </div>
                             </div>
                             <div>
-                                <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                                    Descargas hoy
+                                <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-2 leading-tight">
+                                    Exportar registros
                                 </h4>
-                                <div class="text-3xl font-extrabold text-secondary" th:text="${descargasHoy}"></div>
+                                <a th:href="@{/admin/registros/descargas/exportar(texto=${texto},tipo=${tipo},fechaInicio=${fechaInicio},fechaFin=${fechaFin})}"
+                                   class="inline-flex items-center gap-2 rounded-lg bg-secondary text-on-secondary text-sm font-bold px-4 py-2 hover:bg-[#005a3d] transition-colors">
+                                    <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" />
+                                    </svg>
+                                    Exportar
+                                </a>
                             </div>
                         </article>
                     </section>

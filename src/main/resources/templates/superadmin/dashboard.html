@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 
-<html class="light" lang="es"><head>
+<html class="light" lang="es">
+<head>
     <meta charset="utf-8"/>
+    <title>Recíclame - Dashboard- Superadmin</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -95,82 +97,22 @@
         }
     </script>
 </head>
-<body class="bg-background text-on-surface">
-<!-- Sidebar Wrapper -->
-<aside class="fixed left-0 top-0 h-full w-[260px] bg-[#F2F4F7] border-r border-slate-200 flex flex-col z-50">
-    <div class="p-6">
-        <div class="flex items-center gap-3 mb-10">
-            <div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-white font-black">R</div>
-            <span class="font-black text-slate-900 tracking-tight text-xl">Reciclame</span>
-        </div>
-        <nav class="flex flex-col gap-2">
-            <!-- Active State: Dashboard -->
-            <a th:href="@{/superadmin/dashboard}" class="bg-[#D1FAE5] text-[#0F172A] rounded-lg px-4 py-2.5 flex items-center gap-3 transition-all" href="#">
-                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">grid_view</span>
-                <span class="text-sm font-bold">Dashboard</span>
-            </a>
-            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
-                <span class="material-symbols-outlined text-[20px]">group</span>
-                <span class="text-sm font-medium">Usuarios</span>
-            </a>
-            <a  th:href="@{/superadmin/administradores}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
-                <span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
-                <span class="text-sm font-medium">Administradores</span>
-            </a>
-            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
-                <span class="material-symbols-outlined text-[20px]">menu_book</span>
-                <span class="text-sm font-medium">Estudios</span>
-            </a>
-            <a class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
-                <span class="material-symbols-outlined text-[20px]">gavel</span>
-                <span class="text-sm font-medium">Repositorio Normativo</span>
-            </a>
-            <!-- Añadir enlaces a nuevas páginas -->
-            <a th:href="@{/superadmin/estadoSistema}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
-                <span class="material-symbols-outlined text-[20px]">monitor_heart</span>
-                <span class="text-sm font-medium">Estado del Monitor</span>
-            </a>
-            <a th:href="@{/superadmin/confSeguridad}" class="text-slate-600 dark:text-slate-400 px-4 py-2.5 flex items-center gap-3 hover:bg-slate-200/50 rounded-lg transition-all" href="#">
-                <span class="material-symbols-outlined text-[20px]">security</span>
-                <span class="text-sm font-medium">Configuración de Seguridad</span>
-            </a>
-        </nav>
-    </div>
-    <div class="mt-auto p-6 border-t border-slate-200">
-        <button class="w-full flex items-center gap-3 px-4 py-2.5 text-slate-600 hover:text-error transition-colors text-sm font-medium">
-            <span class="material-symbols-outlined text-[20px]">logout</span>
-            Cerrar Sesión
-        </button>
-    </div>
-</aside>
-<!-- Main Content Shell -->
-<div class="ml-[260px] min-h-screen flex flex-col">
-    <!-- TopAppBar -->
-    <header class="h-16 px-10 flex justify-between items-center bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div class="flex items-center gap-4">
-            <span class="font-extrabold tracking-tight text-slate-900 text-xl">Reciclame</span>
-        </div>
-        <div class="flex items-center gap-6">
-            <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-primary transition-colors">notifications</span>
-                <span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-primary transition-colors">help_outline</span>
-            </div>
-            <div class="h-8 w-[1px] bg-slate-200"></div>
-            <div class="flex items-center gap-3 cursor-pointer group">
-                <div class="text-right">
-                    <p class="text-sm font-bold text-slate-900 leading-none">Ana Flores</p>
-                    <p class="text-[11px] text-slate-500 font-medium">Super Admin</p>
-                </div>
-                <img alt="Ana Flores" class="w-10 h-10 rounded-full object-cover border-2 border-slate-50 group-hover:border-secondary transition-all" data-alt="professional portrait of a woman with a friendly expression in a clean studio setting with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQha3XefTY0SEgwnVe-hj26Z0TPm4sg1CEOlt7SWz6V7yHUqF2Sy4UL3zdwYmDpjSvc1671FR7UwKsx1ccDmLqCZ3MV4mZ6L48o_295UQyMi5RSMZ6BWSJvCfnFdYRAvyX9CMEkGq-Dw0k2uSPLfs9DfBApZCvVLcl7Ds7rQtlV_4I2IciTVqWvdq10Dot4YSZUtZx95Eh_MI5Vm-YMGM_ksJIHKSrhi6TbW38KPu7o-8ACbL99cRYCfkRF_5JDUTsv3A67t5TbQ"/>
-            </div>
-        </div>
-    </header>
-    <!-- Page Canvas -->
+
+<body class="bg-surface text-on-surface font-body h-screen flex selection:bg-secondary-container selection:text-on-secondary-container">
+<div th:replace="~{fragments/sidebar_superadmin :: sidebar}"></div>
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative h-screen overflow-y-auto">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <main class="p-10 max-w-[1440px] mx-auto w-full">
-        <header class="mb-10">
-            <h1 class="text-[52px] font-black tracking-tight text-[#0F172A] leading-tight">Dashboard</h1>
-            <p class="text-slate-500 mt-2 font-medium">Resumen general de operaciones y estado del sistema.</p>
-        </header>
+        <div class="mb-5">
+            <div>
+                <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                    Dashboard
+                </h2>
+                <p class="font-body text-on-surface-variant text-base mt-2">
+                    Resumen general de operaciones y estado del sistema
+                </p>
+            </div>
+        </div>
         <!-- Bento Grid -->
         <div class="bento-grid">
             <!-- Row 1: Statistics -->
