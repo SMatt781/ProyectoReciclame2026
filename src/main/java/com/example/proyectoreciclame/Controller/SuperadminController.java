@@ -1,6 +1,8 @@
 package com.example.proyectoreciclame.Controller;
 
+import com.example.proyectoreciclame.Entity.DominioAutorizado;
 import com.example.proyectoreciclame.Entity.Usuario;
+import com.example.proyectoreciclame.Repository.DominioAutorizadoRepository;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,8 +24,11 @@ import java.util.stream.Collectors;
 public class SuperadminController {
 
     final UsuarioRepository usuarioRepository;
-    public SuperadminController(UsuarioRepository usuarioRepository) {
+    final DominioAutorizadoRepository dominioAutorizadoRepository;
+    public SuperadminController(UsuarioRepository usuarioRepository,
+                                DominioAutorizadoRepository dominioAutorizadoRepository) {
         this.usuarioRepository = usuarioRepository;
+        this.dominioAutorizadoRepository = dominioAutorizadoRepository;
     }
 
     @GetMapping("/dashboard")
@@ -118,11 +123,33 @@ public class SuperadminController {
 
     // Nuevo método para la Configuración de Seguridad
     @GetMapping("/confSeguridad")
-    public String showConfSeguridad(Model model) {
+    public String showConfSeguridad(
+            Model model,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(value = "texto", required = false) String texto
+    ) {
         model.addAttribute("titulo", "Configuración de Seguridad");
         model.addAttribute("currentSection", "superadmin-conf-seguridad");
-        // Lógica relacionada con la configuración de seguridad
-        return "superadmin/confSeguridad"; // Vista de configuración de seguridad
+
+        PageRequest pageable = PageRequest.of(page, 3);
+
+        Page<DominioAutorizado> dominiosPage;
+
+        if (texto != null && !texto.trim().isEmpty()) {
+            dominiosPage = dominioAutorizadoRepository
+                    .findByNombreDominioContainingIgnoreCase(texto.trim(), pageable);
+        } else {
+            dominiosPage = dominioAutorizadoRepository.findAll(pageable);
+        }
+
+        model.addAttribute("dominios", dominiosPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", dominiosPage.getTotalPages());
+        model.addAttribute("hasPrevious", dominiosPage.hasPrevious());
+        model.addAttribute("hasNext", dominiosPage.hasNext());
+        model.addAttribute("texto", texto);
+
+        return "superadmin/confSeguridad";
     }
 
 }

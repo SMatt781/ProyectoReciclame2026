@@ -120,13 +120,30 @@
                 </div>
 
                 <!-- BUSCADOR + INPUT -->
-                <div class="flex gap-4 mb-6">
-                    <input
-                            type="text"
-                            placeholder="Buscar dominio..."
-                            class="flex-1 bg-[#F2F4F7] rounded-xl px-5 py-3 focus:ring-2 focus:ring-[#059669]/20"
-                    >
-                </div>
+                <!-- BUSCADOR -->
+                <form th:action="@{/superadmin/confSeguridad}" method="get" class="flex items-center gap-4 mb-6 w-full">
+                    <div class="flex-1 relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#999] text-xl">
+                        search
+                    </span>
+
+                        <input
+                                class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]"
+                                placeholder="Buscar dominio autorizado..."
+                                type="text"
+                                name="texto"
+                                th:value="${texto}" />
+                    </div>
+
+                    <div class="flex items-center gap-2 shrink-0">
+                        <a th:if="${texto != null and !#strings.isEmpty(texto)}"
+                           th:href="@{/superadmin/confSeguridad}"
+                           class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                            <span class="material-symbols-outlined text-xl">close</span>
+                            <span class="text-sm font-medium">Limpiar</span>
+                        </a>
+                    </div>
+                </form>
 
                 <!-- TABLA -->
                 <div class="overflow-hidden rounded-2xl border border-slate-100">
@@ -144,14 +161,29 @@
 
                         <tbody class="text-sm">
 
-                        <!-- FILA 1 -->
-                        <tr class="border-t">
-                            <td class="px-6 py-4 font-semibold">*.circular.com</td>
-                            <td class="px-6 py-4 text-slate-500">12 oct, 2023</td>
-                            <td class="px-6 py-4 text-slate-500">Admin_Raiz</td>
+                        <tr class="border-t" th:each="dominio : ${dominios}">
+                            <td class="px-6 py-4 font-semibold" th:text="${dominio.nombreDominio}">
+                                *.circular.com
+                            </td>
+
+                            <td class="px-6 py-4 text-slate-500"
+                                th:text="${#temporals.format(dominio.fechaRegistro, 'dd MMM, yyyy')}">
+                                12 oct, 2023
+                            </td>
+
+                            <td class="px-6 py-4 text-slate-500"
+                                th:text="${dominio.usuarioCreador.nombres + ' ' + dominio.usuarioCreador.apellidoPaterno}">
+                                Admin_Raiz
+                            </td>
 
                             <td class="px-6 py-4 text-center">
-                                <button
+                                <button th:if="${dominio.estado}"
+                                        onclick="return confirm('¿Deseas desautorizar este dominio?')"
+                                        class="bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold hover:bg-green-200 transition-all">
+                                    ACTIVO
+                                </button>
+
+                                <button th:unless="${dominio.estado}"
                                         onclick="return confirm('¿Deseas autorizar este dominio?')"
                                         class="bg-red-100 text-red-700 px-4 py-2 rounded-full text-xs font-bold hover:bg-red-200 transition-all">
                                     INACTIVO
@@ -164,67 +196,7 @@
                                         <span class="material-symbols-outlined text-[22px]">edit</span>
                                     </button>
 
-                                    <button
-                                            onclick="return confirm('¿Deseas eliminar este dominio?')"
-                                            class="text-slate-400 hover:text-red-500 transition-colors">
-                                        <span class="material-symbols-outlined text-[22px]">delete</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <!-- FILA 2 -->
-                        <tr class="border-t">
-                            <td class="px-6 py-4 font-semibold">enterprise.org</td>
-                            <td class="px-6 py-4 text-slate-500">05 nov, 2023</td>
-                            <td class="px-6 py-4 text-slate-500">Bot_Sistema</td>
-
-                            <td class="px-6 py-4 text-center">
-                                <button
-                                        onclick="return confirm('¿Deseas desautorizar este dominio?')"
-                                        class="bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold hover:bg-green-200 transition-all">
-                                    ACTIVO
-                                </button>
-                            </td>
-
-                            <td class="px-6 py-4">
-                                <div class="flex justify-center gap-3">
-                                    <button class="text-slate-400 hover:text-[#059669] transition-colors">
-                                        <span class="material-symbols-outlined text-[22px]">edit</span>
-                                    </button>
-
-                                    <button
-                                            onclick="return confirm('¿Deseas eliminar este dominio?')"
-                                            class="text-slate-400 hover:text-red-500 transition-colors">
-                                        <span class="material-symbols-outlined text-[22px]">delete</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <!-- FILA 3 -->
-                        <tr class="border-t">
-                            <td class="px-6 py-4 font-semibold">sustainability-core.net</td>
-                            <td class="px-6 py-4 text-slate-500">18 ene, 2024</td>
-                            <td class="px-6 py-4 text-slate-500">Admin_Raiz</td>
-                            <td class="px-6 py-4 text-center">
-                                <button
-                                        onclick="return confirm('¿Deseas desautorizar este dominio?')"
-                                        class="bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold hover:bg-green-200 transition-all">
-                                    ACTIVO
-                                </button>
-                            </td>
-
-
-                            <td class="px-6 py-4">
-                                <div class="flex justify-center gap-3">
-                                    <button class="text-slate-400 hover:text-[#059669] transition-colors">
-                                        <span class="material-symbols-outlined text-[22px]">edit</span>
-                                    </button>
-
-                                    <button
-                                            onclick="return confirm('¿Deseas eliminar este dominio?')"
-                                            class="text-slate-400 hover:text-red-500 transition-colors">
+                                    <button class="text-slate-400 hover:text-red-500 transition-colors">
                                         <span class="material-symbols-outlined text-[22px]">delete</span>
                                     </button>
                                 </div>
@@ -233,6 +205,44 @@
 
                         </tbody>
                     </table>
+
+                </div>
+                <div id="paginationContainer"
+                     th:if="${totalPages > 0}"
+                     class="flex justify-center items-center gap-2 mt-4">
+
+                    <a th:if="${hasPrevious}"
+                       th:href="@{/superadmin/confSeguridad(page=${currentPage - 1})}"
+                       class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </a>
+
+                    <span th:if="${!hasPrevious}"
+                          class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+                            <span class="material-symbols-outlined">chevron_left</span>
+                    </span>
+
+                    <div class="flex gap-2" th:if="${totalPages > 0}">
+                        <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                           th:href="@{/superadmin/confSeguridad(page=${i})}"
+                           th:text="${i + 1}"
+                           th:class="${i == currentPage} ?
+                                    'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
+                                    :
+                                    'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container transition'">
+                        </a>
+                    </div>
+
+                    <a th:if="${hasNext}"
+                       th:href="@{/superadmin/confSeguridad(page=${currentPage + 1})}"
+                       class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </a>
+
+                    <span th:if="${!hasNext}"
+                          class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </span>
                 </div>
             </div>
 
