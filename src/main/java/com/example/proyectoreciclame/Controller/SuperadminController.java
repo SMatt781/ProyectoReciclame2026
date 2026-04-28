@@ -41,7 +41,7 @@ public class SuperadminController {
             @RequestParam(value = "texto", required = false) String texto,
             @RequestParam(value = "page", defaultValue = "0") int page
     ) {
-        List<Long> rolIds = Arrays.asList(1L, 2L);
+        List<Long> rolIds = Arrays.asList(2L);
 
         int size = 3;
 
