@@ -217,9 +217,7 @@
                         </div>
                         <button type="button" id="openFiltersModal"
                                 class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                            <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9zm7-7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm7 0a1 1 0 011-1h2a1 1 0 011 1v16a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm-7 12a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 01-1-1v-4z" />
-                            </svg>
+                            <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
                             <span class="text-sm font-medium">Filtros avanzados</span>
                         </button>
                         <a th:href="@{/admin/registros/descargas}"
@@ -232,9 +230,7 @@
                         </a>
                         <a th:href="@{/admin/registros/descargas/exportar(texto=${texto},tipo=${tipo},fechaInicio=${fechaInicio},fechaFin=${fechaFin})}"
                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                            <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" />
-                            </svg>
+                            <div th:replace="~{fragments/icons.html :: icon-exportar-excel}"></div>
                             <span class="text-sm font-medium">Exportar</span>
                         </a>
                     </form>

@@ -129,6 +129,30 @@ public class NormativaController {
         String dashRep = (donutPctRep / 100.0 * circumference) + " " + (circumference - (donutPctRep / 100.0 * circumference));
         String dashOtro = (donutPctOtro / 100.0 * circumference) + " " + (circumference - (donutPctOtro / 100.0 * circumference));
 
+        // CHarts logic
+        
+        long nacVigente = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "VIGENTE".equalsIgnoreCase(n.estado())).count();
+        long nacPublicada = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "PUBLICADA".equalsIgnoreCase(n.estado())).count();
+        long nacConsulta = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "CONSULTA PUBLICA".equalsIgnoreCase(n.estado())).count();
+        long nacBorrador = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "BORRADOR EN PROCESO".equalsIgnoreCase(n.estado())).count();
+        long nacDerogada = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "DEROGADA".equalsIgnoreCase(n.estado())).count();
+        long nacTotal = nacVigente + nacPublicada + nacConsulta + nacBorrador + nacDerogada;
+        
+        long intVigente = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "VIGENTE".equalsIgnoreCase(n.estado())).count();
+        long intPublicada = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "PUBLICADA".equalsIgnoreCase(n.estado())).count();
+        long intConsulta = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "CONSULTA PUBLICA".equalsIgnoreCase(n.estado())).count();
+        long intBorrador = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "BORRADOR EN PROCESO".equalsIgnoreCase(n.estado())).count();
+        long intDerogada = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "DEROGADA".equalsIgnoreCase(n.estado())).count();
+        long intTotal = intVigente + intPublicada + intConsulta + intBorrador + intDerogada;
+
+        long gratisNac = normativasDTO.stream().filter(n -> "GRATIS".equalsIgnoreCase(n.acceso()) && "NACIONAL".equalsIgnoreCase(n.alcance())).count();
+        long gratisInt = normativasDTO.stream().filter(n -> "GRATIS".equalsIgnoreCase(n.acceso()) && "INTERNACIONAL".equalsIgnoreCase(n.alcance())).count();
+        long gratisTotal = gratisNac + gratisInt;
+
+        long pagoNac = normativasDTO.stream().filter(n -> "PAGO".equalsIgnoreCase(n.acceso()) && "NACIONAL".equalsIgnoreCase(n.alcance())).count();
+        long pagoInt = normativasDTO.stream().filter(n -> "PAGO".equalsIgnoreCase(n.acceso()) && "INTERNACIONAL".equalsIgnoreCase(n.alcance())).count();
+        long pagoTotal = pagoNac + pagoInt;
+
         model.addAttribute("normativas", normativasDTO);
         model.addAttribute("currentPage", "repoNormativo");
         model.addAttribute("totalNormas", totalNormas);
@@ -157,6 +181,39 @@ public class NormativaController {
         model.addAttribute("dashEe", dashEe);
         model.addAttribute("dashRep", dashRep);
         model.addAttribute("dashOtro", dashOtro);
+        
+        model.addAttribute("nacVigente", nacVigente);
+        model.addAttribute("nacPublicada", nacPublicada);
+        model.addAttribute("nacConsulta", nacConsulta);
+        model.addAttribute("nacBorrador", nacBorrador);
+        model.addAttribute("nacDerogada", nacDerogada);
+        model.addAttribute("nacTotal", nacTotal);
+        
+        model.addAttribute("intVigente", intVigente);
+        model.addAttribute("intPublicada", intPublicada);
+        model.addAttribute("intConsulta", intConsulta);
+        model.addAttribute("intBorrador", intBorrador);
+        model.addAttribute("intDerogada", intDerogada);
+        model.addAttribute("intTotal", intTotal);
+
+        model.addAttribute("gratisNac", gratisNac);
+        model.addAttribute("gratisInt", gratisInt);
+        model.addAttribute("gratisTotal", gratisTotal);
+
+        model.addAttribute("pagoNac", pagoNac);
+        model.addAttribute("pagoInt", pagoInt);
+        model.addAttribute("pagoTotal", pagoTotal);
+        
+        // Return filter params so we can retain them in the UI
+        model.addAttribute("searchQuery", search);
+        model.addAttribute("selectedYear", anio);
+        model.addAttribute("dateStart", dateStart);
+        model.addAttribute("dateEnd", dateEnd);
+        model.addAttribute("selectedCategorias", categoria);
+        model.addAttribute("selectedEstados", estado);
+        model.addAttribute("selectedAccesos", acceso);
+        model.addAttribute("selectedAlcances", alcance);
+        model.addAttribute("selectedObligatoriedades", obligatoriedad);
 
         return "socio/repoNormativo";
     }
