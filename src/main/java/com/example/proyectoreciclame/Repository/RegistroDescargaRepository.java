@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface RegistroDescargaRepository extends JpaRepository<RegistroDescarga, Long> {
 
@@ -47,4 +48,12 @@ public interface RegistroDescargaRepository extends JpaRepository<RegistroDescar
                                           Pageable pageable);
 
     long countByTipoDocumento(String tipoDocumento);
+
+    long countByUsuarioIdUsuario(Long idUsuario);
+
+    @Query("SELECT COUNT(rd) FROM RegistroDescarga rd WHERE rd.usuario.idUsuario = :idUsuario AND rd.fechaDescarga >= :fechaInicio AND rd.fechaDescarga <= :fechaFin")
+    long countByUsuarioIdUsuarioAndFechaDescargaBetween(@Param("idUsuario") Long idUsuario, @Param("fechaInicio") LocalDateTime fechaInicio, @Param("fechaFin") LocalDateTime fechaFin);
+
+    @Query("SELECT rd FROM RegistroDescarga rd WHERE rd.usuario.idUsuario = :idUsuario ORDER BY rd.fechaDescarga DESC LIMIT 3")
+    List<RegistroDescarga> findTop3ByUsuarioIdUsuarioOrderByFechaDescargaDesc(@Param("idUsuario") Long idUsuario);
 }

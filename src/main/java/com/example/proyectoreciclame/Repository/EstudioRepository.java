@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -33,4 +34,7 @@ public interface EstudioRepository extends JpaRepository<Estudio, Long> {
                      @Param("formatos") List<String> formatos,
                      @Param("hasEstados") boolean hasEstados,
                      @Param("estados") List<String> estados);
+
+       List<Estudio> findByFechaCreacionAfter(LocalDateTime fechaCreacion);
+       List<Estudio> findByFechaActualizacionAfterAndFechaCreacionBefore(LocalDateTime fechaActualizacion, LocalDateTime fechaCreacion);
 }

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -39,4 +40,7 @@ public interface NormativaRepository extends JpaRepository<Normativa, Long> {
             @Param("hasObligatoriedad") boolean hasObligatoriedad, @Param("obligatoriedades") List<String> obligatoriedades,
             @Param("hasCategoria") boolean hasCategoria, @Param("categorias") List<String> categorias
     );
+
+    List<Normativa> findByFechaCreacionAfter(LocalDateTime fechaCreacion);
+    List<Normativa> findByFechaActualizacionAfterAndFechaCreacionBefore(LocalDateTime fechaActualizacion, LocalDateTime fechaCreacion);
 }
