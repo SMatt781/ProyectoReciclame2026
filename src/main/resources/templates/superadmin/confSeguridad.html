@@ -88,173 +88,236 @@
         }
     </style>
 </head>
-
 <body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
 
 <div th:replace="~{fragments/sidebar_superadmin :: sidebar}"></div>
 
 <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
     <div th:replace="~{fragments/navbar :: navbar}"></div>
-<main class="flex-1 overflow-y-auto">
-<div class="p-10 max-w-[1200px] mx-auto space-y-8">
-<!-- Title Section -->
-    <div>
-        <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
-            Configuración de seguridad
-        </h2>
-        <p class="font-body text-on-surface-variant text-base mt-2">
-            Gestione los protocolos de seguridad de nivel empresarial para salvaguardar la integridad de sus datos y el acceso de los usuarios a la plataforma Reciclame.
-        </p>
-    </div>
-<!-- Section 1: Políticas de Contraseña (Full Width, Vertical Stack) -->
-<div class="bg-white rounded-[40px] border border-slate-100 shadow-sm overflow-hidden p-8">
-<div class="">
-<h3 class="font-bold text-slate-900 text-xl">Políticas de Contraseña</h3>
-<p class="text-base text-slate-500 mt-2">Defina los requisitos mínimos de complejidad para todas las cuentas administrativas.</p>
-</div>
-<div class="">
-<!-- Toggles Grid from IMAGE_7 -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-<!-- Toggle Item -->
-<div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
-<span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">REQUERIR<br/>MAYÚSCULAS</span>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only toggle-switch peer" type="checkbox"/>
-<div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors toggle-bg"></div>
-<div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full toggle-dot"></div>
-</label>
-</div>
-<div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
-<span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">REQUERIR<br/>NÚMEROS</span>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only toggle-switch peer" type="checkbox"/>
-<div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors toggle-bg"></div>
-<div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full toggle-dot"></div>
-</label>
-</div>
-<div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
-<span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">CARÁCTER<br/>ESPECIAL</span>
-<label class="relative inline-flex items-center cursor-pointer">
-<input class="sr-only toggle-switch peer" type="checkbox"/>
-<div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors toggle-bg"></div>
-<div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full toggle-dot"></div>
-</label>
-</div>
-<div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
-<span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">MANDATO<br/>MFA</span>
-<label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only toggle-switch peer" type="checkbox"/>
-<div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors toggle-bg"></div>
-<div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full toggle-dot"></div>
-</label>
-</div>
-</div>
-<!-- Length and Expiration Row -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-<div class="space-y-3">
-<label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">LONGITUD MÍNIMA</label>
-<input class="w-full bg-[#F2F4F7] border-none rounded-2xl px-6 py-5 text-slate-900 font-semibold focus:ring-2 focus:ring-[#059669]/20" type="number" value="12"/>
-</div>
-<div class="space-y-3">
-<label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">EXPIRACIÓN DE CONTRASEÑA</label>
-<div class="relative">
-<select class="w-full bg-[#F2F4F7] border-none rounded-2xl px-6 py-5 text-slate-900 font-semibold focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
-<option>Cada 90 días</option>
-<option>Cada 180 días</option>
-<option>Nunca</option>
-</select>
-<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
-</div>
-</div>
-</div>
-<!-- Preview Dark Card -->
-<div class="bg-[#101F33] rounded-[24px] p-10 flex flex-col md:flex-row items-center justify-between gap-10">
-<div class="space-y-3">
-<div class="flex items-center gap-2 text-[#059669]">
-<span class="material-symbols-outlined text-2xl" data-icon="verified_user">verified_user</span>
-<span class="text-[11px] font-bold uppercase tracking-widest text-[#56C596]">VISTA PREVIA DE COMPLEJIDAD</span>
-</div>
-<p class="text-slate-400 text-sm">Una contraseña como esta sería aceptada:</p>
-<div class="font-mono font-bold text-white tracking-widest mt-2 text-2xl">C1rcuL@r2024|</div>
-</div>
-<div class="flex items-center gap-8">
-<button class="text-slate-400 font-bold text-sm hover:text-white transition-colors">Descartar</button>
-<button class="bg-[#059669] text-white font-bold px-10 py-5 rounded-2xl hover:bg-[#05815a] transition-all active:scale-95 shadow-xl shadow-[#059669]/20">
-                                    Aplicar Actualizaciones de Política
+
+    <main class="flex-1 overflow-y-auto">
+        <div class="p-10 max-w-[1200px] mx-auto space-y-8">
+
+            <div>
+                <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                    Configuración de seguridad
+                </h2>
+                <p class="font-body text-on-surface-variant text-base mt-2">
+                    Gestione los protocolos de seguridad de nivel empresarial para salvaguardar la integridad de sus datos y el acceso de los usuarios a la plataforma Reciclame.
+                </p>
+            </div>
+
+            <!-- DOMINIOS ARRIBA -->
+            <div class="bg-white rounded-[40px] border border-slate-100 shadow-sm p-8">
+
+                <!-- HEADER -->
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-slate-900 text-xl">Dominios Permitidos</h3>
+
+                    <button class="bg-[#059669] text-white px-5 py-3 rounded-xl font-bold text-sm hover:bg-[#047857] transition-all">
+                        + Añadir Dominio
+                    </button>
+                </div>
+
+                <!-- BUSCADOR + INPUT -->
+                <div class="flex gap-4 mb-6">
+                    <input
+                            type="text"
+                            placeholder="Buscar dominio..."
+                            class="flex-1 bg-[#F2F4F7] rounded-xl px-5 py-3 focus:ring-2 focus:ring-[#059669]/20"
+                    >
+                </div>
+
+                <!-- TABLA -->
+                <div class="overflow-hidden rounded-2xl border border-slate-100">
+
+                    <table class="w-full text-left">
+                        <thead class="bg-[#F2F4F7] text-slate-500 text-xs uppercase">
+                        <tr>
+                            <th class="px-6 py-4">Nombre de dominio</th>
+                            <th class="px-6 py-4">Fecha de adición</th>
+                            <th class="px-6 py-4">Añadido por</th>
+                            <th class="px-6 py-4 text-center">Estado</th>
+                            <th class="px-6 py-4 text-center">Acciones</th>
+                        </tr>
+                        </thead>
+
+                        <tbody class="text-sm">
+
+                        <!-- FILA 1 -->
+                        <tr class="border-t">
+                            <td class="px-6 py-4 font-semibold">*.circular.com</td>
+                            <td class="px-6 py-4 text-slate-500">12 oct, 2023</td>
+                            <td class="px-6 py-4 text-slate-500">Admin_Raiz</td>
+
+                            <td class="px-6 py-4 text-center">
+                                <button
+                                        onclick="return confirm('¿Deseas autorizar este dominio?')"
+                                        class="bg-red-100 text-red-700 px-4 py-2 rounded-full text-xs font-bold hover:bg-red-200 transition-all">
+                                    INACTIVO
                                 </button>
-</div>
-</div>
-</div>
-</div>
-<!-- Section 2: Dominios Permitidos (Below Policies, Full Width) -->
-<div class="bg-white rounded-[40px] border border-slate-100 shadow-sm overflow-hidden p-8">
-<div class="flex justify-between items-center mb-8">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-slate-400 text-3xl" data-icon="domain">domain</span>
-<h3 class="font-bold text-slate-900 text-xl">Dominios</h3>
-</div>
-<button class="w-10 h-10 rounded-xl bg-[#059669]/10 text-[#059669] flex items-center justify-center hover:bg-[#059669]/20 transition-colors">
-<span class="material-symbols-outlined text-2xl" data-icon="add">add</span>
-</button>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-12 gap-12">
-<div class="md:col-span-4 space-y-6">
-<div class="space-y-3">
-<label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">NUEVO DOMINIO</label>
-<div class="flex gap-2">
-<input class="flex-1 bg-[#F2F4F7] border-none rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-[#059669]/20" placeholder="ejemplo: *.circular.com" type="text"/>
-<button class="bg-slate-900 text-white text-[11px] font-bold px-6 rounded-2xl hover:bg-slate-800 transition-all uppercase tracking-widest">
-                                        Autorizar
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <div class="flex justify-center gap-3">
+                                    <button class="text-slate-400 hover:text-[#059669] transition-colors">
+                                        <span class="material-symbols-outlined text-[22px]">edit</span>
                                     </button>
+
+                                    <button
+                                            onclick="return confirm('¿Deseas eliminar este dominio?')"
+                                            class="text-slate-400 hover:text-red-500 transition-colors">
+                                        <span class="material-symbols-outlined text-[22px]">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- FILA 2 -->
+                        <tr class="border-t">
+                            <td class="px-6 py-4 font-semibold">enterprise.org</td>
+                            <td class="px-6 py-4 text-slate-500">05 nov, 2023</td>
+                            <td class="px-6 py-4 text-slate-500">Bot_Sistema</td>
+
+                            <td class="px-6 py-4 text-center">
+                                <button
+                                        onclick="return confirm('¿Deseas desautorizar este dominio?')"
+                                        class="bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold hover:bg-green-200 transition-all">
+                                    ACTIVO
+                                </button>
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <div class="flex justify-center gap-3">
+                                    <button class="text-slate-400 hover:text-[#059669] transition-colors">
+                                        <span class="material-symbols-outlined text-[22px]">edit</span>
+                                    </button>
+
+                                    <button
+                                            onclick="return confirm('¿Deseas eliminar este dominio?')"
+                                            class="text-slate-400 hover:text-red-500 transition-colors">
+                                        <span class="material-symbols-outlined text-[22px]">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- FILA 3 -->
+                        <tr class="border-t">
+                            <td class="px-6 py-4 font-semibold">sustainability-core.net</td>
+                            <td class="px-6 py-4 text-slate-500">18 ene, 2024</td>
+                            <td class="px-6 py-4 text-slate-500">Admin_Raiz</td>
+                            <td class="px-6 py-4 text-center">
+                                <button
+                                        onclick="return confirm('¿Deseas desautorizar este dominio?')"
+                                        class="bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold hover:bg-green-200 transition-all">
+                                    ACTIVO
+                                </button>
+                            </td>
+
+
+                            <td class="px-6 py-4">
+                                <div class="flex justify-center gap-3">
+                                    <button class="text-slate-400 hover:text-[#059669] transition-colors">
+                                        <span class="material-symbols-outlined text-[22px]">edit</span>
+                                    </button>
+
+                                    <button
+                                            onclick="return confirm('¿Deseas eliminar este dominio?')"
+                                            class="text-slate-400 hover:text-red-500 transition-colors">
+                                        <span class="material-symbols-outlined text-[22px]">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-[40px] border border-slate-100 shadow-sm overflow-hidden p-8">
+                <div class="mb-6">
+                    <h3 class="font-bold text-slate-900 text-xl">Políticas de Contraseña</h3>
+                    <p class="text-base text-slate-500 mt-2">Defina los requisitos mínimos de complejidad para todas las cuentas administrativas.</p>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">REQUERIR<br/>MAYÚSCULAS</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input checked="" class="sr-only toggle-switch peer" type="checkbox"/>
+                                <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors toggle-bg"></div>
+                                <div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full toggle-dot"></div>
+                            </label>
+                        </div>
+                        <div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">REQUERIR<br/>NÚMEROS</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input checked="" class="sr-only toggle-switch peer" type="checkbox"/>
+                                <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors toggle-bg"></div>
+                                <div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full toggle-dot"></div>
+                            </label>
+                        </div>
+                        <div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">CARÁCTER<br/>ESPECIAL</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input class="sr-only toggle-switch peer" type="checkbox"/>
+                                <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors toggle-bg"></div>
+                                <div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full toggle-dot"></div>
+                            </label>
+                        </div>
+                        <div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">MANDATO<br/>MFA</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input checked="" class="sr-only toggle-switch peer" type="checkbox"/>
+                                <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors toggle-bg"></div>
+                                <div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full toggle-dot"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div class="space-y-3">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">LONGITUD MÍNIMA</label>
+                            <input class="w-full bg-[#F2F4F7] border-none rounded-2xl px-6 py-5 text-slate-900 font-semibold focus:ring-2 focus:ring-[#059669]/20" type="number" value="12"/>
+                        </div>
+                        <div class="space-y-3">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">EXPIRACIÓN DE CONTRASEÑA</label>
+                            <div class="relative">
+                                <select class="w-full bg-[#F2F4F7] border-none rounded-2xl px-6 py-5 text-slate-900 font-semibold focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                    <option>Cada 90 días</option>
+                                    <option>Cada 180 días</option>
+                                    <option>Nunca</option>
+                                </select>
+                                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#101F33] rounded-[24px] p-10 flex flex-col md:flex-row items-center justify-between gap-10">
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-2 text-[#059669]">
+                                <span class="material-symbols-outlined text-2xl" data-icon="verified_user">verified_user</span>
+                                <span class="text-[11px] font-bold uppercase tracking-widest text-[#56C596]">VISTA PREVIA DE COMPLEJIDAD</span>
+                            </div>
+                            <p class="text-slate-400 text-sm">Una contraseña como esta sería aceptada:</p>
+                            <div class="font-mono font-bold text-white tracking-widest mt-2 text-2xl">C1rcuL@r2024|</div>
+                        </div>
+                        <div class="flex items-center gap-8">
+                            <button class="text-slate-400 font-bold text-sm hover:text-white transition-colors">Descartar</button>
+                            <button class="bg-[#059669] text-white font-bold px-10 py-5 rounded-2xl hover:bg-[#05815a] transition-all active:scale-95 shadow-xl shadow-[#059669]/20">
+                                Aplicar Actualizaciones de Política
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </main>
 </div>
-</div>
-<div class="space-y-4 pt-4 border-t border-slate-50">
-<div class="bg-[#F2F4F7] p-5 rounded-2xl flex items-center gap-4">
-<div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-[#059669] shadow-sm">
-<span class="material-symbols-outlined text-xl" data-icon="fingerprint">fingerprint</span>
-</div>
-<div>
-<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">SSO BIOMÉTRICO</p>
-<p class="text-sm font-bold text-slate-900">Activo (Nivel Alto)</p>
-</div>
-</div>
-<div class="bg-[#F2F4F7] p-5 rounded-2xl flex items-center gap-4">
-<div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-amber-500 shadow-sm">
-<span class="material-symbols-outlined text-xl" data-icon="warning">warning</span>
-</div>
-<div>
-<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ALERTAS</p>
-<p class="text-sm font-bold text-slate-900">0 incidencias este mes</p>
-</div>
-</div>
-</div>
-</div>
-<div class="md:col-span-8">
-<label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest block mb-4">AUTORIZADOS</label>
-<div class="space-y-2">
-<div class="bg-[#F2F4F7]/50 border border-slate-100 p-6 rounded-3xl flex items-center justify-between group transition-colors hover:bg-white hover:shadow-md">
-<div>
-<p class="font-bold text-slate-900 text-base">*.circular.com</p>
-<p class="text-[11px] text-slate-400 uppercase tracking-wider mt-1">ALTA: 12 OCT 2023</p>
-</div>
-<button class="p-2 text-slate-300 hover:text-red-500 transition-colors">
-<span class="material-symbols-outlined text-2xl" data-icon="delete">delete</span>
-</button>
-</div>
-<div class="bg-[#F2F4F7]/50 border border-slate-100 p-6 rounded-3xl flex items-center justify-between group transition-colors hover:bg-white hover:shadow-md">
-<div>
-<p class="font-bold text-slate-900 text-base">enterprise.org</p>
-<p class="text-[11px] text-slate-400 uppercase tracking-wider mt-1">ALTA: 05 NOV 2023</p>
-</div>
-<button class="p-2 text-slate-300 hover:text-red-500 transition-colors">
-<span class="material-symbols-outlined text-2xl" data-icon="delete">delete</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</main>
-</div>
-</body></html>
+</body>
+</html>
