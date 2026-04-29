@@ -475,4 +475,31 @@ public class SuperadminController {
                 + (texto != null ? "&texto=" + texto : "");
     }
 
+    // ── Dominios — POST (Cambiar estado) ─────────────────────────────────────────
+
+    @PostMapping("/confSeguridad/cambiarEstado")
+    public String cambiarEstadoDominio(
+            @RequestParam Integer idDominio,
+            @RequestParam Boolean nuevoEstado,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(value = "texto", required = false) String texto,
+            RedirectAttributes redirectAttributes
+    ) {
+        DominioAutorizado dominio = dominioAutorizadoRepository.findById(idDominio).orElse(null);
+        if (dominio == null) {
+            redirectAttributes.addFlashAttribute("error", "Dominio no encontrado.");
+            return "redirect:/superadmin/confSeguridad";
+        }
+
+        dominio.setEstado(nuevoEstado);
+        dominioAutorizadoRepository.save(dominio);
+
+        String accion = nuevoEstado ? "activado" : "desactivado";
+        redirectAttributes.addFlashAttribute("success",
+                "Dominio '" + dominio.getNombreDominio() + "' " + accion + " correctamente.");
+
+        return "redirect:/superadmin/confSeguridad?page=" + page
+                + (texto != null ? "&texto=" + texto : "");
+    }
+
 }
