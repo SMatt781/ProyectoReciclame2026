@@ -317,8 +317,7 @@ public class SuperadminController {
         model.addAttribute("titulo", "Configuración de Seguridad");
         model.addAttribute("currentSection", "superadmin-conf-seguridad");
 
-        PageRequest pageable = PageRequest.of(page, 3);
-
+        PageRequest pageable = PageRequest.of(page, 3, Sort.by("fechaRegistro").descending());
         Page<DominioAutorizado> dominiosPage;
 
         if (texto != null && !texto.trim().isEmpty()) {
@@ -336,6 +335,144 @@ public class SuperadminController {
         model.addAttribute("texto", texto);
 
         return "superadmin/confSeguridad";
+    }
+    // ── Dominios — POST (Crear) ───────────────────────────────────────────────────
+
+    @PostMapping("/confSeguridad/crear")
+    public String crearDominio(
+            @RequestParam String nombreDominio,
+            @RequestParam(required = false) String motivoAutorizacion,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            RedirectAttributes redirectAttributes,
+            org.springframework.security.core.Authentication authentication
+    ) {
+        // Normalizar: asegurarse que empiece con @
+        String dominio = nombreDominio.trim();
+        if (!dominio.startsWith("@")) {
+            dominio = "@" + dominio;
+        }
+
+        if (dominioAutorizadoRepository.existsByNombreDominioIgnoreCase(dominio)) {
+            redirectAttributes.addFlashAttribute("error", "El dominio '" + dominio + "' ya está registrado.");
+            return "redirect:/superadmin/confSeguridad?page=" + page;
+        }
+
+        // Obtener el usuario autenticado como creador
+        Usuario creador = usuarioRepository.findByCorreoWithRol(authentication.getName()).orElse(null);
+
+        DominioAutorizado nuevo = new DominioAutorizado();
+        nuevo.setNombreDominio(dominio);
+        nuevo.setMotivoAutorizacion(motivoAutorizacion != null ? motivoAutorizacion.trim() : null);
+        nuevo.setEstado(true);
+        nuevo.setUsuarioCreador(creador);
+
+        nuevo.setFechaRegistro(java.time.LocalDateTime.now());
+
+        dominioAutorizadoRepository.save(nuevo);
+
+        redirectAttributes.addFlashAttribute("success", "Dominio '" + dominio + "' añadido correctamente.");
+        return "redirect:/superadmin/confSeguridad?page=" + page;
+    }
+
+// ── Dominios — GET (cargar datos para editar) ────────────────────────────────
+
+    @GetMapping("/confSeguridad/editar/{id}")
+    public String editarDominioForm(
+            @PathVariable Integer id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(value = "texto", required = false) String texto,
+            Model model,
+            RedirectAttributes redirectAttributes
+    ) {
+        DominioAutorizado dominio = dominioAutorizadoRepository.findById(id).orElse(null);
+        if (dominio == null) {
+            redirectAttributes.addFlashAttribute("error", "Dominio no encontrado.");
+            return "redirect:/superadmin/confSeguridad";
+        }
+
+        // Recargar la lista
+        PageRequest pageable = PageRequest.of(page, 3, Sort.by("fechaRegistro").descending());
+        Page<DominioAutorizado> dominiosPage = (texto != null && !texto.isBlank())
+                ? dominioAutorizadoRepository.findByNombreDominioContainingIgnoreCase(texto.trim(), pageable)
+                : dominioAutorizadoRepository.findAll(pageable);
+
+        model.addAttribute("dominios", dominiosPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", dominiosPage.getTotalPages());
+        model.addAttribute("hasPrevious", dominiosPage.hasPrevious());
+        model.addAttribute("hasNext", dominiosPage.hasNext());
+        model.addAttribute("texto", texto);
+        model.addAttribute("titulo", "Configuración de Seguridad");
+        model.addAttribute("currentSection", "superadmin-conf-seguridad");
+
+        // Datos del dominio a editar
+        model.addAttribute("dominioEditar", dominio);
+        model.addAttribute("modalEditarDominio", true);
+
+        return "superadmin/confSeguridad";
+    }
+
+// ── Dominios — POST (Editar) ─────────────────────────────────────────────────
+
+    @PostMapping("/confSeguridad/editar")
+    public String editarDominio(
+            @RequestParam Integer idDominio,
+            @RequestParam String nombreDominio,
+            @RequestParam(required = false) String motivoAutorizacion,
+            @RequestParam(required = false) Boolean estado,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(value = "texto", required = false) String texto,
+            RedirectAttributes redirectAttributes
+    ) {
+        DominioAutorizado dominio = dominioAutorizadoRepository.findById(idDominio).orElse(null);
+        if (dominio == null) {
+            redirectAttributes.addFlashAttribute("error", "Dominio no encontrado.");
+            return "redirect:/superadmin/confSeguridad";
+        }
+
+        String nuevoNombre = nombreDominio.trim();
+        if (!nuevoNombre.startsWith("@")) {
+            nuevoNombre = "@" + nuevoNombre;
+        }
+
+        // Validar unicidad excluyendo el mismo registro
+        if (!dominio.getNombreDominio().equalsIgnoreCase(nuevoNombre)
+                && dominioAutorizadoRepository.existsByNombreDominioIgnoreCase(nuevoNombre)) {
+            redirectAttributes.addFlashAttribute("error", "Ya existe un dominio con ese nombre.");
+            return "redirect:/superadmin/confSeguridad?page=" + page
+                    + (texto != null ? "&texto=" + texto : "");
+        }
+
+        dominio.setNombreDominio(nuevoNombre);
+        dominio.setMotivoAutorizacion(motivoAutorizacion != null ? motivoAutorizacion.trim() : null);
+        dominio.setEstado(estado != null ? estado : dominio.getEstado());
+
+        dominioAutorizadoRepository.save(dominio);
+
+        redirectAttributes.addFlashAttribute("success", "Dominio actualizado correctamente.");
+        return "redirect:/superadmin/confSeguridad?page=" + page
+                + (texto != null ? "&texto=" + texto : "");
+    }
+
+// ── Dominios — POST (Eliminar) ───────────────────────────────────────────────
+
+    @PostMapping("/confSeguridad/eliminar")
+    public String eliminarDominio(
+            @RequestParam Integer idDominio,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(value = "texto", required = false) String texto,
+            RedirectAttributes redirectAttributes
+    ) {
+        if (!dominioAutorizadoRepository.existsById(idDominio)) {
+            redirectAttributes.addFlashAttribute("error", "Dominio no encontrado.");
+            return "redirect:/superadmin/confSeguridad";
+        }
+
+        dominioAutorizadoRepository.deleteById(idDominio);
+
+        redirectAttributes.addFlashAttribute("success", "Dominio eliminado correctamente.");
+        return "redirect:/superadmin/confSeguridad?page=" + page
+                + (texto != null ? "&texto=" + texto : "");
     }
 
 }
