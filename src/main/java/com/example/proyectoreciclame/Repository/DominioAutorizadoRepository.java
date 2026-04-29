@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DominioAutorizadoRepository extends JpaRepository<DominioAutorizado, Integer> {
     Page<DominioAutorizado> findByNombreDominioContainingIgnoreCase(String texto, Pageable pageable);
+    boolean existsByNombreDominioIgnoreCase(String nombreDominio);
 }
