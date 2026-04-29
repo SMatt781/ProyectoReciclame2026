@@ -55,6 +55,7 @@ public class AdminUsuarioController {
                                   @RequestParam(required = false) Long id,
                                   Model model) {
 
+
         Pageable pageable = PageRequest.of(page, 3);
         Page<Usuario> paginaUsuarios;
 
