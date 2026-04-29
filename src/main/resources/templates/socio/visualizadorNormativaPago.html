@@ -119,40 +119,8 @@
     <!-- Main Content Canvas -->
     <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
         <!-- TopAppBar -->
-        <header
-            class="flex justify-between items-center px-8 py-4 w-full h-20 sticky top-0 z-40 bg-[#f7f9fb]/80 dark:bg-slate-950/80 backdrop-blur-xl">
-            <!-- Logo Header Area -->
-            <div class="flex items-center h-full">
-                <img alt="Reciclame Logo" src="../../static/images/logo-reciclame.png"
-                    th:src="@{/images/logo-reciclame.png}" class="h-9 object-contain" />
-            </div>
-
-            <!-- Right Side / Actions & Profile -->
-            <div class="flex items-center gap-6">
-                <button
-                    class="text-on-surface-variant hover:bg-surface-container rounded-full p-2 transition-colors scale-95 active:scale-90 relative">
-                    <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                        <path
-                            d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V2c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 3.36 6 5.92 6 9v5l-2 2v1h16v-1l-2-2z" />
-                    </svg>
-                    <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
-                </button>
-
-                <div class="flex items-center gap-3 pl-4 border-l border-outline-variant/30">
-                    <div class="flex flex-col items-end">
-                        <span class="font-headline font-bold text-sm text-on-primary-fixed">Paola Flores</span>
-                        <span
-                            class="font-label font-medium text-[10px] bg-secondary text-on-secondary px-2 py-0.5 rounded-full tracking-wider">SOCIO</span>
-                    </div>
-                    <svg class="w-10 h-10 rounded-full border-2 border-surface-container-lowest shadow-sm text-primary-container"
-                        fill="currentColor" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="50" fill="#E8C4A0" />
-                        <circle cx="50" cy="35" r="15" fill="#D4A574" />
-                        <ellipse cx="50" cy="65" rx="20" ry="25" fill="#D4A574" />
-                    </svg>
-                </div>
-            </div>
-        </header>
+        <!-- TopAppBar -->
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
         <!-- Main Content canvas modified to force h-full mapping without scroll -->
         <main class="flex-1 flex flex-col overflow-hidden px-6 md:px-10 py-6 bg-[#f9f9ff]">
             <div class="w-full flex-shrink-0">
@@ -160,11 +128,11 @@
                 <header class="mb-6">
                     <div
                         class="flex items-center font-label text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-4 flex-wrap gap-2">
-                        <span>INICIO</span>
+                        <a th:href="@{/socio}" class="cursor-pointer hover:underline">INICIO</a>
                         <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                         </svg>
-                        <span>NORMATIVAS</span>
+                        <a th:href="@{/normativas}" class="cursor-pointer hover:underline">NORMATIVAS</a>
                         <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                         </svg>

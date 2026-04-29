@@ -158,14 +158,14 @@ public class AdminEstudiosController {
 
     @GetMapping("/admin/normativas")
     public String normativasAdmin(Model model) {
-        model.addAttribute("currentSection", "admin-normativas");
-        return "admin/repo_main_admin";
+        return "redirect:/normativas";
     }
+    
     @PostMapping("/admin/repo_new")
     public String guardarNormativa() {
         // guardar en BD aquí
 
-        return "redirect:/admin/normativas";
+        return "redirect:/normativas";
     }
     @GetMapping("/admin/estudios/exportar")
     public org.springframework.http.ResponseEntity<byte[]> exportarEstudios() throws java.io.IOException {
