@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <title>Recíclame - Estado del sistema</title>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#c3ecd7",
+                        "surface-container-high": "#dce9ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container": "#e5eeff",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "on-background": "#0b1c30",
+                        "inverse-surface": "#213145",
+                        "on-surface-variant": "#45464d",
+                        "on-primary-fixed": "#131b2e",
+                        "surface": "#f8f9ff",
+                        "on-surface": "#0b1c30",
+                        "primary": "#000000",
+                        "secondary": "#416656",
+                        "on-primary-container": "#7c839b",
+                        "error": "#ba1a1a"
+                    },
+                    "fontFamily": {
+                        "body": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline": ["Plus Jakarta Sans", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f8f9ff;
+        }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+
+<div th:replace="~{fragments/sidebar_superadmin :: sidebar}"></div>
+
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="flex-1 overflow-y-auto px-6 py-2">
+        <div class="space-y-6">
+
+            <div class="mb-3">
+                <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                    Estado del sistema
+                </h2>
+                <p class="font-body text-on-surface-variant text-sm mt-1 max-w-3xl">
+                    Monitorización en tiempo real de los servicios, infraestructura y salud general de la plataforma Recíclame.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl p-8 border border-slate-100 shadow-sm flex items-center justify-between">
+                    <div class="space-y-6 flex-1">
+                        <div>
+                            <h3 class="text-lg font-bold text-on-primary-fixed mb-1">Uso de Almacenamiento</h3>
+                            <p class="text-sm text-on-primary-container">Capacidad total disponible en clúster</p>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <span class="font-semibold text-on-primary-fixed">SQL Main</span>
+                                    <span class="text-on-primary-container text-xs">1.8 TB / 2.1 TB</span>
+                                </div>
+                                <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-black h-full rounded-full" style="width: 85%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative w-32 h-32 flex items-center justify-center ml-8">
+                        <svg class="w-full h-full transform -rotate-90">
+                            <circle class="text-slate-100" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-width="10"></circle>
+                            <circle class="text-black" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-dasharray="364.4" stroke-dashoffset="54.6" stroke-width="10"></circle>
+                        </svg>
+                        <div class="absolute flex flex-col items-center">
+                            <span class="text-2xl font-bold">85%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-8 border border-slate-100 shadow-sm flex flex-col justify-between">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-lg font-bold text-on-primary-fixed mb-1">Usuarios Activos</h3>
+                            <p class="text-sm text-on-primary-container">Sesiones concurrentes hoy</p>
+                        </div>
+                        <div class="flex items-center gap-1 text-secondary font-bold text-xs bg-secondary/10 px-2 py-1 rounded-lg">
+                            <span class="material-symbols-outlined text-xs">trending_up</span>+12%
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="text-5xl font-extrabold text-on-primary-fixed tracking-tighter">1,284</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl p-6 border border-slate-100 shadow-sm flex items-center gap-6">
+                    <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-black text-2xl">speed</span>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-semibold text-on-primary-container uppercase tracking-wider">Latencia Promedio</h4>
+                        <p class="text-2xl font-bold text-on-primary-fixed">24ms</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 border border-slate-100 shadow-sm flex items-center gap-6">
+                    <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-black text-2xl">memory</span>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-semibold text-on-primary-container uppercase tracking-wider">CPU Core Load</h4>
+                        <p class="text-2xl font-bold text-on-primary-fixed">14.2%</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl p-8 border border-slate-100 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-on-primary-fixed mb-1">Uptime del Sistema</h3>
+                        <p class="text-sm text-on-primary-container">Disponibilidad de los últimos 30 días</p>
+                    </div>
+                    <div class="text-secondary font-bold text-sm">99.98%</div>
+                </div>
+                <div class="flex gap-1 h-8">
+                    <div class="flex-1 bg-secondary/80 rounded-sm"></div>
+                    <div class="flex-1 bg-secondary/80 rounded-sm"></div>
+                    <div class="flex-1 bg-secondary/80 rounded-sm"></div>
+                    <div class="flex-1 bg-secondary/80 rounded-sm"></div>
+                    <div class="flex-1 bg-error/80 rounded-sm"></div> <div class="flex-1 bg-secondary/80 rounded-sm" th:each="i : ${#numbers.sequence(1, 20)}"></div>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold text-on-primary-fixed mb-4">Alertas Recientes</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4">
+                        <span class="material-symbols-outlined text-secondary">cloud_done</span>
+                        <div>
+                            <p class="text-sm font-bold">Backup completado</p>
+                            <p class="text-xs text-on-primary-container">Hace 2 horas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+</body>
+</html>

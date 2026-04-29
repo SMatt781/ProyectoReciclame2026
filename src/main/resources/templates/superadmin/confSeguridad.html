@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es">
+<head>
+    <title>Recíclame - Configuración de seguridad</title>
+    <meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#c3ecd7",
+                        "surface-container-high": "#dce9ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container": "#e5eeff",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "on-background": "#0b1c30",
+                        "inverse-surface": "#213145",
+                        "on-tertiary-container": "#3980f4",
+                        "on-secondary-container": "#476c5b",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f8f9ff",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#565e74",
+                        "background": "#f8f9ff",
+                        "surface-dim": "#cbdbf5",
+                        "on-tertiary-fixed-variant": "#004395",
+                        "tertiary-container": "#001a42",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#45464d",
+                        "primary-container": "#131b2e",
+                        "on-secondary-fixed": "#002115",
+                        "error": "#ba1a1a",
+                        "outline-variant": "#c6c6cd",
+                        "secondary-fixed-dim": "#a8cfbc",
+                        "on-primary-container": "#7c839b",
+                        "tertiary-fixed-dim": "#adc6ff",
+                        "primary": "#000000",
+                        "secondary": "#416656",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-tertiary-fixed": "#001a42",
+                        "surface-variant": "#d3e4fe",
+                        "surface-container-low": "#eff4ff",
+                        "primary-fixed-dim": "#bec6e0",
+                        "on-primary-fixed": "#131b2e",
+                        "on-secondary-fixed-variant": "#294e3f",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#dae2fd",
+                        "outline": "#76777d",
+                        "on-surface": "#0b1c30",
+                        "inverse-primary": "#bec6e0",
+                        "secondary-container": "#c3ecd7",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#d8e2ff",
+                        "surface": "#f8f9ff",
+                        "tertiary": "#000000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "sans": ["Plus Jakarta Sans", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .toggle-switch:checked ~ .toggle-bg {
+            background-color: #059669;
+        }
+        .toggle-switch:checked ~ .toggle-dot {
+            transform: translateX(100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+
+<div th:replace="~{fragments/sidebar_superadmin :: sidebar}"></div>
+
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="flex-1 overflow-y-auto px-6 py-2">
+        <div class="space-y-6">
+
+            <div>
+                <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                    Configuración de seguridad
+                </h2>
+                <p class="font-body text-on-surface-variant text-base mt-2">
+                    Gestione los protocolos de seguridad de nivel empresarial para salvaguardar la integridad de sus datos y el acceso de los usuarios a la plataforma Reciclame.
+                </p>
+            </div>
+
+            <!-- DOMINIOS ARRIBA -->
+            <div class="bg-white rounded-[40px] border border-slate-100 shadow-sm p-8">
+
+                <!-- HEADER -->
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-slate-900 text-xl">Dominios Permitidos</h3>
+
+                    <button class="bg-[#059669] text-white px-5 py-3 rounded-xl font-bold text-sm hover:bg-[#047857] transition-all">
+                        + Añadir Dominio
+                    </button>
+                </div>
+
+                <!-- BUSCADOR + INPUT -->
+                <!-- BUSCADOR -->
+                <form th:action="@{/superadmin/confSeguridad}" method="get" class="flex items-center gap-4 mb-6 w-full">
+                    <div class="flex-1 relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#999] text-xl">
+                        search
+                    </span>
+
+                        <input
+                                class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]"
+                                placeholder="Buscar dominio autorizado..."
+                                type="text"
+                                name="texto"
+                                th:value="${texto}" />
+                    </div>
+
+                    <div class="flex items-center gap-2 shrink-0">
+                        <a th:if="${texto != null and !#strings.isEmpty(texto)}"
+                           th:href="@{/superadmin/confSeguridad}"
+                           class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                            <span class="material-symbols-outlined text-xl">close</span>
+                            <span class="text-sm font-medium">Limpiar</span>
+                        </a>
+                    </div>
+                </form>
+
+                <!-- TABLA -->
+                <div class="overflow-hidden rounded-2xl border border-slate-100">
+
+                    <table class="w-full text-left">
+                        <thead class="bg-[#F2F4F7] text-slate-500 text-xs uppercase">
+                        <tr>
+                            <th class="px-6 py-4">Nombre de dominio</th>
+                            <th class="px-6 py-4">Fecha de adición</th>
+                            <th class="px-6 py-4">Añadido por</th>
+                            <th class="px-6 py-4 text-center">Estado</th>
+                            <th class="px-6 py-4 text-center">Acciones</th>
+                        </tr>
+                        </thead>
+
+                        <tbody class="text-sm">
+
+                        <tr class="border-t" th:each="dominio : ${dominios}">
+                            <td class="px-6 py-4 font-semibold" th:text="${dominio.nombreDominio}">
+                                *.circular.com
+                            </td>
+
+                            <td class="px-6 py-4 text-slate-500"
+                                th:text="${#temporals.format(dominio.fechaRegistro, 'dd MMM, yyyy')}">
+                                12 oct, 2023
+                            </td>
+
+                            <td class="px-6 py-4 text-slate-500"
+                                th:text="${dominio.usuarioCreador.nombres + ' ' + dominio.usuarioCreador.apellidoPaterno}">
+                                Admin_Raiz
+                            </td>
+
+                            <td class="px-6 py-4 text-center">
+                                <button th:if="${dominio.estado}"
+                                        onclick="return confirm('¿Deseas desautorizar este dominio?')"
+                                        class="bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold hover:bg-green-200 transition-all">
+                                    ACTIVO
+                                </button>
+
+                                <button th:unless="${dominio.estado}"
+                                        onclick="return confirm('¿Deseas autorizar este dominio?')"
+                                        class="bg-red-100 text-red-700 px-4 py-2 rounded-full text-xs font-bold hover:bg-red-200 transition-all">
+                                    INACTIVO
+                                </button>
+                            </td>
+
+                            <td class="px-6 py-4">
+                                <div class="flex justify-center gap-3">
+                                    <button class="text-slate-400 hover:text-[#059669] transition-colors">
+                                        <span class="material-symbols-outlined text-[22px]">edit</span>
+                                    </button>
+
+                                    <button class="text-slate-400 hover:text-red-500 transition-colors">
+                                        <span class="material-symbols-outlined text-[22px]">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+                <div id="paginationContainer"
+                     th:if="${totalPages > 0}"
+                     class="flex justify-center items-center gap-2 mt-4">
+
+                    <a th:if="${hasPrevious}"
+                       th:href="@{/superadmin/confSeguridad(page=${currentPage - 1})}"
+                       class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </a>
+
+                    <span th:if="${!hasPrevious}"
+                          class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+                            <span class="material-symbols-outlined">chevron_left</span>
+                    </span>
+
+                    <div class="flex gap-2" th:if="${totalPages > 0}">
+                        <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                           th:href="@{/superadmin/confSeguridad(page=${i})}"
+                           th:text="${i + 1}"
+                           th:class="${i == currentPage} ?
+                                    'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
+                                    :
+                                    'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container transition'">
+                        </a>
+                    </div>
+
+                    <a th:if="${hasNext}"
+                       th:href="@{/superadmin/confSeguridad(page=${currentPage + 1})}"
+                       class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </a>
+
+                    <span th:if="${!hasNext}"
+                          class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-[40px] border border-slate-100 shadow-sm overflow-hidden p-8">
+                <div class="mb-6">
+                    <h3 class="font-bold text-slate-900 text-xl">Políticas de Contraseña</h3>
+                    <p class="text-base text-slate-500 mt-2">Defina los requisitos mínimos de complejidad para todas las cuentas administrativas.</p>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">REQUERIR<br/>MAYÚSCULAS</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input checked="" class="sr-only toggle-switch peer" type="checkbox"/>
+                                <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors toggle-bg"></div>
+                                <div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full toggle-dot"></div>
+                            </label>
+                        </div>
+                        <div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">REQUERIR<br/>NÚMEROS</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input checked="" class="sr-only toggle-switch peer" type="checkbox"/>
+                                <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors toggle-bg"></div>
+                                <div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full toggle-dot"></div>
+                            </label>
+                        </div>
+                        <div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">CARÁCTER<br/>ESPECIAL</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input class="sr-only toggle-switch peer" type="checkbox"/>
+                                <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors toggle-bg"></div>
+                                <div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full toggle-dot"></div>
+                            </label>
+                        </div>
+                        <div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">MANDATO<br/>MFA</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input checked="" class="sr-only toggle-switch peer" type="checkbox"/>
+                                <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors toggle-bg"></div>
+                                <div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full toggle-dot"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div class="space-y-3">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">LONGITUD MÍNIMA</label>
+                            <input class="w-full bg-[#F2F4F7] border-none rounded-2xl px-6 py-5 text-slate-900 font-semibold focus:ring-2 focus:ring-[#059669]/20" type="number" value="12"/>
+                        </div>
+                        <div class="space-y-3">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">EXPIRACIÓN DE CONTRASEÑA</label>
+                            <div class="relative">
+                                <select class="w-full bg-[#F2F4F7] border-none rounded-2xl px-6 py-5 text-slate-900 font-semibold focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                    <option>Cada 90 días</option>
+                                    <option>Cada 180 días</option>
+                                    <option>Nunca</option>
+                                </select>
+                                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#101F33] rounded-[24px] p-10 flex flex-col md:flex-row items-center justify-between gap-10">
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-2 text-[#059669]">
+                                <span class="material-symbols-outlined text-2xl" data-icon="verified_user">verified_user</span>
+                                <span class="text-[11px] font-bold uppercase tracking-widest text-[#56C596]">VISTA PREVIA DE COMPLEJIDAD</span>
+                            </div>
+                            <p class="text-slate-400 text-sm">Una contraseña como esta sería aceptada:</p>
+                            <div class="font-mono font-bold text-white tracking-widest mt-2 text-2xl">C1rcuL@r2024|</div>
+                        </div>
+                        <div class="flex items-center gap-8">
+                            <button class="text-slate-400 font-bold text-sm hover:text-white transition-colors">Descartar</button>
+                            <button class="bg-[#059669] text-white font-bold px-10 py-5 rounded-2xl hover:bg-[#05815a] transition-all active:scale-95 shadow-xl shadow-[#059669]/20">
+                                Aplicar Actualizaciones de Política
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Registros de Descargas - Recíclame</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#f7f9fb",
+                        "background": "#f7f9fb",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container": "#eceef0",
+                        "surface-variant": "#e0e3e5",
+                        "outline-variant": "#c3c7cd",
+                        "outline": "#73777d",
+                        "on-surface": "#191c1e",
+                        "on-surface-variant": "#43474c",
+                        "on-primary-fixed": "#021d30",
+                        "primary-container": "#021d30",
+                        "on-primary": "#ffffff",
+                        "secondary": "#006d37",
+                        "secondary-container": "#6bfe9c",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-secondary">
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="flex-1 overflow-y-auto px-6 py-2">
+        <div class="w-full h-full">
+
+            <!-- Encabezado -->
+            <div class="mb-3">
+                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
+                    <div>
+                        <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                            Registros de Descargas
+                        </h2>
+                        <p class="font-body text-on-surface-variant text-sm mt-1 max-w-3xl">
+                            Gestione y audite el flujo de información técnica de la plataforma en tiempo real.
+                        </p>
+                    </div>
+
+                    <section class="bg-primary-container text-on-primary rounded-xl px-4 py-3 ambient-shadow min-w-[300px] max-w-[390px]">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                                    !
+                                </div>
+                                <div>
+                                    <h3 class="font-headline text-sm font-bold">Auditoría de descargas</h3>
+                                    <p class="text-[11px] text-white/70 mt-1 leading-relaxed">
+                                        Supervisa documentos descargados, usuarios, secciones y fechas de acceso.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <a th:href="@{/admin/registros/descargas/exportar(texto=${texto},tipo=${tipo},fechaInicio=${fechaInicio},fechaFin=${fechaFin})}"
+                               class="shrink-0 px-3 py-2 rounded-lg bg-secondary text-on-secondary text-[11px] font-bold hover:bg-[#005a3d] transition-colors">
+                                Exportar
+                            </a>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <div class="bg-transparent border border-outline-variant/30 rounded-xl p-4 mb-4 flex flex-col">
+
+                <!-- KPIs -->
+                <section class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
+                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-outline to-surface-variant"></div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="w-9 h-9 rounded-lg bg-surface-container text-on-surface-variant flex items-center justify-center shadow-sm">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/>
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                Total
+                            </div>
+                        </div>
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1">Total general</h4>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalDescargas}"></div>
+                    </article>
+
+                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-outline to-surface-variant"></div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="w-9 h-9 rounded-lg bg-surface-container text-on-surface-variant flex items-center justify-center shadow-sm">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/>
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                Normativas
+                            </div>
+                        </div>
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1">Normativas</h4>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalNormativas}"></div>
+                    </article>
+
+                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="w-9 h-9 rounded-lg bg-secondary-container/30 text-secondary flex items-center justify-center shadow-sm">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM8 17H6v-7h2v7zm5 0h-2V7h2v10zm5 0h-2v-4h2v4z"/>
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                Estudios
+                            </div>
+                        </div>
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1">Estudios</h4>
+                        <div class="text-3xl font-extrabold text-secondary" th:text="${totalEstudios}"></div>
+                    </article>
+
+                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="w-9 h-9 rounded-lg bg-secondary-container/30 text-secondary flex items-center justify-center shadow-sm">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14h2V5h14v14H5v2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                Acción
+                            </div>
+                        </div>
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1">Exportación</h4>
+                        <a th:href="@{/admin/registros/descargas/exportar(texto=${texto},tipo=${tipo},fechaInicio=${fechaInicio},fechaFin=${fechaFin})}"
+                           class="inline-flex mt-1 px-4 py-2 rounded-lg bg-secondary text-on-secondary text-xs font-bold hover:bg-[#005a3d] transition-colors">
+                            Exportar registros
+                        </a>
+                    </article>
+                </section>
+
+                <!-- Filtros -->
+                <form method="get" th:action="@{/admin/registros/descargas}"
+                      class="grid grid-cols-1 gap-2 mb-6 w-full xl:grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr_auto] xl:items-end">
+
+                    <div>
+                        <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+                            Búsqueda global
+                        </label>
+                        <input type="text"
+                               name="texto"
+                               th:value="${texto}"
+                               placeholder="Usuario, documento o sección..."
+                               class="w-full px-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa] text-sm" />
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+                            Sección
+                        </label>
+                        <select name="tipo"
+                                class="w-full px-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa] text-sm">
+                            <option value="">Todas</option>
+                            <option value="NORMATIVA" th:selected="${tipo == 'NORMATIVA'}">Normativas</option>
+                            <option value="ESTUDIO" th:selected="${tipo == 'ESTUDIO'}">Estudios</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+                            Fecha inicio
+                        </label>
+                        <input type="date"
+                               name="fechaInicio"
+                               th:value="${fechaInicio}"
+                               class="w-full px-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa] text-sm" />
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+                            Fecha fin
+                        </label>
+                        <input type="date"
+                               name="fechaFin"
+                               th:value="${fechaFin}"
+                               class="w-full px-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa] text-sm" />
+                    </div>
+
+                    <button type="submit"
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                        <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 4a1 1 0 011-1h16a1 1 0 01.8 1.6L14 13.5V19a1 1 0 01-1.447.894l-3-1.5A1 1 0 019 17.5v-4L3.2 4.6A1 1 0 013 4z" />
+                        </svg>
+                        <span class="text-sm font-medium">Filtros</span>
+                    </button>
+                </form>
+
+                <!-- Tabla + paginación -->
+                <div class="flex flex-col">
+                    <div class="overflow-x-auto w-full pb-4" th:if="${not #lists.isEmpty(descargas)}">
+                        <div class="flex flex-col gap-2 min-w-[1000px] w-full">
+
+                            <!-- Cabecera -->
+                            <div class="hidden md:grid grid-cols-[minmax(260px,2fr)_minmax(220px,2fr)_1fr_1fr_1fr] gap-2 px-4 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                                <div>Usuario</div>
+                                <div>Documento</div>
+                                <div>Sección</div>
+                                <div>Fecha</div>
+                                <div>Hora</div>
+                            </div>
+
+                            <!-- Filas -->
+                            <div th:each="r : ${descargas}"
+                                 class="bg-surface-container-lowest rounded-xl p-4 md:px-4 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[minmax(260px,2fr)_minmax(220px,2fr)_1fr_1fr_1fr] gap-2 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+
+                                <div class="flex items-center gap-3 w-full min-w-0">
+                                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary-container/30 text-sm font-bold text-secondary"
+                                         th:text="${r.usuarioIniciales}">
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="truncate text-sm font-bold leading-tight text-on-primary-fixed group-hover:text-secondary transition-colors"
+                                           th:text="${r.usuarioNombreCompleto}"></p>
+                                        <p class="truncate text-[11px] leading-tight text-on-surface-variant"
+                                           th:text="${r.usuario.correo}"></p>
+                                    </div>
+                                </div>
+
+                                <div class="w-full md:w-auto flex items-center justify-start text-sm font-body text-on-surface-variant truncate"
+                                     th:text="${r.nombreDocumento}"></div>
+
+                                <div class="w-full md:w-auto flex items-center justify-start">
+                                    <span class="rounded-full bg-secondary-container/20 px-3 py-1 text-[10px] font-extrabold uppercase text-secondary"
+                                          th:text="${r.tipoDocumento}">
+                                    </span>
+                                </div>
+
+                                <div class="w-full md:w-auto flex items-center justify-start text-sm font-body text-on-surface-variant"
+                                     th:text="${r.fechaTexto}"></div>
+
+                                <div class="w-full md:w-auto flex items-center justify-start text-sm font-body text-on-surface-variant"
+                                     th:text="${r.horaTexto}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estado vacío -->
+                    <div th:if="${#lists.isEmpty(descargas)}"
+                         class="py-12 flex flex-col items-center justify-center text-center bg-surface-container-lowest rounded-xl border border-outline-variant/30 border-dashed">
+                        <svg class="w-16 h-16 text-outline-variant mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                  d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z" />
+                        </svg>
+                        <h3 class="text-lg font-bold text-on-surface mb-2">No se encontraron registros de descarga</h3>
+                    </div>
+
+                    <!-- Paginación -->
+                    <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-4">
+
+                        <a th:if="${hasPrevious}"
+                           th:href="@{/admin/registros/descargas(page=${currentPage - 1}, texto=${texto}, tipo=${tipo}, fechaInicio=${fechaInicio}, fechaFin=${fechaFin})}"
+                           class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </a>
+
+                        <span th:if="${!hasPrevious}"
+                              class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </span>
+
+                        <div id="pageNumbers" class="flex gap-2">
+                            <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                               th:href="@{/admin/registros/descargas(page=${i}, texto=${texto}, tipo=${tipo}, fechaInicio=${fechaInicio}, fechaFin=${fechaFin})}"
+                               th:text="${i + 1}"
+                               th:class="${i == currentPage} ?
+                               'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
+                               :
+                               'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container transition'">
+                            </a>
+                        </div>
+
+                        <a th:if="${hasNext}"
+                           th:href="@{/admin/registros/descargas(page=${currentPage + 1}, texto=${texto}, tipo=${tipo}, fechaInicio=${fechaInicio}, fechaFin=${fechaFin})}"
+                           class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+
+                        <span th:if="${!hasNext}"
+                              class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M9 5l7 7-7 7" />
+                            </svg>
+                        </span>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>
