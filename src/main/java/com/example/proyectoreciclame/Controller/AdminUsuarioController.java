@@ -62,7 +62,7 @@ public class AdminUsuarioController {
         if (texto == null || texto.isBlank()) {
             paginaUsuarios = usuarioRepository.findAllGestionUsuarios(pageable);
         } else {
-            paginaUsuarios = usuarioRepository.buscarEnGestion(texto, pageable);
+            paginaUsuarios = usuarioRepository.buscarEnGestionGeneral(texto, pageable);
         }
 
         List<UsuarioGestionDto> lista = new ArrayList<>();
@@ -280,7 +280,7 @@ public class AdminUsuarioController {
         if (texto == null || texto.isBlank()) {
             paginaUsuarios = usuarioRepository.findAllGestionUsuarios(pageable);
         } else {
-            paginaUsuarios = usuarioRepository.buscarEnGestion(texto, pageable);
+            paginaUsuarios = usuarioRepository.buscarEnGestionGeneral(texto, pageable);
         }
 
         List<UsuarioGestionDto> lista = new ArrayList<>();
