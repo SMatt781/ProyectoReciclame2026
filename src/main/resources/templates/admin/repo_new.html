@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Nueva Normativa - Panel de Administración</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-[#1e293b] min-h-screen flex items-center justify-center p-0 sm:p-4 md:p-10">
+<!-- Modal Container -->
+<main class="w-full max-w-[800px] bg-white rounded-none sm:rounded-2xl shadow-2xl flex flex-col max-h-screen sm:max-h-[90vh] overflow-hidden relative">
+  <!-- Modal Header -->
+  <header class="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-white sticky top-0 z-30">
+    <div class="flex items-center gap-4">
+      <div class="w-10 h-10 rounded-lg bg-[#e0e7ff] flex items-center justify-center text-[#064e3b]">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </div>
+      <div>
+        <h1 class="text-lg font-extrabold text-[#0f172a] tracking-tight">Nueva Normativa</h1>
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">PANEL DE ADMINISTRACIÓN</p>
+      </div>
+    </div>
+    <button class="text-gray-400 hover:bg-gray-100 p-2 rounded-full transition-colors">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 18L18 6M6 6l18 18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+    </button>
+  </header>
+  <!-- Scrollable Form Body -->
+  <div class="overflow-y-auto px-6 py-8 scrollbar-hide flex flex-col gap-10">
+    <!-- Section: Identificación -->
+    <section class="space-y-6">
+      <header class="flex items-center gap-3">
+        <div class="w-1 h-5 bg-[#059669] rounded-full"></div>
+        <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Identificación</h2>
+      </header>
+      <div class="space-y-4">
+        <div class="space-y-2">
+          <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Nombre de la Normativa</label>
+          <input class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300" placeholder="Ej: Ley de Fomento a la Economía Circular" type="text"/>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+          <div class="md:col-span-6 space-y-2">
+            <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Organismo / Ministerio</label>
+            <input class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all" placeholder="Ej. Ministerio de Ambiente" type="text"/>
+          </div>
+          <div class="md:col-span-3 space-y-2">
+            <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Código <span class="text-gray-400 font-medium">(OPC)</span></label>
+            <input class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all" placeholder="N° 21.325" type="text"/>
+          </div>
+          <div class="md:col-span-3 space-y-2">
+            <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Año</label>
+            <div class="relative">
+              <select class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                <option>2024</option>
+                <option>2023</option>
+                <option>2022</option>
+              </select>
+              <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Section: Clasificación -->
+    <section class="space-y-6">
+      <header class="flex items-center gap-3">
+        <div class="w-1 h-5 bg-[#059669] rounded-full"></div>
+        <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Clasificación</h2>
+      </header>
+      <div class="space-y-6">
+        <div class="space-y-3">
+          <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Temática Principal</label>
+          <div class="grid grid-cols-3 md:flex md:flex-wrap gap-2">
+            <button class="px-4 py-3 rounded-xl border border-gray-100 bg-[#f8faff] text-gray-400 flex flex-col items-center justify-center transition-all hover:bg-white hover:border-[#059669] group">
+              <span class="font-bold text-sm text-gray-600">EC</span>
+              <span class="text-[8px] uppercase tracking-tighter mt-1">E. Circular</span>
+            </button>
+            <button class="px-4 py-3 rounded-xl border-2 border-[#059669] bg-white text-[#059669] flex flex-col items-center justify-center relative transition-all">
+              <span class="font-black text-sm">GR</span>
+              <span class="text-[8px] font-bold uppercase tracking-tighter mt-1">G. Residuos</span>
+              <div class="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[#059669] rounded-full flex items-center justify-center">
+                <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"></path></svg>
+              </div>
+            </button>
+            <button class="px-4 py-3 rounded-xl border border-gray-100 bg-[#f8faff] text-gray-400 flex flex-col items-center justify-center transition-all">
+              <span class="font-bold text-sm text-gray-600">EE</span>
+              <span class="text-[8px] uppercase tracking-tighter mt-1">E. Eficiente</span>
+            </button>
+            <button class="px-4 py-3 rounded-xl border border-gray-100 bg-[#f8faff] text-gray-400 flex flex-col items-center justify-center transition-all">
+              <span class="font-bold text-sm text-gray-600">REP</span>
+              <span class="text-[8px] uppercase tracking-tighter mt-1">Resp. Ext</span>
+            </button>
+            <button class="px-4 py-3 rounded-xl border border-gray-100 bg-[#f8faff] text-gray-400 flex flex-col items-center justify-center transition-all">
+              <span class="font-bold text-sm text-gray-600">...</span>
+              <span class="text-[8px] uppercase tracking-tighter mt-1">Otro</span>
+            </button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Tipo de Norma</label>
+            <div class="relative">
+              <select class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                <option>Decreto Ley</option>
+                <option>Ley Orgánica</option>
+                <option>Resolución</option>
+              </select>
+              <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+              </div>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Estado Actual</label>
+            <div class="relative">
+              <select class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer pl-10">
+                <option>Vigente</option>
+                <option>Derogada</option>
+                <option>En trámite</option>
+              </select>
+              <div class="absolute left-4 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-green-500 rounded-full"></div>
+              <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Section: Alcance Geográfico -->
+    <section class="space-y-6">
+      <header class="flex items-center gap-3">
+        <div class="w-1 h-5 bg-[#059669] rounded-full"></div>
+        <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Alcance Geográfico</h2>
+      </header>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 rounded-xl border-2 border-[#059669] bg-[#f0f9f6] flex items-center gap-4 cursor-pointer relative">
+          <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-[#059669] shadow-sm">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-gray-800">Nacional</h3>
+            <p class="text-[10px] text-gray-500 uppercase font-medium">Territorio Local</p>
+          </div>
+          <div class="ml-auto w-5 h-5 bg-[#059669] rounded-full flex items-center justify-center">
+            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+          </div>
+        </div>
+        <div class="p-4 rounded-xl border border-gray-100 bg-[#f8faff] flex items-center gap-4 cursor-pointer hover:bg-white hover:border-gray-200 transition-all">
+          <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-gray-400 shadow-sm">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-gray-400">Internacional</h3>
+            <p class="text-[10px] text-gray-400 uppercase font-medium">Tratados / Global</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Section: Acceso al Documento (Merged from IMAGE_3) -->
+    <section class="space-y-6 pt-2">
+      <header class="flex items-center gap-3">
+        <div class="w-1 h-5 bg-[#059669] rounded-full"></div>
+        <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Acceso al Documento</h2>
+      </header>
+      <div class="space-y-6">
+        <!-- Tabs -->
+        <div class="flex p-1 bg-[#f0f4ff] rounded-xl">
+          <button class="flex-1 py-3 text-xs font-black uppercase tracking-widest text-[#059669] bg-white rounded-lg shadow-sm">Gratuito</button>
+          <button class="flex-1 py-3 text-xs font-black uppercase tracking-widest text-gray-400">De Pago</button>
+        </div>
+        <!-- Dropzone -->
+        <div class="border-2 border-dashed border-[#e2e8f0] rounded-2xl p-10 flex flex-col items-center justify-center bg-[#f8faff] hover:bg-[#f0f9f6] hover:border-[#059669] transition-all cursor-pointer group">
+          <div class="w-12 h-12 bg-[#e0e7ff] rounded-full flex items-center justify-center text-[#475569] mb-4 group-hover:scale-110 transition-transform">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          </div>
+          <h4 class="text-sm font-black text-gray-800">Subir archivo PDF</h4>
+          <p class="text-[10px] text-gray-400 uppercase font-bold tracking-tight mt-1">Máximo 10MB • Solo documentos oficiales</p>
+        </div>
+        <div class="relative py-4">
+          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-100"></div></div>
+          <div class="relative flex justify-center"><span class="bg-white px-4 text-[10px] font-black text-gray-300 uppercase tracking-[0.2em]">O mediante enlace</span></div>
+        </div>
+        <!-- Input Link -->
+        <div class="space-y-2">
+          <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Enlace oficial de descarga</label>
+          <div class="relative">
+            <input class="w-full bg-[#f8faff] border-none rounded-xl text-sm pl-12 pr-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300" placeholder="https://bibliotecadelcongreso.cl/..." type="url"/>
+            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- Modal Footer -->
+  <footer class="px-6 py-5 border-t border-gray-100 bg-white flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-0 z-30">
+    <button class="w-full sm:w-auto px-8 py-3 text-[11px] font-black text-gray-400 uppercase tracking-widest hover:text-gray-600 transition-colors">
+      Cancelar
+    </button>
+    <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+      <span class="hidden sm:block text-[9px] font-bold text-gray-400 uppercase tracking-widest text-right leading-tight">Todos los campos<br/>son obligatorios</span>
+      <button class="w-full sm:w-auto px-10 py-4 bg-[#059669] text-white text-[11px] font-black uppercase tracking-[0.15em] rounded-xl shadow-lg shadow-[#059669]/20 hover:bg-[#047857] active:scale-95 transition-all">
+        Guardar Normativa
+      </button>
+    </div>
+  </footer>
+  <!-- Notification Toast -->
+  <div class="fixed bottom-6 right-6 z-50 pointer-events-none sm:pointer-events-auto">
+    <div class="bg-[#064e3b] text-white px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-4 border border-white/10">
+      <div class="w-8 h-8 rounded-full bg-[#10b981] flex items-center justify-center shadow-inner">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+      </div>
+      <div>
+        <p class="text-xs font-black">Cambios guardados</p>
+        <p class="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">Sistema Administrativo</p>
+      </div>
+      <button class="ml-4 p-1 hover:bg-white/10 rounded-full transition-colors pointer-events-auto">
+        <svg class="w-4 h-4 text-white/40" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </button>
+    </div>
+  </div>
+</main>
+
+</body></html>

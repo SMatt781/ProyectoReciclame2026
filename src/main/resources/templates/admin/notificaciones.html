@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Centro de Notificaciones | Reciclame</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet"/>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7f9fb",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#cfe9d9",
+                        "tertiary-container": "#092016",
+                        "primary-container": "#021d30",
+                        "on-secondary-container": "#00743a",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#b1c9e2",
+                        "on-surface-variant": "#43474c",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "outline-variant": "#c3c7cd",
+                        "on-secondary-fixed": "#00210c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006d37",
+                        "surface-variant": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#354c40",
+                        "on-secondary": "#ffffff",
+                        "outline": "#73777d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-container": "#71897c",
+                        "tertiary-fixed-dim": "#b3ccbd",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#496177",
+                        "on-secondary-fixed-variant": "#005228",
+                        "on-primary-container": "#6f869e",
+                        "secondary-container": "#6bfe9c",
+                        "on-tertiary-fixed": "#092016",
+                        "secondary-fixed": "#6bfe9c",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#021d30",
+                        "on-primary-fixed-variant": "#31495e",
+                        "primary-fixed": "#cde5ff",
+                        "secondary-fixed-dim": "#4ae183",
+                        "primary-fixed-dim": "#b1c9e2"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+
+        .icon-sm { width: 1.25rem; height: 1.25rem; }
+        .icon-md { width: 1.5rem; height: 1.5rem; }
+        .icon-lg { width: 2rem; height: 2rem; }
+        .icon-xl { width: 2.5rem; height: 2.5rem; }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<!-- Main -->
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+    <!-- Topbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Content -->
+    <main class="flex-1 overflow-y-auto px-8 py-3">
+        <div class="w-full max-w-5xl mx-auto">
+
+            <!-- Header -->
+            <div class="mb-5">
+                <div>
+                    <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                        Centro de Notificaciones
+                    </h2>
+                    <p class="font-body text-on-surface-variant text-base mt-2 max-w-2xl leading-relaxed">
+                        Mantente al día con publicaciones, solicitudes de usuarios y alertas importantes del sistema.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Main block -->
+            <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
+
+                <!-- Tabs -->
+                <div class="flex flex-wrap gap-6 mb-8 border-b border-surface-variant">
+                    <button class="pb-3 text-secondary font-bold text-sm border-b-2 border-secondary">
+                        Todas las actividades
+                    </button>
+                    <button class="pb-3 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors">
+                        Normativas
+                    </button>
+                    <button class="pb-3 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors">
+                        Estudios
+                    </button>
+                    <button class="pb-3 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors">
+                        Solicitudes
+                    </button>
+                    <button class="pb-3 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors">
+                        Sistema
+                    </button>
+                </div>
+
+                <!-- Cards -->
+                <div class="space-y-5">
+
+                    <!-- Card 1 -->
+                    <div class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border flex items-start gap-4 relative group hover:-translate-y-1 transition-transform duration-300">
+                        <div class="w-11 h-11 bg-secondary-container/30 rounded-xl flex items-center justify-center flex-shrink-0 text-secondary">
+                            <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-6 14H7v-2h6v2zm4-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                            </svg>
+                        </div>
+
+                        <div class="flex-1 pr-8">
+                            <div class="flex justify-between items-center mb-1 gap-4">
+                                <span class="text-secondary font-bold text-[11px] uppercase tracking-wider">Documento publicado</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-on-surface-variant text-xs">hace 5 min</span>
+                                    <div class="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
+                                </div>
+                            </div>
+
+                            <h3 class="text-lg font-bold text-on-primary-fixed mb-2">Nueva normativa publicada</h3>
+                            <p class="text-on-surface-variant text-sm leading-relaxed">
+                                Se ha incorporado la directiva 2024/EC sobre plásticos de un solo uso al repositorio.
+                            </p>
+                        </div>
+
+                        <div class="absolute bottom-5 right-6">
+                            <input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border flex items-start gap-4 relative group hover:-translate-y-1 transition-transform duration-300">
+                        <div class="w-11 h-11 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0 text-primary-container">
+                            <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/>
+                            </svg>
+                        </div>
+
+                        <div class="flex-1 pr-8">
+                            <div class="flex justify-between items-center mb-1 gap-4">
+                                <span class="text-secondary font-bold text-[11px] uppercase tracking-wider">Documento publicado</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-on-surface-variant text-xs">hace 24 min</span>
+                                    <div class="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
+                                </div>
+                            </div>
+
+                            <h3 class="text-lg font-bold text-on-primary-fixed mb-2">Nuevo estudio publicado</h3>
+                            <p class="text-on-surface-variant text-sm leading-relaxed">
+                                Se ha actualizado el estudio XXXX sobre economía circular y gestión de residuos.
+                            </p>
+                        </div>
+
+                        <div class="absolute bottom-5 right-6">
+                            <input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border flex items-start gap-4 relative group hover:-translate-y-1 transition-transform duration-300">
+                        <div class="w-11 h-11 bg-surface-container rounded-xl flex items-center justify-center flex-shrink-0 text-on-surface-variant">
+                            <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M15 12c2.21 0 4-1.79 4-4S17.21 4 15 4s-4 1.79-4 4 1.79 4 4 4zm-6 0c2.21 0 4-1.79 4-4S11.21 4 9 4 5 5.79 5 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm6 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.98 1.97 3.45v2h8v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
+
+                        <div class="flex-1 pr-8">
+                            <div class="flex justify-between items-center mb-1 gap-4">
+                                <span class="text-on-surface-variant font-bold text-[11px] uppercase tracking-wider">Consulta pública</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-on-surface-variant text-xs">hace 2 h</span>
+                                    <div class="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
+                                </div>
+                            </div>
+
+                            <h3 class="text-lg font-bold text-on-primary-fixed mb-2">Solicitud de verificación pendiente</h3>
+                            <p class="text-on-surface-variant text-sm leading-relaxed mb-4">
+                                El usuario XXXXX XXXXX solicita registro y validación de perfil.
+                            </p>
+
+                            <button class="px-4 py-2 bg-surface-container text-primary-container font-semibold rounded-lg text-sm hover:bg-surface-container-high transition-colors">
+                                Revisar perfil
+                            </button>
+                        </div>
+
+                        <div class="absolute bottom-5 right-6">
+                            <input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8">
+                    <button class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+
+                    <div class="flex gap-2">
+                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors bg-secondary text-on-secondary">1</button>
+                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors text-on-surface-variant hover:bg-surface-container">2</button>
+                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors text-on-surface-variant hover:bg-surface-container">3</button>
+                        <span class="w-10 h-10 flex items-center justify-center text-outline-variant font-bold">...</span>
+                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors text-on-surface-variant hover:bg-surface-container">8</button>
+                    </div>
+
+                    <button class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>
