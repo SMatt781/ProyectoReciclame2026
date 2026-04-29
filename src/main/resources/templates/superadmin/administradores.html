@@ -179,43 +179,78 @@
                     </button>
                 </div>
 
-                <form class="px-8 pb-8 space-y-6">
+                <form th:action="@{/superadmin/administradores/crear}" method="post" id="formCrearAdmin" class="px-8 pb-8 space-y-6">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                    <!-- Nombres -->
                     <div class="space-y-2">
-                        <label class="font-label-md text-label-md text-on-surface-variant block">NOMBRES Y APELLIDOS*</label>
-                        <input class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl" placeholder="Ej. Juan Pérez" type="text" />
+                        <label class="font-label-md text-label-md text-on-surface-variant block">NOMBRES *</label>
+                        <input name="nombres" required
+                               class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl"
+                               placeholder="Ej. Juan" type="text"/>
                     </div>
 
-                    <div class="space-y-2">
-                        <label class="font-label-md text-label-md text-on-surface-variant block">CORREO ELECTRÓNICO*</label>
-                        <input class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl" placeholder="usuario@reciclame.org" type="email" />
-                    </div>
-
+                    <!-- Apellidos -->
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-2">
-                            <label class="font-label-md text-label-md text-on-surface-variant block">ROL</label>
-                            <select class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl">
-                                <option selected="">Administrador</option>
-                                <option>Editor</option>
-                                <option>Visualizador</option>
-                            </select>
+                            <label class="font-label-md text-label-md text-on-surface-variant block">APELLIDO PATERNO *</label>
+                            <input name="apellidoPaterno" required
+                                   class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl"
+                                   placeholder="Ej. García" type="text"/>
                         </div>
-
                         <div class="space-y-2">
-                            <label class="font-label-md text-label-md text-on-surface-variant block">CONTRASEÑA TEMPORAL*</label>
-                            <input class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl" type="password" value="••••••••" />
+                            <label class="font-label-md text-label-md text-on-surface-variant block">APELLIDO MATERNO</label>
+                            <input name="apellidoMaterno"
+                                   class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl"
+                                   placeholder="Ej. López" type="text"/>
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-3 pt-2">
-                        <input class="w-5 h-5 rounded border-outline-variant cursor-pointer" id="invite" type="checkbox" />
-                        <label class="font-body-sm text-body-sm text-on-surface" for="invite">Enviar invitación por correo electrónico automáticamente</label>
+                    <!-- DNI y Teléfono -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="font-label-md text-label-md text-on-surface-variant block">DNI</label>
+                            <input name="dni" maxlength="8"
+                                   class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl"
+                                   placeholder="Ej. 12345678" type="text"/>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="font-label-md text-label-md text-on-surface-variant block">TELÉFONO</label>
+                            <input name="telefono" maxlength="9"
+                                   class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl"
+                                   placeholder="Ej. 987654321" type="text"/>
+                        </div>
+                    </div>
+
+                    <!-- Correo -->
+                    <div class="space-y-2">
+                        <label class="font-label-md text-label-md text-on-surface-variant block">CORREO ELECTRÓNICO *</label>
+                        <input name="correo" required
+                               class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl"
+                               placeholder="usuario@reciclame.org" type="email"/>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="space-y-2">
+                        <label class="font-label-md text-label-md text-on-surface-variant block">CONTRASEÑA *</label>
+                        <div class="relative">
+                            <input id="inputPassword" name="contrasenaHash" required
+                                   class="w-full h-12 px-4 pr-12 bg-surface-container-lowest border border-outline-variant rounded-xl"
+                                   placeholder="Mínimo 8 caracteres" type="password"/>
+                            <button type="button" onclick="togglePassword()"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-background">
+                                <span id="iconPassword" class="material-symbols-outlined" style="font-size:20px">visibility</span>
+                            </button>
+                        </div>
                     </div>
                 </form>
 
                 <div class="px-8 py-6 bg-slate-50 flex items-center justify-end gap-4 border-t border-slate-100">
                     <button class="px-6 py-3 font-semibold text-slate-500 hover:text-slate-900" type="button" onclick="closeModal()">Cancelar</button>
-                    <button class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 px-8 py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/20" type="submit">Crear Administrador</button>
-                </div>
+                    <button form="formCrearAdmin" type="submit"
+                            class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 px-8 py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/20">
+                        Crear Administrador
+                    </button>                </div>
             </div>
         </div>
 
@@ -399,14 +434,26 @@
                             </div>
 
                             <!-- Acciones -->
-                            <div class="flex justify-center gap-3 flex-wrap w-full md:w-auto">                                <button class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
+                            <div class="flex justify-center gap-3 flex-wrap w-full md:w-auto">
+                                <a th:href="@{/superadmin/administradores/editar/{id}(id=${admin.idUsuario}, page=${currentPage}, texto=${texto})}"
+                                   class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
                                     Editar
-                                </button>
+                                </a>
 
-                                <button class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-error-container hover:text-error transition-colors">
-                                    Bloquear
-                                </button>
+                                <form th:action="@{/superadmin/administradores/bloquear}" method="post" style="display:inline">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <input type="hidden" name="idUsuario" th:value="${admin.idUsuario}"/>
+                                    <input type="hidden" name="page" th:value="${currentPage}"/>
+                                    <input type="hidden" name="texto" th:value="${texto}"/>
+                                    <button type="submit"
+                                            th:text="${admin.estadoCuenta == T(com.example.proyectoreciclame.Entity.Usuario.EstadoCuenta).BLOQUEADO ? 'Desbloquear' : 'Bloquear'}"
+                                            th:class="${admin.estadoCuenta == T(com.example.proyectoreciclame.Entity.Usuario.EstadoCuenta).BLOQUEADO}
+                           ? 'inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors'
+                           : 'inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-error-container hover:text-error transition-colors'">
+                                    </button>
+                                </form>
                             </div>
+
                         </div>
 
                     </div>
@@ -458,9 +505,90 @@
         </div>
     </main>
 </article>
+<!-- ══════════════════════════════════════════════
+     MODAL — Editar Administrador
+     ══════════════════════════════════════════════ -->
+<div id="modalEditarAdmin"
+     th:class="${modalEditar} ? 'fixed inset-0 bg-on-surface/40 backdrop-blur-sm z-40 flex items-center justify-center' : 'fixed inset-0 bg-on-surface/40 backdrop-blur-sm z-40 hidden'">
+    <div class="relative z-50 w-full max-w-lg bg-surface-container-lowest rounded-2xl shadow-xl overflow-hidden border border-slate-100 m-auto">
 
-<button class="fixed bottom-10 right-10 w-16 h-16 bg-emerald-500 text-slate-950 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50 group">
-    <span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+        <div class="px-8 pt-8 pb-6 flex justify-between items-start">
+            <div>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight">Editar Administrador</h1>
+                <p class="text-sm text-slate-500 mt-1">Modifica los datos del perfil de gestión.</p>
+            </div>
+            <button onclick="document.getElementById('modalEditarAdmin').classList.add('hidden')"
+                    class="p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <form th:action="@{/superadmin/administradores/editar}" method="post" id="formEditarAdmin" class="px-8 pb-8 space-y-6">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <input type="hidden" name="idUsuario" th:value="${adminEditar?.idUsuario}"/>
+            <input type="hidden" name="page" th:value="${currentPage}"/>
+            <input type="hidden" name="texto" th:value="${texto}"/>
+
+            <div class="space-y-2">
+                <label class="font-label-md text-label-md text-on-surface-variant block">NOMBRES *</label>
+                <input name="nombres" required type="text"
+                       th:value="${adminEditar?.nombres}"
+                       class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl"/>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <label class="font-label-md text-label-md text-on-surface-variant block">APELLIDO PATERNO *</label>
+                    <input name="apellidoPaterno" required type="text"
+                           th:value="${adminEditar?.apellidoPaterno}"
+                           class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl"/>
+                </div>
+                <div class="space-y-2">
+                    <label class="font-label-md text-label-md text-on-surface-variant block">APELLIDO MATERNO</label>
+                    <input name="apellidoMaterno" type="text"
+                           th:value="${adminEditar?.apellidoMaterno}"
+                           class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl"/>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <label class="font-label-md text-label-md text-on-surface-variant block">DNI</label>
+                    <input name="dni" type="text" maxlength="8"
+                           th:value="${adminEditar?.dni}"
+                           class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl"/>
+                </div>
+                <div class="space-y-2">
+                    <label class="font-label-md text-label-md text-on-surface-variant block">TELÉFONO</label>
+                    <input name="telefono" type="text" maxlength="9"
+                           th:value="${adminEditar?.telefono}"
+                           class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl"/>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="font-label-md text-label-md text-on-surface-variant block">CORREO ELECTRÓNICO *</label>
+                <input name="correo" required type="email"
+                       th:value="${adminEditar?.correo}"
+                       class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl"/>
+            </div>
+        </form>
+
+        <div class="px-8 py-6 bg-slate-50 flex items-center justify-end gap-4 border-t border-slate-100">
+            <button onclick="document.getElementById('modalEditarAdmin').classList.add('hidden')"
+                    class="px-6 py-3 font-semibold text-slate-500 hover:text-slate-900" type="button">
+                Cancelar
+            </button>
+            <button form="formEditarAdmin" type="submit"
+                    class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 px-8 py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/20">
+                Guardar Cambios
+            </button>
+        </div>
+    </div>
+</div>
+<button onclick="openModal()"
+        class="fixed bottom-10 right-10 w-16 h-16 bg-emerald-500 text-slate-950 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50 group">
+    <span class="material-symbols-outlined text-3xl">add</span>
     <span class="absolute right-full mr-4 bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Nuevo Administrador</span>
 </button>
 

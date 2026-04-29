@@ -31,23 +31,41 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     """)
     Page<Usuario> findAllGestionUsuarios(Pageable pageable);
 
+    // ── Para AdminUsuarioController (todos los roles, con razonSocial) ──────────
     @Query("""
-        SELECT u
-        FROM Usuario u
-        LEFT JOIN FETCH u.rol r
-        LEFT JOIN FETCH u.usuarioEmpresa ue
-        WHERE u.eliminadoEn IS NULL
-          AND (
-            LOWER(u.nombres) LIKE LOWER(CONCAT('%', :texto, '%'))
-            OR LOWER(u.apellidoPaterno) LIKE LOWER(CONCAT('%', :texto, '%'))
-            OR LOWER(COALESCE(u.apellidoMaterno, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
-            OR LOWER(u.dni) LIKE LOWER(CONCAT('%', :texto, '%'))
-            OR LOWER(COALESCE(ue.razonSocial, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
-            OR LOWER(u.correo) LIKE LOWER(CONCAT('%', :texto, '%'))    
-          )
-        ORDER BY u.fechaRegistro DESC
-    """)
-    Page<Usuario> buscarEnGestion(@Param("texto") String texto, Pageable pageable);
+    SELECT u FROM Usuario u
+    LEFT JOIN FETCH u.rol r
+    LEFT JOIN FETCH u.usuarioEmpresa ue
+    WHERE u.eliminadoEn IS NULL
+      AND (
+        LOWER(u.nombres) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(u.apellidoPaterno) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(COALESCE(u.apellidoMaterno, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(u.dni) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(COALESCE(ue.razonSocial, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(u.correo) LIKE LOWER(CONCAT('%', :texto, '%'))
+      )
+    ORDER BY u.fechaRegistro DESC
+""")
+    Page<Usuario> buscarEnGestionGeneral(@Param("texto") String texto, Pageable pageable);
+
+    // ── Para SuperadminController (filtrado por rol) ─────────────────────────────
+    @Query("""
+    SELECT u FROM Usuario u
+    LEFT JOIN u.rol r
+    WHERE u.eliminadoEn IS NULL
+      AND r.idRol IN :rolIds
+      AND (
+        LOWER(u.nombres) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(u.apellidoPaterno) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(COALESCE(u.apellidoMaterno, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(u.dni) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(u.correo) LIKE LOWER(CONCAT('%', :texto, '%'))
+      )
+""")
+    Page<Usuario> buscarEnGestion(@Param("texto") String texto,
+                                  @Param("rolIds") List<Integer> rolIds,
+                                  Pageable pageable);
 
     long countByEliminadoEnIsNull();
 
@@ -72,7 +90,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
       AND u.eliminadoEn IS NULL
     ORDER BY u.fechaRegistro DESC
 """)
-    Page<Usuario> findByRol_IdInAndEliminadoEnIsNull(List<Long> rolIds, Pageable pageable);
+    Page<Usuario> findByRol_IdInAndEliminadoEnIsNull(List<Integer> rolIds, Pageable pageable);
 
     @Query("""
     SELECT COUNT(u)
@@ -80,7 +98,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     WHERE u.rol.idRol IN :rolIds
       AND u.eliminadoEn IS NULL
 """)
-    long countByRol_IdInAndEliminadoEnIsNull(List<Long> rolIds);
+    long countByRol_IdInAndEliminadoEnIsNull(List<Integer> rolIds);
 
     @Query("""
     SELECT COUNT(u)
@@ -90,7 +108,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
       AND u.estadoCuenta = 'ACTIVO'
       AND u.eliminadoEn IS NULL
 """)
-    long countActiveAdminsByRole(List<Long> rolIds);
+    long countActiveAdminsByRole(@Param("rolIds") List<Integer> rolIds);
 
     @Query("""
     SELECT COUNT(u)
@@ -100,6 +118,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
       AND u.estadoCuenta = 'BLOQUEADO'
       AND u.eliminadoEn IS NULL
 """)
-    long countBlockedAdminsByRole(List<Long> rolIds);
+    long countBlockedAdminsByRole(@Param("rolIds") List<Integer> rolIds);
+    boolean existsByCorreoAndEliminadoEnIsNull(String correo);
+    boolean existsByDniAndEliminadoEnIsNull(String dni);
 
 }

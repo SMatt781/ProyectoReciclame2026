@@ -1,16 +1,19 @@
 package com.example.proyectoreciclame.Controller;
 
 import com.example.proyectoreciclame.Entity.DominioAutorizado;
+import com.example.proyectoreciclame.Entity.Rol;
 import com.example.proyectoreciclame.Entity.Usuario;
 import com.example.proyectoreciclame.Repository.DominioAutorizadoRepository;
+import com.example.proyectoreciclame.Repository.RolRepository;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -23,12 +26,22 @@ import java.util.stream.Collectors;
 @RequestMapping("/superadmin")
 public class SuperadminController {
 
+    // ── Constantes ────────────────────────────────────────────────────────────
+    private static final List<Integer> ROL_ADMIN_IDS = List.of(2);
+    private static final int PAGE_SIZE = 3;
+
+    // ── Dependencias ─────────────────────────────────────────────────────────
     final UsuarioRepository usuarioRepository;
     final DominioAutorizadoRepository dominioAutorizadoRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final RolRepository rolRepository;
+
     public SuperadminController(UsuarioRepository usuarioRepository,
-                                DominioAutorizadoRepository dominioAutorizadoRepository) {
+                                DominioAutorizadoRepository dominioAutorizadoRepository, BCryptPasswordEncoder passwordEncoder, RolRepository rolRepository) {
         this.usuarioRepository = usuarioRepository;
         this.dominioAutorizadoRepository = dominioAutorizadoRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.rolRepository = rolRepository;
     }
 
     @GetMapping("/dashboard")
@@ -40,26 +53,25 @@ public class SuperadminController {
     }
 
     // Nuevo método para mostrar administradores
+    // ── Administradores — GET ────────────────────────────────────────────────
+
     @GetMapping("/administradores")
     public String showAdministradores(
             Model model,
             @RequestParam(value = "texto", required = false) String texto,
             @RequestParam(value = "page", defaultValue = "0") int page
     ) {
-        List<Long> rolIds = Arrays.asList(2L);
-
-        int size = 3;
+        PageRequest pageable = PageRequest.of(
+                page, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "idUsuario"));
 
         Page<Usuario> administradores;
-        if (texto != null && !texto.isEmpty()) {
-            administradores = usuarioRepository.buscarEnGestion(texto, PageRequest.of(page, size));
+        if (texto != null && !texto.isBlank()) {
+            administradores = usuarioRepository
+                    .buscarEnGestion(texto, ROL_ADMIN_IDS, pageable);
         } else {
-            administradores = usuarioRepository.findByRol_IdInAndEliminadoEnIsNull(rolIds, PageRequest.of(page, size));
+            administradores = usuarioRepository
+                    .findByRol_IdInAndEliminadoEnIsNull(ROL_ADMIN_IDS, pageable);
         }
-
-        long totalAdmins = usuarioRepository.countByRol_IdInAndEliminadoEnIsNull(rolIds);
-        long activeAdmins = usuarioRepository.countActiveAdminsByRole(rolIds);
-        long blockedAdmins = usuarioRepository.countBlockedAdminsByRole(rolIds);
 
         Map<Long, String> ultimoAccesoTexto = administradores.getContent().stream()
                 .collect(Collectors.toMap(
@@ -68,25 +80,199 @@ public class SuperadminController {
                 ));
 
         model.addAttribute("ultimoAccesoTexto", ultimoAccesoTexto);
-
         model.addAttribute("titulo", "Administradores");
         model.addAttribute("currentSection", "superadmin-administradores");
-
         model.addAttribute("administradores", administradores);
-        model.addAttribute("totalAdmins", totalAdmins);
-        model.addAttribute("activeAdmins", activeAdmins);
-        model.addAttribute("blockedAdmins", blockedAdmins);
-
+        model.addAttribute("totalAdmins",
+                usuarioRepository.countByRol_IdInAndEliminadoEnIsNull(ROL_ADMIN_IDS));
+        model.addAttribute("activeAdmins",
+                usuarioRepository.countActiveAdminsByRole(ROL_ADMIN_IDS));
+        model.addAttribute("blockedAdmins",
+                usuarioRepository.countBlockedAdminsByRole(ROL_ADMIN_IDS));
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", administradores.getTotalPages());
         model.addAttribute("hasPrevious", administradores.hasPrevious());
         model.addAttribute("hasNext", administradores.hasNext());
         model.addAttribute("texto", texto);
 
+        return "superadmin/administradores";
+    }
 
+    // ── Administradores — POST (Crear) ───────────────────────────────────────
+
+    @PostMapping("/administradores/crear")
+    public String crearAdministrador(
+            @ModelAttribute Usuario usuario,
+            RedirectAttributes redirectAttributes
+    ) {
+        // 1. Validar unicidad de correo
+        if (usuarioRepository.existsByCorreoAndEliminadoEnIsNull(usuario.getCorreo())) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Ya existe un administrador con ese correo electrónico.");
+            return "redirect:/superadmin/administradores";
+        }
+
+        // 2. Validar unicidad de DNI
+        if (usuario.getDni() != null && !usuario.getDni().isBlank()
+                && usuarioRepository.existsByDniAndEliminadoEnIsNull(usuario.getDni())) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Ya existe un administrador con ese DNI.");
+            return "redirect:/superadmin/administradores";
+        }
+
+        // 3. Encriptar contraseña
+        usuario.setContrasenaHash(passwordEncoder.encode(usuario.getContrasenaHash()));
+
+        // 4. Asignar Rol ID = 2 (Administrador)
+        Rol rolAdmin = rolRepository.findById(2)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Rol 'Administrador' (id=2) no encontrado en la base de datos."));
+        usuario.setRol(rolAdmin);
+
+        // 5. Estado de cuenta activo usando el Enum interno
+        usuario.setEstadoCuenta(Usuario.EstadoCuenta.ACTIVO);
+        usuario.setEstadoAprobacion("APROBADO");  // ← AGREGA ESTA LÍNEA
+        // 6. Guardar
+        usuarioRepository.save(usuario);
+
+        redirectAttributes.addFlashAttribute("success",
+                "Administrador creado exitosamente.");
+        return "redirect:/superadmin/administradores";
+    }
+
+    // ── Administradores — GET (cargar datos para editar) ─────────────────────────
+
+    @GetMapping("/administradores/editar/{id}")
+    public String editarAdministradorForm(
+            @PathVariable Long id,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "texto", required = false) String texto,
+            Model model,
+            RedirectAttributes redirectAttributes
+    ) {
+        Usuario admin = usuarioRepository.findById(id).orElse(null);
+        if (admin == null) {
+            redirectAttributes.addFlashAttribute("error", "Administrador no encontrado.");
+            return "redirect:/superadmin/administradores";
+        }
+
+        // Recargar la lista para mostrar la página con el modal abierto
+        PageRequest pageable = PageRequest.of(page, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "idUsuario"));
+        Page<Usuario> administradores = (texto != null && !texto.isBlank())
+                ? usuarioRepository.buscarEnGestion(texto, ROL_ADMIN_IDS, pageable)
+                : usuarioRepository.findByRol_IdInAndEliminadoEnIsNull(ROL_ADMIN_IDS, pageable);
+
+        Map<Long, String> ultimoAccesoTexto = administradores.getContent().stream()
+                .collect(Collectors.toMap(
+                        Usuario::getIdUsuario,
+                        a -> formatearUltimoAcceso(a.getUltimoAcceso())
+                ));
+
+        model.addAttribute("ultimoAccesoTexto", ultimoAccesoTexto);
+        model.addAttribute("administradores", administradores);
+        model.addAttribute("totalAdmins", usuarioRepository.countByRol_IdInAndEliminadoEnIsNull(ROL_ADMIN_IDS));
+        model.addAttribute("activeAdmins", usuarioRepository.countActiveAdminsByRole(ROL_ADMIN_IDS));
+        model.addAttribute("blockedAdmins", usuarioRepository.countBlockedAdminsByRole(ROL_ADMIN_IDS));
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", administradores.getTotalPages());
+        model.addAttribute("hasPrevious", administradores.hasPrevious());
+        model.addAttribute("hasNext", administradores.hasNext());
+        model.addAttribute("texto", texto);
+        model.addAttribute("titulo", "Administradores");
+        model.addAttribute("currentSection", "superadmin-administradores");
+
+        // Datos del admin a editar — van al modal
+        model.addAttribute("adminEditar", admin);
+        model.addAttribute("modalEditar", true);
 
         return "superadmin/administradores";
     }
+
+// ── Administradores — POST (guardar edición) ─────────────────────────────────
+
+    @PostMapping("/administradores/editar")
+    public String editarAdministrador(
+            @RequestParam Long idUsuario,
+            @RequestParam String nombres,
+            @RequestParam String apellidoPaterno,
+            @RequestParam(required = false) String apellidoMaterno,
+            @RequestParam(required = false) String dni,
+            @RequestParam(required = false) String telefono,
+            @RequestParam String correo,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "texto", required = false) String texto,
+            RedirectAttributes redirectAttributes
+    ) {
+        Usuario admin = usuarioRepository.findById(idUsuario).orElse(null);
+        if (admin == null) {
+            redirectAttributes.addFlashAttribute("error", "Administrador no encontrado.");
+            return "redirect:/superadmin/administradores";
+        }
+
+        // Validar unicidad de correo (excluyendo el mismo usuario)
+        if (!admin.getCorreo().equalsIgnoreCase(correo)
+                && usuarioRepository.existsByCorreoAndEliminadoEnIsNull(correo)) {
+            redirectAttributes.addFlashAttribute("error", "Ya existe un administrador con ese correo.");
+            return "redirect:/superadmin/administradores?page=" + page
+                    + (texto != null ? "&texto=" + texto : "");
+        }
+
+        // Validar unicidad de DNI (excluyendo el mismo usuario)
+        if (dni != null && !dni.isBlank()
+                && !dni.equals(admin.getDni())
+                && usuarioRepository.existsByDniAndEliminadoEnIsNull(dni)) {
+            redirectAttributes.addFlashAttribute("error", "Ya existe un administrador con ese DNI.");
+            return "redirect:/superadmin/administradores?page=" + page
+                    + (texto != null ? "&texto=" + texto : "");
+        }
+
+        admin.setNombres(nombres.trim());
+        admin.setApellidoPaterno(apellidoPaterno.trim());
+        admin.setApellidoMaterno(apellidoMaterno != null ? apellidoMaterno.trim() : null);
+        admin.setDni(dni != null ? dni.trim() : null);
+        admin.setTelefono(telefono != null ? telefono.trim() : null);
+        admin.setCorreo(correo.trim());
+        admin.setActualizadoEn(LocalDateTime.now());
+
+        usuarioRepository.save(admin);
+
+        redirectAttributes.addFlashAttribute("success", "Administrador actualizado correctamente.");
+        return "redirect:/superadmin/administradores?page=" + page
+                + (texto != null ? "&texto=" + texto : "");
+    }
+
+// ── Administradores — POST (bloquear / desbloquear) ──────────────────────────
+
+    @PostMapping("/administradores/bloquear")
+    public String bloquearAdministrador(
+            @RequestParam Long idUsuario,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "texto", required = false) String texto,
+            RedirectAttributes redirectAttributes
+    ) {
+        Usuario admin = usuarioRepository.findById(idUsuario).orElse(null);
+        if (admin == null) {
+            redirectAttributes.addFlashAttribute("error", "Administrador no encontrado.");
+            return "redirect:/superadmin/administradores";
+        }
+
+        boolean estaBloqueado = admin.getEstadoCuenta() == Usuario.EstadoCuenta.BLOQUEADO;
+
+        if (estaBloqueado) {
+            admin.setEstadoCuenta(Usuario.EstadoCuenta.ACTIVO);
+            redirectAttributes.addFlashAttribute("success", "Administrador desbloqueado correctamente.");
+        } else {
+            admin.setEstadoCuenta(Usuario.EstadoCuenta.BLOQUEADO);
+            redirectAttributes.addFlashAttribute("success", "Administrador bloqueado correctamente.");
+        }
+
+        admin.setActualizadoEn(LocalDateTime.now());
+        usuarioRepository.save(admin);
+
+        return "redirect:/superadmin/administradores?page=" + page
+                + (texto != null ? "&texto=" + texto : "");
+    }
+
 
     private String formatearUltimoAcceso(LocalDateTime ultimoAcceso) {
         if (ultimoAcceso == null) {
