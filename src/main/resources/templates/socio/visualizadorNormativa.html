@@ -185,24 +185,31 @@
                             </div>
                         </div>
 
-                        <!-- Viewer Canvas (Simulado) -->
-                        <div
-                            class="flex-1 bg-surface-container/30 flex items-center justify-center p-8 overflow-y-auto">
-                            <div
-                                class="w-full max-w-2xl bg-white min-h-[700px] shadow-sm rounded-sm p-12 border border-outline-variant/10">
-                                <div class="h-8 w-3/4 bg-surface-container-high rounded mb-8"></div>
-                                <div class="h-4 w-full bg-surface-container rounded mb-4"></div>
-                                <div class="h-4 w-full bg-surface-container rounded mb-4"></div>
-                                <div class="h-4 w-5/6 bg-surface-container rounded mb-12"></div>
-                                <div
-                                    class="h-48 w-full bg-surface-container-high rounded-lg mb-12 flex items-center justify-center text-on-surface-variant">
-                                    <svg class="icon-xl opacity-20 text-current" fill="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z" />
+                        <!-- Viewer Canvas -->
+                        <div id="viewerContainer" class="flex-1 bg-surface-container relative overflow-hidden transition-all duration-300">
+                            <div class="absolute inset-0 bg-white/50 z-10 pointer-events-none"></div>
+                            <div class="relative w-full h-full" style="z-index: 20;">
+                                <!-- PDF Iframe -->
+                                <iframe th:if="${normativa.archivoUrl != null}" 
+                                        th:src="${normativa.archivoUrl} + '#toolbar=0&navpanes=0&scrollbar=0'" 
+                                        class="w-full h-full border-0 flex-1" 
+                                        oncontextmenu="return false;"></iframe>
+                                        
+                                <div th:if="${normativa.archivoUrl == null}" class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
+                                    <svg class="icon-xl opacity-50 mb-4 shrink-0" width="40" height="40" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
                                     </svg>
+                                    <span>No hay documento disponible</span>
                                 </div>
-                                <div class="h-4 w-full bg-surface-container rounded mb-4"></div>
-                                <div class="h-4 w-4/5 bg-surface-container rounded mb-4"></div>
+
+                                <!-- Watermark Overlay -->
+                                <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]" style="z-index: 50;">
+                                    <div class="transform -rotate-45 text-4xl sm:text-5xl font-bold text-gray-800 whitespace-nowrap p-10 flex flex-col gap-24 text-center">
+                                        <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
+                                        <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
+                                        <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -312,6 +319,45 @@
             </div>
         </main>
     </div>
+    <script>
+        // Security logic for document viewer
+        document.addEventListener('DOMContentLoaded', function() {
+            const viewerContainer = document.getElementById('viewerContainer');
+            
+            // Block context menu (right click)
+            document.addEventListener('contextmenu', event => event.preventDefault());
+
+            // Block common screen capture/print shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl+P, Ctrl+S, Ctrl+C, PrintScreen
+                if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'c' || e.key === 'C')) || 
+                    e.key === 'PrintScreen' || e.key === 'F12') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Clear clipboard if PrintScreen is pressed
+            window.addEventListener('keyup', function(e) {
+                if (e.key == 'PrintScreen') {
+                    navigator.clipboard.writeText('');
+                }
+            });
+
+            // Blur content when window loses focus (prevent snipping tool)
+            window.addEventListener('blur', function() {
+                if(viewerContainer) {
+                    viewerContainer.style.filter = 'blur(10px)';
+                }
+            });
+
+            window.addEventListener('focus', function() {
+                if(viewerContainer) {
+                    viewerContainer.style.filter = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
