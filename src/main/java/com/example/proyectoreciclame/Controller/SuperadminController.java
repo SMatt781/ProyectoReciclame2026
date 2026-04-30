@@ -104,6 +104,8 @@ public class SuperadminController {
         model.addAttribute("texto", texto);
         model.addAttribute("listaDominios",
                 dominioAutorizadoRepository.findByEstadoTrue());
+        model.addAttribute("politica",
+                politicaContrasenaRepository.findById(1).orElse(null));
 
         return "superadmin/administradores";
     }

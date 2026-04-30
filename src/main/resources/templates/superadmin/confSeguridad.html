@@ -132,6 +132,11 @@
                     </button>
                 </div>
 
+                <!-- Descripción debajo del título -->
+                <p class="text-sm text-slate-500 mt-2 mb-4">
+                    El estado "Activo" o "Inactivo" solo aplica para nuevos dominios que se añadirán. No afecta a los dominios existentes que ya están en la plataforma.
+                </p>
+
                 <!-- BUSCADOR + INPUT -->
                 <!-- BUSCADOR -->
                 <form th:action="@{/superadmin/confSeguridad}" method="get" class="flex items-center gap-4 mb-6 w-full">
@@ -350,14 +355,12 @@
                                 <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">EXPIRACIÓN DE CONTRASEÑA</label>
                                 <div class="relative">
                                     <select name="expiracionDias"
-                                            class="w-full bg-[#F2F4F7] border-none rounded-2xl px-6 py-5 pr-12 text-slate-900 font-semibold focus:ring-2 focus:ring-[#059669]/20 cursor-pointer">
-
+                                            class="w-full bg-[#F2F4F7] border-none rounded-2xl px-6 py-5 pr-12 text-slate-900 font-semibold focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer relative">
                                         <option value="90"  th:selected="${politica?.expiracionDias == 30}">Cada 30 días</option>
                                         <option value="90"  th:selected="${politica?.expiracionDias == 90}">Cada 90 días</option>
                                         <option value="180" th:selected="${politica?.expiracionDias == 180}">Cada 180 días</option>
                                         <option value="365" th:selected="${politica?.expiracionDias == 365}">Cada 365 días</option>
                                     </select>
-                                    <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
                                 </div>
                             </div>
                         </div>
@@ -439,9 +442,8 @@
 <!-- ══════════════════════════════════════════════
      MODAL — Crear Dominio
      ══════════════════════════════════════════════ -->
-<div id="modalCrearDominio"
-     class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center">
-    <div class="relative w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 m-auto">
+<div id="modalCrearDominio" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center">
+    <div class="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 m-auto max-h-[90vh] overflow-y-auto">
 
         <div class="px-8 pt-8 pb-6 flex justify-between items-start">
             <div>

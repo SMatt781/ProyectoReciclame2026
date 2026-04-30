@@ -160,6 +160,11 @@
                 </div>
 
                 <button onclick="openModal()"
+                        th:data-longitud="${politica?.longitudMinima ?: 8}"
+                        th:data-mayuscula="${politica?.requiereMayuscula ?: false}"
+                        th:data-numero="${politica?.requiereNumero ?: false}"
+                        th:data-simbolo="${politica?.requiereSimbolo ?: false}"
+                        id="btnAbrirModal"
                         class="bg-secondary text-on-secondary font-bold px-6 py-3 rounded-xl hover:bg-[#005a3d] transition-all flex items-center gap-2 active:scale-95 shadow-sm">
                     <span class="material-symbols-outlined">add_circle</span>
                     <span>Crear Administrador</span>
@@ -168,7 +173,7 @@
         </div>
 
         <div id="adminModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden items-center justify-center">
-            <div class="relative w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 m-auto">
+            <div class="relative w-full max-w-3xl bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 m-auto max-h-[90vh] overflow-y-auto">
 
                 <div class="px-8 pt-8 pb-6 flex justify-between items-start">
                     <div>
@@ -237,12 +242,29 @@
                     <div class="space-y-2">
                         <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest block">Contraseña *</label>
                         <div class="relative">
-                            <input id="inputPassword" name="contrasenaHash" required type="password" placeholder="Mínimo 8 caracteres"
+                            <input id="inputPassword" name="contrasenaHash" required type="password"
+                                   placeholder="Mínimo 8 caracteres"
+                                   oninput="validarPasswordEnTiempoReal()"
                                    class="w-full h-12 px-4 pr-12 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#059669]/30"/>
                             <button type="button" onclick="togglePassword()"
                                     class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                                 <span id="iconPassword" class="material-symbols-outlined" style="font-size:20px">visibility</span>
                             </button>
+                        </div>
+                        <!-- Indicadores de requisitos -->
+                        <div id="requisitosPassword" class="hidden space-y-1 pt-1">
+                            <p id="req-longitud"  class="text-xs flex items-center gap-1.5 text-slate-400">
+                                <span class="material-symbols-outlined text-[14px]">circle</span> Mínimo <span id="req-longitud-num">8</span> caracteres
+                            </p>
+                            <p id="req-mayuscula" class="text-xs flex items-center gap-1.5 text-slate-400 hidden">
+                                <span class="material-symbols-outlined text-[14px]">circle</span> Al menos una mayúscula
+                            </p>
+                            <p id="req-numero"    class="text-xs flex items-center gap-1.5 text-slate-400 hidden">
+                                <span class="material-symbols-outlined text-[14px]">circle</span> Al menos un número
+                            </p>
+                            <p id="req-simbolo"   class="text-xs flex items-center gap-1.5 text-slate-400 hidden">
+                                <span class="material-symbols-outlined text-[14px]">circle</span> Al menos un símbolo (@#$!|*%&)
+                            </p>
                         </div>
                     </div>
                 </form>
@@ -261,23 +283,99 @@
         </div>
 
         <script>
+            // ── Leer políticas desde el botón ────────────────────────────────────────
+            function getPoliticas() {
+                const btn = document.getElementById('btnAbrirModal');
+                return {
+                    longitud:  parseInt(btn?.dataset.longitud  || 8),
+                    mayuscula: btn?.dataset.mayuscula === 'true',
+                    numero:    btn?.dataset.numero    === 'true',
+                    simbolo:   btn?.dataset.simbolo   === 'true',
+                };
+            }
+
+            // ── Modal crear ──────────────────────────────────────────────────────────
             function openModal() {
                 const modal = document.getElementById('adminModal');
                 modal.classList.remove('hidden');
-                modal.classList.add('flex'); // Agrega esto para centrar el cuadro blanco
+                modal.classList.add('flex');
+                inicializarRequisitos();
             }
 
             function closeModal() {
                 const modal = document.getElementById('adminModal');
                 modal.classList.add('hidden');
-                modal.classList.remove('flex'); // Quita el flex al cerrar
+                modal.classList.remove('flex');
             }
 
-            // Mantenemos tu función del ojito exactamente igual
+            function inicializarRequisitos() {
+                const p = getPoliticas();
+                document.getElementById('req-longitud-num').textContent = p.longitud;
+                document.getElementById('req-mayuscula').classList.toggle('hidden', !p.mayuscula);
+                document.getElementById('req-numero').classList.toggle('hidden', !p.numero);
+                document.getElementById('req-simbolo').classList.toggle('hidden', !p.simbolo);
+                document.getElementById('requisitosPassword').classList.remove('hidden');
+            }
+
+            // ── Validación en tiempo real ─────────────────────────────────────────────
+            function validarPasswordEnTiempoReal() {
+                const val = document.getElementById('inputPassword').value;
+                const p   = getPoliticas();
+
+                actualizarReq('req-longitud',  val.length >= p.longitud);
+                actualizarReq('req-mayuscula', /[A-Z]/.test(val));
+                actualizarReq('req-numero',    /[0-9]/.test(val));
+                actualizarReq('req-simbolo',   /[@#$!|*%&]/.test(val));
+            }
+
+            function actualizarReq(id, cumple) {
+                const el   = document.getElementById(id);
+                const icon = el.querySelector('.material-symbols-outlined');
+                if (cumple) {
+                    el.classList.remove('text-slate-400', 'text-red-500');
+                    el.classList.add('text-emerald-600');
+                    icon.textContent = 'check_circle';
+                } else {
+                    el.classList.remove('text-emerald-600');
+                    el.classList.add('text-slate-400');
+                    icon.textContent = 'circle';
+                }
+            }
+
+            // ── Validar antes del submit ──────────────────────────────────────────────
+            document.getElementById('formCrearAdmin').addEventListener('submit', function(e) {
+                const val = document.getElementById('inputPassword').value;
+                const p   = getPoliticas();
+                const errores = [];
+
+                if (val.length < p.longitud)          errores.push('mínimo ' + p.longitud + ' caracteres');
+                if (p.mayuscula && !/[A-Z]/.test(val)) errores.push('al menos una mayúscula');
+                if (p.numero    && !/[0-9]/.test(val)) errores.push('al menos un número');
+                if (p.simbolo   && !/[@#$!|*%&]/.test(val)) errores.push('al menos un símbolo');
+
+                if (errores.length > 0) {
+                    e.preventDefault();
+                    mostrarErrorModal('La contraseña no cumple: ' + errores.join(', ') + '.');
+                }
+            });
+
+            function mostrarErrorModal(msg) {
+                // Reutilizar el div de flash si existe, si no crearlo inline
+                let errDiv = document.getElementById('errorInlineModal');
+                if (!errDiv) {
+                    errDiv = document.createElement('div');
+                    errDiv.id = 'errorInlineModal';
+                    errDiv.className = 'mx-0 mb-3 flex items-center gap-3 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-red-800 text-sm';
+                    const form = document.getElementById('formCrearAdmin');
+                    form.parentNode.insertBefore(errDiv, form);
+                }
+                errDiv.innerHTML = '<span class="material-symbols-outlined text-red-600" style="font-size:20px">error</span><span>' + msg + '</span>';
+            }
+
+            // ── Ojito contraseña ─────────────────────────────────────────────────────
             function togglePassword() {
                 const input = document.getElementById('inputPassword');
-                const icon = document.getElementById('iconPassword');
-
+                const icon  = document.getElementById('iconPassword');
                 if (input.type === 'password') {
                     input.type = 'text';
                     icon.textContent = 'visibility_off';
@@ -287,13 +385,17 @@
                 }
             }
 
-            // EXTRA: Cerrar el modal si el usuario hace clic fuera del cuadro blanco (opcional pero recomendado)
+            // ── Cerrar modal al clic fuera ────────────────────────────────────────────
             window.onclick = function(event) {
                 const modal = document.getElementById('adminModal');
-                if (event.target == modal) {
-                    closeModal();
-                }
+                if (event.target === modal) closeModal();
             }
+
+            // ── Reabrir modal si hay error flash del servidor ─────────────────────────
+            window.addEventListener('DOMContentLoaded', () => {
+                const hayError = document.querySelector('[data-flash-error]');
+                if (hayError) openModal();
+            });
         </script>
 
         <div class="bg-transparent border border-outline-variant/30 rounded-xl p-4 mb-4 flex flex-col">
@@ -416,6 +518,8 @@
                 </div>
             </form>
 
+
+
             <div class="flex flex-col">
                 <div class="overflow-x-auto w-full pb-4">
                     <div class="flex flex-col gap-4 min-w-[900px] w-full">
@@ -470,16 +574,13 @@
                             </div>
 
                             <!-- Acciones -->
-                            <div class="flex justify-center gap-1 w-full md:w-auto">
-
-                                <!-- Botón Editar — lapicito -->
+                            <div class="flex justify-center gap-2 w-full md:w-auto">
                                 <a th:href="@{/superadmin/administradores/editar/{id}(id=${admin.idUsuario}, page=${currentPage}, texto=${texto})}"
                                    title="Editar"
-                                   class="inline-flex items-center justify-center w-9 h-9 rounded-lg text-on-surface-variant hover:bg-secondary-container/30 hover:text-secondary transition-colors">
-                                    <span class="material-symbols-outlined text-[20px]">edit</span>
+                                   class="text-slate-400 hover:text-[#059669] transition-colors p-1">
+                                    <span class="material-symbols-outlined text-[22px]">edit</span>
                                 </a>
 
-                                <!-- Botón Bloquear/Desbloquear — ícono dinámico -->
                                 <form th:action="@{/superadmin/administradores/bloquear}" method="post" style="display:inline">
                                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                                     <input type="hidden" name="idUsuario" th:value="${admin.idUsuario}"/>
@@ -488,13 +589,12 @@
                                     <button type="submit"
                                             th:title="${admin.estadoCuenta == T(com.example.proyectoreciclame.Entity.Usuario.EstadoCuenta).BLOQUEADO ? 'Desbloquear' : 'Bloquear'}"
                                             th:class="${admin.estadoCuenta == T(com.example.proyectoreciclame.Entity.Usuario.EstadoCuenta).BLOQUEADO}
-                                           ? 'inline-flex items-center justify-center w-9 h-9 rounded-lg text-secondary hover:bg-secondary-container/30 transition-colors'
-                                           : 'inline-flex items-center justify-center w-9 h-9 rounded-lg text-on-surface-variant hover:bg-error-container hover:text-error transition-colors'">
-                                            <span class="material-symbols-outlined text-[20px]"
-                                            th:text="${admin.estadoCuenta == T(com.example.proyectoreciclame.Entity.Usuario.EstadoCuenta).BLOQUEADO
-                                                                 ? 'lock_open'
-                                                                 : 'block'}">
-                                           </span>
+                           ? 'text-[#059669] hover:text-emerald-700 transition-colors p-1'
+                           : 'text-slate-400 hover:text-red-500 transition-colors p-1'">
+            <span class="material-symbols-outlined text-[22px]"
+                  th:text="${admin.estadoCuenta == T(com.example.proyectoreciclame.Entity.Usuario.EstadoCuenta).BLOQUEADO
+                             ? 'lock_open' : 'block'}">
+            </span>
                                     </button>
                                 </form>
                             </div>
