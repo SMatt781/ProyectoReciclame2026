@@ -94,6 +94,8 @@ public class SuperadminController {
         model.addAttribute("hasPrevious", administradores.hasPrevious());
         model.addAttribute("hasNext", administradores.hasNext());
         model.addAttribute("texto", texto);
+        model.addAttribute("listaDominios",
+                dominioAutorizadoRepository.findByEstadoTrue());
 
         return "superadmin/administradores";
     }
@@ -103,10 +105,16 @@ public class SuperadminController {
     @PostMapping("/administradores/crear")
     public String crearAdministrador(
             @ModelAttribute Usuario usuario,
+            @RequestParam String usuarioCorreo,
+            @RequestParam String dominioCorreo,
             RedirectAttributes redirectAttributes
     ) {
+        // Construir correo completo — dominioCorreo ya tiene el @
+        String correoCompleto = usuarioCorreo.trim() + dominioCorreo.trim();
+        usuario.setCorreo(correoCompleto);
+
         // 1. Validar unicidad de correo
-        if (usuarioRepository.existsByCorreoAndEliminadoEnIsNull(usuario.getCorreo())) {
+        if (usuarioRepository.existsByCorreoAndEliminadoEnIsNull(correoCompleto)) {
             redirectAttributes.addFlashAttribute("error",
                     "Ya existe un administrador con ese correo electrónico.");
             return "redirect:/superadmin/administradores";
@@ -129,9 +137,10 @@ public class SuperadminController {
                         "Rol 'Administrador' (id=2) no encontrado en la base de datos."));
         usuario.setRol(rolAdmin);
 
-        // 5. Estado de cuenta activo usando el Enum interno
+        // 5. Estado de cuenta activo
         usuario.setEstadoCuenta(Usuario.EstadoCuenta.ACTIVO);
-        usuario.setEstadoAprobacion("APROBADO");  // ← AGREGA ESTA LÍNEA
+        usuario.setEstadoAprobacion("APROBADO");
+
         // 6. Guardar
         usuarioRepository.save(usuario);
 
@@ -181,9 +190,10 @@ public class SuperadminController {
         model.addAttribute("titulo", "Administradores");
         model.addAttribute("currentSection", "superadmin-administradores");
 
-        // Datos del admin a editar — van al modal
         model.addAttribute("adminEditar", admin);
         model.addAttribute("modalEditar", true);
+        model.addAttribute("listaDominios",
+                dominioAutorizadoRepository.findByEstadoTrue());
 
         return "superadmin/administradores";
     }
@@ -198,11 +208,15 @@ public class SuperadminController {
             @RequestParam(required = false) String apellidoMaterno,
             @RequestParam(required = false) String dni,
             @RequestParam(required = false) String telefono,
-            @RequestParam String correo,
+            @RequestParam String usuarioCorreo,
+            @RequestParam String dominioCorreo,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "texto", required = false) String texto,
             RedirectAttributes redirectAttributes
     ) {
+        // Construir correo completo
+        String correo = usuarioCorreo.trim() + dominioCorreo.trim();
+
         Usuario admin = usuarioRepository.findById(idUsuario).orElse(null);
         if (admin == null) {
             redirectAttributes.addFlashAttribute("error", "Administrador no encontrado.");
@@ -231,7 +245,7 @@ public class SuperadminController {
         admin.setApellidoMaterno(apellidoMaterno != null ? apellidoMaterno.trim() : null);
         admin.setDni(dni != null ? dni.trim() : null);
         admin.setTelefono(telefono != null ? telefono.trim() : null);
-        admin.setCorreo(correo.trim());
+        admin.setCorreo(correo);
         admin.setActualizadoEn(LocalDateTime.now());
 
         usuarioRepository.save(admin);

@@ -3,12 +3,12 @@
 <html class="light" lang="es">
 <head>
     <title>Recíclame - Administradores</title>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
@@ -98,7 +98,7 @@
             }
         }
     </script>
-<style>
+    <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -217,8 +217,21 @@
 
                     <div class="space-y-2">
                         <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest block">Correo Electrónico *</label>
-                        <input name="correo" required type="email" placeholder="usuario@reciclame.org"
-                               class="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#059669]/30"/>
+                        <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#059669]/30">
+                            <input name="usuarioCorreo" required type="text" placeholder="usuario"
+                                   pattern="[a-zA-Z0-9._]+"
+                                   title="Solo letras, números, puntos y guiones bajos. Sin espacios ni caracteres especiales."
+                                   oninput="this.value = this.value.replace(/[@;:{}[\]()\%$#&quot;!=|°+*´¨¡¿?'&lt;&gt;,\\\/ ]/g, '')"
+                                   class="flex-1 h-12 px-4 bg-transparent border-none text-sm focus:outline-none focus:ring-0"/>
+                            <span class="text-slate-300 text-lg select-none">|</span>
+                            <select name="dominioCorreo" required
+                                    class="h-12 px-3 pr-8 bg-transparent border-none text-sm text-slate-600 focus:outline-none focus:ring-0 cursor-pointer">
+                                <option th:each="dom : ${listaDominios}"
+                                        th:value="${dom.nombreDominio}"
+                                        th:text="${dom.nombreDominio}">
+                                </option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="space-y-2">
@@ -457,22 +470,31 @@
                             </div>
 
                             <!-- Acciones -->
-                            <div class="flex justify-center gap-3 flex-wrap w-full md:w-auto">
+                            <div class="flex justify-center gap-1 w-full md:w-auto">
+
+                                <!-- Botón Editar — lapicito -->
                                 <a th:href="@{/superadmin/administradores/editar/{id}(id=${admin.idUsuario}, page=${currentPage}, texto=${texto})}"
-                                   class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
-                                    Editar
+                                   title="Editar"
+                                   class="inline-flex items-center justify-center w-9 h-9 rounded-lg text-on-surface-variant hover:bg-secondary-container/30 hover:text-secondary transition-colors">
+                                    <span class="material-symbols-outlined text-[20px]">edit</span>
                                 </a>
 
+                                <!-- Botón Bloquear/Desbloquear — ícono dinámico -->
                                 <form th:action="@{/superadmin/administradores/bloquear}" method="post" style="display:inline">
                                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                                     <input type="hidden" name="idUsuario" th:value="${admin.idUsuario}"/>
                                     <input type="hidden" name="page" th:value="${currentPage}"/>
                                     <input type="hidden" name="texto" th:value="${texto}"/>
                                     <button type="submit"
-                                            th:text="${admin.estadoCuenta == T(com.example.proyectoreciclame.Entity.Usuario.EstadoCuenta).BLOQUEADO ? 'Desbloquear' : 'Bloquear'}"
+                                            th:title="${admin.estadoCuenta == T(com.example.proyectoreciclame.Entity.Usuario.EstadoCuenta).BLOQUEADO ? 'Desbloquear' : 'Bloquear'}"
                                             th:class="${admin.estadoCuenta == T(com.example.proyectoreciclame.Entity.Usuario.EstadoCuenta).BLOQUEADO}
-                           ? 'inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors'
-                           : 'inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-error-container hover:text-error transition-colors'">
+                                           ? 'inline-flex items-center justify-center w-9 h-9 rounded-lg text-secondary hover:bg-secondary-container/30 transition-colors'
+                                           : 'inline-flex items-center justify-center w-9 h-9 rounded-lg text-on-surface-variant hover:bg-error-container hover:text-error transition-colors'">
+                                            <span class="material-symbols-outlined text-[20px]"
+                                            th:text="${admin.estadoCuenta == T(com.example.proyectoreciclame.Entity.Usuario.EstadoCuenta).BLOQUEADO
+                                                                 ? 'lock_open'
+                                                                 : 'block'}">
+                                           </span>
                                     </button>
                                 </form>
                             </div>
@@ -592,9 +614,27 @@
 
             <div class="space-y-2">
                 <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest block">Correo Electrónico *</label>
-                <input name="correo" required type="email"
-                       th:value="${adminEditar?.correo}"
-                       class="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#059669]/30"/>
+                <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#059669]/30">
+                    <input name="usuarioCorreo" required type="text"
+                           th:value="${adminEditar != null and adminEditar.correo != null
+                   ? #strings.substringBefore(adminEditar.correo, '@')
+                   : ''}"
+                           placeholder="usuario"
+                           pattern="[a-zA-Z0-9._]+"
+                           title="Solo letras, números, puntos y guiones bajos. Sin espacios ni caracteres especiales."
+                           oninput="this.value = this.value.replace(/[@;:{}[\]()\%$#&quot;!=|°+*´¨¡¿?'&lt;&gt;,\\\/ ]/g, '')"
+                           class="flex-1 h-12 px-4 bg-transparent border-none text-sm focus:outline-none focus:ring-0"/>
+                    <span class="text-slate-300 text-lg select-none">|</span>
+                    <select name="dominioCorreo" required
+                            class="h-12 px-3 pr-8 bg-transparent border-none text-sm text-slate-600 focus:outline-none focus:ring-0 cursor-pointer">
+                        <option th:each="dom : ${listaDominios}"
+                                th:value="${dom.nombreDominio}"
+                                th:text="${dom.nombreDominio}"
+                                th:selected="${adminEditar != null and adminEditar.correo != null
+                                  and ('@' + #strings.substringAfter(adminEditar.correo, '@')) == dom.nombreDominio}">
+                        </option>
+                    </select>
+                </div>
             </div>
         </form>
 
