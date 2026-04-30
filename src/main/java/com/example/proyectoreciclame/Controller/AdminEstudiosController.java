@@ -161,6 +161,7 @@ public class AdminEstudiosController {
     }
 
     @GetMapping("/admin/normativas")
+
     public String normativasAdmin(
             @RequestParam(required = false) String search,
             @RequestParam(required = false, name = "yearSelect") Integer anio,
@@ -303,6 +304,7 @@ public class AdminEstudiosController {
         System.out.println("GUARDANDO NORMATIVA...");
         System.out.println("titulo = " + titulo);
         return "redirect:/admin/normativas";
+
 
     }
     @GetMapping("/admin/estudios/exportar")
