@@ -580,6 +580,12 @@ public class SuperadminController {
             RedirectAttributes redirectAttributes,
             org.springframework.security.core.Authentication authentication
     ) {
+        // Verificar si expiracionDias es null
+        if (expiracionDias == null) {
+            redirectAttributes.addFlashAttribute("error", "Debe seleccionar un valor para la expiración de la contraseña.");
+            return "redirect:/superadmin/confSeguridad";
+        }
+
         PoliticaContrasena politica = politicaContrasenaRepository.findById(1)
                 .orElse(new PoliticaContrasena());
 
