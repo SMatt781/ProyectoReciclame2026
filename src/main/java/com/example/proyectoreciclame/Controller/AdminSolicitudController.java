@@ -2,24 +2,31 @@ package com.example.proyectoreciclame.Controller;
 
 import com.example.proyectoreciclame.Dto.SolicitudRegistroDto;
 import com.example.proyectoreciclame.Entity.SolicitudRegistro;
+import com.example.proyectoreciclame.Entity.Usuario;
 import com.example.proyectoreciclame.Repository.SolicitudRegistroRepository;
+import com.example.proyectoreciclame.Repository.UsuarioRepository;
+import com.example.proyectoreciclame.Service.CorreoService;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.example.proyectoreciclame.Entity.Usuario;
-import com.example.proyectoreciclame.Repository.UsuarioRepository;
-
 import java.util.Optional;
-import com.example.proyectoreciclame.Service.CorreoService;
+
 @Controller
 @RequestMapping("/admin/usuarios/solicitudes")
 public class AdminSolicitudController {
@@ -37,11 +44,33 @@ public class AdminSolicitudController {
     }
 
     @GetMapping
-    public String listarSolicitudes(@RequestParam(defaultValue = "0") int page, Model model) {
+    public String listarSolicitudes(@RequestParam(defaultValue = "0") int page,
+                                    @RequestParam(required = false) String search,
+                                    @RequestParam(required = false) String rol,
+                                    @RequestParam(required = false) String dateStart,
+                                    @RequestParam(required = false) String dateEnd,
+                                    Model model) {
 
         Pageable pageable = PageRequest.of(page, 5);
-        Page<Usuario> pagina = usuarioRepository
-                .findByEstadoAprobacionAndEliminadoEnIsNullOrderByFechaRegistroDesc("PENDIENTE", pageable);
+
+        String searchParam = (search != null && !search.isBlank()) ? search.trim() : null;
+        String rolParam = (rol != null && !rol.isBlank()) ? rol.trim() : null;
+
+        LocalDateTime fechaInicio = (dateStart != null && !dateStart.isBlank())
+                ? LocalDate.parse(dateStart).atStartOfDay()
+                : null;
+
+        LocalDateTime fechaFin = (dateEnd != null && !dateEnd.isBlank())
+                ? LocalDate.parse(dateEnd).atTime(23, 59, 59)
+                : null;
+
+        Page<Usuario> pagina = usuarioRepository.filtrarSolicitudesPendientes(
+                searchParam,
+                rolParam,
+                fechaInicio,
+                fechaFin,
+                pageable
+        );
 
         List<SolicitudRegistroDto> solicitudes = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
@@ -77,19 +106,139 @@ public class AdminSolicitudController {
             ));
         }
 
+        LocalDate hoy = LocalDate.now();
+        LocalDateTime inicioHoy = hoy.atStartOfDay();
+        LocalDateTime finHoy = hoy.atTime(23, 59, 59);
+
         model.addAttribute("solicitudes", solicitudes);
+
         model.addAttribute("currentSection", "admin-usuarios");
         model.addAttribute("currentPage", page);
+
         model.addAttribute("totalPages", pagina.getTotalPages());
         model.addAttribute("hasPrevious", pagina.hasPrevious());
         model.addAttribute("hasNext", pagina.hasNext());
-        model.addAttribute("totalPendientes", pagina.getTotalElements());
+
+        model.addAttribute("totalPendientes",
+                usuarioRepository.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE"));
+
+        model.addAttribute("totalUsuariosActivos",
+                usuarioRepository.countUsuariosActivosAprobados());
+
+        model.addAttribute("empresasRegistradas",
+                usuarioRepository.countEmpresasRegistradas());
+
+        model.addAttribute("solicitudesHoy",
+                solicitudRegistroRepository.countByEstadoAndFechaSolicitudBetween(
+                        "PENDIENTE",
+                        inicioHoy,
+                        finHoy
+                ));
+
+        model.addAttribute("search", search);
+        model.addAttribute("rolSeleccionado", rol);
+        model.addAttribute("dateStart", dateStart);
+        model.addAttribute("dateEnd", dateEnd);
 
         return "admin/solicitudes-registro";
     }
 
+    /*
+     * IMPORTANTE:
+     * Este método debe ir antes de @GetMapping("/{idUsuario}"),
+     * porque si va después, Spring puede interpretar "/exportar" como idUsuario.
+     */
+    @GetMapping("/exportar")
+    public ResponseEntity<byte[]> exportarSolicitudes(@RequestParam(required = false) String search,
+                                                      @RequestParam(required = false) String rol,
+                                                      @RequestParam(required = false) String dateStart,
+                                                      @RequestParam(required = false) String dateEnd) throws IOException {
+
+        Pageable pageable = PageRequest.of(0, 10000);
+
+        String searchParam = (search != null && !search.isBlank()) ? search.trim() : null;
+        String rolParam = (rol != null && !rol.isBlank()) ? rol.trim() : null;
+
+        LocalDateTime fechaInicio = (dateStart != null && !dateStart.isBlank())
+                ? LocalDate.parse(dateStart).atStartOfDay()
+                : null;
+
+        LocalDateTime fechaFin = (dateEnd != null && !dateEnd.isBlank())
+                ? LocalDate.parse(dateEnd).atTime(23, 59, 59)
+                : null;
+
+        Page<Usuario> pagina = usuarioRepository.filtrarSolicitudesPendientes(
+                searchParam,
+                rolParam,
+                fechaInicio,
+                fechaFin,
+                pageable
+        );
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Solicitudes");
+
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("Nombre");
+        header.createCell(1).setCellValue("DNI");
+        header.createCell(2).setCellValue("Correo");
+        header.createCell(3).setCellValue("Empresa");
+        header.createCell(4).setCellValue("Rol solicitado");
+        header.createCell(5).setCellValue("Estado");
+        header.createCell(6).setCellValue("Fecha solicitud");
+
+        int rowNum = 1;
+
+        for (Usuario u : pagina.getContent()) {
+
+            Optional<SolicitudRegistro> solicitudOpt = buscarSolicitudRelacionada(u);
+
+            String nombreCompleto = construirNombreCompleto(
+                    u.getNombres(),
+                    u.getApellidoPaterno(),
+                    u.getApellidoMaterno()
+            );
+
+            String empresa = u.getUsuarioEmpresa() != null
+                    ? u.getUsuarioEmpresa().getRazonSocial()
+                    : "--";
+
+            String rolSolicitado = (u.getRol() != null && u.getRol().getNombre() != null)
+                    ? u.getRol().getNombre()
+                    : solicitudOpt.map(SolicitudRegistro::getRolSolicitado).orElse("Sin rol");
+
+            String fecha = solicitudOpt
+                    .map(SolicitudRegistro::getFechaSolicitud)
+                    .map(LocalDateTime::toString)
+                    .orElse(u.getFechaRegistro() != null ? u.getFechaRegistro().toString() : "-");
+
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(nombreCompleto);
+            row.createCell(1).setCellValue(u.getDni() != null ? u.getDni() : "-");
+            row.createCell(2).setCellValue(u.getCorreo() != null ? u.getCorreo() : "-");
+            row.createCell(3).setCellValue(empresa);
+            row.createCell(4).setCellValue(rolSolicitado);
+            row.createCell(5).setCellValue(u.getEstadoAprobacion() != null ? u.getEstadoAprobacion() : "-");
+            row.createCell(6).setCellValue(fecha);
+        }
+
+        for (int i = 0; i <= 6; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        workbook.write(out);
+        workbook.close();
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=solicitudes_registro.xlsx")
+                .header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                .body(out.toByteArray());
+    }
+
     @GetMapping("/{idUsuario}")
     public String detalleSolicitud(@PathVariable Long idUsuario, Model model) {
+
         Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
 
         if (usuario == null) {
@@ -107,6 +256,7 @@ public class AdminSolicitudController {
 
     @PostMapping("/{idUsuario}/aceptar")
     public String aceptarSolicitud(@PathVariable Long idUsuario) {
+
         Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
 
         if (usuario != null) {
@@ -116,6 +266,7 @@ public class AdminSolicitudController {
             usuarioRepository.save(usuario);
 
             Optional<SolicitudRegistro> solicitudOpt = buscarSolicitudRelacionada(usuario);
+
             if (solicitudOpt.isPresent()) {
                 SolicitudRegistro solicitud = solicitudOpt.get();
                 solicitud.setEstado("APROBADO");
@@ -135,6 +286,7 @@ public class AdminSolicitudController {
     @PostMapping("/{idUsuario}/denegar")
     public String denegarSolicitud(@PathVariable Long idUsuario,
                                    @RequestParam(required = false) String motivo) {
+
         Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
 
         if (usuario != null) {
@@ -144,6 +296,7 @@ public class AdminSolicitudController {
             usuarioRepository.save(usuario);
 
             Optional<SolicitudRegistro> solicitudOpt = buscarSolicitudRelacionada(usuario);
+
             if (solicitudOpt.isPresent()) {
                 SolicitudRegistro solicitud = solicitudOpt.get();
                 solicitud.setEstado("RECHAZADO");
@@ -163,6 +316,7 @@ public class AdminSolicitudController {
     }
 
     private Optional<SolicitudRegistro> buscarSolicitudRelacionada(Usuario usuario) {
+
         Optional<SolicitudRegistro> porDni = solicitudRegistroRepository
                 .findTopByDniOrderByFechaSolicitudDesc(usuario.getDni());
 
@@ -173,17 +327,39 @@ public class AdminSolicitudController {
         return solicitudRegistroRepository.findTopByCorreoOrderByFechaSolicitudDesc(usuario.getCorreo());
     }
 
-    private String construirNombreCompleto(String nombres, String apellidoPaterno, String apellidoMaterno) {
+    private String construirNombreCompleto(String nombres,
+                                           String apellidoPaterno,
+                                           String apellidoMaterno) {
+
         StringBuilder sb = new StringBuilder();
-        if (nombres != null) sb.append(nombres);
-        if (apellidoPaterno != null) sb.append(" ").append(apellidoPaterno);
-        if (apellidoMaterno != null && !apellidoMaterno.isBlank()) sb.append(" ").append(apellidoMaterno);
+
+        if (nombres != null && !nombres.isBlank()) {
+            sb.append(nombres);
+        }
+
+        if (apellidoPaterno != null && !apellidoPaterno.isBlank()) {
+            if (!sb.isEmpty()) sb.append(" ");
+            sb.append(apellidoPaterno);
+        }
+
+        if (apellidoMaterno != null && !apellidoMaterno.isBlank()) {
+            if (!sb.isEmpty()) sb.append(" ");
+            sb.append(apellidoMaterno);
+        }
+
         return sb.toString().trim();
     }
 
     private String obtenerIniciales(String nombres, String apellidoPaterno) {
-        String n = (nombres != null && !nombres.isBlank()) ? nombres.substring(0, 1).toUpperCase() : "";
-        String a = (apellidoPaterno != null && !apellidoPaterno.isBlank()) ? apellidoPaterno.substring(0, 1).toUpperCase() : "";
+
+        String n = (nombres != null && !nombres.isBlank())
+                ? nombres.substring(0, 1).toUpperCase()
+                : "";
+
+        String a = (apellidoPaterno != null && !apellidoPaterno.isBlank())
+                ? apellidoPaterno.substring(0, 1).toUpperCase()
+                : "";
+
         return n + a;
     }
 }
