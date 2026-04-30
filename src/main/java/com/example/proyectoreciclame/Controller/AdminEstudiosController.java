@@ -161,7 +161,6 @@ public class AdminEstudiosController {
     }
 
     @GetMapping("/admin/normativas")
-
     public String normativasAdmin(
             @RequestParam(required = false) String search,
             @RequestParam(required = false, name = "yearSelect") Integer anio,
@@ -216,7 +215,218 @@ public class AdminEstudiosController {
         model.addAttribute("selectedAlcances", alcance);
         model.addAttribute("selectedObligatoriedades", obligatoriedad);
 
+        // 🔥 OBTENER TODAS LAS NORMATIVAS (para dashboard)
+        java.util.List<Normativa> lista = normativaRepository.findAll();
+
+// TOTAL
+        long totalNormas = lista.size();
+        model.addAttribute("totalNormas", totalNormas);
+
+// =====================
+// 🔵 DISTRIBUCIÓN POR TEMA
+// =====================
+
+        long countEc = lista.stream()
+                .filter(n -> n.getCategorias().stream()
+                        .anyMatch(c -> c.getNombre().equalsIgnoreCase("Economía circular")))
+                .count();
+
+        long countGr = lista.stream()
+                .filter(n -> n.getCategorias().stream()
+                        .anyMatch(c -> c.getNombre().equalsIgnoreCase("Gestión de residuos")))
+                .count();
+
+        long countEe = lista.stream()
+                .filter(n -> n.getCategorias().stream()
+                        .anyMatch(c -> c.getNombre().equalsIgnoreCase("Envases y Embalajes")))
+                .count();
+
+        long countRep = lista.stream()
+                .filter(n -> n.getCategorias() != null && n.getCategorias().stream()
+                        .anyMatch(c -> c.getNombre() != null &&
+                                c.getNombre().equalsIgnoreCase("Responsabilidad Extendida")))
+                .count();
+
+        long countOtro = lista.stream()
+                .filter(n -> n.getCategorias() != null)
+                .flatMap(n -> n.getCategorias().stream())
+                .filter(c -> c.getNombre() != null)
+                .filter(c ->
+                        !c.getNombre().equalsIgnoreCase("Economía circular") &&
+                                !c.getNombre().equalsIgnoreCase("Gestión de residuos") &&
+                                !c.getNombre().equalsIgnoreCase("Envases y Embalajes") &&
+                                !c.getNombre().equalsIgnoreCase("Responsabilidad Extendida")
+                )
+                .count();
+
+        long sinCategoria = lista.stream()
+                .filter(n -> n.getCategorias() == null || n.getCategorias().isEmpty())
+                .count();
+
+        countOtro = countOtro + sinCategoria;
+        long totalTemas = countEc + countGr + countEe + countRep + countOtro;
+
+// porcentajes
+        double pctEc = totalNormas > 0 ? (countEc * 100.0 / totalTemas) : 0;
+        double pctGr = totalNormas > 0 ? (countGr * 100.0 / totalTemas) : 0;
+        double pctEe = totalNormas > 0 ? (countEe * 100.0 / totalTemas) : 0;
+        double pctRep = totalNormas > 0 ? (countRep * 100.0 / totalTemas) : 0;
+        double pctOtro = totalNormas > 0 ? (countOtro * 100.0 / totalTemas) : 0;
+        double circ = 282.74;
+
+        double dashEc = totalNormas > 0 ? (countEc * circ / totalTemas) : 0;
+        double dashGr = totalNormas > 0 ? (countGr * circ / totalTemas) : 0;
+        double dashEe = totalNormas > 0 ? (countEe * circ / totalTemas) : 0;
+        double dashRep = totalNormas > 0 ? (countRep * circ / totalTemas) : 0;
+        double dashOtro = totalNormas > 0 ? (countOtro * circ / totalTemas) : 0;
+
+        double startEc = -90;
+        double startGr = startEc + (pctEc * 3.6);
+        double startEe = startGr + (pctGr * 3.6);
+        double startRep = startEe + (pctEe * 3.6);
+        double startOtro = startRep + (pctRep * 3.6);
+
+        model.addAttribute("dashEc", dashEc + " " + circ);
+        model.addAttribute("dashGr", dashGr + " " + circ);
+        model.addAttribute("dashEe", dashEe + " " + circ);
+        model.addAttribute("dashRep", dashRep + " " + circ);
+        model.addAttribute("dashOtro", dashOtro + " " + circ);
+
+        model.addAttribute("startEc", startEc);
+        model.addAttribute("startGr", startGr);
+        model.addAttribute("startEe", startEe);
+        model.addAttribute("startRep", startRep);
+        model.addAttribute("startOtro", startOtro);
+
+// enviar al model
+        model.addAttribute("countEc", countEc);
+        model.addAttribute("countGr", countGr);
+        model.addAttribute("countEe", countEe);
+        model.addAttribute("countRep", countRep);
+        model.addAttribute("countOtro", countOtro);
+
+        model.addAttribute("pctEc", pctEc);
+        model.addAttribute("pctGr", pctGr);
+        model.addAttribute("pctEe", pctEe);
+        model.addAttribute("pctRep", pctRep);
+        model.addAttribute("pctOtro", pctOtro);
+
+// =====================
+// 🟢 ESTADO POR ALCANCE
+// =====================
+
+        long nacTotal = lista.stream().filter(n -> n.getAlcance().name().equals("NACIONAL")).count();
+        long intTotal = lista.stream().filter(n -> n.getAlcance().name().equals("INTERNACIONAL")).count();
+
+        long nacVigente = lista.stream().filter(n -> n.getAlcance().name().equals("NACIONAL") && n.getEstado().name().equals("VIGENTE")).count();
+        long nacPublicada = lista.stream().filter(n -> n.getAlcance().name().equals("NACIONAL") && n.getEstado().name().equals("PUBLICADA")).count();
+        long nacConsulta = lista.stream().filter(n -> n.getAlcance().name().equals("NACIONAL") && n.getEstado().name().equals("CONSULTA_PUBLICA")).count();
+        long nacBorrador = lista.stream().filter(n -> n.getAlcance().name().equals("NACIONAL") && n.getEstado().name().equals("BORRADOR_EN_PROCESO")).count();
+        long nacDerogada = lista.stream().filter(n -> n.getAlcance().name().equals("NACIONAL") && n.getEstado().name().equals("DEROGADA")).count();
+
+        long intVigente = lista.stream().filter(n -> n.getAlcance().name().equals("INTERNACIONAL") && n.getEstado().name().equals("VIGENTE")).count();
+        long intPublicada = lista.stream().filter(n -> n.getAlcance().name().equals("INTERNACIONAL") && n.getEstado().name().equals("PUBLICADA")).count();
+        long intConsulta = lista.stream().filter(n -> n.getAlcance().name().equals("INTERNACIONAL") && n.getEstado().name().equals("CONSULTA_PUBLICA")).count();
+        long intBorrador = lista.stream().filter(n -> n.getAlcance().name().equals("INTERNACIONAL") && n.getEstado().name().equals("BORRADOR_EN_PROCESO")).count();
+        long intDerogada = lista.stream().filter(n -> n.getAlcance().name().equals("INTERNACIONAL") && n.getEstado().name().equals("DEROGADA")).count();
+
+        model.addAttribute("nacTotal", nacTotal);
+        model.addAttribute("intTotal", intTotal);
+
+        model.addAttribute("nacVigente", nacVigente);
+        model.addAttribute("nacPublicada", nacPublicada);
+        model.addAttribute("nacConsulta", nacConsulta);
+        model.addAttribute("nacBorrador", nacBorrador);
+        model.addAttribute("nacDerogada", nacDerogada);
+
+        model.addAttribute("intVigente", intVigente);
+        model.addAttribute("intPublicada", intPublicada);
+        model.addAttribute("intConsulta", intConsulta);
+        model.addAttribute("intBorrador", intBorrador);
+        model.addAttribute("intDerogada", intDerogada);
+
+// =====================
+// 🟠 ACCESO
+// =====================
+
+        long gratisTotal = lista.stream().filter(n -> n.getAcceso().name().equals("GRATIS")).count();
+        long pagoTotal = lista.stream().filter(n -> n.getAcceso().name().equals("PAGO")).count();
+
+        long gratisNac = lista.stream().filter(n -> n.getAcceso().name().equals("GRATIS") && n.getAlcance().name().equals("NACIONAL")).count();
+        long gratisInt = lista.stream().filter(n -> n.getAcceso().name().equals("GRATIS") && n.getAlcance().name().equals("INTERNACIONAL")).count();
+
+        long pagoNac = lista.stream().filter(n -> n.getAcceso().name().equals("PAGO") && n.getAlcance().name().equals("NACIONAL")).count();
+        long pagoInt = lista.stream().filter(n -> n.getAcceso().name().equals("PAGO") && n.getAlcance().name().equals("INTERNACIONAL")).count();
+
+        model.addAttribute("gratisTotal", gratisTotal);
+        model.addAttribute("pagoTotal", pagoTotal);
+
+        model.addAttribute("gratisNac", gratisNac);
+        model.addAttribute("gratisInt", gratisInt);
+        model.addAttribute("pagoNac", pagoNac);
+        model.addAttribute("pagoInt", pagoInt);
+
         return "admin/repo_main_admin";
+    }
+
+    @GetMapping("/admin/normativas/exportar")
+    public org.springframework.http.ResponseEntity<byte[]> exportarNormativas() throws java.io.IOException {
+
+        java.util.List<com.example.proyectoreciclame.Entity.Normativa> normativas =
+                normativaRepository.findAll();
+
+        org.apache.poi.ss.usermodel.Workbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook();
+        org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Normativas");
+
+        org.apache.poi.ss.usermodel.Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("Nombre");
+        header.createCell(1).setCellValue("Código");
+        header.createCell(2).setCellValue("Organismo Emisor");
+        header.createCell(3).setCellValue("Año");
+        header.createCell(4).setCellValue("Tipo");
+        header.createCell(5).setCellValue("Estado");
+        header.createCell(6).setCellValue("Acceso");
+        header.createCell(7).setCellValue("Alcance");
+        header.createCell(8).setCellValue("Categorías");
+        header.createCell(9).setCellValue("Obligatoriedad");
+
+        int rowNum = 1;
+
+        for (com.example.proyectoreciclame.Entity.Normativa n : normativas) {
+            org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowNum++);
+
+            String categorias = "Sin categoría";
+
+            if (n.getCategorias() != null && !n.getCategorias().isEmpty()) {
+                categorias = n.getCategorias().stream()
+                        .map(c -> c.getNombre())
+                        .collect(java.util.stream.Collectors.joining(", "));
+            }
+
+            row.createCell(0).setCellValue(n.getTitulo());
+            row.createCell(1).setCellValue(n.getCodigo());
+            row.createCell(2).setCellValue(n.getOrganismoEmisor());
+            row.createCell(3).setCellValue(n.getAnio());
+            row.createCell(4).setCellValue(n.getTipoNorma() != null ? n.getTipoNorma().name() : "");
+            row.createCell(5).setCellValue(n.getEstado() != null ? n.getEstado().name() : "");
+            row.createCell(6).setCellValue(n.getAcceso() != null ? n.getAcceso().name() : "");
+            row.createCell(7).setCellValue(n.getAlcance() != null ? n.getAlcance().name() : "");
+            row.createCell(8).setCellValue(categorias);
+            row.createCell(9).setCellValue(n.getObligatoriedad());
+        }
+
+        for (int i = 0; i <= 9; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+        workbook.write(out);
+        workbook.close();
+
+        return org.springframework.http.ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=normativas.xlsx")
+                .header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                .body(out.toByteArray());
     }
 
     @PostMapping("/admin/repo_new")
@@ -304,7 +514,6 @@ public class AdminEstudiosController {
         System.out.println("GUARDANDO NORMATIVA...");
         System.out.println("titulo = " + titulo);
         return "redirect:/admin/normativas";
-
 
     }
     @GetMapping("/admin/estudios/exportar")

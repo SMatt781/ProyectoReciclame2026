@@ -50,6 +50,10 @@ public class AdminUsuarioController {
 
     @GetMapping("/gestion")
     public String gestionUsuarios(@RequestParam(required = false) String texto,
+                                  @RequestParam(required = false) List<String> rol,
+                                  @RequestParam(required = false) String dateStart,
+                                  @RequestParam(required = false) String dateEnd,
+                                  @RequestParam(required = false) List<String> estado,
                                   @RequestParam(defaultValue = "0") int page,
                                   @RequestParam(required = false) String modal,
                                   @RequestParam(required = false) Long id,
@@ -59,10 +63,25 @@ public class AdminUsuarioController {
         Pageable pageable = PageRequest.of(page, 3);
         Page<Usuario> paginaUsuarios;
 
-        if (texto == null || texto.isBlank()) {
+        boolean hasRoles = rol != null && !rol.isEmpty();
+        if (hasRoles) {
+            rol = rol.stream().map(String::toUpperCase).toList();
+        }
+        boolean hasEstados = estado != null && !estado.isEmpty();
+        
+        LocalDateTime fechaInicio = null;
+        LocalDateTime fechaFin = null;
+        if (dateStart != null && !dateStart.isEmpty()) {
+            fechaInicio = java.time.LocalDate.parse(dateStart).atStartOfDay();
+        }
+        if (dateEnd != null && !dateEnd.isEmpty()) {
+            fechaFin = java.time.LocalDate.parse(dateEnd).atTime(23, 59, 59);
+        }
+
+        if ((texto == null || texto.isBlank()) && !hasRoles && !hasEstados && fechaInicio == null && fechaFin == null) {
             paginaUsuarios = usuarioRepository.findAllGestionUsuarios(pageable);
         } else {
-            paginaUsuarios = usuarioRepository.buscarEnGestionGeneral(texto, pageable);
+            paginaUsuarios = usuarioRepository.buscarEnGestionAvanzado(texto, hasRoles, rol, fechaInicio, fechaFin, hasEstados, estado, pageable);
         }
 
         List<UsuarioGestionDto> lista = new ArrayList<>();
@@ -79,8 +98,8 @@ public class AdminUsuarioController {
                     ? u.getUsuarioEmpresa().getRazonSocial()
                     : "Sin empresa";
 
-            String rol = (u.getRol() != null) ? u.getRol().getNombre() : "Sin rol";
-            String estado = obtenerEstadoVisible(u);
+            String rolUsuario = (u.getRol() != null) ? u.getRol().getNombre() : "Sin rol";
+            String estadoUsuario = obtenerEstadoVisible(u);
             String fecha = (u.getFechaRegistro() != null) ? u.getFechaRegistro().format(formatter) : "-";
             String iniciales = obtenerIniciales(u.getNombres(), u.getApellidoPaterno());
 
@@ -90,8 +109,8 @@ public class AdminUsuarioController {
                     u.getCorreo(),
                     u.getDni(),
                     empresa,
-                    rol,
-                    estado,
+                    rolUsuario,
+                    estadoUsuario,
                     fecha,
                     iniciales
             ));
@@ -99,6 +118,10 @@ public class AdminUsuarioController {
 
         model.addAttribute("usuarios", lista);
         model.addAttribute("texto", texto);
+        model.addAttribute("selectedRoles", rol);
+        model.addAttribute("dateStart", dateStart);
+        model.addAttribute("dateEnd", dateEnd);
+        model.addAttribute("selectedEstados", estado);
         model.addAttribute("currentSection", "admin-usuarios");
 
         model.addAttribute("currentPage", page);
@@ -132,6 +155,10 @@ public class AdminUsuarioController {
     public String editarUsuario(@ModelAttribute("editForm") UsuarioEditForm form,
                                 @RequestParam(defaultValue = "0") int page,
                                 @RequestParam(required = false) String texto,
+                                @RequestParam(required = false) List<String> rol,
+                                @RequestParam(required = false) String dateStart,
+                                @RequestParam(required = false) String dateEnd,
+                                @RequestParam(required = false) List<String> estado,
                                 Model model) {
 
         Usuario usuario = usuarioRepository.findById(form.getIdUsuario()).orElse(null);
@@ -147,7 +174,7 @@ public class AdminUsuarioController {
             model.addAttribute("editForm", form);
             model.addAttribute("roles", rolRepository.findAll());
 
-            cargarVistaGestionBase(texto, page, model);
+            cargarVistaGestionBase(texto, rol, dateStart, dateEnd, estado, page, model);
             return "admin/gestion-usuarios";
         }
 
@@ -160,9 +187,9 @@ public class AdminUsuarioController {
         usuario.setActualizadoEn(LocalDateTime.now());
 
         if (form.getIdRol() != null) {
-            Rol rol = rolRepository.findById(form.getIdRol()).orElse(null);
-            if (rol != null) {
-                usuario.setRol(rol);
+            Rol rolEntidad = rolRepository.findById(form.getIdRol()).orElse(null);
+            if (rolEntidad != null) {
+                usuario.setRol(rolEntidad);
             }
         }
 
@@ -193,7 +220,11 @@ public class AdminUsuarioController {
     @PostMapping("/bloquear")
     public String bloquearUsuario(@ModelAttribute("blockForm") UsuarioBloqueoForm form,
                                   @RequestParam(defaultValue = "0") int page,
-                                  @RequestParam(required = false) String texto) {
+                                  @RequestParam(required = false) String texto,
+                                  @RequestParam(required = false) List<String> rol,
+                                  @RequestParam(required = false) String dateStart,
+                                  @RequestParam(required = false) String dateEnd,
+                                  @RequestParam(required = false) List<String> estado) {
 
         Usuario usuario = usuarioRepository.findById(form.getIdUsuario()).orElse(null);
         if (usuario == null) {
@@ -214,7 +245,11 @@ public class AdminUsuarioController {
     @PostMapping("/desbloquear")
     public String desbloquearUsuario(@ModelAttribute("blockForm") UsuarioBloqueoForm form,
                                      @RequestParam(defaultValue = "0") int page,
-                                     @RequestParam(required = false) String texto) {
+                                     @RequestParam(required = false) String texto,
+                                     @RequestParam(required = false) List<String> rol,
+                                     @RequestParam(required = false) String dateStart,
+                                     @RequestParam(required = false) String dateEnd,
+                                     @RequestParam(required = false) List<String> estado) {
 
         Usuario usuario = usuarioRepository.findById(form.getIdUsuario()).orElse(null);
         if (usuario == null) {
@@ -273,14 +308,29 @@ public class AdminUsuarioController {
         model.addAttribute("modoBloqueo", bloquear ? "bloquear" : "desbloquear");
     }
 
-    private void cargarVistaGestionBase(String texto, int page, Model model) {
+    private void cargarVistaGestionBase(String texto, List<String> rol, String dateStart, String dateEnd, List<String> estado, int page, Model model) {
         Pageable pageable = PageRequest.of(page, 3);
         Page<Usuario> paginaUsuarios;
 
-        if (texto == null || texto.isBlank()) {
+        boolean hasRoles = rol != null && !rol.isEmpty();
+        if (hasRoles) {
+            rol = rol.stream().map(String::toUpperCase).toList();
+        }
+        boolean hasEstados = estado != null && !estado.isEmpty();
+        
+        LocalDateTime fechaInicio = null;
+        LocalDateTime fechaFin = null;
+        if (dateStart != null && !dateStart.isEmpty()) {
+            fechaInicio = java.time.LocalDate.parse(dateStart).atStartOfDay();
+        }
+        if (dateEnd != null && !dateEnd.isEmpty()) {
+            fechaFin = java.time.LocalDate.parse(dateEnd).atTime(23, 59, 59);
+        }
+
+        if ((texto == null || texto.isBlank()) && !hasRoles && !hasEstados && fechaInicio == null && fechaFin == null) {
             paginaUsuarios = usuarioRepository.findAllGestionUsuarios(pageable);
         } else {
-            paginaUsuarios = usuarioRepository.buscarEnGestionGeneral(texto, pageable);
+            paginaUsuarios = usuarioRepository.buscarEnGestionAvanzado(texto, hasRoles, rol, fechaInicio, fechaFin, hasEstados, estado, pageable);
         }
 
         List<UsuarioGestionDto> lista = new ArrayList<>();
@@ -297,8 +347,8 @@ public class AdminUsuarioController {
                     ? u.getUsuarioEmpresa().getRazonSocial()
                     : "Sin empresa";
 
-            String rol = (u.getRol() != null) ? u.getRol().getNombre() : "Sin rol";
-            String estado = obtenerEstadoVisible(u);
+            String rolUsuario = (u.getRol() != null) ? u.getRol().getNombre() : "Sin rol";
+            String estadoUsuario = obtenerEstadoVisible(u);
             String fecha = (u.getFechaRegistro() != null) ? u.getFechaRegistro().format(formatter) : "-";
             String iniciales = obtenerIniciales(u.getNombres(), u.getApellidoPaterno());
 
@@ -308,8 +358,8 @@ public class AdminUsuarioController {
                     u.getCorreo(),
                     u.getDni(),
                     empresa,
-                    rol,
-                    estado,
+                    rolUsuario,
+                    estadoUsuario,
                     fecha,
                     iniciales
             ));
@@ -317,6 +367,10 @@ public class AdminUsuarioController {
 
         model.addAttribute("usuarios", lista);
         model.addAttribute("texto", texto);
+        model.addAttribute("selectedRoles", rol);
+        model.addAttribute("dateStart", dateStart);
+        model.addAttribute("dateEnd", dateEnd);
+        model.addAttribute("selectedEstados", estado);
         model.addAttribute("currentSection", "admin-usuarios");
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", paginaUsuarios.getTotalPages());

@@ -38,16 +38,42 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     LEFT JOIN FETCH u.usuarioEmpresa ue
     WHERE u.eliminadoEn IS NULL
       AND (
-        LOWER(u.nombres) LIKE LOWER(CONCAT('%', :texto, '%'))
+        :texto IS NULL OR :texto = ''
+        OR LOWER(u.nombres) LIKE LOWER(CONCAT('%', :texto, '%'))
         OR LOWER(u.apellidoPaterno) LIKE LOWER(CONCAT('%', :texto, '%'))
         OR LOWER(COALESCE(u.apellidoMaterno, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
         OR LOWER(u.dni) LIKE LOWER(CONCAT('%', :texto, '%'))
         OR LOWER(COALESCE(ue.razonSocial, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
         OR LOWER(u.correo) LIKE LOWER(CONCAT('%', :texto, '%'))
       )
+      AND (
+        :hasRoles = false OR UPPER(r.nombre) IN :roles
+      )
+      AND (
+        :fechaInicio IS NULL OR u.fechaRegistro >= :fechaInicio
+      )
+      AND (
+        :fechaFin IS NULL OR u.fechaRegistro <= :fechaFin
+      )
+      AND (
+        :hasEstados = false
+        OR ('Activo' IN :estados AND u.estadoCuenta = 'ACTIVO')
+        OR ('Bloqueado' IN :estados AND u.estadoCuenta = 'BLOQUEADO')
+        OR ('Pendiente' IN :estados AND u.estadoAprobacion = 'PENDIENTE')
+        OR ('Rechazado' IN :estados AND u.estadoAprobacion = 'RECHAZADO')
+      )
     ORDER BY u.fechaRegistro DESC
 """)
-    Page<Usuario> buscarEnGestionGeneral(@Param("texto") String texto, Pageable pageable);
+    Page<Usuario> buscarEnGestionAvanzado(
+            @Param("texto") String texto,
+            @Param("hasRoles") boolean hasRoles,
+            @Param("roles") List<String> roles,
+            @Param("fechaInicio") java.time.LocalDateTime fechaInicio,
+            @Param("fechaFin") java.time.LocalDateTime fechaFin,
+            @Param("hasEstados") boolean hasEstados,
+            @Param("estados") List<String> estados,
+            Pageable pageable
+    );
 
     // ── Para SuperadminController (filtrado por rol) ─────────────────────────────
     @Query("""

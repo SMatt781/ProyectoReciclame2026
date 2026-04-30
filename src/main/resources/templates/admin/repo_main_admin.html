@@ -327,7 +327,7 @@
                         <div class="space-y-4">
                             <!-- Row: Gratis -->
                             <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                                <div class="w-32 text-sm font-bold text-[#666] shrink-0">GRATUITO</div>
+                                <div class="w-32 text-sm font-bold text-[#666] shrink-0">GRATIS</div>
                                 <div class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
                                     <div th:if="${gratisNac != null and gratisNac > 0}"
                                          th:style="'width: ' + (${gratisNac} * 100.0 / ${gratisTotal != null and gratisTotal > 0 ? gratisTotal : 1}) + '%'"
@@ -401,6 +401,7 @@
                         <span class="text-sm font-medium">Filtros avanzados</span>
                     </button>
                     <button type="button"
+                            onclick="window.location.href='/admin/normativas/exportar'"
                             class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
                         <div th:replace="~{fragments/icons.html :: icon-exportar-excel}"></div>
                         <span class="text-sm font-medium">Exportar</span>
@@ -428,7 +429,7 @@
 
                         <!-- Row Dynamic -->
                         <div th:each="normativa : ${normativas}"
-                             class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[280px_110px_170px_130px_110px_120px_140px_70px_150px_120px] gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                             class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[280px_110px_170px_180px_130px_120px_140px_70px_150px_120px] gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
                             <div class="flex flex-col w-full text-left pr-4">
                                 <h4 th:text="${normativa.titulo}"
                                     class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors">
@@ -460,21 +461,24 @@
                                     <span class="inline-flex items-center gap-1.5">
                                         <span class="w-2 h-2 rounded-full shrink-0"
                                               th:classappend="${normativa.estado == 'VIGENTE' ? 'bg-[#006c46]' : (normativa.estado == 'DEROGADA' ? 'bg-[#E24B4A]' : (normativa.estado == 'PUBLICADA' ? 'bg-[#ffc107]' : (normativa.estado == 'CONSULTA PUBLICA' ? 'bg-[#2196f3]' : 'bg-[#888780]')))}"></span>
-                                        <span th:text="${normativa.estado}"
-                                              class="text-on-surface text-xs font-bold whitespace-normal">Vigente</span>
+                                        <span th:text="${#strings.replace(normativa.estado.name(), '_', ' ')}"
+                                              class="text-on-surface text-xs font-bold break-words">
+    VIGENTE
+</span>
                                     </span>
                             </div>
                             <div class="flex justify-start w-full md:w-auto">
-                                    <span th:if="${normativa.acceso == 'GRATIS'}"
-                                          class="inline-flex items-center gap-1 text-gratuito text-xs font-bold uppercase tracking-wider">
-                                        <div th:replace="~{fragments/icons.html :: icon-acceso-gratuito}"></div>
-                                        GRATUITO
-                                    </span>
-                                <span th:if="${normativa.acceso == 'PAGO'}"
+    <span th:if="${normativa.acceso != null and normativa.acceso.name() == 'GRATIS'}"
+          class="inline-flex items-center gap-1 text-gratuito text-xs font-bold uppercase tracking-wider">
+        <div th:replace="~{fragments/icons.html :: icon-acceso-gratuito}"></div>
+        GRATUITO
+    </span>
+
+                                <span th:if="${normativa.acceso != null and normativa.acceso.name() == 'PAGO'}"
                                       class="inline-flex items-center gap-1 text-de-pago text-xs font-bold uppercase tracking-wider">
-                                        <div th:replace="~{fragments/icons.html :: icon-acceso-pago}"></div>
-                                        DE PAGO
-                                    </span>
+        <div th:replace="~{fragments/icons.html :: icon-acceso-pago}"></div>
+        DE PAGO
+    </span>
                             </div>
                             <div class="flex justify-start w-full md:w-auto">
                                     <span th:text="${normativa.alcance}"
