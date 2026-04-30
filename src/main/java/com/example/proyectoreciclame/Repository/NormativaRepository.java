@@ -43,4 +43,13 @@ public interface NormativaRepository extends JpaRepository<Normativa, Long> {
 
     List<Normativa> findByFechaCreacionAfter(LocalDateTime fechaCreacion);
     List<Normativa> findByFechaActualizacionAfterAndFechaCreacionBefore(LocalDateTime fechaActualizacion, LocalDateTime fechaCreacion);
+
+    long countByEstadoAndEliminadoEnIsNull(Normativa.EstadoNormativa estado);
+
+    long countByEstadoAndAlcanceAndEliminadoEnIsNull(
+            Normativa.EstadoNormativa estado,
+            Normativa.AlcanceNormativa alcance
+    );
+
+    List<Normativa> findTop3ByEliminadoEnIsNullOrderByFechaActualizacionDesc();
 }

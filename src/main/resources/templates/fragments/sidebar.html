@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">model.addAttribute("estudios", estudioRepository.findAll());
+<html xmlns:th="http://www.thymeleaf.org">
 <body>
 <aside th:fragment="sidebar" class="hidden md:flex flex-col h-full w-64 p-5 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50">
     <!-- Brand / Header -->
@@ -84,7 +84,7 @@
 
             <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
                th:classappend="${currentPage == 'repoNormativo'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
-               th:href="@{/normativas}">
+               th:href="@{/admin/normativas}">
                 <div th:replace="~{fragments/icons.html :: icon-normativas-sidebar}"></div>
                 Repositorio Normativo
             </a>
@@ -259,14 +259,14 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Nombre de la Normativa</label>
-                            <input name="nombre" type="text" placeholder="Ej: Ley de Fomento a la Economía Circular"
+                            <input name="titulo" type="text" placeholder="Ej: Ley de Fomento a la Economía Circular"
                                    class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 bg-surface-container-low text-sm" />
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
                             <div class="md:col-span-6">
                                 <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Organismo / Ministerio</label>
-                                <input name="organismo" type="text" placeholder="Ej. Ministerio de Ambiente"
+                                <input name="organismoEmisor" type="text" placeholder="Ej. Ministerio de Ambiente"
                                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 bg-surface-container-low text-sm" />
                             </div>
 
@@ -298,9 +298,10 @@
                             <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Tipo de Norma</label>
                             <select name="tipoNorma"
                                     class="w-full appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
-                                <option>Decreto Ley</option>
-                                <option>Ley Orgánica</option>
-                                <option>Resolución</option>
+                                <option value="DECRETO_LEY">Decreto Ley</option>
+                                <option value="LEY_NACIONAL">Ley Nacional</option>
+                                <option value="REGLAMENTO">Reglamento</option>
+                                <option value="OTRO">Otro</option>
                             </select>
                         </div>
 
@@ -308,9 +309,11 @@
                             <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Estado Actual</label>
                             <select name="estado"
                                     class="w-full appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
-                                <option>Vigente</option>
-                                <option>Derogada</option>
-                                <option>En trámite</option>
+                                <option value="VIGENTE">Vigente</option>
+                                <option value="DEROGADA">Derogada</option>
+                                <option value="PUBLICADA">Publicada</option>
+                                <option value="CONSULTA_PUBLICA">Consulta Pública</option>
+                                <option value="BORRADOR_EN_PROCESO">Borrador en Proceso</option>
                             </select>
                         </div>
                     </div>
