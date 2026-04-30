@@ -62,4 +62,13 @@ public interface EstudioRepository extends JpaRepository<Estudio, Long> {
             @Param("estados") List<String> estados
     );
 
+    long countByEstadoAndEliminadoEnIsNull(Estudio.EstadoEstudio estado);
+
+    long countByEstadoAndFormatoAndEliminadoEnIsNull(
+            Estudio.EstadoEstudio estado,
+            Estudio.FormatoEstudio formato
+    );
+
+    List<Estudio> findTop3ByEliminadoEnIsNullOrderByFechaActualizacionDesc();
+
 }
