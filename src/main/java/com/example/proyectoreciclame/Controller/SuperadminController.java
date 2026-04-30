@@ -324,6 +324,32 @@ public class SuperadminController {
                 + (texto != null ? "&texto=" + texto : "");
     }
 
+    // ── Administradores — POST (Eliminar) ────────────────────────────────────────
+
+    @PostMapping("/administradores/eliminar")
+    public String eliminarAdministrador(
+            @RequestParam Long idUsuario,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "texto", required = false) String texto,
+            RedirectAttributes redirectAttributes
+    ) {
+        Usuario admin = usuarioRepository.findById(idUsuario).orElse(null);
+        if (admin == null) {
+            redirectAttributes.addFlashAttribute("error", "Administrador no encontrado.");
+            return "redirect:/superadmin/administradores";
+        }
+
+        // Soft delete — no borramos el registro, solo marcamos eliminadoEn
+        admin.setEliminadoEn(LocalDateTime.now());
+        admin.setActualizadoEn(LocalDateTime.now());
+        usuarioRepository.save(admin);
+
+        redirectAttributes.addFlashAttribute("success",
+                "Administrador eliminado correctamente.");
+        return "redirect:/superadmin/administradores?page=" + page
+                + (texto != null ? "&texto=" + texto : "");
+    }
+
 
     private String formatearUltimoAcceso(LocalDateTime ultimoAcceso) {
         if (ultimoAcceso == null) {
@@ -607,5 +633,6 @@ public class SuperadminController {
                 "Políticas de contraseña actualizadas correctamente.");
         return "redirect:/superadmin/confSeguridad";
     }
+
 
 }
