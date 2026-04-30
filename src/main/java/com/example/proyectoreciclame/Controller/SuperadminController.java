@@ -54,10 +54,26 @@ public class SuperadminController {
 
     @GetMapping("/dashboard")
     public String showDashboard(Model model) {
-        // Puedes añadir algún dato aquí si quieres
         model.addAttribute("titulo", "Dashboard");
         model.addAttribute("currentSection", "superadmin-dashboard");
-        return "superadmin/dashboard"; // Este es el nombre del archivo HTML de tu vista
+
+        // Métricas reales
+        model.addAttribute("totalAdmins",
+                usuarioRepository.countByRol_IdInAndEliminadoEnIsNull(ROL_ADMIN_IDS));
+        model.addAttribute("activeAdmins",
+                usuarioRepository.countActiveAdminsByRole(ROL_ADMIN_IDS));
+        model.addAttribute("totalDominios",
+                dominioAutorizadoRepository.countByEstadoTrue()); // agregar al repo
+        model.addAttribute("politica",
+                politicaContrasenaRepository.findById(1).orElse(null));
+
+        // Últimos 3 admins (para la tabla reciente)
+        PageRequest ultimos = PageRequest.of(0, 3,
+                Sort.by(Sort.Direction.DESC, "idUsuario"));
+        model.addAttribute("ultimosAdmins",
+                usuarioRepository.findByRol_IdInAndEliminadoEnIsNull(ROL_ADMIN_IDS, ultimos));
+
+        return "superadmin/dashboard";
     }
 
     // Nuevo método para mostrar administradores
