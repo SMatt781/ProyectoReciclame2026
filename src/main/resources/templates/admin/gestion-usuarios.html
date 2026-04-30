@@ -279,7 +279,16 @@
                                 placeholder="Buscar usuario por nombre, DNI o empresa..."
                                 class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
                         </div>
-                        <button type="button"
+                        <a th:href="@{/admin/usuarios/gestion}"
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
+                            title="Limpiar filtros">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            <span class="text-sm font-medium">Limpiar</span>
+                        </a>
+                        <button type="button" id="openFiltersModal"
                             class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
 
                             <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
@@ -365,17 +374,17 @@
                                     <!-- Acciones -->
                                     <div class="flex justify-end gap-1.5 flex-wrap w-full md:w-auto">
                                         <a th:if="${u.estado != 'Bloqueado'}"
-                                            th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, modal='edit', id=${u.idUsuario})}"
+                                            th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='edit', id=${u.idUsuario})}"
                                             class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
                                             Editar
                                         </a>
                                         <a th:if="${u.estado == 'Activo'}"
-                                            th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, modal='block', id=${u.idUsuario})}"
+                                            th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='block', id=${u.idUsuario})}"
                                             class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-error-container hover:text-error transition-colors">
                                             Bloquear
                                         </a>
                                         <a th:if="${u.estado == 'Bloqueado'}"
-                                            th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, modal='unblock', id=${u.idUsuario})}"
+                                            th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='unblock', id=${u.idUsuario})}"
                                             class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
                                             Desbloquear
                                         </a>
@@ -398,7 +407,7 @@
 
                             <!-- Botón anterior -->
                             <a th:if="${hasPrevious}"
-                                th:href="@{/admin/usuarios/gestion(page=${currentPage - 1}, texto=${texto})}"
+                                th:href="@{/admin/usuarios/gestion(page=${currentPage - 1}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}"
                                 class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -417,7 +426,7 @@
                             <!-- Números -->
                             <div id="pageNumbers" class="flex gap-2">
                                 <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-                                    th:href="@{/admin/usuarios/gestion(page=${i}, texto=${texto})}" th:text="${i + 1}"
+                                    th:href="@{/admin/usuarios/gestion(page=${i}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}" th:text="${i + 1}"
                                     th:class="${i == currentPage} ?
                 'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
                 :
@@ -427,7 +436,7 @@
 
                             <!-- Botón siguiente -->
                             <a th:if="${hasNext}"
-                                th:href="@{/admin/usuarios/gestion(page=${currentPage + 1}, texto=${texto})}"
+                                th:href="@{/admin/usuarios/gestion(page=${currentPage + 1}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}"
                                 class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -461,13 +470,13 @@
                     <p class="text-sm text-on-surface-variant mt-1">Actualiza la información principal del usuario.</p>
                 </div>
 
-                <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto})}"
+                <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}"
                     class="px-4 py-2 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
                     Cerrar
                 </a>
             </div>
 
-            <form th:action="@{/admin/usuarios/editar(page=${currentPage}, texto=${texto})}" th:object="${editForm}"
+            <form th:action="@{/admin/usuarios/editar(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}" th:object="${editForm}"
                 method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4 px-6 py-6">
 
                 <input type="hidden" th:field="*{idUsuario}">
@@ -556,7 +565,7 @@
                 </div>
 
                 <div class="md:col-span-2 flex justify-end gap-3 pt-2">
-                    <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto})}"
+                    <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}"
                         class="px-6 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
                         Cancelar
                     </a>
@@ -582,7 +591,7 @@
             </div>
 
             <form th:if="${modoBloqueo == 'bloquear'}"
-                th:action="@{/admin/usuarios/bloquear(page=${currentPage}, texto=${texto})}" th:object="${blockForm}"
+                th:action="@{/admin/usuarios/bloquear(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}" th:object="${blockForm}"
                 method="post" class="px-6 py-6">
 
                 <input type="hidden" th:field="*{idUsuario}" />
@@ -602,7 +611,7 @@
                 </div>
 
                 <div class="flex justify-end gap-3">
-                    <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto})}"
+                    <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}"
                         class="px-6 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
                         Cancelar
                     </a>
@@ -615,7 +624,7 @@
             </form>
 
             <form th:if="${modoBloqueo == 'desbloquear'}"
-                th:action="@{/admin/usuarios/desbloquear(page=${currentPage}, texto=${texto})}" th:object="${blockForm}"
+                th:action="@{/admin/usuarios/desbloquear(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}" th:object="${blockForm}"
                 method="post" class="px-6 py-6">
 
                 <input type="hidden" th:field="*{idUsuario}" />
@@ -627,7 +636,7 @@
                 </div>
 
                 <div class="flex justify-end gap-3">
-                    <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto})}"
+                    <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}"
                         class="px-6 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
                         Cancelar
                     </a>
@@ -641,6 +650,151 @@
         </div>
     </div>
 
+    <!-- Filtros Avanzados Modal -->
+    <div id="filtersModal"
+        class="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 p-4 transition-opacity opacity-0 pointer-events-none duration-300">
+        <div
+            class="bg-surface text-on-surface w-full max-w-2xl rounded-[1.5rem] p-6 sm:p-8 flex flex-col relative scale-95 transition-transform duration-300 shadow-xl max-h-full overflow-y-auto">
+            <!-- Close button -->
+            <button id="closeFiltersModal" type="button"
+                class="absolute top-6 right-6 p-2 rounded-full hover:bg-surface-container text-on-surface-variant transition-colors">
+                <svg class="icon-md" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                </svg>
+            </button>
+
+            <h2 class="text-2xl font-headline font-bold text-on-primary-fixed mb-6">Filtros Avanzados</h2>
+
+            <form id="filtersForm" action="/admin/usuarios/gestion" method="GET" class="space-y-6">
+                <!-- Rango de Fechas -->
+                <section>
+                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Fecha de Registro</h3>
+                    <div class="space-y-4">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <div class="flex-1">
+                                <label
+                                    class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
+                                    Inicio</label>
+                                <input type="date" id="dateStart" name="dateStart" th:value="${dateStart}"
+                                    class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
+                            </div>
+                            <div class="flex-1">
+                                <label
+                                    class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
+                                    Fin</label>
+                                <input type="date" id="dateEnd" name="dateEnd" th:value="${dateEnd}"
+                                    class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
+                            </div>
+                        </div>
+                        <p id="dateError" class="text-error text-xs font-semibold hidden">La Fecha Inicial no puede ser
+                            mayor que la Fecha Final.</p>
+                    </div>
+                </section>
+
+                <hr class="border-outline-variant/30">
+
+                <!-- Rol -->
+                <section>
+                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Rol</h3>
+                    <div class="flex flex-wrap gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="rol" value="SOCIO" th:checked="${selectedRoles != null and #lists.contains(selectedRoles, 'SOCIO')}"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body">Socio</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="rol" value="VISUALIZADOR" th:checked="${selectedRoles != null and #lists.contains(selectedRoles, 'VISUALIZADOR')}"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body">Visualizador</span>
+                        </label>
+                    </div>
+                </section>
+
+                <hr class="border-outline-variant/30">
+
+                <!-- Estado -->
+                <section>
+                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Estado</h3>
+                    <div class="flex flex-wrap gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="estado" value="Activo" th:checked="${selectedEstados != null and #lists.contains(selectedEstados, 'Activo')}"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Activo</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="estado" value="Bloqueado" th:checked="${selectedEstados != null and #lists.contains(selectedEstados, 'Bloqueado')}"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Bloqueado</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="estado" value="Pendiente" th:checked="${selectedEstados != null and #lists.contains(selectedEstados, 'Pendiente')}"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Pendiente</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="estado" value="Rechazado" th:checked="${selectedEstados != null and #lists.contains(selectedEstados, 'Rechazado')}"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Rechazado</span>
+                        </label>
+                    </div>
+                </section>
+
+                <div class="pt-6 mt-4 flex justify-end gap-3 border-t border-outline-variant/30">
+                    <button type="submit"
+                        class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary font-bold text-sm hover:bg-[#00210c] transition-colors shadow-sm cursor-pointer">
+                        Aplicar Filtros
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script de Lógica para el Modal -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const openFiltersBtn = document.getElementById('openFiltersModal');
+            const closeFiltersBtn = document.getElementById('closeFiltersModal');
+            const filtersModal = document.getElementById('filtersModal');
+            const modalContent = filtersModal.querySelector('div');
+
+            const openModal = () => {
+                filtersModal.classList.remove('opacity-0', 'pointer-events-none');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            };
+
+            const closeModal = () => {
+                filtersModal.classList.add('opacity-0', 'pointer-events-none');
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-95');
+            };
+
+            openFiltersBtn.addEventListener('click', openModal);
+            closeFiltersBtn.addEventListener('click', closeModal);
+            filtersModal.addEventListener('click', (e) => {
+                if (e.target === filtersModal) closeModal();
+            });
+
+            // Validation
+            const dateStart = document.getElementById('dateStart');
+            const dateEnd = document.getElementById('dateEnd');
+            const filtersForm = document.getElementById('filtersForm');
+            const dateError = document.getElementById('dateError');
+
+            filtersForm.addEventListener('submit', (e) => {
+                if (dateStart.value && dateEnd.value) {
+                    if (new Date(dateStart.value) > new Date(dateEnd.value)) {
+                        e.preventDefault(); // Bloqueamos el envío porque hay error
+                        dateError.classList.remove('hidden');
+                        return;
+                    } else {
+                        dateError.classList.add('hidden');
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

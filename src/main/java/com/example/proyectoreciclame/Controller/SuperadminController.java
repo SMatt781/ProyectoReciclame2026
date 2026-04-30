@@ -54,10 +54,26 @@ public class SuperadminController {
 
     @GetMapping("/dashboard")
     public String showDashboard(Model model) {
-        // Puedes añadir algún dato aquí si quieres
         model.addAttribute("titulo", "Dashboard");
         model.addAttribute("currentSection", "superadmin-dashboard");
-        return "superadmin/dashboard"; // Este es el nombre del archivo HTML de tu vista
+
+        // Métricas reales
+        model.addAttribute("totalAdmins",
+                usuarioRepository.countByRol_IdInAndEliminadoEnIsNull(ROL_ADMIN_IDS));
+        model.addAttribute("activeAdmins",
+                usuarioRepository.countActiveAdminsByRole(ROL_ADMIN_IDS));
+        model.addAttribute("totalDominios",
+                dominioAutorizadoRepository.countByEstadoTrue()); // agregar al repo
+        model.addAttribute("politica",
+                politicaContrasenaRepository.findById(1).orElse(null));
+
+        // Últimos 3 admins (para la tabla reciente)
+        PageRequest ultimos = PageRequest.of(0, 3,
+                Sort.by(Sort.Direction.DESC, "idUsuario"));
+        model.addAttribute("ultimosAdmins",
+                usuarioRepository.findByRol_IdInAndEliminadoEnIsNull(ROL_ADMIN_IDS, ultimos));
+
+        return "superadmin/dashboard";
     }
 
     // Nuevo método para mostrar administradores
@@ -104,6 +120,8 @@ public class SuperadminController {
         model.addAttribute("texto", texto);
         model.addAttribute("listaDominios",
                 dominioAutorizadoRepository.findByEstadoTrue());
+        model.addAttribute("politica",
+                politicaContrasenaRepository.findById(1).orElse(null));
 
         return "superadmin/administradores";
     }
@@ -318,6 +336,32 @@ public class SuperadminController {
         admin.setActualizadoEn(LocalDateTime.now());
         usuarioRepository.save(admin);
 
+        return "redirect:/superadmin/administradores?page=" + page
+                + (texto != null ? "&texto=" + texto : "");
+    }
+
+    // ── Administradores — POST (Eliminar) ────────────────────────────────────────
+
+    @PostMapping("/administradores/eliminar")
+    public String eliminarAdministrador(
+            @RequestParam Long idUsuario,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "texto", required = false) String texto,
+            RedirectAttributes redirectAttributes
+    ) {
+        Usuario admin = usuarioRepository.findById(idUsuario).orElse(null);
+        if (admin == null) {
+            redirectAttributes.addFlashAttribute("error", "Administrador no encontrado.");
+            return "redirect:/superadmin/administradores";
+        }
+
+        // Soft delete — no borramos el registro, solo marcamos eliminadoEn
+        admin.setEliminadoEn(LocalDateTime.now());
+        admin.setActualizadoEn(LocalDateTime.now());
+        usuarioRepository.save(admin);
+
+        redirectAttributes.addFlashAttribute("success",
+                "Administrador eliminado correctamente.");
         return "redirect:/superadmin/administradores?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
     }
@@ -578,6 +622,12 @@ public class SuperadminController {
             RedirectAttributes redirectAttributes,
             org.springframework.security.core.Authentication authentication
     ) {
+        // Verificar si expiracionDias es null
+        if (expiracionDias == null) {
+            redirectAttributes.addFlashAttribute("error", "Debe seleccionar un valor para la expiración de la contraseña.");
+            return "redirect:/superadmin/confSeguridad";
+        }
+
         PoliticaContrasena politica = politicaContrasenaRepository.findById(1)
                 .orElse(new PoliticaContrasena());
 
@@ -599,5 +649,6 @@ public class SuperadminController {
                 "Políticas de contraseña actualizadas correctamente.");
         return "redirect:/superadmin/confSeguridad";
     }
+
 
 }
