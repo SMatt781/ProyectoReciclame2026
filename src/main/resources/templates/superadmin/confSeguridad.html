@@ -277,77 +277,121 @@
                     <p class="text-base text-slate-500 mt-2">Defina los requisitos mínimos de complejidad para todas las cuentas administrativas.</p>
                 </div>
 
-                <div class="space-y-8">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
-                            <span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">REQUERIR<br/>MAYÚSCULAS</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input checked="" class="sr-only toggle-switch peer" type="checkbox"/>
-                                <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors toggle-bg"></div>
-                                <div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full toggle-dot"></div>
-                            </label>
-                        </div>
-                        <div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
-                            <span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">REQUERIR<br/>NÚMEROS</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input checked="" class="sr-only toggle-switch peer" type="checkbox"/>
-                                <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors toggle-bg"></div>
-                                <div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full toggle-dot"></div>
-                            </label>
-                        </div>
-                        <div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
-                            <span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">CARÁCTER<br/>ESPECIAL</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input class="sr-only toggle-switch peer" type="checkbox"/>
-                                <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors toggle-bg"></div>
-                                <div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full toggle-dot"></div>
-                            </label>
-                        </div>
-                        <div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
-                            <span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">MANDATO<br/>MFA</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input checked="" class="sr-only toggle-switch peer" type="checkbox"/>
-                                <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors toggle-bg"></div>
-                                <div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full toggle-dot"></div>
-                            </label>
-                        </div>
-                    </div>
+                <form th:action="@{/superadmin/confSeguridad/politica}" method="post" id="formPolitica">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        <div class="space-y-3">
-                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">LONGITUD MÍNIMA</label>
-                            <input class="w-full bg-[#F2F4F7] border-none rounded-2xl px-6 py-5 text-slate-900 font-semibold focus:ring-2 focus:ring-[#059669]/20" type="number" value="12"/>
-                        </div>
-                        <div class="space-y-3">
-                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">EXPIRACIÓN DE CONTRASEÑA</label>
-                            <div class="relative">
-                                <select class="w-full bg-[#F2F4F7] border-none rounded-2xl px-6 py-5 text-slate-900 font-semibold focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
-                                    <option>Cada 90 días</option>
-                                    <option>Cada 180 días</option>
-                                    <option>Nunca</option>
-                                </select>
-                                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
+                    <div class="space-y-8">
+
+                        <!-- Toggles -->
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+                            <!-- Requerir Mayúsculas -->
+                            <div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
+                                <span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">REQUERIR<br/>MAYÚSCULAS</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="requiereMayuscula" value="true"
+                                           id="toggle-mayuscula"
+                                           th:checked="${politica?.requiereMayuscula}"
+                                           class="sr-only peer toggle-politica"/>
+                                    <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors"></div>
+                                    <div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full"></div>
+                                </label>
+                            </div>
+
+                            <!-- Requerir Números -->
+                            <div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
+                                <span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">REQUERIR<br/>NÚMEROS</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="requiereNumero" value="true"
+                                           id="toggle-numero"
+                                           th:checked="${politica?.requiereNumero}"
+                                           class="sr-only peer toggle-politica"/>
+                                    <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors"></div>
+                                    <div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full"></div>
+                                </label>
+                            </div>
+
+                            <!-- Carácter Especial -->
+                            <div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
+                                <span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">CARÁCTER<br/>ESPECIAL</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="requiereSimbolo" value="true"
+                                           id="toggle-simbolo"
+                                           th:checked="${politica?.requiereSimbolo}"
+                                           class="sr-only peer toggle-politica"/>
+                                    <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors"></div>
+                                    <div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full"></div>
+                                </label>
+                            </div>
+
+                            <!-- Mandato MFA -->
+                            <div class="bg-[#F0F5FF] p-5 rounded-2xl flex items-center justify-between">
+                                <span class="text-[11px] font-bold text-[#45464d] uppercase tracking-wider leading-tight">MANDATO<br/>MFA</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="mandatoMfa" value="true"
+                                           id="toggle-mfa"
+                                           th:checked="${politica?.mandatoMfa}"
+                                           class="sr-only peer toggle-politica"/>
+                                    <div class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-[#059669] transition-colors"></div>
+                                    <div class="absolute left-[2px] top-[2px] bg-white border border-slate-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-full"></div>
+                                </label>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="bg-[#101F33] rounded-[24px] p-10 flex flex-col md:flex-row items-center justify-between gap-10">
-                        <div class="space-y-3">
-                            <div class="flex items-center gap-2 text-[#059669]">
-                                <span class="material-symbols-outlined text-2xl" data-icon="verified_user">verified_user</span>
-                                <span class="text-[11px] font-bold uppercase tracking-widest text-[#56C596]">VISTA PREVIA DE COMPLEJIDAD</span>
+                        <!-- Longitud y Expiración -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                            <div class="space-y-3">
+                                <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">LONGITUD MÍNIMA</label>
+                                <input name="longitudMinima" type="number" min="6" max="32"
+                                       th:value="${politica?.longitudMinima ?: 8}"
+                                       class="w-full bg-[#F2F4F7] border-none rounded-2xl px-6 py-5 text-slate-900 font-semibold focus:ring-2 focus:ring-[#059669]/20"/>
                             </div>
-                            <p class="text-slate-400 text-sm">Una contraseña como esta sería aceptada:</p>
-                            <div class="font-mono font-bold text-white tracking-widest mt-2 text-2xl">C1rcuL@r2024|</div>
+                            <div class="space-y-3">
+                                <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">EXPIRACIÓN DE CONTRASEÑA</label>
+                                <div class="relative">
+                                    <select name="expiracionDias"
+                                            class="w-full bg-[#F2F4F7] border-none rounded-2xl px-6 py-5 pr-12 text-slate-900 font-semibold focus:ring-2 focus:ring-[#059669]/20 cursor-pointer">
+
+                                        <option value="90"  th:selected="${politica?.expiracionDias == 30}">Cada 30 días</option>
+                                        <option value="90"  th:selected="${politica?.expiracionDias == 90}">Cada 90 días</option>
+                                        <option value="180" th:selected="${politica?.expiracionDias == 180}">Cada 180 días</option>
+                                        <option value="365" th:selected="${politica?.expiracionDias == 365}">Cada 365 días</option>
+                                    </select>
+                                    <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-8">
-                            <button class="text-slate-400 font-bold text-sm hover:text-white transition-colors">Descartar</button>
-                            <button class="bg-[#059669] text-white font-bold px-10 py-5 rounded-2xl hover:bg-[#05815a] transition-all active:scale-95 shadow-xl shadow-[#059669]/20">
-                                Aplicar Actualizaciones de Política
+
+                        <!-- Vista previa de complejidad — solo muestra, sin botón -->
+                        <div class="bg-[#101F33] rounded-[24px] p-8 flex items-center gap-6">
+                            <div class="flex items-center gap-3 text-[#059669] shrink-0">
+                                <span class="material-symbols-outlined text-2xl">verified_user</span>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-[#56C596] whitespace-nowrap">
+            CONTRASEÑA DE EJEMPLO
+        </span>
+                            </div>
+                            <div class="h-8 w-px bg-slate-600"></div>
+                            <div class="font-mono font-bold text-white tracking-widest text-xl" id="previsualizacion">
+                            </div>
+                        </div>
+
+                        <!-- Fila de acciones — fuera del bloque azul, bien visible -->
+                        <div class="flex items-center justify-between pt-2">
+                            <button type="button" onclick="descartarCambios()"
+                                    class="flex items-center gap-2 px-5 py-2.5 text-slate-400 hover:text-slate-700 font-semibold text-sm transition-colors rounded-xl hover:bg-slate-100">
+                                <span class="material-symbols-outlined text-[18px]">undo</span>
+                                Descartar cambios
+                            </button>
+
+                            <button type="submit" form="formPolitica"
+                                    class="flex items-center gap-2 bg-[#059669] hover:bg-[#047857] text-white font-bold px-8 py-3 rounded-2xl transition-all active:scale-95 shadow-lg shadow-[#059669]/20">
+                                <span class="material-symbols-outlined text-[20px]">save</span>
+                                Guardar Políticas
                             </button>
                         </div>
+
                     </div>
-                </div>
+                </form>
             </div>
 
 
@@ -503,6 +547,171 @@
         </div>
     </div>
 </div>
+
+<!-- ══════════════════════════════════════════════
+     MODAL — Confirmar cambio de toggle
+     ══════════════════════════════════════════════ -->
+<div id="modalConfirmToggle"
+     class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[70] items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full mx-4 border border-slate-100 overflow-hidden">
+
+        <div class="px-8 pt-8 pb-6 text-center">
+            <div id="iconToggleContainer"
+                 class="mx-auto flex items-center justify-center h-14 w-14 rounded-full mb-4">
+                <span id="iconToggle" class="material-symbols-outlined text-3xl"></span>
+            </div>
+            <h3 id="titleToggle" class="text-xl font-black text-slate-900 tracking-tight"></h3>
+            <p id="msgToggle" class="text-sm text-slate-500 mt-2"></p>
+        </div>
+
+        <div class="px-8 pb-8 flex gap-3">
+            <button type="button" id="btnCancelarToggle"
+                    class="flex-1 px-4 py-2.5 font-bold text-slate-500 hover:bg-slate-50 rounded-xl border border-slate-200">
+                Cancelar
+            </button>
+            <button type="button" id="btnConfirmarToggle"
+                    class="flex-1 px-4 py-2.5 rounded-xl font-bold text-white">
+                Confirmar
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ── Nombres legibles de cada toggle ───────────────────────────────────────
+    const toggleLabels = {
+        'toggle-mayuscula': 'Requerir Mayúsculas',
+        'toggle-numero':    'Requerir Números',
+        'toggle-simbolo':   'Carácter Especial',
+        'toggle-mfa':       'Mandato MFA'
+    };
+
+    let togglePendiente = null; // guarda el checkbox mientras el usuario confirma
+
+    // ── Interceptar cada toggle ───────────────────────────────────────────────
+    document.querySelectorAll('.toggle-politica').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function(e) {
+            e.preventDefault();
+
+            // Revertir visualmente mientras se espera confirmación
+            checkbox.checked = !checkbox.checked;
+            togglePendiente = checkbox;
+
+            const nuevoEstado = !checkbox.checked; // el estado que se quiere aplicar
+            const label = toggleLabels[checkbox.id] || 'esta opción';
+
+            const title    = document.getElementById('titleToggle');
+            const msg      = document.getElementById('msgToggle');
+            const btnConf  = document.getElementById('btnConfirmarToggle');
+            const iconCont = document.getElementById('iconToggleContainer');
+            const icon     = document.getElementById('iconToggle');
+
+            if (nuevoEstado) {
+                title.innerText    = 'Activar ' + label;
+                msg.innerText      = '¿Deseas activar "' + label + '"? Este cambio afectará las políticas de seguridad.';
+                btnConf.className  = 'flex-1 px-4 py-2.5 rounded-xl font-bold text-white bg-emerald-500 hover:bg-emerald-600';
+                iconCont.className = 'mx-auto flex items-center justify-center h-14 w-14 rounded-full mb-4 bg-emerald-100 text-emerald-600';
+                icon.innerText     = 'check_circle';
+            } else {
+                title.innerText    = 'Desactivar ' + label;
+                msg.innerText      = '¿Deseas desactivar "' + label + '"? Este cambio afectará las políticas de seguridad.';
+                btnConf.className  = 'flex-1 px-4 py-2.5 rounded-xl font-bold text-white bg-red-500 hover:bg-red-600';
+                iconCont.className = 'mx-auto flex items-center justify-center h-14 w-14 rounded-full mb-4 bg-red-100 text-red-600';
+                icon.innerText     = 'block';
+            }
+
+            const modal = document.getElementById('modalConfirmToggle');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        });
+    });
+
+    // ── Confirmar → aplicar el cambio ─────────────────────────────────────────
+    document.getElementById('btnConfirmarToggle').addEventListener('click', function() {
+        if (togglePendiente) {
+            togglePendiente.checked = !togglePendiente.checked; // aplicar
+            togglePendiente = null;
+        }
+        cerrarModalToggle();
+    });
+
+    // ── Cancelar → dejar el toggle como estaba ────────────────────────────────
+    document.getElementById('btnCancelarToggle').addEventListener('click', function() {
+        togglePendiente = null; // ya estaba revertido visualmente
+        cerrarModalToggle();
+    });
+
+    function cerrarModalToggle() {
+        const modal = document.getElementById('modalConfirmToggle');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    // ── Descartar cambios → recargar la página ────────────────────────────────
+    function descartarCambios() {
+        if (confirm('¿Deseas descartar todos los cambios no guardados?')) {
+            window.location.reload();
+        }
+    }
+
+    // ── Cerrar modal al hacer clic fuera ──────────────────────────────────────
+    document.getElementById('modalConfirmToggle').addEventListener('click', function(e) {
+        if (e.target === this) {
+            togglePendiente = null;
+            cerrarModalToggle();
+        }
+    });
+
+    // ── Contraseña de ejemplo dinámica ────────────────────────────────────────────
+    const BANCO_MINUSCULAS = 'abcdefghjkmnpqrstuvwxyz';
+    const BANCO_MAYUSCULAS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const BANCO_NUMEROS    = '23456789';
+    const BANCO_SIMBOLOS   = '@#$!|*';
+
+    function generarContrasenaEjemplo() {
+        const mayuscula = document.getElementById('toggle-mayuscula').checked;
+        const numero    = document.getElementById('toggle-numero').checked;
+        const simbolo   = document.getElementById('toggle-simbolo').checked;
+        const longitud  = parseInt(document.querySelector('input[name="longitudMinima"]').value) || 8;
+
+        // Construir pool de caracteres según reglas activas
+        let pool = BANCO_MINUSCULAS;
+        let obligatorios = [];
+
+        if (mayuscula) {
+            pool += BANCO_MAYUSCULAS;
+            obligatorios.push(BANCO_MAYUSCULAS[Math.floor(Math.random() * BANCO_MAYUSCULAS.length)]);
+        }
+        if (numero) {
+            pool += BANCO_NUMEROS;
+            obligatorios.push(BANCO_NUMEROS[Math.floor(Math.random() * BANCO_NUMEROS.length)]);
+        }
+        if (simbolo) {
+            pool += BANCO_SIMBOLOS;
+            obligatorios.push(BANCO_SIMBOLOS[Math.floor(Math.random() * BANCO_SIMBOLOS.length)]);
+        }
+
+        // Rellenar hasta la longitud mínima
+        let resultado = [...obligatorios];
+        while (resultado.length < longitud) {
+            resultado.push(pool[Math.floor(Math.random() * pool.length)]);
+        }
+
+        // Mezclar para que los obligatorios no siempre estén al inicio
+        resultado = resultado.sort(() => Math.random() - 0.5);
+
+        document.getElementById('previsualizacion').textContent = resultado.join('');
+    }
+
+    // Regenerar cuando cambia cualquier toggle o el número de longitud
+    document.querySelectorAll('.toggle-politica').forEach(cb => {
+        cb.addEventListener('change', () => setTimeout(generarContrasenaEjemplo, 50));
+    });
+    document.querySelector('input[name="longitudMinima"]').addEventListener('input', generarContrasenaEjemplo);
+
+    // Generar al cargar la página
+    generarContrasenaEjemplo();
+</script>
 
 <script>
     // Cerrar modales al hacer clic fuera
