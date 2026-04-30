@@ -1,7 +1,10 @@
 package com.example.proyectoreciclame.Controller;
 
 import com.example.proyectoreciclame.Entity.Estudio;
+import com.example.proyectoreciclame.Entity.Normativa;
 import com.example.proyectoreciclame.Repository.EstudioRepository;
+import com.example.proyectoreciclame.Repository.NormativaRepository;
+import com.example.proyectoreciclame.Repository.CategoriaRepository;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -157,15 +161,151 @@ public class AdminEstudiosController {
     }
 
     @GetMapping("/admin/normativas")
-    public String normativasAdmin(Model model) {
-        return "redirect:/normativas";
-    }
-    
-    @PostMapping("/admin/repo_new")
-    public String guardarNormativa() {
-        // guardar en BD aquí
 
-        return "redirect:/normativas";
+    public String normativasAdmin(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false, name = "yearSelect") Integer anio,
+            @RequestParam(required = false, name = "dateStart") String dateStartStr,
+            @RequestParam(required = false, name = "dateEnd") String dateEndStr,
+            @RequestParam(required = false) java.util.List<String> categoria,
+            @RequestParam(required = false) java.util.List<String> estado,
+            @RequestParam(required = false) java.util.List<String> acceso,
+            @RequestParam(required = false) java.util.List<String> alcance,
+            @RequestParam(required = false) java.util.List<String> obligatoriedad,
+            Model model
+    ) {
+        java.time.LocalDateTime fechaInicio = (dateStartStr != null && !dateStartStr.isBlank())
+                ? java.time.LocalDate.parse(dateStartStr).atStartOfDay()
+                : null;
+
+        java.time.LocalDateTime fechaFin = (dateEndStr != null && !dateEndStr.isBlank())
+                ? java.time.LocalDate.parse(dateEndStr).atTime(23, 59, 59)
+                : null;
+
+        boolean hasCategoria = categoria != null && !categoria.isEmpty();
+        boolean hasEstado = estado != null && !estado.isEmpty();
+        boolean hasAcceso = acceso != null && !acceso.isEmpty();
+        boolean hasAlcance = alcance != null && !alcance.isEmpty();
+        boolean hasObligatoriedad = obligatoriedad != null && !obligatoriedad.isEmpty();
+
+        model.addAttribute("currentPage", "repoNormativo");
+        model.addAttribute("currentSection", "admin-normativas");
+
+        if (search != null && !search.isBlank()) {
+            model.addAttribute("normativas", normativaRepository.findByKeyword(search));
+        } else {
+            model.addAttribute("normativas", normativaRepository.findWithAdvancedFilters(
+                    anio != null, anio,
+                    fechaInicio,
+                    fechaFin,
+                    hasEstado, hasEstado ? estado : java.util.List.of(),
+                    hasAcceso, hasAcceso ? acceso : java.util.List.of(),
+                    hasAlcance, hasAlcance ? alcance : java.util.List.of(),
+                    hasObligatoriedad, hasObligatoriedad ? obligatoriedad : java.util.List.of(),
+                    hasCategoria, hasCategoria ? categoria : java.util.List.of()
+            ));
+        }
+
+        model.addAttribute("searchQuery", search);
+        model.addAttribute("selectedYear", anio);
+        model.addAttribute("dateStart", dateStartStr);
+        model.addAttribute("dateEnd", dateEndStr);
+        model.addAttribute("selectedCategorias", categoria);
+        model.addAttribute("selectedEstados", estado);
+        model.addAttribute("selectedAccesos", acceso);
+        model.addAttribute("selectedAlcances", alcance);
+        model.addAttribute("selectedObligatoriedades", obligatoriedad);
+
+        return "admin/repo_main_admin";
+    }
+
+    @PostMapping("/admin/repo_new")
+    public String guardarNormativa(
+            @RequestParam(value = "titulo", required = false) String titulo,
+            @RequestParam(value = "organismoEmisor", required = false) String organismoEmisor,
+            @RequestParam(value = "codigo", required = false) String codigo,
+            @RequestParam(value = "anio", required = false) Integer anio,
+            @RequestParam(value = "tipoNorma", required = false) String tipoNorma,
+            @RequestParam(value = "estado", required = false) String estado,
+            @RequestParam(value = "archivo", required = false) org.springframework.web.multipart.MultipartFile archivo,
+            @RequestParam(value = "enlace", required = false) String enlace,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes attr
+    ) {
+        try {
+            if (titulo == null || titulo.isBlank()) {
+                throw new RuntimeException("Debe ingresar el nombre de la normativa");
+            }
+
+            if (organismoEmisor == null || organismoEmisor.isBlank()) {
+                throw new RuntimeException("Debe ingresar el organismo emisor");
+            }
+
+            if (anio == null) {
+                anio = java.time.LocalDate.now().getYear();
+            }
+
+            com.example.proyectoreciclame.Entity.Normativa n =
+                    new com.example.proyectoreciclame.Entity.Normativa();
+
+            n.setTitulo(titulo);
+            n.setOrganismoEmisor(organismoEmisor);
+            n.setCodigo(codigo);
+            n.setAnio(anio);
+
+            n.setTipoNorma(com.example.proyectoreciclame.Entity.Normativa.TipoNorma.valueOf(
+                    tipoNorma != null && !tipoNorma.isBlank() ? tipoNorma : "DECRETO_LEY"
+            ));
+
+            n.setEstado(com.example.proyectoreciclame.Entity.Normativa.EstadoNormativa.valueOf(
+                    estado != null && !estado.isBlank() ? estado : "VIGENTE"
+            ));
+
+            n.setAcceso(com.example.proyectoreciclame.Entity.Normativa.AccesoNormativa.GRATIS);
+            n.setAlcance(com.example.proyectoreciclame.Entity.Normativa.AlcanceNormativa.NACIONAL);
+            n.setObligatoriedad("Legal Vinculante");
+
+            com.example.proyectoreciclame.Entity.Usuario usuario =
+                    usuarioRepository.findById(1L)
+                            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            n.setUsuarioCreador(usuario);
+
+            if (archivo != null && !archivo.isEmpty()) {
+                String nombreOriginal = archivo.getOriginalFilename();
+                String nombreArchivo = System.currentTimeMillis() + "_" + nombreOriginal;
+
+                String ruta = "src/main/resources/static/uploads/normativas/";
+
+                java.io.File carpeta = new java.io.File(ruta);
+                if (!carpeta.exists()) carpeta.mkdirs();
+
+                java.io.File destino = new java.io.File(ruta + nombreArchivo);
+                archivo.transferTo(destino);
+
+                n.setArchivoNombre(nombreArchivo);
+                n.setArchivoUrl("/uploads/normativas/" + nombreArchivo);
+            }
+
+            if (enlace != null && !enlace.isBlank()) {
+                n.setEnlaceExterno(enlace);
+            }
+
+            java.time.LocalDateTime ahora = java.time.LocalDateTime.now();
+            n.setFechaCreacion(ahora);
+            n.setFechaActualizacion(ahora);
+
+            normativaRepository.save(n);
+
+            attr.addFlashAttribute("msg", "Normativa creada correctamente");
+
+        } catch (Exception e) {
+            attr.addFlashAttribute("msgError", "Error: " + e.getMessage());
+        }
+        System.out.println("GUARDANDO NORMATIVA...");
+        System.out.println("titulo = " + titulo);
+        return "redirect:/admin/normativas";
+
+
     }
     @GetMapping("/admin/estudios/exportar")
     public org.springframework.http.ResponseEntity<byte[]> exportarEstudios() throws java.io.IOException {
@@ -234,5 +374,70 @@ public class AdminEstudiosController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
     }
+    @Autowired
+    private com.example.proyectoreciclame.Repository.NormativaRepository normativaRepository;
+
+    @Autowired
+    private com.example.proyectoreciclame.Repository.CategoriaRepository categoriaRepository;
+
+    @GetMapping("/admin/normativas/{id}")
+    public String verNormativa(@PathVariable Long id, Model model) {
+        Normativa normativa = normativaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Normativa no encontrada"));
+
+        model.addAttribute("normativa", normativa);
+        model.addAttribute("currentSection", "admin-normativas");
+
+        return "admin/repo_main_admin";
+    }
+    @GetMapping("/admin/normativas/{id}/eliminar")
+    public String eliminarNormativa(@PathVariable Long id,
+                                    RedirectAttributes attr) {
+        normativaRepository.deleteById(id);
+        attr.addFlashAttribute("msg", "Normativa eliminada correctamente");
+        return "redirect:/admin/normativas";
+    }
+
+    @GetMapping("/admin/normativas/{id}/editar")
+    public String editarNormativa(@PathVariable Long id, Model model) {
+        Normativa normativa = normativaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Normativa no encontrada"));
+
+        model.addAttribute("normativaEdit", normativa);
+        model.addAttribute("normativas", normativaRepository.findAllNormativas());
+        model.addAttribute("currentPage", "repoNormativo");
+        model.addAttribute("currentSection", "admin-normativas");
+
+        return "admin/repo_main_admin";
+    }
+    @PostMapping("/admin/normativas/{id}/actualizar")
+    public String actualizarNormativa(
+            @PathVariable Long id,
+            @RequestParam String titulo,
+            @RequestParam String organismoEmisor,
+            @RequestParam String codigo,
+            @RequestParam Integer anio,
+            @RequestParam String tipoNorma,
+            @RequestParam String estado,
+            RedirectAttributes attr
+    ) {
+        Normativa n = normativaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Normativa no encontrada"));
+
+        n.setTitulo(titulo);
+        n.setOrganismoEmisor(organismoEmisor);
+        n.setCodigo(codigo);
+        n.setAnio(anio);
+        n.setTipoNorma(Normativa.TipoNorma.valueOf(tipoNorma));
+        n.setEstado(Normativa.EstadoNormativa.valueOf(estado));
+        n.setFechaActualizacion(java.time.LocalDateTime.now());
+
+        normativaRepository.save(n);
+
+        attr.addFlashAttribute("msg", "Normativa actualizada correctamente");
+        return "redirect:/admin/normativas";
+    }
+
+
 
 }

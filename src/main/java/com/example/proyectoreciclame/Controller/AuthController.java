@@ -10,6 +10,7 @@ import com.example.proyectoreciclame.Repository.RolRepository;
 import com.example.proyectoreciclame.Repository.SolicitudRegistroRepository;
 import com.example.proyectoreciclame.Repository.UsuarioEmpresaRepository;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
+import com.example.proyectoreciclame.Service.CorreoService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,17 +32,20 @@ public class AuthController {
     private final UsuarioEmpresaRepository usuarioEmpresaRepository;
     private final SolicitudRegistroRepository solicitudRegistroRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final CorreoService correoService;
 
     public AuthController(UsuarioRepository usuarioRepository,
                           RolRepository rolRepository,
                           UsuarioEmpresaRepository usuarioEmpresaRepository,
                           SolicitudRegistroRepository solicitudRegistroRepository,
-                          BCryptPasswordEncoder passwordEncoder) {
+                          BCryptPasswordEncoder passwordEncoder,
+                          CorreoService correoService) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.usuarioEmpresaRepository = usuarioEmpresaRepository;
         this.solicitudRegistroRepository = solicitudRegistroRepository;
         this.passwordEncoder = passwordEncoder;
+        this.correoService = correoService;
     }
 
     @GetMapping("/login")
@@ -131,6 +135,12 @@ public class AuthController {
 
         solicitudRegistroRepository.save(solicitud);
 
+        correoService.enviarConfirmacionRegistro(
+                usuario.getCorreo(),
+                usuario.getNombres(),
+                "SOCIO"
+        );
+
         return "redirect:/solicitud-enviada";
     }
 
@@ -188,6 +198,12 @@ public class AuthController {
         solicitud.setFechaResolucion(null);
 
         solicitudRegistroRepository.save(solicitud);
+
+        correoService.enviarConfirmacionRegistro(
+                usuario.getCorreo(),
+                usuario.getNombres(),
+                "VISUALIZADOR"
+        );
 
         return "redirect:/solicitud-enviada";
     }
