@@ -19,18 +19,21 @@ import com.example.proyectoreciclame.Entity.Usuario;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
 
 import java.util.Optional;
-
+import com.example.proyectoreciclame.Service.CorreoService;
 @Controller
 @RequestMapping("/admin/usuarios/solicitudes")
 public class AdminSolicitudController {
 
     private final SolicitudRegistroRepository solicitudRegistroRepository;
     private final UsuarioRepository usuarioRepository;
+    private final CorreoService correoService;
 
     public AdminSolicitudController(SolicitudRegistroRepository solicitudRegistroRepository,
-                                    UsuarioRepository usuarioRepository) {
+                                    UsuarioRepository usuarioRepository,
+                                    CorreoService correoService) {
         this.solicitudRegistroRepository = solicitudRegistroRepository;
         this.usuarioRepository = usuarioRepository;
+        this.correoService = correoService;
     }
 
     @GetMapping
@@ -119,6 +122,11 @@ public class AdminSolicitudController {
                 solicitud.setFechaResolucion(LocalDateTime.now());
                 solicitudRegistroRepository.save(solicitud);
             }
+
+            correoService.enviarRegistroAprobado(
+                    usuario.getCorreo(),
+                    usuario.getNombres()
+            );
         }
 
         return "redirect:/admin/usuarios/solicitudes";
@@ -143,6 +151,12 @@ public class AdminSolicitudController {
                 solicitud.setFechaResolucion(LocalDateTime.now());
                 solicitudRegistroRepository.save(solicitud);
             }
+
+            correoService.enviarRegistroDenegado(
+                    usuario.getCorreo(),
+                    usuario.getNombres(),
+                    motivo
+            );
         }
 
         return "redirect:/admin/usuarios/solicitudes";

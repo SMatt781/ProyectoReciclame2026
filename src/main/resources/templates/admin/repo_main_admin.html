@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html class="light" lang="es">
+
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -58,7 +59,10 @@
                         "primary-fixed": "#cde5ff",
                         "secondary-fixed-dim": "#4ae183",
                         "primary-fixed-dim": "#b1c9e2",
-                        "back-tabla-normativas": "#e2e8f8"
+                        "back-tabla-normativas": "#e2e8f8",
+                        "de-pago": "#b45309",
+                        "gratuito": "#047857"
+
                     },
                     borderRadius: {
                         DEFAULT: "0.25rem",
@@ -86,560 +90,914 @@
             box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
         }
 
-        .icon-sm { width: 1.25rem; height: 1.25rem; }
-        .icon-md { width: 1.5rem; height: 1.5rem; }
-        .icon-lg { width: 2rem; height: 2rem; }
-        .icon-xl { width: 2.5rem; height: 2.5rem; }
+        /* SVG Icon utility */
+        .icon-sm {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
 
-        summary::-webkit-details-marker {
-            display: none;
+        .icon-md {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .icon-lg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .icon-xl {
+            width: 2.5rem;
+            height: 2.5rem;
         }
     </style>
 </head>
 
-<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
-
+<body
+        class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
 <!-- SideNavBar -->
-<aside class="hidden md:flex flex-col h-full w-72 p-6 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50">
-    <div class="flex items-center gap-3 mb-10 pl-2">
-        <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
-            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M7 19c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-8h4V9h-4V7c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H3v2h4v8zm2-8h6V7H9v4z"/>
-            </svg>
-        </div>
-        <div class="flex flex-col">
-            <h1 class="text-[#001B2E] dark:text-white font-black text-xl font-headline tracking-tight">Reciclame</h1>
-            <span class="text-xs text-on-surface-variant font-medium">Economía Circular</span>
-        </div>
-    </div>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
-    <nav class="flex-1 space-y-2">
-        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/dashboard}">
-            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-            </svg>
-            Dashboard
-        </a>
-
-        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/usuarios/gestion}">
-            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.98 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-            </svg>
-            Usuarios
-        </a>
-
-        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/estudios}">
-            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-            </svg>
-            Estudios
-        </a>
-
-        <a class="bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 font-headline font-bold text-sm tracking-tight scale-95 active:scale-100 transition-transform" th:href="@{/admin/normativas}">
-            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M3 13h2v8H3zm4-8h2v16H7zm4-2h2v18h-2zm4 4h2v14h-2zm4-2h2v16h-2z"/>
-            </svg>
-            Repositorio Normativo
-        </a>
-
-
-      <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/registros/actividad}">
-        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/>
-        </svg>
-        Registros de actividad
-      </a>
-
-      <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" th:href="@{/admin/registros/descargas}">
-        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M21 5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5zm-2 0l-6.5 4L5 5h14zm0 13H5V7l6.5 4L19 7v11z"/>
-        </svg>
-        Registros de descarga
-      </a>
-
-    </nav>
-
-    <button type="button"
-            onclick="document.getElementById('modalNuevaNormativa').classList.remove('hidden')"
-            class="w-full bg-primary-container text-on-primary font-label font-bold text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-fixed-variant transition-colors ambient-shadow">
-        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-        </svg>
-        Añadir Normativa
-    </button>
-
-    <div class="pt-4 space-y-2 relative before:absolute before:top-0 before:left-4 before:right-4 before:h-px before:bg-surface-variant">
-        <a class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0]" href="#">
-            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.62l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.09-.47 0-.59.22L2.74 8.87c-.12.21-.08.48.1.62l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.62l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.04.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.09.47 0 .59-.22l1.92-3.32c.12-.22.07-.48-.1-.62l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
-            </svg>
-            Configuración
-        </a>
-
-        <form th:action="@{/logout}" method="post">
-            <button type="submit"
-                    class="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 font-headline font-bold text-sm tracking-tight hover:bg-[#eceef0] w-full text-left">
-                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
-                </svg>
-                Cerrar Sesión
-            </button>
-        </form>
-    </div>
-</aside>
-
+<!-- Main Content Canvas -->
 <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
-
+    <!-- TopAppBar -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
+    <!-- Main Scrollable Content -->
     <main class="flex-1 overflow-y-auto px-8 py-3">
         <div class="w-full">
-
-            <!-- Header -->
+            <!-- Page Header -->
             <div class="mb-5">
                 <div>
-                    <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
-                        Repositorio Normativo Nacional
-                    </h2>
-                    <p class="font-body text-on-surface-variant text-base mt-2 max-w-3xl leading-relaxed">
-                        Acceda a la base de datos centralizada de marcos legales, reglamentos técnicos y proyectos en consulta sobre economía circular y gestión de residuos.
+                    <h2
+                            class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                        Repositorio Normativo </h2>
+                    <p class="font-body text-on-surface-variant text-base mt-2">
+                        Acceda a la base de datos centralizada de marcos legales, reglamentos técnicos y proyectos
+                        en consulta sobre economía circular y gestión de residuos.
                     </p>
                 </div>
+
             </div>
 
-            <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
+            <!-- STATS SECTION -->
+            <div class="flex flex-col xl:flex-row gap-8 mb-12 bg-white rounded-xl p-6 w-full shadow-sm border border-outline-variant/30">
 
-                <!-- Stats -->
-                <div class="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 mb-8">
-                    <section class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border">
-                        <h3 class="font-headline text-lg font-bold text-on-primary-fixed mb-6">
-                            Distribución por temática
-                        </h3>
+                <!-- LEFT: Donut Chart & Legend -->
+                <div class="flex-1 flex flex-col min-w-0 xl:min-w-[400px]">
+                    <h3 class="text-lg font-bold text-[#1a1a1a] mb-6">Distribución por temática</h3>
+                    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-8">
+                        <!-- Donut Chart -->
+                        <div class="flex flex-col items-center shrink-0">
+                            <!-- SVG Donut Chart -->
+                            <svg viewBox="0 0 120 120" class="w-32 h-32">
+                                <!-- Center circle (white) -->
+                                <circle cx="60" cy="60" r="35" fill="white" />
+                                <!-- Donut segments -->
+                                <circle cx="60" cy="60" r="45" fill="none" stroke="#006c46" stroke-width="18"
+                                        th:attr="stroke-dasharray=${dashEc}, transform=${'rotate(' + startEc + ' 60 60)'}" />
+                                <circle cx="60" cy="60" r="45" fill="none" stroke="#3b82f6" stroke-width="18"
+                                        th:attr="stroke-dasharray=${dashGr}, transform=${'rotate(' + startGr + ' 60 60)'}" />
+                                <circle cx="60" cy="60" r="45" fill="none" stroke="#f49e0b" stroke-width="18"
+                                        th:attr="stroke-dasharray=${dashEe}, transform=${'rotate(' + startEe + ' 60 60)'}" />
+                                <circle cx="60" cy="60" r="45" fill="none" stroke="#ba1a1a" stroke-width="18"
+                                        th:attr="stroke-dasharray=${dashRep}, transform=${'rotate(' + startRep + ' 60 60)'}" />
+                                <circle cx="60" cy="60" r="45" fill="none" stroke="#888780" stroke-width="18"
+                                        th:attr="stroke-dasharray=${dashOtro}, transform=${'rotate(' + startOtro + ' 60 60)'}" />
+                            </svg>
+                            <p class="text-4xl font-bold text-[#1a1a1a] mt-4" th:text="${totalNormas}">142</p>
+                            <p class="text-xs text-[#999] uppercase tracking-wider">NORMAS</p>
+                        </div>
 
-                        <div class="flex flex-col md:flex-row items-center justify-around gap-8">
-                            <div class="relative h-40 w-40 shrink-0">
-                                <svg viewBox="0 0 120 120" class="w-full h-full">
-                                    <circle cx="60" cy="60" r="35" fill="white"/>
-                                    <circle cx="60" cy="60" r="45" fill="none" stroke="#006c46" stroke-width="18" stroke-dasharray="70.7 282.7" transform="rotate(0 60 60)"/>
-                                    <circle cx="60" cy="60" r="45" fill="none" stroke="#f49e0b" stroke-width="18" stroke-dasharray="52.9 282.7" transform="rotate(89 60 60)"/>
-                                    <circle cx="60" cy="60" r="45" fill="none" stroke="#ba1a1a" stroke-width="18" stroke-dasharray="46.8 282.7" transform="rotate(156 60 60)"/>
-                                    <circle cx="60" cy="60" r="45" fill="none" stroke="#3b82f6" stroke-width="18" stroke-dasharray="111.5 282.7" transform="rotate(222 60 60)"/>
-                                </svg>
-                                <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                                    <span class="text-2xl font-black text-on-primary-fixed">142</span>
-                                    <span class="text-[0.65rem] font-bold uppercase tracking-tighter text-on-surface-variant">NORMAS</span>
+                        <!-- Legend -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 w-full">
+                            <!-- Economía Circular -->
+                            <div class="flex flex-col gap-1">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-3 h-3 rounded-full bg-[#006c46]"></div>
+                                    <span class="text-sm font-medium text-[#666]">Economía circular (EC)</span>
+                                </div>
+                                <div class="flex items-baseline gap-3 pl-6">
+                                    <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countEc}">57</span>
+                                    <span class="text-xs text-[#999]" th:text="${#numbers.formatDecimal(pctEc, 0, 0)} + '%'">40%</span>
                                 </div>
                             </div>
 
-                            <div class="grid w-full md:w-auto gap-4">
+                            <!-- Gesti. Residuos -->
+                            <div class="flex flex-col gap-1">
                                 <div class="flex items-center gap-3">
-                                    <div class="h-3 w-3 rounded-full bg-[#006c46]"></div>
-                                    <span class="flex-grow text-sm font-bold text-on-surface-variant">Economía circular (EC)</span>
-                                    <span class="text-sm font-black text-on-primary-fixed">57</span>
+                                    <div class="w-3 h-3 rounded-full bg-[#3b82f6]"></div>
+                                    <span class="text-sm font-medium text-[#666]">Gesti. Residuos (GR)</span>
                                 </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="h-3 w-3 rounded-full bg-[#3b82f6]"></div>
-                                    <span class="flex-grow text-sm font-bold text-on-surface-variant">Gesti. Residuos (GR)</span>
-                                    <span class="text-sm font-black text-on-primary-fixed">35</span>
+                                <div class="flex items-baseline gap-3 pl-6">
+                                    <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countGr}">35</span>
+                                    <span class="text-xs text-[#999]" th:text="${#numbers.formatDecimal(pctGr, 0, 0)} + '%'">25%</span>
                                 </div>
+                            </div>
+
+                            <!-- Envases y Embalajes -->
+                            <div class="flex flex-col gap-1">
                                 <div class="flex items-center gap-3">
-                                    <div class="h-3 w-3 rounded-full bg-[#f49e0b]"></div>
-                                    <span class="flex-grow text-sm font-bold text-on-surface-variant">Eficien. Energé. (EE)</span>
-                                    <span class="text-sm font-black text-on-primary-fixed">21</span>
+                                    <div class="w-3 h-3 rounded-full bg-[#f49e0b]"></div>
+                                    <span class="text-sm font-medium text-[#666]">Envases y Embalajes (EE)</span>
                                 </div>
+                                <div class="flex items-baseline gap-3 pl-6">
+                                    <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countEe}">21</span>
+                                    <span class="text-xs text-[#999]" th:text="${#numbers.formatDecimal(pctEe, 0, 0)} + '%'">15%</span>
+                                </div>
+                            </div>
+
+                            <!-- Ley REP -->
+                            <div class="flex flex-col gap-1">
                                 <div class="flex items-center gap-3">
-                                    <div class="h-3 w-3 rounded-full bg-[#ba1a1a]"></div>
-                                    <span class="flex-grow text-sm font-bold text-on-surface-variant">Ley REP</span>
-                                    <span class="text-sm font-black text-on-primary-fixed">17</span>
+                                    <div class="w-3 h-3 rounded-full bg-[#ba1a1a]"></div>
+                                    <span class="text-sm font-medium text-[#666]">Ley REP</span>
+                                </div>
+                                <div class="flex items-baseline gap-3 pl-6">
+                                    <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countRep}">17</span>
+                                    <span class="text-xs text-[#999]" th:text="${#numbers.formatDecimal(pctRep, 0, 0)} + '%'">12%</span>
+                                </div>
+                            </div>
+
+                            <!-- Otro -->
+                            <div class="flex flex-col gap-1">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-3 h-3 rounded-full bg-[#888780]"></div>
+                                    <span class="text-sm font-medium text-[#666]">Otro</span>
+                                </div>
+                                <div class="flex items-baseline gap-3 pl-6">
+                                    <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countOtro}">0</span>
+                                    <span class="text-xs text-[#999]" th:text="${#numbers.formatDecimal(pctOtro, 0, 0)} + '%'">0%</span>
                                 </div>
                             </div>
                         </div>
-                    </section>
+                    </div>
                 </div>
 
-                <!-- Search + actions -->
-                <div class="flex flex-col xl:flex-row gap-4 mb-6 w-full">
+                <!-- Divider -->
+                <div class="hidden xl:block w-px bg-outline-variant/30"></div>
+                <div class="block xl:hidden h-px w-full bg-outline-variant/30"></div>
+
+                <!-- RIGHT: Stacked Bar Charts -->
+                <div class="flex-1 flex flex-col gap-8 min-w-0 xl:min-w-[400px]">
+                    <!-- Chart 1: Nacional vs Internacional by estado -->
+                    <div>
+                        <h3 class="text-lg font-bold text-[#1a1a1a] mb-4">Estado por alcance</h3>
+                        <div class="space-y-4">
+                            <!-- Row: Nacional -->
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                                <div class="w-32 text-sm font-bold text-[#666] shrink-0">NACIONAL</div>
+                                <div class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
+                                    <div th:if="${nacVigente != null and nacVigente > 0}"
+                                         th:style="'width: ' + (${nacVigente} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
+                                         class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Vigente">
+                                        <span th:text="${nacVigente}"></span>
+                                    </div>
+                                    <div th:if="${nacPublicada != null and nacPublicada > 0}"
+                                         th:style="'width: ' + (${nacPublicada} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
+                                         class="bg-[#EF9F27] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Publicada">
+                                        <span th:text="${nacPublicada}"></span>
+                                    </div>
+                                    <div th:if="${nacConsulta != null and nacConsulta > 0}"
+                                         th:style="'width: ' + (${nacConsulta} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
+                                         class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Consulta Pública">
+                                        <span th:text="${nacConsulta}"></span>
+                                    </div>
+                                    <div th:if="${nacBorrador != null and nacBorrador > 0}"
+                                         th:style="'width: ' + (${nacBorrador} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
+                                         class="bg-[#888780] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Borrador en Proceso">
+                                        <span th:text="${nacBorrador}"></span>
+                                    </div>
+                                    <div th:if="${nacDerogada != null and nacDerogada > 0}"
+                                         th:style="'width: ' + (${nacDerogada} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
+                                         class="bg-[#E24B4A] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Derogada">
+                                        <span th:text="${nacDerogada}"></span>
+                                    </div>
+                                </div>
+                                <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0" th:text="${nacTotal ?: 0}">0</div>
+                            </div>
+
+                            <!-- Row: Internacional -->
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                                <div class="w-32 text-sm font-bold text-[#666] shrink-0">INTERNACIONAL</div>
+                                <div class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
+                                    <div th:if="${intVigente != null and intVigente > 0}"
+                                         th:style="'width: ' + (${intVigente} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
+                                         class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Vigente">
+                                        <span th:text="${intVigente}"></span>
+                                    </div>
+                                    <div th:if="${intPublicada != null and intPublicada > 0}"
+                                         th:style="'width: ' + (${intPublicada} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
+                                         class="bg-[#EF9F27] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Publicada">
+                                        <span th:text="${intPublicada}"></span>
+                                    </div>
+                                    <div th:if="${intConsulta != null and intConsulta > 0}"
+                                         th:style="'width: ' + (${intConsulta} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
+                                         class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Consulta Pública">
+                                        <span th:text="${intConsulta}"></span>
+                                    </div>
+                                    <div th:if="${intBorrador != null and intBorrador > 0}"
+                                         th:style="'width: ' + (${intBorrador} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
+                                         class="bg-[#888780] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Borrador en Proceso">
+                                        <span th:text="${intBorrador}"></span>
+                                    </div>
+                                    <div th:if="${intDerogada != null and intDerogada > 0}"
+                                         th:style="'width: ' + (${intDerogada} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
+                                         class="bg-[#E24B4A] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Derogada">
+                                        <span th:text="${intDerogada}"></span>
+                                    </div>
+                                </div>
+                                <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0" th:text="${intTotal ?: 0}">0</div>
+                            </div>
+
+                            <!-- Legend for Chart 1 -->
+                            <div class="flex flex-wrap gap-4 mt-3">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#1D9E75]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Vigente</span></div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#EF9F27]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Publicada</span></div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#378ADD]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Consulta</span></div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#888780]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Borrador</span></div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#E24B4A]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Derogada</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart 2: Tipo de acceso by alcance -->
+                    <div>
+                        <h3 class="text-lg font-bold text-[#1a1a1a] mb-4">Alcance por tipo de acceso</h3>
+                        <div class="space-y-4">
+                            <!-- Row: Gratis -->
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                                <div class="w-32 text-sm font-bold text-[#666] shrink-0">GRATUITO</div>
+                                <div class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
+                                    <div th:if="${gratisNac != null and gratisNac > 0}"
+                                         th:style="'width: ' + (${gratisNac} * 100.0 / ${gratisTotal != null and gratisTotal > 0 ? gratisTotal : 1}) + '%'"
+                                         class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Nacional">
+                                        <span th:text="${gratisNac}"></span>
+                                    </div>
+                                    <div th:if="${gratisInt != null and gratisInt > 0}"
+                                         th:style="'width: ' + (${gratisInt} * 100.0 / ${gratisTotal != null and gratisTotal > 0 ? gratisTotal : 1}) + '%'"
+                                         class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Internacional">
+                                        <span th:text="${gratisInt}"></span>
+                                    </div>
+                                </div>
+                                <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0" th:text="${gratisTotal ?: 0}">0</div>
+                            </div>
+
+                            <!-- Row: Pago -->
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                                <div class="w-32 text-sm font-bold text-[#666] shrink-0">DE PAGO</div>
+                                <div class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
+                                    <div th:if="${pagoNac != null and pagoNac > 0}"
+                                         th:style="'width: ' + (${pagoNac} * 100.0 / ${pagoTotal != null and pagoTotal > 0 ? pagoTotal : 1}) + '%'"
+                                         class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Nacional">
+                                        <span th:text="${pagoNac}"></span>
+                                    </div>
+                                    <div th:if="${pagoInt != null and pagoInt > 0}"
+                                         th:style="'width: ' + (${pagoInt} * 100.0 / ${pagoTotal != null and pagoTotal > 0 ? pagoTotal : 1}) + '%'"
+                                         class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Internacional">
+                                        <span th:text="${pagoInt}"></span>
+                                    </div>
+                                </div>
+                                <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0" th:text="${pagoTotal ?: 0}">0</div>
+                            </div>
+
+                            <!-- Legend for Chart 2 -->
+                            <div class="flex flex-wrap gap-4 mt-3">
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#1D9E75]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Nacional</span></div>
+                                <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#378ADD]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Internacional</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEARCH & FILTERS -->
+            <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
+                <!-- Search Bar -->
+                <!-- Search Bar -->
+                <form action="/admin/normativas" method="GET" class="flex gap-4 mb-6">
                     <div class="flex-1 relative">
-                        <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        <input type="text" placeholder="Buscar por nombre, código o palabra clave"
+                        <input type="text" name="search" placeholder="Buscar por nombre, código o palabra clave"
+                               th:value="${searchQuery}"
                                class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
                     </div>
-
-                    <div class="flex flex-wrap gap-3 shrink-0">
-                        <button type="button"
-                                class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                            <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M3 4a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9zm7-7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm7 0a1 1 0 011-1h2a1 1 0 011 1v16a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm-7 12a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 01-1-1v-4z" />
-                            </svg>
-                            <span class="text-sm font-medium">Filtros avanzados</span>
-                        </button>
-
-                        <button type="button"
-                                class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                            <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zM11 3L5.5 8.5l1.42 1.41L11 5.83V15h2V5.83l4.08 4.08L18.5 8.5 12 3z" />
-                            </svg>
-                            <span class="text-sm font-medium">Exportar</span>
-                        </button>
-
-                        <button type="button" id="toggleViewBtn"
-                                class="h-12 w-12 flex items-center justify-center bg-white text-slate-700 rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors"
-                                title="Cambiar vista">
-                            <svg id="icon-list" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                            <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Grid view -->
-                <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-
-                    <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="flex justify-between items-start mb-5">
-                            <div class="w-10 h-10 rounded-lg bg-secondary-container/30 text-secondary flex items-center justify-center shadow-sm">
-                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2l8 4v6c0 5.55-3.84 10.74-8 12-4.16-1.26-8-6.45-8-12V6l8-4z"/>
-                                </svg>
-                            </div>
-                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
-                                <span>LEY - 21368</span>
-                                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                                <span>2021</span>
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
-                                Ley de Plásticos de un solo uso
-                            </h4>
-                            <p class="font-body text-sm text-on-surface-variant leading-relaxed mb-4">
-                                Min. medio Ambiente
-                            </p>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="inline-block bg-[#006c46]/15 text-[#006c46] px-3 py-1 rounded-full text-xs font-bold uppercase">Economía Circular</span>
-                                <span class="inline-flex items-center gap-1.5 text-secondary text-xs font-bold uppercase">
-                                    <span class="w-2 h-2 rounded-full bg-secondary"></span> Vigente
-                                </span>
-                            </div>
-                        </div>
-                        <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
-                            <span class="inline-flex items-center gap-1.5 text-secondary font-medium text-sm">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                                </svg>
-                                Gratuito
-                            </span>
-                            <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link" href="#">
-                                Ver normativa
-                                <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"/>
-                                </svg>
-                            </a>
-                        </div>
-                    </article>
-
-                    <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-amber-200 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="flex justify-between items-start mb-5">
-                            <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shadow-sm">
-                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
-                                </svg>
-                            </div>
-                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
-                                <span>DS -08-2023</span>
-                                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                                <span>2023</span>
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-amber-700 transition-colors">
-                                Metas de recolección de Neumáticos
-                            </h4>
-                            <p class="font-body text-sm text-on-surface-variant leading-relaxed mb-4">
-                                Gabinete Presidencial
-                            </p>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="inline-block bg-[#ba1a1a]/15 text-[#ba1a1a] px-3 py-1 rounded-full text-xs font-bold uppercase">Ley REP</span>
-                                <span class="inline-flex items-center gap-1.5 text-amber-700 text-xs font-bold uppercase">
-                                    <span class="w-2 h-2 rounded-full bg-amber-500"></span> Publicado
-                                </span>
-                            </div>
-                        </div>
-                        <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
-                            <span class="inline-flex items-center gap-1.5 text-amber-700 font-medium text-sm">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                                </svg>
-                                De pago
-                            </span>
-                            <a class="font-label text-sm font-semibold text-primary-container hover:text-amber-700 transition-colors flex items-center gap-1 group/link" href="#">
-                                Ver normativa
-                                <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"/>
-                                </svg>
-                            </a>
-                        </div>
-                    </article>
-
-                    <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="flex justify-between items-start mb-5">
-                            <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shadow-sm">
-                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
-                                </svg>
-                            </div>
-                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
-                                <span>PROC-2024-RO</span>
-                                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                                <span>2024</span>
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-blue-600 transition-colors">
-                                Estrategia Residuos Orgánicos
-                            </h4>
-                            <p class="font-body text-sm text-on-surface-variant leading-relaxed mb-4">
-                                Min. Agricultura
-                            </p>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="inline-block bg-[#3b82f6]/15 text-[#3b82f6] px-3 py-1 rounded-full text-xs font-bold uppercase">Gest. Residuos</span>
-                                <span class="inline-flex items-center gap-1.5 text-blue-600 text-xs font-bold uppercase">
-                                    <span class="w-2 h-2 rounded-full bg-blue-500"></span> Consulta
-                                </span>
-                            </div>
-                        </div>
-                        <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
-                            <span class="inline-flex items-center gap-1.5 text-amber-700 font-medium text-sm">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                                </svg>
-                                De pago
-                            </span>
-                            <a class="font-label text-sm font-semibold text-primary-container hover:text-blue-600 transition-colors flex items-center gap-1 group/link" href="#">
-                                Ver normativa
-                                <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"/>
-                                </svg>
-                            </a>
-                        </div>
-                    </article>
-                </div>
-
-                <!-- List view -->
-                <div id="listView" class="hidden flex-col gap-4">
-                    <div class="hidden xl:grid grid-cols-12 gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
-                        <div class="col-span-3">Nombre</div>
-                        <div class="col-span-2">Código</div>
-                        <div class="col-span-2">Tema</div>
-                        <div class="col-span-1">Estado</div>
-                        <div class="col-span-1">Acceso</div>
-                        <div class="col-span-1">Año</div>
-                        <div class="col-span-2 text-right">Ver normativa</div>
-                    </div>
-
-                    <div class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col xl:grid xl:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
-                        <div class="col-span-3 w-full">
-                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors">
-                                Ley de Plásticos de un solo uso
-                            </h4>
-                            <p class="text-xs text-on-surface-variant mt-1">Min. medio Ambiente</p>
-                        </div>
-                        <div class="col-span-2 w-full text-sm text-on-surface-variant font-medium">LEY - 21368</div>
-                        <div class="col-span-2 w-full">
-                            <span class="inline-block bg-[#006c46]/15 text-[#006c46] px-3 py-1 rounded-full text-xs font-bold uppercase">Economía Circular</span>
-                        </div>
-                        <div class="col-span-1 w-full text-sm font-bold text-secondary">Vigente</div>
-                        <div class="col-span-1 w-full text-sm font-medium text-secondary">Gratuito</div>
-                        <div class="col-span-1 w-full text-sm text-on-surface-variant font-medium">2021</div>
-                        <div class="col-span-2 w-full flex justify-end">
-                            <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link" href="#">
-                                Ver normativa
-                                <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"/>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pagination -->
-                <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8">
-                    <button id="prevPageBtn"
-                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled>
+                    <a href="/admin/normativas"
+                       class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
+                       title="Limpiar filtros">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M15 19l-7-7 7-7" />
+                                  d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <span class="text-sm font-medium">Limpiar</span>
+                    </a>
+                    <button type="button" id="openFiltersModal"
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                        <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
+                        <span class="text-sm font-medium">Filtros avanzados</span>
+                    </button>
+                    <button type="button"
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                        <div th:replace="~{fragments/icons.html :: icon-exportar-excel}"></div>
+                        <span class="text-sm font-medium">Exportar</span>
+                    </button>
+                </form>
+
+                <!-- LIST VIEW -->
+                <div class="overflow-x-auto w-full pb-4" th:if="${not #lists.isEmpty(normativas)}">
+
+                    <div class="flex flex-col gap-4 min-w-[1640px] w-full">
+                        <!-- Header -->
+                        <div
+                                class="hidden md:grid grid-cols-[280px_110px_170px_130px_110px_120px_140px_70px_150px_120px] gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                            <div>Nombre</div>
+                            <div>Código</div>
+                            <div>Tema</div>
+                            <div>Estado</div>
+                            <div>Acceso</div>
+                            <div>Alcance</div>
+                            <div>Tipo</div>
+                            <div>Año</div>
+                            <div>Obligatoriedad</div>
+                            <div class="text-right">Ver Normativa</div>
+                        </div>
+
+                        <!-- Row Dynamic -->
+                        <div th:each="normativa : ${normativas}"
+                             class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[280px_110px_170px_130px_110px_120px_140px_70px_150px_120px] gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                            <div class="flex flex-col w-full text-left pr-4">
+                                <h4 th:text="${normativa.titulo}"
+                                    class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors">
+                                    Ley de Plásticos de un solo uso</h4>
+                                <p th:text="${normativa.organismoEmisor}" class="text-xs text-on-surface-variant mt-1">
+                                    Min. medio Ambiente</p>
+                            </div>
+                            <div th:text="${normativa.codigo}"
+                                 class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant">
+                                LEY - 21368
+                            </div>
+                            <div class="flex justify-start w-full md:w-auto flex-wrap gap-2">
+                                    <span th:if="${#lists.isEmpty(normativa.categorias)}"
+                                          class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center bg-[#888780] text-white">
+                                        Sin categoría
+                                    </span>
+                                <span th:each="cat, iter : ${normativa.categorias}"
+                                      th:if="${iter.index < 2}"
+                                      th:text="${#strings.equalsIgnoreCase(cat.nombre, 'Responsabilidad Extendida') ? 'REP' : cat.nombre}"
+                                      class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center text-white"
+                                      th:classappend="${#strings.equalsIgnoreCase(cat.nombre, 'Economía circular') ? 'bg-[#006C46]' :
+                      (#strings.equalsIgnoreCase(cat.nombre, 'Gestión de residuos') ? 'bg-[#3B82F6]' :
+                      (#strings.equalsIgnoreCase(cat.nombre, 'Envases y Embalajes') ? 'bg-[#F49E0B]' :
+                      ((#strings.equalsIgnoreCase(cat.nombre, 'Ley REP') or #strings.equalsIgnoreCase(cat.nombre, 'Responsabilidad Extendida'))
+                      ? 'bg-[#BA1A1A]' : 'bg-[#888780]')))}">
+</span>
+                            </div>
+                            <div class="flex justify-start w-full md:w-auto">
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full shrink-0"
+                                              th:classappend="${normativa.estado == 'VIGENTE' ? 'bg-[#006c46]' : (normativa.estado == 'DEROGADA' ? 'bg-[#E24B4A]' : (normativa.estado == 'PUBLICADA' ? 'bg-[#ffc107]' : (normativa.estado == 'CONSULTA PUBLICA' ? 'bg-[#2196f3]' : 'bg-[#888780]')))}"></span>
+                                        <span th:text="${normativa.estado}"
+                                              class="text-on-surface text-xs font-bold whitespace-normal">Vigente</span>
+                                    </span>
+                            </div>
+                            <div class="flex justify-start w-full md:w-auto">
+                                    <span th:if="${normativa.acceso == 'GRATIS'}"
+                                          class="inline-flex items-center gap-1 text-gratuito text-xs font-bold uppercase tracking-wider">
+                                        <div th:replace="~{fragments/icons.html :: icon-acceso-gratuito}"></div>
+                                        GRATUITO
+                                    </span>
+                                <span th:if="${normativa.acceso == 'PAGO'}"
+                                      class="inline-flex items-center gap-1 text-de-pago text-xs font-bold uppercase tracking-wider">
+                                        <div th:replace="~{fragments/icons.html :: icon-acceso-pago}"></div>
+                                        DE PAGO
+                                    </span>
+                            </div>
+                            <div class="flex justify-start w-full md:w-auto">
+                                    <span th:text="${normativa.alcance}"
+                                          class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center border border-outline-variant/30"
+                                          th:classappend="${#strings.equalsIgnoreCase(normativa.alcance, 'NACIONAL')} ? 'bg-secondary-container/30 text-secondary' : 'bg-primary-fixed/40 text-on-primary-fixed'">
+                                        NACIONAL
+                                    </span>
+                            </div>
+                            <div th:text="${normativa.tipoNorma}"
+                                 class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant whitespace-normal">
+                                Ley Nacional
+                            </div>
+                            <div th:text="${normativa.anio}"
+                                 class="flex justify-start w-full md:w-auto text-sm font-body text-on-surface-variant font-medium">
+                                2021
+                            </div>
+                            <div class="flex justify-start w-full md:w-auto">
+                                    <span th:if="${normativa.obligatoriedad == 'Legal Vinculante'}"
+                                          class="inline-block px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-tertiary-fixed text-on-tertiary-fixed border border-tertiary-fixed-dim">
+                                        Legal Vinculante
+                                    </span>
+                                <span th:if="${normativa.obligatoriedad == 'No vinculante'}"
+                                      class="inline-block px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-surface-container-high text-on-surface-variant border border-outline-variant/30">
+                                        No vinculante
+                                    </span>
+                                <span
+                                        th:if="${normativa.obligatoriedad != 'Legal Vinculante' and normativa.obligatoriedad != 'No vinculante'}"
+                                        th:text="${normativa.obligatoriedad}"
+                                        class="inline-block px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-surface-container text-on-surface-variant border border-outline-variant/30">
+                                    </span>
+                            </div>
+                            <div class="flex justify-end w-full md:w-auto">
+                                <a th:href="@{/normativas/{id}(id=${normativa.idNormativa})}"
+                                   class="font-label text-sm font-semibold text-outline hover:text-primary-container transition-colors flex items-center gap-1 group/link">
+                                    Ver Normativa
+                                    <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform shrink-0"
+                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mensaje vacío -->
+                <div th:if="${#lists.isEmpty(normativas)}"
+                     class="py-12 flex flex-col items-center justify-center text-center bg-surface-container-lowest rounded-xl border border-outline-variant/30 border-dashed mt-6">
+                    <svg class="w-16 h-16 text-outline-variant mb-4" fill="none" stroke="currentColor"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                              d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    <h3 class="text-lg font-bold text-on-surface mb-2">No hay documentos disponibles</h3>
+                    <p class="text-sm text-on-surface-variant max-w-md">No se encontraron normativas que coincidan
+                        con los filtros de búsqueda aplicados.</p>
+                </div>
+
+                <!-- Minimalist Pagination -->
+                <div id="paginationContainer" class="mt-12 flex justify-center items-center gap-2 hidden">
+                    <button id="prevPageBtn"
+                            class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container hover:text-on-surface transition-colors disabled:opacity-50"
+                            disabled="">
+                        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
                         </svg>
                     </button>
-
-                    <div id="pageNumbers" class="flex gap-2">
-                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors bg-secondary text-on-secondary">1</button>
-                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors text-on-surface-variant hover:bg-surface-container">2</button>
-                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors text-on-surface-variant hover:bg-surface-container">3</button>
-                        <span class="w-10 h-10 flex items-center justify-center text-outline-variant font-bold">...</span>
-                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors text-on-surface-variant hover:bg-surface-container">15</button>
+                    <div id="pageNumbers" class="flex items-center gap-1 font-label text-sm font-semibold">
+                        <!-- Números generados por JS -->
                     </div>
-
                     <button id="nextPageBtn"
-                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M9 5l7 7-7 7" />
+                            class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors disabled:opacity-50">
+                        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                         </svg>
                     </button>
                 </div>
             </div>
+
+
         </div>
     </main>
 </div>
 
-<!-- Modal Nueva Normativa -->
-<div id="modalNuevaNormativa" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-surface text-on-surface w-full max-w-3xl rounded-[1.5rem] p-6 sm:p-8 flex flex-col relative scale-100 ambient-shadow max-h-[90vh] overflow-y-auto">
-        <button type="button"
-                onclick="document.getElementById('modalNuevaNormativa').classList.add('hidden')"
+<!-- Filtros Avanzados Modal -->
+<div id="filtersModal"
+     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 transition-opacity opacity-0 pointer-events-none duration-300">
+    <div
+            class="bg-surface text-on-surface w-full max-w-2xl rounded-[1.5rem] p-6 sm:p-8 flex flex-col relative scale-95 transition-transform duration-300 shadow-xl max-h-[90vh] overflow-y-auto">
+        <!-- Close button -->
+        <button type="button" id="closeFiltersModal"
                 class="absolute top-6 right-6 p-2 rounded-full hover:bg-surface-container text-on-surface-variant transition-colors">
             <svg class="icon-md" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                <path
+                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
             </svg>
         </button>
 
-        <h2 class="text-2xl font-headline font-bold text-on-primary-fixed mb-6">Nueva Normativa</h2>
+        <h2 class="text-2xl font-headline font-bold text-on-primary-fixed mb-6">Filtros Avanzados</h2>
 
-        <form th:action="@{/admin/repo_new}" method="post" class="space-y-8">
-
+        <form id="filtersForm" action="/admin/normativas" method="GET" class="space-y-6">
+            <!-- Fecha -->
             <section>
-                <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Identificación</h3>
+                <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Fecha</h3>
                 <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Nombre de la Normativa</label>
-                        <input name="nombre" type="text" placeholder="Ej: Ley de Fomento a la Economía Circular"
-                               class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 bg-surface-container-low text-sm" />
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="dateType" value="year"
+                                   th:checked="${dateStart == null and dateEnd == null}"
+                                   class="text-secondary focus:ring-secondary form-radio" checked>
+                            <span class="text-sm font-semibold">Año</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="dateType" value="range"
+                                   th:checked="${dateStart != null or dateEnd != null}"
+                                   class="text-secondary focus:ring-secondary form-radio">
+                            <span class="text-sm font-semibold">Rango de fechas</span>
+                        </label>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                        <div class="md:col-span-6">
-                            <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Organismo / Ministerio</label>
-                            <input name="organismo" type="text" placeholder="Ej. Ministerio de Ambiente"
-                                   class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 bg-surface-container-low text-sm" />
-                        </div>
+                    <!-- Año Select -->
+                    <div id="yearContainer" th:classappend="${dateStart != null or dateEnd != null} ? 'hidden'">
+                        <select id="yearSelect" name="yearSelect"
+                                class="w-full sm:w-1/2 appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
+                            <option value="">Seleccione un año</option>
+                            <!-- JS will populate 1990 - Current Year -->
+                        </select>
+                    </div>
 
-                        <div class="md:col-span-3">
-                            <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Código</label>
-                            <input name="codigo" type="text" placeholder="N° 21.325"
-                                   class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 bg-surface-container-low text-sm" />
+                    <!-- Rango Input -->
+                    <div id="rangeContainer" class="flex flex-col sm:flex-row gap-4" th:classappend="${dateStart == null and dateEnd == null} ? 'hidden'">
+                        <div class="flex-1">
+                            <label
+                                    class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
+                                Inicio</label>
+                            <input type="date" id="dateStart" name="dateStart"
+                                   th:value="${dateStart}"
+                                   class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
                         </div>
-
-                        <div class="md:col-span-3">
-                            <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Año</label>
-                            <select name="anio"
-                                    class="w-full appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
-                                <option>2024</option>
-                                <option>2023</option>
-                                <option>2022</option>
-                            </select>
+                        <div class="flex-1">
+                            <label
+                                    class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
+                                Fin</label>
+                            <input type="date" id="dateEnd" name="dateEnd"
+                                   th:value="${dateEnd}"
+                                   class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
                         </div>
                     </div>
+                    <p id="dateError" class="text-error text-xs font-semibold hidden">La Fecha Inicial no puede ser
+                        mayor que la Fecha Final.</p>
                 </div>
             </section>
 
             <hr class="border-outline-variant/30">
 
+            <!-- Tema -->
             <section>
-                <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Clasificación</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Tipo de Norma</label>
-                        <select name="tipoNorma"
-                                class="w-full appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
-                            <option>Decreto Ley</option>
-                            <option>Ley Orgánica</option>
-                            <option>Resolución</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Estado Actual</label>
-                        <select name="estado"
-                                class="w-full appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
-                            <option>Vigente</option>
-                            <option>Derogada</option>
-                            <option>En trámite</option>
-                        </select>
-                    </div>
+                <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Tema</h3>
+                <div class="flex flex-wrap gap-6">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="categoria" value="Economía circular"
+                               th:checked="${selectedCategorias != null and #lists.contains(selectedCategorias, 'Economía circular')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body">Economía circular</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="categoria" value="Gestión de residuos"
+                               th:checked="${selectedCategorias != null and #lists.contains(selectedCategorias, 'Gestión de residuos')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body">Gestión de residuos</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="categoria" value="Envases y Embalajes"
+                               th:checked="${selectedCategorias != null and #lists.contains(selectedCategorias, 'Envases y Embalajes')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body">Envases y embalajes</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="categoria" value="Ley REP"
+                               th:checked="${selectedCategorias != null and #lists.contains(selectedCategorias, 'Ley REP')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body">Ley REP</span>
+                    </label>
                 </div>
             </section>
 
             <hr class="border-outline-variant/30">
 
+            <!-- Estado -->
             <section>
-                <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Acceso al Documento</h3>
-                <div>
-                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Enlace oficial de descarga</label>
-                    <input name="enlace" type="url" placeholder="https://bibliotecadelcongreso.cl/..."
-                           class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 bg-surface-container-low text-sm" />
+                <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Estado</h3>
+                <div class="flex flex-wrap gap-6">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="estado" value="VIGENTE"
+                               th:checked="${selectedEstados != null and #lists.contains(selectedEstados, 'VIGENTE')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body uppercase tracking-wide">Vigente</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="estado" value="CONSULTA PUBLICA"
+                               th:checked="${selectedEstados != null and #lists.contains(selectedEstados, 'CONSULTA PUBLICA')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body uppercase tracking-wide">Consulta Pública</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="estado" value="PUBLICADA"
+                               th:checked="${selectedEstados != null and #lists.contains(selectedEstados, 'PUBLICADA')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body uppercase tracking-wide">Publicada</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="estado" value="BORRADOR EN PROCESO"
+                               th:checked="${selectedEstados != null and #lists.contains(selectedEstados, 'BORRADOR EN PROCESO')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body uppercase tracking-wide">Borrador en Proceso</span>
+                    </label>
                 </div>
             </section>
+
+            <hr class="border-outline-variant/30">
+
+            <!-- Alcance -->
+            <section>
+                <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Alcance</h3>
+                <div class="flex flex-wrap gap-6">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="alcance" value="NACIONAL"
+                               th:checked="${selectedAlcances != null and #lists.contains(selectedAlcances, 'NACIONAL')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body uppercase tracking-wide">Nacional</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="alcance" value="INTERNACIONAL"
+                               th:checked="${selectedAlcances != null and #lists.contains(selectedAlcances, 'INTERNACIONAL')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body uppercase tracking-wide">Internacional</span>
+                    </label>
+                </div>
+            </section>
+
+            <hr class="border-outline-variant/30">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Acceso -->
+                <section>
+                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Acceso
+                    </h3>
+                    <div class="flex flex-wrap gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="acceso" value="GRATIS"
+                                   th:checked="${selectedAccesos != null and #lists.contains(selectedAccesos, 'GRATIS')}"
+                                   class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Gratuito</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="acceso" value="PAGO"
+                                   th:checked="${selectedAccesos != null and #lists.contains(selectedAccesos, 'PAGO')}"
+                                   class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">De Pago</span>
+                        </label>
+                    </div>
+                </section>
+
+                <!-- Obligatoriedad -->
+                <section>
+                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">
+                        Obligatoriedad</h3>
+                    <div class="flex flex-wrap gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="obligatoriedad" value="Legal Vinculante"
+                                   th:checked="${selectedObligatoriedades != null and #lists.contains(selectedObligatoriedades, 'Legal Vinculante')}"
+                                   class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Legal Vinculante</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="obligatoriedad" value="No vinculante"
+                                   th:checked="${selectedObligatoriedades != null and #lists.contains(selectedObligatoriedades, 'No vinculante')}"
+                                   class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">No Vinculante</span>
+                        </label>
+                    </div>
+                </section>
+            </div>
 
             <div class="pt-6 mt-4 flex justify-end gap-3 border-t border-outline-variant/30">
-                <button type="button"
-                        onclick="document.getElementById('modalNuevaNormativa').classList.add('hidden')"
-                        class="px-6 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-on-surface font-bold text-sm hover:bg-surface-container transition-colors">
-                    Cancelar
-                </button>
-
                 <button type="submit"
                         class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary font-bold text-sm hover:bg-[#00210c] transition-colors shadow-sm cursor-pointer">
-                    Guardar Normativa
+                    Aplicar Filtros
                 </button>
             </div>
         </form>
     </div>
 </div>
 
-<script>
+<!-- Script de Paginación y Modal -->
+<script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', () => {
-        const toggleViewBtn = document.getElementById('toggleViewBtn');
-        const gridView = document.getElementById('gridView');
-        const listView = document.getElementById('listView');
-        const iconList = document.getElementById('icon-list');
-        const iconGrid = document.getElementById('icon-grid');
+        // Modal Logic
+        const openFiltersBtn = document.getElementById('openFiltersModal');
+        const closeFiltersBtn = document.getElementById('closeFiltersModal');
+        const filtersModal = document.getElementById('filtersModal');
 
-        let isGridView = true;
+        const selectedYear = /*[[${selectedYear}]]*/ null;
 
-        if (toggleViewBtn) {
-            toggleViewBtn.addEventListener('click', () => {
-                isGridView = !isGridView;
+        if (filtersModal) {
+            const modalContent = filtersModal.querySelector('div');
 
-                if (isGridView) {
-                    gridView.classList.remove('hidden');
-                    listView.classList.add('hidden');
-                    listView.classList.remove('flex');
-                    iconList.classList.remove('hidden');
-                    iconGrid.classList.add('hidden');
+            // Populating years
+            const yearSelect = document.getElementById('yearSelect');
+            const currentYear = new Date().getFullYear();
+            for (let y = currentYear; y >= 1990; y--) {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = y;
+                if (selectedYear == y) {
+                    opt.selected = true;
+                }
+                yearSelect.appendChild(opt);
+            }
+
+            const openModal = () => {
+                filtersModal.classList.remove('opacity-0', 'pointer-events-none');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            };
+
+            const closeModal = () => {
+                filtersModal.classList.add('opacity-0', 'pointer-events-none');
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-95');
+            };
+
+            openFiltersBtn.addEventListener('click', openModal);
+            closeFiltersBtn.addEventListener('click', closeModal);
+            filtersModal.addEventListener('click', (e) => {
+                if (e.target === filtersModal) closeModal();
+            });
+
+            // Toggle Logic
+            const dateTypeRadios = document.querySelectorAll('input[name="dateType"]');
+            const yearContainer = document.getElementById('yearContainer');
+            const rangeContainer = document.getElementById('rangeContainer');
+            const dateError = document.getElementById('dateError');
+
+            dateTypeRadios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    if (e.target.value === 'year') {
+                        yearContainer.classList.remove('hidden');
+                        rangeContainer.classList.add('hidden');
+                        dateError.classList.add('hidden');
+                    } else {
+                        yearContainer.classList.add('hidden');
+                        rangeContainer.classList.remove('hidden');
+                    }
+                });
+            });
+
+            // Validation
+            const dateStart = document.getElementById('dateStart');
+            const dateEnd = document.getElementById('dateEnd');
+            const filtersForm = document.getElementById('filtersForm');
+
+            filtersForm.addEventListener('submit', (e) => {
+                const checkedDateType = document.querySelector('input[name="dateType"]:checked');
+                const isRange = checkedDateType && checkedDateType.value === 'range';
+
+                if (isRange) {
+                    yearSelect.name = '';
+                    if (!dateStart.value && !dateEnd.value) {
+                        checkedDateType.name = '';
+                    }
                 } else {
-                    gridView.classList.add('hidden');
-                    listView.classList.remove('hidden');
-                    listView.classList.add('flex');
-                    iconList.classList.add('hidden');
-                    iconGrid.classList.remove('hidden');
+                    dateStart.name = '';
+                    dateEnd.name = '';
+                    if (!yearSelect.value) {
+                        if (checkedDateType) checkedDateType.name = '';
+                        yearSelect.name = '';
+                    }
+                }
+
+                if (isRange && dateStart.value && dateEnd.value) {
+                    if (new Date(dateStart.value) > new Date(dateEnd.value)) {
+                        e.preventDefault();
+                        dateError.classList.remove('hidden');
+                        return;
+                    } else {
+                        dateError.classList.add('hidden');
+                    }
                 }
             });
         }
+
+        // Pagination Logic
+        const listItems = document.querySelectorAll('.list-item');
+        const paginationContainer = document.getElementById('paginationContainer');
+        const pageNumbersContainer = document.getElementById('pageNumbers');
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        const nextPageBtn = document.getElementById('nextPageBtn');
+
+        let currentPage = 1;
+        const pageSize = 5;
+
+        function renderPagination() {
+            if (!paginationContainer) return;
+
+            const totalItems = listItems.length;
+            const totalPages = Math.ceil(totalItems / pageSize) || 1;
+
+            if (currentPage > totalPages) currentPage = 1;
+
+            if (totalPages <= 1) {
+                paginationContainer.classList.add('hidden');
+                paginationContainer.classList.remove('flex');
+            } else {
+                paginationContainer.classList.remove('hidden');
+                paginationContainer.classList.add('flex');
+            }
+
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = startIndex + pageSize;
+
+            listItems.forEach((item, index) => {
+                if (index >= startIndex && index < endIndex) {
+                    item.classList.remove('hidden');
+                    item.classList.add('flex', 'md:grid');
+                } else {
+                    item.classList.add('hidden');
+                    item.classList.remove('flex', 'md:grid');
+                }
+            });
+
+            if (prevPageBtn) prevPageBtn.disabled = currentPage === 1;
+            if (nextPageBtn) nextPageBtn.disabled = currentPage === totalPages;
+
+            if (pageNumbersContainer) {
+                pageNumbersContainer.innerHTML = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    const btn = document.createElement('button');
+                    btn.textContent = i;
+                    btn.className = `w-10 h-10 rounded-full flex items-center justify-center transition-colors font-label text-sm font-semibold ${i === currentPage ? 'bg-secondary text-on-secondary shadow-md' : 'text-on-surface-variant hover:bg-surface-container'}`;
+                    btn.addEventListener('click', () => {
+                        currentPage = i;
+                        renderPagination();
+                    });
+                    pageNumbersContainer.appendChild(btn);
+                }
+            }
+        }
+
+        if (prevPageBtn) {
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderPagination();
+                }
+            });
+        }
+
+        if (nextPageBtn) {
+            nextPageBtn.addEventListener('click', () => {
+                const totalItems = listItems.length;
+                if (currentPage < Math.ceil(totalItems / pageSize)) {
+                    currentPage++;
+                    renderPagination();
+                }
+            });
+        }
+
+        // Inicializar paginación
+        renderPagination();
     });
 </script>
+<div id="modalNuevaNormativa" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-[800px] bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden relative">
+
+        <form th:action="@{/admin/repo_new}" method="post" enctype="multipart/form-data" class="flex flex-col max-h-[90vh] overflow-hidden">
+
+            <input type="hidden" name="acceso" value="GRATIS">
+            <input type="hidden" name="alcance" value="NACIONAL">
+            <input type="hidden" name="obligatoriedad" value="Legal Vinculante">
+
+            <div class="overflow-y-auto px-6 py-8 flex flex-col gap-6">
+                <input name="titulo" class="w-full bg-[#f8faff] rounded-xl px-4 py-3" placeholder="Nombre de la normativa" type="text">
+                <input name="organismoEmisor" class="w-full bg-[#f8faff] rounded-xl px-4 py-3" placeholder="Organismo / Ministerio" type="text">
+                <input name="codigo" class="w-full bg-[#f8faff] rounded-xl px-4 py-3" placeholder="Código" type="text">
+
+                <select name="anio" class="w-full bg-[#f8faff] rounded-xl px-4 py-3">
+                    <option>2024</option>
+                    <option>2023</option>
+                </select>
+
+                <select name="tipoNorma" class="w-full bg-[#f8faff] rounded-xl px-4 py-3">
+                    <option value="DECRETO_LEY">Decreto Ley</option>
+                    <option value="LEY_NACIONAL">Ley Nacional</option>
+                    <option value="REGLAMENTO">Reglamento</option>
+                    <option value="OTRO">Otro</option>
+                </select>
+
+                <select name="estado" class="w-full bg-[#f8faff] rounded-xl px-4 py-3">
+                    <option value="VIGENTE">Vigente</option>
+                    <option value="DEROGADA">Derogada</option>
+                </select>
+
+                <input name="archivo" type="file">
+                <input name="enlace" type="url" placeholder="Enlace externo">
+            </div>
+
+            <div class="px-6 py-5 border-t flex justify-between">
+                <button type="button"
+                        onclick="document.getElementById('modalNuevaNormativa').classList.add('hidden')">
+                    Cancelar
+                </button>
+
+                <button type="submit">
+                    Guardar Normativa
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
 </body>
+
 </html>
