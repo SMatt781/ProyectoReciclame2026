@@ -1,9 +1,11 @@
 package com.example.proyectoreciclame.Controller;
 
 import com.example.proyectoreciclame.Entity.DominioAutorizado;
+import com.example.proyectoreciclame.Entity.PoliticaContrasena;
 import com.example.proyectoreciclame.Entity.Rol;
 import com.example.proyectoreciclame.Entity.Usuario;
 import com.example.proyectoreciclame.Repository.DominioAutorizadoRepository;
+import com.example.proyectoreciclame.Repository.PoliticaContrasenaRepository;
 import com.example.proyectoreciclame.Repository.RolRepository;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -35,13 +38,18 @@ public class SuperadminController {
     final DominioAutorizadoRepository dominioAutorizadoRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final RolRepository rolRepository;
+    private final PoliticaContrasenaRepository politicaContrasenaRepository;
 
     public SuperadminController(UsuarioRepository usuarioRepository,
-                                DominioAutorizadoRepository dominioAutorizadoRepository, BCryptPasswordEncoder passwordEncoder, RolRepository rolRepository) {
+                                DominioAutorizadoRepository dominioAutorizadoRepository,
+                                BCryptPasswordEncoder passwordEncoder,
+                                RolRepository rolRepository,
+                                PoliticaContrasenaRepository politicaContrasenaRepository) {
         this.usuarioRepository = usuarioRepository;
         this.dominioAutorizadoRepository = dominioAutorizadoRepository;
         this.passwordEncoder = passwordEncoder;
         this.rolRepository = rolRepository;
+        this.politicaContrasenaRepository = politicaContrasenaRepository;
     }
 
     @GetMapping("/dashboard")
@@ -129,8 +137,35 @@ public class SuperadminController {
         }
 
         // 3. Encriptar contraseña
-        usuario.setContrasenaHash(passwordEncoder.encode(usuario.getContrasenaHash()));
+        // 3. Validar contraseña contra políticas activas
+        String rawPassword = usuario.getContrasenaHash();
+        PoliticaContrasena politica = politicaContrasenaRepository.findById(1).orElse(null);
 
+        if (politica != null) {
+            List<String> erroresPolitica = new ArrayList<>();
+
+            if (rawPassword.length() < politica.getLongitudMinima()) {
+                erroresPolitica.add("mínimo " + politica.getLongitudMinima() + " caracteres");
+            }
+            if (politica.getRequiereMayuscula() && !rawPassword.matches(".*[A-Z].*")) {
+                erroresPolitica.add("al menos una mayúscula");
+            }
+            if (politica.getRequiereNumero() && !rawPassword.matches(".*[0-9].*")) {
+                erroresPolitica.add("al menos un número");
+            }
+            if (politica.getRequiereSimbolo() && !rawPassword.matches(".*[@#$!|*%&].*")) {
+                erroresPolitica.add("al menos un símbolo (@#$!|*%&)");
+            }
+
+            if (!erroresPolitica.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error",
+                        "La contraseña no cumple las políticas: " + String.join(", ", erroresPolitica) + ".");
+                return "redirect:/superadmin/administradores";
+            }
+        }
+
+// 4. Encriptar contraseña
+        usuario.setContrasenaHash(passwordEncoder.encode(rawPassword));
         // 4. Asignar Rol ID = 2 (Administrador)
         Rol rolAdmin = rolRepository.findById(2)
                 .orElseThrow(() -> new IllegalStateException(
@@ -348,6 +383,20 @@ public class SuperadminController {
         model.addAttribute("hasNext", dominiosPage.hasNext());
         model.addAttribute("texto", texto);
 
+        PoliticaContrasena politica = politicaContrasenaRepository.findById(1)
+                .orElseGet(() -> {
+                    PoliticaContrasena nueva = new PoliticaContrasena();
+                    nueva.setIdPolitica(1);
+                    nueva.setLongitudMinima(8);
+                    nueva.setRequiereMayuscula(true);
+                    nueva.setRequiereNumero(true);
+                    nueva.setRequiereSimbolo(false);
+                    nueva.setMandatoMfa(false);
+                    nueva.setExpiracionDias(90);
+                    return nueva;
+                });
+        model.addAttribute("politica", politica);
+
         return "superadmin/confSeguridad";
     }
     // ── Dominios — POST (Crear) ───────────────────────────────────────────────────
@@ -514,6 +563,41 @@ public class SuperadminController {
 
         return "redirect:/superadmin/confSeguridad?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
+    }
+
+    // ── Política de Contraseña — POST (Guardar) ───────────────────────────────────
+
+    @PostMapping("/confSeguridad/politica")
+    public String guardarPolitica(
+            @RequestParam(defaultValue = "false") Boolean requiereMayuscula,
+            @RequestParam(defaultValue = "false") Boolean requiereNumero,
+            @RequestParam(defaultValue = "false") Boolean requiereSimbolo,
+            @RequestParam(defaultValue = "false") Boolean mandatoMfa,
+            @RequestParam Integer longitudMinima,
+            @RequestParam(required = false) Integer expiracionDias,
+            RedirectAttributes redirectAttributes,
+            org.springframework.security.core.Authentication authentication
+    ) {
+        PoliticaContrasena politica = politicaContrasenaRepository.findById(1)
+                .orElse(new PoliticaContrasena());
+
+        politica.setIdPolitica(1);
+        politica.setRequiereMayuscula(requiereMayuscula);
+        politica.setRequiereNumero(requiereNumero);
+        politica.setRequiereSimbolo(requiereSimbolo);
+        politica.setMandatoMfa(mandatoMfa);
+        politica.setLongitudMinima(longitudMinima);
+        politica.setExpiracionDias(expiracionDias);
+
+        Usuario actualizador = usuarioRepository
+                .findByCorreoWithRol(authentication.getName()).orElse(null);
+        politica.setActualizadoPor(actualizador);
+
+        politicaContrasenaRepository.save(politica);
+
+        redirectAttributes.addFlashAttribute("success",
+                "Políticas de contraseña actualizadas correctamente.");
+        return "redirect:/superadmin/confSeguridad";
     }
 
 }
