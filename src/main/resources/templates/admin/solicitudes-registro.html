@@ -159,7 +159,10 @@
                             <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
                                 Total usuarios activos
                             </h4>
-                            <div class="text-4xl font-extrabold text-on-primary-fixed">1,248</div>
+                            <div class="text-4xl font-extrabold text-on-primary-fixed"
+                                 th:text="${totalUsuariosActivos}">
+                                0
+                            </div>
                         </div>
                     </article>
 
@@ -179,7 +182,10 @@
                             <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
                                 Empresas registradas
                             </h4>
-                            <div class="text-4xl font-extrabold text-on-primary-fixed">84</div>
+                            <div class="text-4xl font-extrabold text-on-primary-fixed"
+                                 th:text="${empresasRegistradas}">
+                                0
+                            </div>
                         </div>
                     </article>
 
@@ -199,38 +205,77 @@
                             <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
                                 Solicitudes hoy
                             </h4>
-                            <div class="text-4xl font-extrabold text-on-primary-fixed">3</div>
+                            <div class="text-4xl font-extrabold text-on-primary-fixed"
+                                 th:text="${solicitudesHoy}">
+                                0
+                            </div>
                         </div>
                     </article>
                 </section>
 
                 <!-- Barra superior -->
-                <form class="flex gap-4 mb-6 w-full">
-                    <div class="flex-1 relative">
-                        <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <input type="text" placeholder="Buscar usuario"
-                               class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]">
-                    </div>
-                    <button type="button"
-                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                        <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M3 4a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9zm7-7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm7 0a1 1 0 011-1h2a1 1 0 011 1v16a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm-7 12a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 01-1-1v-4z" />
-                        </svg>
-                        <span class="text-sm font-medium">Filtros avanzados</span>
-                    </button>
-                    <button type="button"
-                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                        <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zM11 3L5.5 8.5l1.42 1.41L11 5.83V15h2V5.83l4.08 4.08L18.5 8.5 12 3z" />
-                        </svg>
-                        <span class="text-sm font-medium">Exportar</span>
-                    </button>
-                </form>
+                <div class="mb-6 w-full">
+                    <form th:action="@{/admin/usuarios/solicitudes}"
+                          method="get"
+                          class="grid grid-cols-1 xl:grid-cols-[1fr_auto_auto_auto] gap-4 items-stretch w-full">
+
+                        <div class="relative w-full">
+                            <svg class="w-5 h-5 text-[#999] absolute left-3 top-1/2 -translate-y-1/2"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+
+                            <input type="text"
+                                   name="search"
+                                   th:value="${search}"
+                                   placeholder="Buscar por nombre, apellido, correo, DNI o empresa"
+                                   class="w-full h-12 pl-10 pr-4 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]">
+                        </div>
+
+                        <button type="submit"
+                                class="h-12 flex items-center justify-center gap-2 px-5 text-white bg-secondary rounded-lg hover:bg-[#005a3d] transition">
+                            <span class="text-sm font-bold">Buscar</span>
+                        </button>
+
+                        <button type="button"
+                                onclick="document.getElementById('modalFiltrosSolicitudes').classList.remove('hidden')"
+                                class="h-12 flex items-center justify-center gap-2 px-5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                            <svg class="w-5 h-5 text-current"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M3 4a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9zm7-7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm7 0a1 1 0 011-1h2a1 1 0 011 1v16a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm-7 12a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 01-1-1v-4z" />
+                            </svg>
+                            <span class="text-sm font-medium whitespace-nowrap">Filtros avanzados</span>
+                        </button>
+
+                        <a th:href="@{/admin/usuarios/solicitudes/exportar(search=${search}, rol=${rolSeleccionado}, dateStart=${dateStart}, dateEnd=${dateEnd})}"
+                           class="h-12 flex items-center justify-center gap-2 px-5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition no-underline">
+                            <svg class="w-5 h-5 text-current"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zM11 3L5.5 8.5l1.42 1.41L11 5.83V15h2V5.83l4.08 4.08L18.5 8.5 12 3z" />
+                            </svg>
+                            <span class="text-sm font-medium whitespace-nowrap">Exportar</span>
+                        </a>
+
+                        <input type="hidden" name="rol" th:value="${rolSeleccionado}">
+                        <input type="hidden" name="dateStart" th:value="${dateStart}">
+                        <input type="hidden" name="dateEnd" th:value="${dateEnd}">
+                    </form>
+                </div>
 
                 <!-- Tabla div-grid -->
                 <div class="flex flex-col">
@@ -324,7 +369,7 @@
                 <!-- Paginación -->
                 <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-6">
                     <a th:if="${hasPrevious}"
-                       th:href="@{/admin/usuarios/solicitudes(page=${currentPage - 1})}"
+                       th:href="@{/admin/usuarios/solicitudes(page=${currentPage - 1}, search=${search}, rol=${rolSeleccionado}, dateStart=${dateStart}, dateEnd=${dateEnd})}"
                        class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -342,7 +387,7 @@
 
                     <div id="pageNumbers" class="flex gap-2">
                         <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-                           th:href="@{/admin/usuarios/solicitudes(page=${i})}"
+                           th:href="@{/admin/usuarios/solicitudes(page=${i}, search=${search}, rol=${rolSeleccionado}, dateStart=${dateStart}, dateEnd=${dateEnd})}"
                            th:text="${i + 1}"
                            th:class="${i == currentPage} ?
                 'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
@@ -352,7 +397,7 @@
                     </div>
 
                     <a th:if="${hasNext}"
-                       th:href="@{/admin/usuarios/solicitudes(page=${currentPage + 1})}"
+                       th:href="@{/admin/usuarios/solicitudes(page=${currentPage + 1}, search=${search}, rol=${rolSeleccionado}, dateStart=${dateStart}, dateEnd=${dateEnd})}"
                        class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -383,6 +428,79 @@
             </div>
         </div>
     </main>
+</div>
+
+<div id="modalFiltrosSolicitudes"
+     class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 relative">
+
+        <button type="button"
+                onclick="document.getElementById('modalFiltrosSolicitudes').classList.add('hidden')"
+                class="absolute top-4 right-4 text-gray-400 hover:bg-gray-100 p-2 rounded-full">
+            ✕
+        </button>
+
+        <h3 class="text-xl font-extrabold text-on-primary-fixed mb-2">
+            Filtros avanzados
+        </h3>
+
+        <p class="text-sm text-on-surface-variant mb-6">
+            Filtra las solicitudes pendientes por rol y rango de fecha de solicitud.
+        </p>
+
+        <form th:action="@{/admin/usuarios/solicitudes}" method="get" class="space-y-5">
+
+            <input type="hidden" name="search" th:value="${search}">
+
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-2">
+                    Rol solicitado
+                </label>
+
+                <select name="rol"
+                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low text-sm">
+                    <option value="">Todos</option>
+                    <option value="SOCIO" th:selected="${rolSeleccionado == 'SOCIO'}">Socio</option>
+                    <option value="VISUALIZADOR" th:selected="${rolSeleccionado == 'VISUALIZADOR'}">Visualizador</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-2">
+                        Desde
+                    </label>
+                    <input type="date"
+                           name="dateStart"
+                           th:value="${dateStart}"
+                           class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-2">
+                        Hasta
+                    </label>
+                    <input type="date"
+                           name="dateEnd"
+                           th:value="${dateEnd}"
+                           class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low text-sm">
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4 border-t border-outline-variant/30">
+                <a th:href="@{/admin/usuarios/solicitudes}"
+                   class="px-5 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-on-surface font-bold text-sm hover:bg-surface-container transition no-underline">
+                    Limpiar
+                </a>
+
+                <button type="submit"
+                        class="px-5 py-2.5 rounded-lg bg-secondary text-on-secondary font-bold text-sm hover:bg-[#005a3d] transition">
+                    Aplicar filtros
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 </body>
 </html>

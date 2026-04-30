@@ -12,4 +12,10 @@ public interface SolicitudRegistroRepository extends JpaRepository<SolicitudRegi
     Optional<SolicitudRegistro> findTopByCorreoOrderByFechaSolicitudDesc(String correo);
 
     long countByEstado(String estado);
+
+    long countByEstadoAndFechaSolicitudBetween(
+            String estado,
+            java.time.LocalDateTime inicio,
+            java.time.LocalDateTime fin
+    );
 }

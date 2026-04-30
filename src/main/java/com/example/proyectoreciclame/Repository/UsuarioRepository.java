@@ -122,4 +122,56 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     boolean existsByCorreoAndEliminadoEnIsNull(String correo);
     boolean existsByDniAndEliminadoEnIsNull(String dni);
 
+    @Query("""
+    SELECT u
+    FROM Usuario u
+    LEFT JOIN FETCH u.rol r
+    LEFT JOIN FETCH u.usuarioEmpresa ue
+    WHERE u.estadoAprobacion = 'PENDIENTE'
+      AND u.eliminadoEn IS NULL
+      AND (
+        :search IS NULL OR :search = ''
+        OR LOWER(u.nombres) LIKE LOWER(CONCAT('%', :search, '%'))
+        OR LOWER(u.apellidoPaterno) LIKE LOWER(CONCAT('%', :search, '%'))
+        OR LOWER(COALESCE(u.apellidoMaterno, '')) LIKE LOWER(CONCAT('%', :search, '%'))
+        OR LOWER(u.correo) LIKE LOWER(CONCAT('%', :search, '%'))
+        OR LOWER(u.dni) LIKE LOWER(CONCAT('%', :search, '%'))
+        OR LOWER(COALESCE(ue.razonSocial, '')) LIKE LOWER(CONCAT('%', :search, '%'))
+      )
+      AND (
+        :rol IS NULL OR :rol = ''
+        OR LOWER(r.nombre) = LOWER(:rol)
+      )
+      AND (
+        :fechaInicio IS NULL OR u.fechaRegistro >= :fechaInicio
+      )
+      AND (
+        :fechaFin IS NULL OR u.fechaRegistro <= :fechaFin
+      )
+    ORDER BY u.fechaRegistro DESC
+""")
+    Page<Usuario> filtrarSolicitudesPendientes(
+            @Param("search") String search,
+            @Param("rol") String rol,
+            @Param("fechaInicio") java.time.LocalDateTime fechaInicio,
+            @Param("fechaFin") java.time.LocalDateTime fechaFin,
+            Pageable pageable
+    );
+
+    @Query("""
+    SELECT COUNT(u)
+    FROM Usuario u
+    WHERE u.estadoCuenta = 'ACTIVO'
+      AND u.estadoAprobacion = 'APROBADO'
+      AND u.eliminadoEn IS NULL
+""")
+    long countUsuariosActivosAprobados();
+
+    @Query("""
+    SELECT COUNT(ue)
+    FROM UsuarioEmpresa ue
+    WHERE ue.usuario.eliminadoEn IS NULL
+      AND ue.usuario.estadoAprobacion = 'APROBADO'
+""")
+    long countEmpresasRegistradas();
 }
