@@ -2,10 +2,14 @@ package com.example.proyectoreciclame.Controller;
 
 import com.example.proyectoreciclame.Dto.RegistroSocioForm;
 import com.example.proyectoreciclame.Dto.RegistroVisualizadorForm;
+import com.example.proyectoreciclame.Entity.DominioAutorizado;
+import com.example.proyectoreciclame.Entity.PoliticaContrasena;
 import com.example.proyectoreciclame.Entity.Rol;
 import com.example.proyectoreciclame.Entity.SolicitudRegistro;
 import com.example.proyectoreciclame.Entity.Usuario;
 import com.example.proyectoreciclame.Entity.UsuarioEmpresa;
+import com.example.proyectoreciclame.Repository.DominioAutorizadoRepository;
+import com.example.proyectoreciclame.Repository.PoliticaContrasenaRepository;
 import com.example.proyectoreciclame.Repository.RolRepository;
 import com.example.proyectoreciclame.Repository.SolicitudRegistroRepository;
 import com.example.proyectoreciclame.Repository.UsuarioEmpresaRepository;
@@ -22,7 +26,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 @Controller
 public class AuthController {
@@ -33,19 +36,25 @@ public class AuthController {
     private final SolicitudRegistroRepository solicitudRegistroRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final CorreoService correoService;
+    private final DominioAutorizadoRepository dominioAutorizadoRepository;
+    private final PoliticaContrasenaRepository politicaContrasenaRepository;
 
     public AuthController(UsuarioRepository usuarioRepository,
                           RolRepository rolRepository,
                           UsuarioEmpresaRepository usuarioEmpresaRepository,
                           SolicitudRegistroRepository solicitudRegistroRepository,
                           BCryptPasswordEncoder passwordEncoder,
-                          CorreoService correoService) {
+                          CorreoService correoService,
+                          DominioAutorizadoRepository dominioAutorizadoRepository,
+                          PoliticaContrasenaRepository politicaContrasenaRepository) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.usuarioEmpresaRepository = usuarioEmpresaRepository;
         this.solicitudRegistroRepository = solicitudRegistroRepository;
         this.passwordEncoder = passwordEncoder;
         this.correoService = correoService;
+        this.dominioAutorizadoRepository = dominioAutorizadoRepository;
+        this.politicaContrasenaRepository = politicaContrasenaRepository;
     }
 
     @GetMapping("/login")
@@ -76,16 +85,19 @@ public class AuthController {
     @GetMapping("/registro/socio")
     public String registroSocio(Model model) {
         model.addAttribute("registroForm", new RegistroSocioForm());
+        cargarPoliticaPasswordEnModelo(model);
         return "auth/registro-socio";
     }
 
     @PostMapping("/registro/socio")
     public String registrarSocio(@Valid @ModelAttribute("registroForm") RegistroSocioForm form,
-                                 BindingResult bindingResult) {
+                                 BindingResult bindingResult,
+                                 Model model) {
 
         validarRegistroSocio(form, bindingResult);
 
         if (bindingResult.hasErrors()) {
+            cargarPoliticaPasswordEnModelo(model);
             return "auth/registro-socio";
         }
 
@@ -95,8 +107,8 @@ public class AuthController {
         Usuario usuario = new Usuario();
         usuario.setRol(rolSocio);
         usuario.setNombres(form.getNombres().trim());
-        usuario.setApellidoPaterno(extraerApellidoPaterno(form.getApellidos()));
-        usuario.setApellidoMaterno(extraerApellidoMaterno(form.getApellidos()));
+        usuario.setApellidoPaterno(form.getApellidoPaterno().trim());
+        usuario.setApellidoMaterno(form.getApellidoMaterno().trim());
         usuario.setDni(form.getDni().trim());
         usuario.setCorreo(form.getCorreo().trim().toLowerCase());
         usuario.setTelefono(form.getTelefono().trim());
@@ -147,16 +159,19 @@ public class AuthController {
     @GetMapping("/registro/visualizador")
     public String registroVisualizador(Model model) {
         model.addAttribute("registroForm", new RegistroVisualizadorForm());
+        cargarPoliticaPasswordEnModelo(model);
         return "auth/registro-visualizador";
     }
 
     @PostMapping("/registro/visualizador")
     public String registrarVisualizador(@Valid @ModelAttribute("registroForm") RegistroVisualizadorForm form,
-                                        BindingResult bindingResult) {
+                                        BindingResult bindingResult,
+                                        Model model) {
 
         validarRegistroVisualizador(form, bindingResult);
 
         if (bindingResult.hasErrors()) {
+            cargarPoliticaPasswordEnModelo(model);
             return "auth/registro-visualizador";
         }
 
@@ -166,8 +181,8 @@ public class AuthController {
         Usuario usuario = new Usuario();
         usuario.setRol(rolVisualizador);
         usuario.setNombres(form.getNombres().trim());
-        usuario.setApellidoPaterno(extraerApellidoPaterno(form.getApellidos()));
-        usuario.setApellidoMaterno(extraerApellidoMaterno(form.getApellidos()));
+        usuario.setApellidoPaterno(form.getApellidoPaterno().trim());
+        usuario.setApellidoMaterno(form.getApellidoMaterno().trim());
         usuario.setDni(form.getDni().trim());
         usuario.setCorreo(form.getCorreo().trim().toLowerCase());
         usuario.setTelefono(form.getTelefono().trim());
@@ -219,48 +234,148 @@ public class AuthController {
     }
 
     private void validarRegistroSocio(RegistroSocioForm form, BindingResult br) {
-        if (usuarioRepository.existsByCorreoIgnoreCase(form.getCorreo().trim())) {
+        if (form.getCorreo() != null && !form.getCorreo().isBlank()
+                && usuarioRepository.existsByCorreoIgnoreCase(form.getCorreo().trim())) {
             br.rejectValue("correo", "correo.exists", "El correo ya está registrado");
         }
 
-        if (usuarioRepository.existsByDni(form.getDni().trim())) {
+        if (form.getDni() != null && !form.getDni().isBlank()
+                && usuarioRepository.existsByDni(form.getDni().trim())) {
             br.rejectValue("dni", "dni.exists", "El DNI ya está registrado");
         }
 
-        if (!form.getPassword().equals(form.getConfirmPassword())) {
+        if (form.getPassword() != null && form.getConfirmPassword() != null
+                && !form.getPassword().equals(form.getConfirmPassword())) {
             br.rejectValue("confirmPassword", "password.no.match", "Las contraseñas no coinciden");
         }
+
+        validarDominioCorreo(form.getCorreo(), br);
+        validarPoliticaContrasena(form.getPassword(), br);
     }
 
     private void validarRegistroVisualizador(RegistroVisualizadorForm form, BindingResult br) {
-        if (usuarioRepository.existsByCorreoIgnoreCase(form.getCorreo().trim())) {
+        if (form.getCorreo() != null && !form.getCorreo().isBlank()
+                && usuarioRepository.existsByCorreoIgnoreCase(form.getCorreo().trim())) {
             br.rejectValue("correo", "correo.exists", "El correo ya está registrado");
         }
 
-        if (usuarioRepository.existsByDni(form.getDni().trim())) {
+        if (form.getDni() != null && !form.getDni().isBlank()
+                && usuarioRepository.existsByDni(form.getDni().trim())) {
             br.rejectValue("dni", "dni.exists", "El DNI ya está registrado");
         }
 
-        if (!form.getPassword().equals(form.getConfirmPassword())) {
+        if (form.getPassword() != null && form.getConfirmPassword() != null
+                && !form.getPassword().equals(form.getConfirmPassword())) {
             br.rejectValue("confirmPassword", "password.no.match", "Las contraseñas no coinciden");
         }
+
+        validarDominioCorreo(form.getCorreo(), br);
+        validarPoliticaContrasena(form.getPassword(), br);
     }
 
-    private String extraerApellidoPaterno(String apellidos) {
-        if (apellidos == null || apellidos.isBlank()) {
-            return "";
+    private void validarDominioCorreo(String correo, BindingResult br) {
+        if (correo == null || correo.isBlank()) {
+            return;
         }
-        String[] partes = apellidos.trim().split("\\s+");
-        return partes.length >= 1 ? partes[0] : "";
+
+        String correoNormalizado = correo.trim().toLowerCase();
+        int posicionArroba = correoNormalizado.lastIndexOf("@");
+
+        if (posicionArroba == -1) {
+            return;
+        }
+
+        String dominioCorreo = correoNormalizado.substring(posicionArroba);
+
+        boolean autorizado = dominioAutorizadoRepository.findByEstadoTrue()
+                .stream()
+                .map(DominioAutorizado::getNombreDominio)
+                .filter(d -> d != null && !d.isBlank())
+                .map(d -> d.trim().toLowerCase())
+                .anyMatch(dominioCorreo::equals);
+
+        if (!autorizado) {
+            br.rejectValue(
+                    "correo",
+                    "correo.dominio.no.autorizado",
+                    "El dominio del correo no está autorizado"
+            );
+        }
     }
 
-    private String extraerApellidoMaterno(String apellidos) {
-        if (apellidos == null || apellidos.isBlank()) {
-            return "";
+    private void validarPoliticaContrasena(String password, BindingResult br) {
+        if (password == null || password.isBlank()) {
+            return;
         }
-        String[] partes = apellidos.trim().split("\\s+");
-        return partes.length >= 2
-                ? String.join(" ", Arrays.copyOfRange(partes, 1, partes.length))
-                : "";
+
+        PoliticaContrasena politica = politicaContrasenaRepository.findById(1)
+                .orElse(null);
+
+        if (politica == null) {
+            return;
+        }
+
+        if (politica.getLongitudMinima() != null
+                && password.length() < politica.getLongitudMinima()) {
+            br.rejectValue(
+                    "password",
+                    "password.longitud",
+                    "La contraseña debe tener mínimo " + politica.getLongitudMinima() + " caracteres"
+            );
+        }
+
+        if (Boolean.TRUE.equals(politica.getRequiereMayuscula())
+                && !password.matches(".*[A-ZÁÉÍÓÚÑ].*")) {
+            br.rejectValue(
+                    "password",
+                    "password.mayuscula",
+                    "La contraseña debe tener al menos una mayúscula"
+            );
+        }
+
+        if (Boolean.TRUE.equals(politica.getRequiereNumero())
+                && !password.matches(".*\\d.*")) {
+            br.rejectValue(
+                    "password",
+                    "password.numero",
+                    "La contraseña debe tener al menos un número"
+            );
+        }
+
+        if (Boolean.TRUE.equals(politica.getRequiereSimbolo())
+                && !password.matches(".*[^A-Za-zÁÉÍÓÚáéíóúÑñ0-9].*")) {
+            br.rejectValue(
+                    "password",
+                    "password.simbolo",
+                    "La contraseña debe tener al menos un símbolo"
+            );
+        }
+    }
+
+    private void cargarPoliticaPasswordEnModelo(Model model) {
+        PoliticaContrasena politica = politicaContrasenaRepository.findById(1)
+                .orElse(null);
+
+        model.addAttribute(
+                "passwordMinLength",
+                politica != null && politica.getLongitudMinima() != null
+                        ? politica.getLongitudMinima()
+                        : 10
+        );
+
+        model.addAttribute(
+                "passwordRequireUpper",
+                politica == null || Boolean.TRUE.equals(politica.getRequiereMayuscula())
+        );
+
+        model.addAttribute(
+                "passwordRequireNumber",
+                politica == null || Boolean.TRUE.equals(politica.getRequiereNumero())
+        );
+
+        model.addAttribute(
+                "passwordRequireSymbol",
+                politica == null || Boolean.TRUE.equals(politica.getRequiereSimbolo())
+        );
     }
 }

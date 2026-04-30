@@ -12,8 +12,11 @@ public class RegistroVisualizadorForm {
     @NotBlank(message = "Campo nombres obligatorio")
     private String nombres;
 
-    @NotBlank(message = "Campo apellidos obligatorio")
-    private String apellidos;
+    @NotBlank(message = "Campo apellido paterno obligatorio")
+    private String apellidoPaterno;
+
+    @NotBlank(message = "Campo apellido materno obligatorio")
+    private String apellidoMaterno;
 
     @NotBlank(message = "Campo DNI obligatorio")
     @Pattern(regexp = "\\d{8}", message = "El DNI debe tener 8 dígitos")
@@ -27,7 +30,6 @@ public class RegistroVisualizadorForm {
     private String correo;
 
     @NotBlank(message = "Campo contraseña obligatorio")
-    @Size(min = 8, message = "La contraseña debe tener mínimo 8 caracteres")
     private String password;
 
     @NotBlank(message = "Debe confirmar la contraseña")
