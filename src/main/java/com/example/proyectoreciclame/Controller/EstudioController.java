@@ -3,6 +3,7 @@ package com.example.proyectoreciclame.Controller;
 import com.example.proyectoreciclame.Dto.EstudioDTO;
 import com.example.proyectoreciclame.Entity.Estudio;
 import com.example.proyectoreciclame.Repository.EstudioRepository;
+import com.example.proyectoreciclame.Repository.RegistroDescargaRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,9 @@ public class EstudioController {
 
     @Autowired
     private EstudioRepository estudioRepository;
+
+    @Autowired
+    private RegistroDescargaRepository registroDescargaRepository;
 
     @GetMapping
     public String listar(
@@ -52,7 +56,26 @@ public class EstudioController {
         model.addAttribute("estudios", estudios);
         model.addAttribute("currentPage", "estudios");
 
+        long totalEstudios = estudioRepository.countByEliminadoEnIsNull();
+        long totalDescargasEstudios = registroDescargaRepository.countByTipoDocumento("ESTUDIO");
+        LocalDate limiteRecientes = LocalDate.now().minusDays(30);
+        long estudiosRecientes = estudioRepository.countByFechaPublicacionAfterAndEliminadoEnIsNull(limiteRecientes);
+        String anioMasActivo = resolveAnioMasActivo();
+
+        model.addAttribute("totalEstudios", totalEstudios);
+        model.addAttribute("totalDescargasEstudios", totalDescargasEstudios);
+        model.addAttribute("estudiosRecientes", estudiosRecientes);
+        model.addAttribute("anioMasActivo", anioMasActivo);
+
         return "socio/estudios";
+    }
+
+    private String resolveAnioMasActivo() {
+        List<Object[]> resultados = estudioRepository.findActiveYearsByPublicacion();
+        if (resultados == null || resultados.isEmpty() || resultados.get(0)[0] == null) {
+            return "Sin datos";
+        }
+        return String.valueOf(resultados.get(0)[0]);
     }
 
 //        @GetMapping("/panelSocio")

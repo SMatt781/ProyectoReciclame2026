@@ -49,7 +49,12 @@ public interface RegistroDescargaRepository extends JpaRepository<RegistroDescar
 
     long countByTipoDocumento(String tipoDocumento);
 
+    long countByIdDocumentoAndTipoDocumento(Long idDocumento, String tipoDocumento);
+
     long countByUsuarioIdUsuario(Long idUsuario);
+
+    @Query("SELECT COUNT(rd) FROM RegistroDescarga rd WHERE rd.usuario.idUsuario = :idUsuario AND UPPER(rd.tipoDocumento) = UPPER(:tipoDocumento)")
+    long countByUsuarioIdUsuarioAndTipoDocumento(@Param("idUsuario") Long idUsuario, @Param("tipoDocumento") String tipoDocumento);
 
     @Query("SELECT COUNT(rd) FROM RegistroDescarga rd WHERE rd.usuario.idUsuario = :idUsuario AND rd.fechaDescarga >= :fechaInicio AND rd.fechaDescarga <= :fechaFin")
     long countByUsuarioIdUsuarioAndFechaDescargaBetween(@Param("idUsuario") Long idUsuario, @Param("fechaInicio") LocalDateTime fechaInicio, @Param("fechaFin") LocalDateTime fechaFin);

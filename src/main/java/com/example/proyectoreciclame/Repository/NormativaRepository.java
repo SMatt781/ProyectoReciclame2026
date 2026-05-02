@@ -1,6 +1,7 @@
 package com.example.proyectoreciclame.Repository;
 
 import com.example.proyectoreciclame.Entity.Normativa;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -40,6 +41,12 @@ public interface NormativaRepository extends JpaRepository<Normativa, Long> {
             @Param("hasObligatoriedad") boolean hasObligatoriedad, @Param("obligatoriedades") List<String> obligatoriedades,
             @Param("hasCategoria") boolean hasCategoria, @Param("categorias") List<String> categorias
     );
+
+    @Query("SELECT n FROM Normativa n WHERE n.organismoEmisor = :organismoEmisor AND n.idNormativa != :idActual AND n.estado IN (com.example.proyectoreciclame.Entity.Normativa.EstadoNormativa.VIGENTE, com.example.proyectoreciclame.Entity.Normativa.EstadoNormativa.PUBLICADA) ORDER BY n.fechaActualizacion DESC")
+    List<Normativa> findNormativasRelacionadas(@Param("organismoEmisor") String organismoEmisor, @Param("idActual") Long idActual, Pageable pageable);
+
+    @Query("SELECT DISTINCT n FROM Normativa n JOIN n.categorias c WHERE c.idCategoria IN :idsCategorias AND n.idNormativa != :idActual AND n.estado IN (com.example.proyectoreciclame.Entity.Normativa.EstadoNormativa.VIGENTE, com.example.proyectoreciclame.Entity.Normativa.EstadoNormativa.PUBLICADA) ORDER BY n.fechaActualizacion DESC")
+    List<Normativa> findNormativasSimilaresPorCategoria(@Param("idsCategorias") List<Integer> idsCategorias, @Param("idActual") Long idActual, Pageable pageable);
 
     List<Normativa> findByFechaCreacionAfter(LocalDateTime fechaCreacion);
     List<Normativa> findByFechaActualizacionAfterAndFechaCreacionBefore(LocalDateTime fechaActualizacion, LocalDateTime fechaCreacion);

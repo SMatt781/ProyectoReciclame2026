@@ -408,111 +408,176 @@
                     </form>
 
                     <!-- LIST VIEW -->
-                    <div class="overflow-x-auto w-full pb-4" th:if="${not #lists.isEmpty(normativas)}">
+                    <div class="w-full pb-4" th:if="${not #lists.isEmpty(normativas)}">
 
-                        <div class="flex flex-col gap-4 min-w-[1640px] w-full">
+                        <div class="flex flex-col gap-4 w-full">
                             <!-- Header -->
                             <div
-                                class="hidden md:grid grid-cols-[280px_110px_170px_130px_110px_120px_140px_70px_150px_120px] gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                                class="hidden md:grid grid-cols-[40px_minmax(200px,1fr)_120px_140px_120px_100px_60px_60px] gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider items-center">
+                                <div></div>
                                 <div>Nombre</div>
                                 <div>Código</div>
                                 <div>Tema</div>
                                 <div>Estado</div>
                                 <div>Acceso</div>
-                                <div>Alcance</div>
-                                <div>Tipo</div>
                                 <div>Año</div>
-                                <div>Obligatoriedad</div>
-                                <div class="text-right">Ver Normativa</div>
+                                <div class="text-center">Ver</div>
                             </div>
 
                             <!-- Row Dynamic -->
                             <div th:each="normativa : ${normativas}"
-                                class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[280px_110px_170px_130px_110px_120px_140px_70px_150px_120px] gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
-                                <div class="flex flex-col w-full text-left pr-4">
-                                    <h4 th:text="${normativa.titulo}"
-                                        class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors">
-                                        Ley de Plásticos de un solo uso</h4>
-                                    <p th:text="${normativa.organismo}" class="text-xs text-on-surface-variant mt-1">
-                                        Min. medio Ambiente</p>
-                                </div>
-                                <div th:text="${normativa.codigo}"
-                                    class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant">
-                                    LEY - 21368
-                                </div>
-                                <div class="flex justify-start w-full md:w-auto flex-wrap gap-2">
-                                    <span th:if="${#lists.isEmpty(normativa.categorias)}"
-                                        class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center bg-[#888780] text-white">
-                                        Sin categoría
-                                    </span>
-                                    <span th:each="cat, iter : ${normativa.categorias}"
-                                          th:if="${iter.index < 2}"
-                                          th:text="${#strings.equalsIgnoreCase(cat, 'Responsabilidad Extendida') ? 'REP' : cat}"
-                                          class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center text-white"
-                                          th:classappend="${#strings.equalsIgnoreCase(cat, 'Economía circular') ? 'bg-[#006C46]' : (#strings.equalsIgnoreCase(cat, 'Gestión de residuos') ? 'bg-[#3B82F6]' : (#strings.equalsIgnoreCase(cat, 'Envases y Embalajes') ? 'bg-[#F49E0B]' : ((#strings.equalsIgnoreCase(cat, 'Ley REP') or #strings.equalsIgnoreCase(cat, 'Responsabilidad Extendida')) ? 'bg-[#BA1A1A]' : 'bg-[#888780]')))}">
-                                        ECONOMÍA CIRCULAR
-                                    </span>
-                                </div>
-                                <div class="flex justify-start w-full md:w-auto">
-                                    <span class="inline-flex items-center gap-1.5">
-                                        <span class="w-2 h-2 rounded-full shrink-0"
-                                            th:classappend="${normativa.estado == 'VIGENTE' ? 'bg-[#006c46]' : (normativa.estado == 'DEROGADA' ? 'bg-[#E24B4A]' : (normativa.estado == 'PUBLICADA' ? 'bg-[#ffc107]' : (normativa.estado == 'CONSULTA PUBLICA' ? 'bg-[#2196f3]' : 'bg-[#888780]')))}"></span>
-                                        <span th:text="${normativa.estado}"
-                                            class="text-on-surface text-xs font-bold whitespace-normal">Vigente</span>
-                                    </span>
-                                </div>
-                                <div class="flex justify-start w-full md:w-auto">
-                                    <span th:if="${normativa.acceso == 'GRATIS'}"
-                                        class="inline-flex items-center gap-1 text-gratuito text-xs font-bold uppercase tracking-wider">
-                                        <div th:replace="~{fragments/icons.html :: icon-acceso-gratuito}"></div>
-                                        GRATUITO
-                                    </span>
-                                    <span th:if="${normativa.acceso == 'PAGO'}"
-                                        class="inline-flex items-center gap-1 text-de-pago text-xs font-bold uppercase tracking-wider">
-                                        <div th:replace="~{fragments/icons.html :: icon-acceso-pago}"></div>
-                                        DE PAGO
-                                    </span>
-                                </div>
-                                <div class="flex justify-start w-full md:w-auto">
-                                    <span th:text="${normativa.alcance}"
-                                        class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center border border-outline-variant/30"
-                                        th:classappend="${#strings.equalsIgnoreCase(normativa.alcance, 'NACIONAL')} ? 'bg-secondary-container/30 text-secondary' : 'bg-primary-fixed/40 text-on-primary-fixed'">
-                                        NACIONAL
-                                    </span>
-                                </div>
-                                <div th:text="${normativa.tipo}"
-                                    class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant whitespace-normal">
-                                    Ley Nacional
-                                </div>
-                                <div th:text="${normativa.anio}"
-                                    class="flex justify-start w-full md:w-auto text-sm font-body text-on-surface-variant font-medium">
-                                    2021
-                                </div>
-                                <div class="flex justify-start w-full md:w-auto">
-                                    <span th:if="${normativa.obligatoriedad == 'Legal Vinculante'}"
-                                        class="inline-block px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-tertiary-fixed text-on-tertiary-fixed border border-tertiary-fixed-dim">
-                                        Legal Vinculante
-                                    </span>
-                                    <span th:if="${normativa.obligatoriedad == 'No vinculante'}"
-                                        class="inline-block px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-surface-container-high text-on-surface-variant border border-outline-variant/30">
-                                        No vinculante
-                                    </span>
-                                    <span
-                                        th:if="${normativa.obligatoriedad != 'Legal Vinculante' and normativa.obligatoriedad != 'No vinculante'}"
-                                        th:text="${normativa.obligatoriedad}"
-                                        class="inline-block px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-surface-container text-on-surface-variant border border-outline-variant/30">
-                                    </span>
-                                </div>
-                                <div class="flex justify-end w-full md:w-auto">
-                                    <a th:href="@{/normativas/{id}(id=${normativa.id})}"
-                                        class="font-label text-sm font-semibold text-outline hover:text-primary-container transition-colors flex items-center gap-1 group/link">
-                                        Ver Normativa
-                                        <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform shrink-0"
-                                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                class="list-item bg-surface-container-lowest rounded-xl ambient-shadow flex flex-col overflow-hidden border border-transparent hover:border-outline-variant/30 transition-colors group">
+                                
+                                <!-- MAIN ROW -->
+                                <div class="p-4 md:px-6 md:py-4 flex flex-col md:grid md:grid-cols-[40px_minmax(200px,1fr)_120px_140px_120px_100px_60px_60px] gap-3 md:gap-4 items-start md:items-center cursor-pointer main-row" onclick="toggleRow(this)">
+                                    
+                                    <!-- Mobile Header & Toggle -->
+                                    <div class="flex items-center justify-between w-full md:hidden mb-2">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-2 h-2 rounded-full shrink-0" th:classappend="${normativa.estado == 'VIGENTE' ? 'bg-[#006c46]' : (normativa.estado == 'DEROGADA' ? 'bg-[#E24B4A]' : (normativa.estado == 'PUBLICADA' ? 'bg-[#ffc107]' : (normativa.estado == 'CONSULTA PUBLICA' ? 'bg-[#2196f3]' : 'bg-[#888780]')))}"></span>
+                                            <span th:text="${normativa.estado}" class="text-xs font-bold text-on-surface uppercase tracking-wider">Vigente</span>
+                                        </div>
+                                        <svg class="w-5 h-5 text-on-surface-variant transition-transform duration-300 transform expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                         </svg>
-                                    </a>
+                                    </div>
+
+                                    <!-- 1. Expand Toggle (Desktop) -->
+                                    <div class="hidden md:flex justify-center w-full">
+                                        <svg class="w-5 h-5 text-on-surface-variant transition-transform duration-300 transform expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
+
+                                    <!-- 2. Nombre & Organismo -->
+                                    <div class="flex flex-col w-full text-left pr-4">
+                                        <h4 th:text="${normativa.titulo}" class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors">Ley de Plásticos</h4>
+                                        <p th:text="${normativa.organismo}" class="text-xs text-on-surface-variant mt-1">Ministerio del Medio Ambiente</p>
+                                    </div>
+
+                                    <!-- 3. Código -->
+                                    <div class="flex w-full md:w-auto">
+                                        <span class="md:hidden text-xs font-bold text-on-surface-variant w-24">Código:</span>
+                                        <div th:text="${normativa.codigo}" class="text-xs font-body text-on-surface-variant font-medium">LEY - 21368</div>
+                                    </div>
+
+                                    <!-- 4. Tema -->
+                                    <div class="flex w-full md:w-auto items-center">
+                                        <span class="md:hidden text-xs font-bold text-on-surface-variant w-24">Tema:</span>
+                                        <div class="flex flex-wrap gap-1" th:with="catSize=${#lists.isEmpty(normativa.categorias) ? 0 : #lists.size(normativa.categorias)}">
+                                            <span th:if="${catSize == 0}" class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center bg-[#888780] text-white">Sin categoría</span>
+                                            <th:block th:each="cat, iter : ${normativa.categorias}">
+                                                <span th:if="${iter.index < 2}"
+                                                      th:with="isEc=${#strings.equalsIgnoreCase(cat, 'Economía circular')}, isGr=${#strings.equalsIgnoreCase(cat, 'Gestión de residuos')}, isEe=${#strings.equalsIgnoreCase(cat, 'Envases y Embalajes')}, isRep=${#strings.equalsIgnoreCase(cat, 'Ley REP') or #strings.equalsIgnoreCase(cat, 'Responsabilidad Extendida')}"
+                                                      th:text="${isEc ? 'EC' : (isGr ? 'GR' : (isEe ? 'EE' : (isRep ? 'REP' : 'OTRO')))}"
+                                                      class="inline-block px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center text-white"
+                                                      th:classappend="${isEc ? 'bg-[#006C46]' : (isGr ? 'bg-[#3B82F6]' : (isEe ? 'bg-[#F49E0B]' : (isRep ? 'bg-[#BA1A1A]' : 'bg-[#888780]')))}">
+                                                </span>
+                                            </th:block>
+                                            <span th:if="${catSize > 2}"
+                                                  class="inline-block px-2 py-1 rounded-full text-[10px] font-bold bg-surface-variant text-on-surface"
+                                                  th:text="'+' + (${catSize} - 2)">
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- 5. Estado (Desktop only as it's in mobile header) -->
+                                    <div class="hidden md:flex justify-start w-full md:w-auto">
+                                        <span class="inline-flex items-center gap-1.5">
+                                            <span class="w-2 h-2 rounded-full shrink-0" th:classappend="${normativa.estado == 'VIGENTE' ? 'bg-[#006c46]' : (normativa.estado == 'DEROGADA' ? 'bg-[#E24B4A]' : (normativa.estado == 'PUBLICADA' ? 'bg-[#ffc107]' : (normativa.estado == 'CONSULTA PUBLICA' ? 'bg-[#2196f3]' : 'bg-[#888780]')))}"></span>
+                                            <span th:text="${normativa.estado}" class="text-on-surface text-xs font-bold whitespace-normal">Vigente</span>
+                                        </span>
+                                    </div>
+
+                                    <!-- 6. Acceso -->
+                                    <div class="flex w-full md:w-auto items-center">
+                                        <span class="md:hidden text-xs font-bold text-on-surface-variant w-24">Acceso:</span>
+                                        <span th:if="${normativa.acceso == 'GRATIS'}" class="inline-flex items-center gap-1 text-gratuito text-xs font-bold uppercase tracking-wider">
+                                            <div th:replace="~{fragments/icons.html :: icon-acceso-gratuito}"></div>
+                                            GRATUITO
+                                        </span>
+                                        <span th:if="${normativa.acceso == 'PAGO'}" class="inline-flex items-center gap-1 text-de-pago text-xs font-bold uppercase tracking-wider">
+                                            <div th:replace="~{fragments/icons.html :: icon-acceso-pago}"></div>
+                                            DE PAGO
+                                        </span>
+                                    </div>
+
+                                    <!-- 7. Año -->
+                                    <div class="flex w-full md:w-auto items-center">
+                                        <span class="md:hidden text-xs font-bold text-on-surface-variant w-24">Año:</span>
+                                        <div th:text="${normativa.anio}" class="text-sm font-body text-on-surface-variant font-medium">2021</div>
+                                    </div>
+
+                                    <!-- 8. Ver Normativa Icon (Desktop only) -->
+                                    <div class="hidden md:flex justify-center w-full md:w-auto">
+                                        <button type="button" class="p-2 rounded-full text-outline hover:bg-surface-container hover:text-primary-container transition-colors" title="Expandir para ver detalles">
+                                            <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- EXPANDED DETAILS -->
+                                <div class="expanded-content hidden bg-surface-container-lowest border-t border-outline-variant/30 px-4 md:px-6 py-4 cursor-default" onclick="event.stopPropagation()">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-4 gap-x-4">
+                                        
+                                        <!-- Tipo -->
+                                        <div>
+                                            <h5 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Tipo de Norma</h5>
+                                            <p th:text="${normativa.tipo}" class="text-sm font-body text-on-surface font-medium">Ley Nacional</p>
+                                        </div>
+
+                                        <!-- Obligatoriedad -->
+                                        <div>
+                                            <h5 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Obligatoriedad</h5>
+                                            <span th:if="${normativa.obligatoriedad == 'Legal Vinculante'}" class="inline-block px-3 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-tertiary-fixed text-on-tertiary-fixed border border-tertiary-fixed-dim">
+                                                Legal Vinculante
+                                            </span>
+                                            <span th:if="${normativa.obligatoriedad == 'No vinculante'}" class="inline-block px-3 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-surface-container-high text-on-surface-variant border border-outline-variant/30">
+                                                No vinculante
+                                            </span>
+                                            <span th:if="${normativa.obligatoriedad != 'Legal Vinculante' and normativa.obligatoriedad != 'No vinculante'}" th:text="${normativa.obligatoriedad}" class="inline-block px-3 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-surface-container text-on-surface-variant border border-outline-variant/30">
+                                            </span>
+                                        </div>
+
+                                        <!-- Alcance -->
+                                        <div>
+                                            <h5 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Alcance</h5>
+                                            <span th:text="${normativa.alcance}" class="inline-block px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-center border border-outline-variant/30" th:classappend="${#strings.equalsIgnoreCase(normativa.alcance, 'NACIONAL')} ? 'bg-secondary-container/30 text-secondary' : 'bg-primary-fixed/40 text-on-primary-fixed'">
+                                                NACIONAL
+                                            </span>
+                                        </div>
+
+                                        <!-- Organismo -->
+                                        <div>
+                                            <h5 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Organismo Emisor</h5>
+                                            <p th:text="${normativa.organismo}" class="text-sm font-body text-on-surface font-medium">Ministerio del Medio Ambiente</p>
+                                        </div>
+
+                                        <!-- Temas Completos -->
+                                        <div class="col-span-1 md:col-span-2 lg:col-span-4">
+                                            <h5 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1.5">Temas Asignados</h5>
+                                            <div class="flex flex-wrap gap-2">
+                                                <th:block th:each="cat : ${normativa.categorias}">
+                                                    <span th:with="isEc=${#strings.equalsIgnoreCase(cat, 'Economía circular')}, isGr=${#strings.equalsIgnoreCase(cat, 'Gestión de residuos')}, isEe=${#strings.equalsIgnoreCase(cat, 'Envases y Embalajes')}, isRep=${#strings.equalsIgnoreCase(cat, 'Ley REP') or #strings.equalsIgnoreCase(cat, 'Responsabilidad Extendida')}"
+                                                          th:text="${isEc ? 'EC - Economía Circular' : (isGr ? 'GR - Gestión de Residuos' : (isEe ? 'EE - Envases y Embalajes' : (isRep ? 'REP - Ley REP' : cat)))}"
+                                                          class="inline-block px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-left text-white shadow-sm"
+                                                          th:classappend="${isEc ? 'bg-[#006C46]' : (isGr ? 'bg-[#3B82F6]' : (isEe ? 'bg-[#F49E0B]' : (isRep ? 'bg-[#BA1A1A]' : 'bg-[#888780]')))}">
+                                                    </span>
+                                                </th:block>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Acciones -->
+                                        <div class="col-span-1 md:col-span-2 lg:col-span-4 mt-1 flex flex-wrap gap-3 pt-3 border-t border-outline-variant/30">
+                                            <a th:href="@{/normativas/{id}(id=${normativa.id})}" class="flex items-center gap-1.5 px-4 py-1.5 bg-secondary text-white rounded-lg text-xs font-bold hover:bg-[#00210c] transition-colors shadow-sm">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                Ver Normativa
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -770,6 +835,34 @@
 
     <!-- Script de Paginación y Modal -->
     <script th:inline="javascript">
+        function toggleRow(rowElement) {
+            const parent = rowElement.closest('.list-item');
+            const content = parent.querySelector('.expanded-content');
+            const icons = rowElement.querySelectorAll('.expand-icon');
+
+            // Close other rows
+            document.querySelectorAll('.expanded-content').forEach(el => {
+                if (el !== content && !el.classList.contains('hidden')) {
+                    el.classList.add('hidden');
+                    el.closest('.list-item').classList.remove('border-outline-variant/30', 'bg-surface-container/30');
+                    el.closest('.list-item').classList.add('border-transparent');
+                    el.closest('.list-item').querySelectorAll('.expand-icon').forEach(i => i.classList.remove('rotate-180'));
+                }
+            });
+
+            // Toggle current row
+            content.classList.toggle('hidden');
+            icons.forEach(icon => icon.classList.toggle('rotate-180'));
+            
+            if (!content.classList.contains('hidden')) {
+                parent.classList.remove('border-transparent');
+                parent.classList.add('border-outline-variant/30', 'bg-surface-container/30');
+            } else {
+                parent.classList.add('border-transparent');
+                parent.classList.remove('border-outline-variant/30', 'bg-surface-container/30');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             // Modal Logic
             const openFiltersBtn = document.getElementById('openFiltersModal');
@@ -874,7 +967,7 @@
             const nextPageBtn = document.getElementById('nextPageBtn');
 
             let currentPage = 1;
-            const pageSize = 5;
+            const pageSize = 4;
 
             function renderPagination() {
                 if (!paginationContainer) return;
