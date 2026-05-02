@@ -216,7 +216,7 @@
                 </div>
 
                 <!-- Columna Derecha: Información -->
-                <div class="w-full xl:w-[420px] flex flex-col h-full min-h-0 gap-4 overflow-y-auto pr-1">
+                <div class="w-full xl:w-[460px] flex flex-col h-full min-h-0 gap-4 overflow-y-auto pr-1">
 
                     <!-- Acceso a Fuente Original -->
                     <section class="bg-primary-container rounded-xl p-6 text-center space-y-4 shadow-sm">
@@ -247,16 +247,16 @@
                     <!-- Detalle Técnico -->
                     <section class="bg-white rounded-xl p-5 shadow-sm space-y-6">
                         <div>
-                            <h4 class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">
+                            <h4 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
                                 DESCRIPCIÓN</h4>
                             <p th:text="${normativa.descripcion}"
-                                class="text-sm text-on-surface-variant leading-relaxed line-clamp-6">
+                                class="font-body text-sm text-on-surface-variant leading-relaxed text-[#1a1a1a] line-clamp-6">
                                 Descripción de la normativa...
                             </p>
                         </div>
 
                         <div th:if="${normativa.campoAplicacion != null}">
-                            <h4 class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-2">
+                            <h4 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
                                 CAMPOS DE APLICACIÓN</h4>
                             <div class="flex flex-wrap gap-2">
                                 <span th:each="campo : ${#strings.arraySplit(normativa.campoAplicacion, ',')}"
@@ -267,39 +267,58 @@
                             </div>
                         </div>
 
+                        <!-- Estadísticas -->
+                        <div class="mt-6">
+                            <h4
+                                class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                                ESTADÍSTICAS
+                            </h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="text-center bg-secondary-container/30 p-3 rounded-lg">
+                                    <p class="text-2xl font-bold text-secondary" th:text="${detalle.totalDescargas}">125</p>
+                                    <p class="text-xs font-semibold text-on-secondary-container uppercase tracking-wider">Descargas</p>
+                                </div>
+                                <div class="text-center bg-surface-container p-3 rounded-lg">
+                                    <p class="text-sm font-bold text-on-surface" th:text="${#temporals.format(normativa.fechaActualizacion, 'dd MMM yyyy')}">24 May 2024</p>
+                                    <p class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Actualización</p>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- METADATA GRID -->
                         <div class="grid grid-cols-2 gap-y-4 pt-4 border-t border-surface-variant/50">
                             <div>
-                                <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">CÓDIGO</h3>
+                                <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">CÓDIGO</h3>
                                 <p th:text="${normativa.codigo != null ? normativa.codigo : 'N/A'}"
-                                    class="text-xs font-bold text-on-surface">LEY-20920</p>
+                                    class="text-sm font-medium text-[#1a1a1a]">LEY-20920</p>
                             </div>
                             <div>
-                                <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">AÑO</h3>
-                                <p th:text="${normativa.anio}" class="text-xs font-bold text-on-surface">2016</p>
+                                <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">AÑO</h3>
+                                <p th:text="${normativa.anio}" class="text-sm font-medium text-[#1a1a1a]">2016</p>
                             </div>
                             <div class="col-span-2">
-                                <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">ORGANISMO EMISOR
+                                <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">ORGANISMO EMISOR
                                 </h3>
-                                <p th:text="${normativa.organismoEmisor}" class="text-xs font-bold text-on-surface">
+                                <p th:text="${normativa.organismoEmisor}" class="text-sm font-medium text-[#1a1a1a]">
                                     Ministerio del Medio Ambiente</p>
                             </div>
                             <div>
-                                <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">TIPO</h3>
+                                <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">TIPO</h3>
                                 <p th:text="${normativa.tipoNorma.name().replace('_', ' ')}"
-                                    class="text-xs font-bold text-on-surface">Ley de la República</p>
+                                    class="text-sm font-medium text-[#1a1a1a]">Ley de la República</p>
                             </div>
                             <div>
-                                <h3 class="text-[10px] font-bold text-outline uppercase tracking-wider">OBLIGATORIEDAD
+                                <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">OBLIGATORIEDAD
                                 </h3>
-                                <p th:text="${normativa.obligatoriedad}" class="text-xs font-bold text-on-surface">
+                                <p th:text="${normativa.obligatoriedad}" class="text-sm font-medium text-[#1a1a1a]">
                                     Vinculante</p>
                             </div>
                         </div>
 
                         <!-- Clasificación Circular -->
                         <div class="pt-4 border-t border-surface-variant/50" th:if="${normativa.clasificacion != null}">
-                            <h4 class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-3">
+                            <h4 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">
                                 CLASIFICACIÓN CIRCULAR</h4>
                             <div
                                 class="flex items-center gap-3 bg-tertiary-fixed/30 p-3 rounded-lg border border-tertiary-fixed-dim/20">
@@ -315,6 +334,75 @@
                             </div>
                         </div>
                     </section>
+
+                    <!-- Opción 1A: Normativas Relacionadas -->
+                    <section class="bg-white rounded-lg border border-outline-variant/20 p-4 shadow-sm flex-shrink-0">
+                        <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                            Normativas Relacionadas
+                        </h3>
+                        <div class="flex flex-col gap-3">
+                            <div th:each="rel : ${detalle.normativasRelacionadas}" class="pb-3 border-b border-surface-variant/50 last:border-b-0 last:pb-0">
+                                <a th:href="@{/normativas/{id}(id=${rel.id})}" class="block hover:bg-surface-container/50 -m-2 p-2 rounded-md">
+                                    <h4 class="text-sm font-bold text-on-primary-fixed leading-snug" th:text="${rel.titulo}">Título de la normativa relacionada</h4>
+                                    <div class="flex items-center gap-2 mt-1.5">
+                                        <span class="px-2 py-0.5 bg-surface-container text-on-surface-variant rounded text-xs font-semibold" th:text="${rel.codigo}">COD-123</span>
+                                        <span th:text="${rel.acceso}"
+                                              th:classappend="${#strings.equalsIgnoreCase(rel.acceso, 'PAGO') ? 'text-de-pago bg-de-pago/10' : 'text-gratuito bg-gratuito/10'}"
+                                              class="px-2 py-0.5 rounded text-xs font-bold uppercase">GRATIS</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <p th:if="${#lists.isEmpty(detalle.normativasRelacionadas)}" class="text-sm text-on-surface-variant">No hay normativas del mismo emisor.</p>
+                        </div>
+                    </section>
+
+                    <!-- Opción 1C: Historial -->
+                    <section class="bg-white rounded-lg border border-outline-variant/20 p-4 shadow-sm flex-shrink-0">
+                        <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Historial
+                        </h3>
+                        <ul class="space-y-2 text-sm text-on-surface-variant">
+                            <li class="flex items-center gap-2">
+                                <span class="font-semibold w-28">Publicada:</span>
+                                <span th:text="${#temporals.format(normativa.fechaCreacion, 'dd MMM yyyy')}">01 Jun 2016</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="font-semibold w-28">Actualizada:</span>
+                                <span th:text="${#temporals.format(normativa.fechaActualizacion, 'dd MMM yyyy')}">24 May 2024</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="font-semibold w-28">Estado:</span>
+                                <span th:text="${normativa.estado.name().replace('_', ' ')}"
+                                      th:classappend="${normativa.estado.name() == 'VIGENTE' ? 'text-gratuito' : 'text-de-pago'}"
+                                      class="font-bold">VIGENTE</span>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- Opción 4: Normativas Similares -->
+                    <section class="bg-white rounded-lg border border-outline-variant/20 p-4 shadow-sm flex-shrink-0">
+                        <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                            También te podría interesar
+                        </h3>
+                        <div class="flex flex-col gap-2">
+                            <div th:each="sim : ${detalle.normativasSimilares}" class="bg-[#f9f9fb] p-2 rounded-md border border-transparent hover:border-outline-variant/30">
+                                <a th:href="@{/normativas/{id}(id=${sim.id})}" class="block">
+                                    <h4 class="text-sm font-bold text-on-primary-fixed leading-snug" th:text="${sim.titulo}">Título de la normativa similar</h4>
+                                    <div class="flex items-center justify-between mt-1.5">
+                                        <span class="text-xs text-on-surface-variant">★★★★☆</span>
+                                        <span th:text="${sim.acceso}"
+                                              th:classappend="${#strings.equalsIgnoreCase(sim.acceso, 'PAGO') ? 'text-de-pago bg-de-pago/10' : 'text-gratuito bg-gratuito/10'}"
+                                              class="px-2 py-0.5 rounded text-xs font-bold uppercase">GRATIS</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <p th:if="${#lists.isEmpty(detalle.normativasSimilares)}" class="text-sm text-on-surface-variant">No hay normativas similares.</p>
+                        </div>
+                    </section>
+
                 </div>
             </div>
         </main>

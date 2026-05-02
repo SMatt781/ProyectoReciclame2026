@@ -1,8 +1,10 @@
 package com.example.proyectoreciclame.Controller;
 
 import com.example.proyectoreciclame.Dto.NormativaDTO;
+import com.example.proyectoreciclame.Dto.NormativaDetalleDTO;
 import com.example.proyectoreciclame.Entity.Normativa;
 import com.example.proyectoreciclame.Repository.NormativaRepository;
+import com.example.proyectoreciclame.Service.NormativaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +21,9 @@ public class NormativaController {
 
     @Autowired
     private NormativaRepository normativaRepository;
+    
+    @Autowired
+    private NormativaService normativaService;
 
     @GetMapping
     public String listarNormativas(
@@ -220,15 +225,16 @@ public class NormativaController {
 
     @GetMapping("/{id}")
     public String verNormativa(@org.springframework.web.bind.annotation.PathVariable Long id, Model model) {
-        Normativa normativa = normativaRepository.findById(id).orElse(null);
-        if (normativa == null) {
+        NormativaDetalleDTO detalle = normativaService.obtenerDetalleConContexto(id);
+        if (detalle == null || detalle.getNormativa() == null) {
             return "redirect:/normativas";
         }
         
-        model.addAttribute("normativa", normativa);
+        model.addAttribute("detalle", detalle);
+        model.addAttribute("normativa", detalle.getNormativa());
         model.addAttribute("currentPage", "repoNormativo");
 
-        if (normativa.getAcceso() == Normativa.AccesoNormativa.PAGO) {
+        if (detalle.getNormativa().getAcceso() == Normativa.AccesoNormativa.PAGO) {
             return "socio/visualizadorNormativaPago";
         } else {
             return "socio/visualizadorNormativa";

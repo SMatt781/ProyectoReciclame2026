@@ -71,4 +71,18 @@ public interface EstudioRepository extends JpaRepository<Estudio, Long> {
 
     List<Estudio> findTop3ByEliminadoEnIsNullOrderByFechaActualizacionDesc();
 
+    long countByEliminadoEnIsNull();
+
+    long countByFechaPublicacionAfterAndEliminadoEnIsNull(LocalDate fechaPublicacion);
+
+    @Query("""
+            SELECT FUNCTION('year', e.fechaPublicacion), COUNT(e)
+            FROM Estudio e
+            WHERE e.eliminadoEn IS NULL
+              AND e.fechaPublicacion IS NOT NULL
+            GROUP BY FUNCTION('year', e.fechaPublicacion)
+            ORDER BY COUNT(e) DESC
+            """)
+    List<Object[]> findActiveYearsByPublicacion();
+
 }

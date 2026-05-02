@@ -119,7 +119,6 @@
     <!-- Main Content Canvas -->
     <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
         <!-- TopAppBar -->
-        <!-- TopAppBar -->
         <div th:replace="~{fragments/navbar :: navbar}"></div>
         <!-- Main Content canvas modified to force h-full mapping without scroll -->
         <main class="flex-1 flex flex-col overflow-hidden px-6 md:px-10 py-6 bg-[#f9f9ff]">
@@ -149,7 +148,7 @@
                             class="inline-flex items-center gap-1.5 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase">
                         </span>
                         <span
-                            class="inline-flex items-center gap-1.5 text-de-pago bg-[#fef3c7] px-4 py-1.5 rounded-full text-xs font-bold uppercase border border-de-pago">
+                            class="inline-flex items-center gap-1.5 text-de-pago bg-de-pago/10 px-4 py-1.5 rounded-full text-xs font-bold uppercase border border-de-pago">
                             ACCESO DE PAGO
                         </span>
                         <span th:if="${normativa.categorias != null and !normativa.categorias.isEmpty()}"
@@ -162,10 +161,10 @@
             </div>
 
             <!-- CONTENEDOR PADRE (GRID) -->
-            <div class="w-full flex-1 min-h-0 h-full overflow-hidden flex flex-col xl:flex-row gap-6">
+            <div class="w-full flex-1 min-h-0 h-full overflow-hidden grid grid-cols-1 xl:grid-cols-[2fr_1.2fr] gap-6">
 
                 <!-- Columna Izquierda -->
-                <div class="w-full xl:w-1/2 h-full flex flex-col">
+                <div class="w-full h-full flex flex-col overflow-y-auto pr-1">
                     <section class="flex-1 flex flex-col bg-white rounded-xl p-5 shadow-sm">
                         <div>
                             <h4
@@ -191,8 +190,44 @@
                             </div>
                         </div>
 
+                        <!-- Estadísticas y Documento Protegido -->
+                        <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+                            <!-- Bloque: Estadísticas -->
+                            <div class="flex flex-col">
+                                <h4
+                                    class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                                    ESTADÍSTICAS
+                                </h4>
+                                <div class="flex flex-wrap gap-4 flex-1">
+                                    <div class="text-center bg-secondary-container/30 px-4 py-3 rounded-lg flex-1 flex flex-col justify-center">
+                                        <p class="text-2xl font-bold text-secondary" th:text="${detalle.totalDescargas}">125</p>
+                                        <p class="text-[10px] font-semibold text-on-secondary-container uppercase tracking-wider mt-1">Descargas</p>
+                                    </div>
+                                    <div class="text-center bg-surface-container px-4 py-3 rounded-lg flex-1 flex flex-col justify-center">
+                                        <p class="text-lg font-bold text-on-surface" th:text="${#temporals.format(normativa.fechaActualizacion, 'dd MMM yyyy')}">24 May 2024</p>
+                                        <p class="text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider mt-1">Actualización</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Bloque: Documento Protegido -->
+                            <div class="flex flex-col justify-center bg-[#041533] rounded-xl p-5 text-center shadow-sm">
+                                <h3 class="text-[15px] font-bold text-white mb-2 uppercase tracking-wider">DOCUMENTO PROTEGIDO</h3>
+                                <p class="text-[12px] text-[#b0b0b0] mb-4">No hay vista previa disponible para este documento.</p>
+                                <a th:href="${normativa.enlaceExterno}" target="_blank"
+                                    class="inline-flex items-center justify-center gap-2 bg-white text-[#041533] px-4 py-2 rounded-lg font-bold text-xs hover:bg-[#f0f0f0] transition w-max mx-auto">
+                                    Acceder al enlace de compra
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+
                         <!-- METADATA GRID -->
-                        <div class="mt-auto grid grid-cols-2 gap-6 pt-4 border-t border-surface-variant">
+                        <div class="mt-8 grid grid-cols-2 gap-6 pt-4 border-t border-surface-variant">
                             <div>
                                 <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">CÓDIGO</h3>
                                 <p th:text="${normativa.codigo != null ? normativa.codigo : 'No especificado'}"
@@ -219,96 +254,120 @@
                     </section>
                 </div>
 
-                <!-- Columna Derecha -->
-                <div class="w-full xl:w-1/2 flex flex-col h-full min-h-0 gap-4">
+                <!-- Columna Derecha: Contexto y Relaciones -->
+                <div class="w-full xl:w-[460px] flex-shrink-0 flex flex-col h-full min-h-0 gap-4 overflow-y-auto pr-1">
 
-                    <!-- Documento Protegido -->
-                    <div
-                        class="flex-1 flex flex-col justify-center bg-[#041533] rounded-xl p-6 text-center space-y-4 shadow-sm overflow-y-auto">
-
-                        <div>
-                            <h3 class="text-lg font-bold text-white mb-2">DOCUMENTO PROTEGIDO </h3>
-                            <p class="text-[13px] text-[#b0b0b0] leading-relaxed">
-                                No hay vista previa disponible para este documento. Esta norma forma parte del catálogo
-                                de pago y debe ser adquirida a través de la plataforma oficial externa para acceder a su
-                                contenido completo.
-                            </p>
-                        </div>
-                        <div>
-                            <a th:href="${normativa.enlaceExterno}" target="_blank"
-                                class="inline-flex items-center gap-2 bg-white text-[#041533] px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-[#f0f0f0] transition">
-                                Acceder al enlace de compra
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Clasificación Circular -->
-                    <div class="grid grid-cols-2 gap-4">
-
-                        <!-- SECCIÓN 1: Clasificación Circular -->
-                        <section class="shrink-0 bg-[#dce2f3] rounded-xl px-5 py-4">
-                            <h2 class="text-[13px] font-bold text-[#1a1a1a] uppercase tracking-wider mb-4">CLASIFICACIÓN
-                                CIRCULAR</h2>
-
-                            <!-- Prioridad Alta -->
-                            <div class="flex items-center gap-3 pb-3 mb-3 border-b border-[#c2cee8]"
-                                th:if="${normativa.clasificacion != null}">
-                                <div
-                                    class="w-9 h-9 rounded-lg bg-[#c8e6c9] flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-4 h-4 text-[#00743a]" fill="currentColor" viewBox="0 0 24 24">
-                                        <path
-                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                                    </svg>
-                                </div>
-                                <div class="flex flex-col">
-                                    <p class="font-bold text-[#1a1a1a] text-sm leading-tight">Clasificación</p>
-                                    <p th:text="${normativa.clasificacion.name().replace('_', ' ')}"
-                                        class="text-xs text-[#00743a] font-medium leading-tight">Prioridad Alta</p>
-                                </div>
+                    <!-- Opción 1A: Normativas Relacionadas -->
+                    <section class="bg-white rounded-lg border border-outline-variant/20 p-4 shadow-sm flex-shrink-0">
+                        <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                            Normativas Relacionadas
+                        </h3>
+                        <div class="flex flex-col gap-3">
+                            <div th:each="rel : ${detalle.normativasRelacionadas}" class="pb-3 border-b border-surface-variant/50 last:border-b-0 last:pb-0">
+                                <a th:href="@{/normativas/{id}(id=${rel.id})}" class="block hover:bg-surface-container/50 -m-2 p-2 rounded-md">
+                                    <h4 class="text-sm font-bold text-on-primary-fixed leading-snug" th:text="${rel.titulo}">Título de la normativa relacionada</h4>
+                                    <div class="flex items-center gap-2 mt-1.5">
+                                        <span class="px-2 py-0.5 bg-surface-container text-on-surface-variant rounded text-xs font-semibold" th:text="${rel.codigo}">COD-123</span>
+                                        <span th:text="${rel.acceso}"
+                                              th:classappend="${#strings.equalsIgnoreCase(rel.acceso, 'PAGO') ? 'text-de-pago bg-de-pago/10' : 'text-gratuito bg-gratuito/10'}"
+                                              class="px-2 py-0.5 rounded text-xs font-bold uppercase">GRATIS</span>
+                                    </div>
+                                </a>
                             </div>
+                            <p th:if="${#lists.isEmpty(detalle.normativasRelacionadas)}" class="text-sm text-on-surface-variant">No hay normativas del mismo emisor.</p>
+                        </div>
+                    </section>
 
-                            <!-- Obligatoriedad -->
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-9 h-9 rounded-lg bg-white border border-[#1a1a1a] flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-4 h-4 text-[#1a1a1a]" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
-                                    </svg>
-                                </div>
-                                <div class="flex flex-col">
-                                    <p class="font-bold text-[#1a1a1a] text-sm leading-tight">Obligatoriedad</p>
-                                    <p th:text="${normativa.obligatoriedad}"
-                                        class="text-xs text-[#666] font-medium leading-tight">Legal Vinculante</p>
-                                </div>
+                    <!-- Opción 1C: Historial -->
+                    <section class="bg-white rounded-lg border border-outline-variant/20 p-4 shadow-sm flex-shrink-0">
+                        <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Historial
+                        </h3>
+                        <ul class="space-y-2 text-sm text-on-surface-variant">
+                            <li class="flex items-center gap-2">
+                                <span class="font-semibold w-28">Publicada:</span>
+                                <span th:text="${#temporals.format(normativa.fechaCreacion, 'dd MMM yyyy')}">01 Jun 2016</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="font-semibold w-28">Actualizada:</span>
+                                <span th:text="${#temporals.format(normativa.fechaActualizacion, 'dd MMM yyyy')}">24 May 2024</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="font-semibold w-28">Estado:</span>
+                                <span th:text="${normativa.estado.name().replace('_', ' ')}"
+                                      th:classappend="${normativa.estado.name() == 'VIGENTE' ? 'text-gratuito' : 'text-de-pago'}"
+                                      class="font-bold">VIGENTE</span>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- Opción 4: Normativas Similares -->
+                    <section class="bg-white rounded-lg border border-outline-variant/20 p-4 shadow-sm flex-shrink-0">
+                        <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                            También te podría interesar
+                        </h3>
+                        <div class="flex flex-col gap-2">
+                            <div th:each="sim : ${detalle.normativasSimilares}" class="bg-[#f9f9fb] p-2 rounded-md border border-transparent hover:border-outline-variant/30">
+                                <a th:href="@{/normativas/{id}(id=${sim.id})}" class="block">
+                                    <h4 class="text-sm font-bold text-on-primary-fixed leading-snug" th:text="${sim.titulo}">Título de la normativa similar</h4>
+                                    <div class="flex items-center justify-between mt-1.5">
+                                        <span class="text-xs text-on-surface-variant">★★★★☆</span>
+                                        <span th:text="${sim.acceso}"
+                                              th:classappend="${#strings.equalsIgnoreCase(sim.acceso, 'PAGO') ? 'text-de-pago bg-de-pago/10' : 'text-gratuito bg-gratuito/10'}"
+                                              class="px-2 py-0.5 rounded text-xs font-bold uppercase">GRATIS</span>
+                                    </div>
+                                </a>
                             </div>
-                        </section>
+                            <p th:if="${#lists.isEmpty(detalle.normativasSimilares)}" class="text-sm text-on-surface-variant">No hay normativas similares.</p>
+                        </div>
+                    </section>
 
-                        <!-- SECCIÓN 2: Nueva Sección (tu nueva sección aquí) -->
-                        <section class="shrink-0 bg-[#f0f4ff] rounded-xl px-5 py-4">
-                            <h2 class="text-[13px] font-bold text-[#1a1a1a] uppercase tracking-wider mb-4">INFORMACIÓN
-                                DE ADQUISICIÓN
-                            </h2>
-
-                            <!-- Contenido aquí -->
-                            <p class="text-xs text-[#666] leading-relaxed">
-                                Este documento es propiedad intelectual de su emisor y requiere el pago de una tasa por
-                                derechos de autor o acceso comercial a través de su plataforma oficial.
-                            </p>
-                        </section>
-
-                    </div>
                 </div>
             </div>
         </main>
     </div>
-</body>
+    <script>
+        // Security logic for document viewer
+        document.addEventListener('DOMContentLoaded', function() {
+            const viewerContainer = document.getElementById('viewerContainer');
+            
+            // Block context menu (right click)
+            document.addEventListener('contextmenu', event => event.preventDefault());
 
-</html>
-</div>
+            // Block common screen capture/print shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl+P, Ctrl+S, Ctrl+C, PrintScreen
+                if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'c' || e.key === 'C')) || 
+                    e.key === 'PrintScreen' || e.key === 'F12') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Clear clipboard if PrintScreen is pressed
+            window.addEventListener('keyup', function(e) {
+                if (e.key == 'PrintScreen') {
+                    navigator.clipboard.writeText('');
+                }
+            });
+
+            // Blur content when window loses focus (prevent snipping tool)
+            window.addEventListener('blur', function() {
+                if(viewerContainer) {
+                    viewerContainer.style.filter = 'blur(10px)';
+                }
+            });
+
+            window.addEventListener('focus', function() {
+                if(viewerContainer) {
+                    viewerContainer.style.filter = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

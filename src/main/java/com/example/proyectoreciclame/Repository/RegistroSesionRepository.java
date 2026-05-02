@@ -51,4 +51,14 @@ public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, 
                                         Pageable pageable);
 
     Optional<RegistroSesion> findTopByUsuarioAndEstadoOrderByFechaInicioDesc(Usuario usuario, String estado);
+
+    @Query("SELECT COUNT(rs) FROM RegistroSesion rs WHERE rs.usuario.idUsuario = :idUsuario AND rs.fechaInicio >= :fechaInicio AND rs.fechaInicio <= :fechaFin")
+    long countByUsuarioIdUsuarioAndFechaInicioBetween(@Param("idUsuario") Long idUsuario,
+                                                      @Param("fechaInicio") LocalDateTime fechaInicio,
+                                                      @Param("fechaFin") LocalDateTime fechaFin);
+
+    @Query("SELECT COUNT(DISTINCT FUNCTION('date', rs.fechaInicio)) FROM RegistroSesion rs WHERE rs.usuario.idUsuario = :idUsuario AND rs.fechaInicio >= :fechaInicio AND rs.fechaInicio <= :fechaFin")
+    long countActiveDaysByUsuarioIdUsuarioBetween(@Param("idUsuario") Long idUsuario,
+                                                  @Param("fechaInicio") LocalDateTime fechaInicio,
+                                                  @Param("fechaFin") LocalDateTime fechaFin);
 }

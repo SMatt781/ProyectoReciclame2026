@@ -39,6 +39,19 @@ public class Notificacion {
     @Column(name = "leido", nullable = false)
     private Boolean leido = false;
 
+    @Column(name = "tipo", nullable = false)
+    private String tipo;
+
+    @Column(name = "enlace_referencia")
+    private String enlaceReferencia;
+
+    @Column(name = "tipo_entidad")
+    private String tipoEntidad;
+
+    @Column(name = "id_entidad")
+    private Long idEntidad;
+
+    @Column(name = "fecha")
     private LocalDateTime fecha;
 
 
