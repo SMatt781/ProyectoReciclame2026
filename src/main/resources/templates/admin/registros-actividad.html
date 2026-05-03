@@ -110,8 +110,9 @@
             <div class="bg-transparent border border-outline-variant/30 rounded-xl p-4 mb-4 flex flex-col">
 
                 <!-- Filtros -->
+                <!-- Filtros -->
                 <form method="get" th:action="@{/admin/registros/actividad}"
-                      class="grid grid-cols-1 gap-2 mb-6 w-full xl:grid-cols-[1.5fr_0.8fr_0.8fr_auto_auto] xl:items-end">
+                      class="grid grid-cols-1 gap-2 mb-6 w-full xl:grid-cols-[1.5fr_0.8fr_0.8fr_auto_auto_auto] xl:items-end">
 
                     <div>
                         <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
@@ -147,22 +148,39 @@
                         </select>
                     </div>
 
+                    <!-- Limpiar filtros -->
+                    <a th:href="@{/admin/registros/actividad}"
+                       class="flex items-center justify-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition no-underline">
+                        <svg class="w-5 h-5 text-current"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <span class="text-sm font-medium whitespace-nowrap">Limpiar</span>
+                    </a>
+
+                    <!-- Filtrar -->
                     <button type="submit"
-                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                            class="flex items-center justify-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
                         <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M3 4a1 1 0 011-1h16a1 1 0 01.8 1.6L14 13.5V19a1 1 0 01-1.447.894l-3-1.5A1 1 0 019 17.5v-4L3.2 4.6A1 1 0 013 4z" />
                         </svg>
-                        <span class="text-sm font-medium">Filtros </span>
+                        <span class="text-sm font-medium whitespace-nowrap">Filtrar</span>
                     </button>
 
+                    <!-- Exportar -->
                     <a th:href="@{/admin/registros/actividad/exportar(texto=${texto},fecha=${fecha},rol=${rol})}"
-                       class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                       class="flex items-center justify-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition no-underline">
                         <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9.414V19a2 2 0 01-2 2z" />
                         </svg>
-                        <span class="text-sm font-medium">Exportar</span>
+                        <span class="text-sm font-medium whitespace-nowrap">Exportar</span>
                     </a>
                 </form>
 

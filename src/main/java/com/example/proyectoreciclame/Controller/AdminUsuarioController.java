@@ -31,6 +31,11 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import java.util.*;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/admin/usuarios")
@@ -149,6 +154,130 @@ public class AdminUsuarioController {
         }
 
         return "admin/gestion-usuarios";
+    }
+
+    @GetMapping("/gestion/exportar")
+    public void exportarGestionUsuarios(@RequestParam(required = false) String texto,
+                                        @RequestParam(required = false) List<String> rol,
+                                        @RequestParam(required = false) String dateStart,
+                                        @RequestParam(required = false) String dateEnd,
+                                        @RequestParam(required = false) List<String> estado,
+                                        HttpServletResponse response) throws IOException {
+
+        boolean hasRoles = rol != null && !rol.isEmpty();
+        if (hasRoles) {
+            rol = rol.stream().map(String::toUpperCase).toList();
+        }
+
+        boolean hasEstados = estado != null && !estado.isEmpty();
+
+        LocalDateTime fechaInicio = null;
+        LocalDateTime fechaFin = null;
+
+        if (dateStart != null && !dateStart.isEmpty()) {
+            fechaInicio = java.time.LocalDate.parse(dateStart).atStartOfDay();
+        }
+
+        if (dateEnd != null && !dateEnd.isEmpty()) {
+            fechaFin = java.time.LocalDate.parse(dateEnd).atTime(23, 59, 59);
+        }
+
+        Page<Usuario> paginaUsuarios;
+
+        if ((texto == null || texto.isBlank()) && !hasRoles && !hasEstados && fechaInicio == null && fechaFin == null) {
+            paginaUsuarios = usuarioRepository.findAllGestionUsuarios(Pageable.unpaged());
+        } else {
+            paginaUsuarios = usuarioRepository.buscarEnGestionAvanzado(
+                    texto,
+                    hasRoles,
+                    rol,
+                    fechaInicio,
+                    fechaFin,
+                    hasEstados,
+                    estado,
+                    Pageable.unpaged()
+            );
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Usuarios");
+
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerStyle.setFont(headerFont);
+
+        Row header = sheet.createRow(0);
+
+        String[] columnas = {
+                "ID",
+                "Nombres",
+                "Apellido paterno",
+                "Apellido materno",
+                "DNI",
+                "Correo",
+                "Teléfono",
+                "Empresa",
+                "Rol",
+                "Estado aprobación",
+                "Estado cuenta",
+                "Fecha registro"
+        };
+
+        for (int i = 0; i < columnas.length; i++) {
+            Cell cell = header.createCell(i);
+            cell.setCellValue(columnas[i]);
+            cell.setCellStyle(headerStyle);
+        }
+
+        int rowIndex = 1;
+
+        for (Usuario u : paginaUsuarios.getContent()) {
+            Row row = sheet.createRow(rowIndex++);
+
+            String empresa = "-";
+
+            if (u.getUsuarioEmpresa() != null && u.getUsuarioEmpresa().getRazonSocial() != null) {
+                empresa = u.getUsuarioEmpresa().getRazonSocial();
+            }
+
+            String rolUsuario = u.getRol() != null && u.getRol().getNombre() != null
+                    ? u.getRol().getNombre()
+                    : "-";
+
+            String estadoCuenta = u.getEstadoCuenta() != null
+                    ? u.getEstadoCuenta().name()
+                    : "-";
+
+            String fechaRegistro = u.getFechaRegistro() != null
+                    ? u.getFechaRegistro().format(formatter)
+                    : "-";
+
+            row.createCell(0).setCellValue(u.getIdUsuario() != null ? u.getIdUsuario() : 0);
+            row.createCell(1).setCellValue(u.getNombres() != null ? u.getNombres() : "-");
+            row.createCell(2).setCellValue(u.getApellidoPaterno() != null ? u.getApellidoPaterno() : "-");
+            row.createCell(3).setCellValue(u.getApellidoMaterno() != null ? u.getApellidoMaterno() : "-");
+            row.createCell(4).setCellValue(u.getDni() != null ? u.getDni() : "-");
+            row.createCell(5).setCellValue(u.getCorreo() != null ? u.getCorreo() : "-");
+            row.createCell(6).setCellValue(u.getTelefono() != null ? u.getTelefono() : "-");
+            row.createCell(7).setCellValue(empresa);
+            row.createCell(8).setCellValue(rolUsuario);
+            row.createCell(9).setCellValue(u.getEstadoAprobacion() != null ? u.getEstadoAprobacion() : "-");
+            row.createCell(10).setCellValue(estadoCuenta);
+            row.createCell(11).setCellValue(fechaRegistro);
+        }
+
+        for (int i = 0; i < columnas.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=usuarios_reciclame.xlsx");
+
+        workbook.write(response.getOutputStream());
+        workbook.close();
     }
 
     @PostMapping("/editar")

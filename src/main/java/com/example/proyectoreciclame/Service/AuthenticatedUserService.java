@@ -24,6 +24,7 @@ public class AuthenticatedUserService {
         }
 
         Usuario usuario = usuarioRepository.findByCorreoWithRol(auth.getName()).orElse(null);
+
         if (usuario == null) {
             return null;
         }
@@ -39,11 +40,13 @@ public class AuthenticatedUserService {
         String i1 = usuario.getNombres() != null && !usuario.getNombres().isBlank()
                 ? usuario.getNombres().substring(0, 1).toUpperCase()
                 : "";
+
         String i2 = usuario.getApellidoPaterno() != null && !usuario.getApellidoPaterno().isBlank()
                 ? usuario.getApellidoPaterno().substring(0, 1).toUpperCase()
                 : "";
 
         dto.setIniciales(i1 + i2);
+
         return dto;
     }
 }

@@ -231,35 +231,40 @@
                                 </h3>
                             </div>
 
-                            <form th:action="@{'/admin/usuarios/solicitudes/' + ${usuario.idUsuario} + '/denegar'}"
+                            <form id="formDenegarSolicitud"
+                                  th:action="@{'/admin/usuarios/solicitudes/' + ${usuario.idUsuario} + '/denegar'}"
                                   method="post"
                                   class="space-y-5">
+
                                 <div>
                                     <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">
                                         Motivo de rechazo
                                     </label>
+
                                     <textarea name="motivo"
                                               rows="5"
                                               class="w-full rounded-lg bg-surface-container-low px-4 py-3 font-medium text-on-primary-fixed placeholder:text-on-surface-variant border border-outline-variant/30 focus:outline-none focus:ring-2 focus:ring-error/20 resize-none"
                                               placeholder="Ingrese el motivo del rechazo si corresponde..."></textarea>
                                 </div>
-
-                                <div class="flex items-center justify-end gap-3">
-                                    <button type="submit"
-                                            class="px-6 py-2.5 rounded-lg border border-error/20 bg-error-container text-error text-sm font-bold hover:bg-[#ffe9e6] transition-colors">
-                                        Rechazar solicitud
-                                    </button>
-                                </div>
                             </form>
 
-                            <form th:action="@{'/admin/usuarios/solicitudes/' + ${usuario.idUsuario} + '/aceptar'}"
-                                  method="post"
-                                  class="mt-4 flex justify-end">
+                            <div class="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
+
                                 <button type="submit"
-                                        class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary text-sm font-bold hover:bg-[#005a3d] transition-colors shadow-sm">
-                                    Aprobar acceso
+                                        form="formDenegarSolicitud"
+                                        class="inline-flex items-center justify-center min-w-[170px] rounded-lg px-4 py-2.5 text-sm font-semibold text-on-surface-variant border border-outline-variant/30 bg-white hover:bg-error-container hover:text-error transition-colors">
+                                    Rechazar solicitud
                                 </button>
-                            </form>
+
+                                <form th:action="@{'/admin/usuarios/solicitudes/' + ${usuario.idUsuario} + '/aceptar'}"
+                                      method="post">
+                                    <button type="submit"
+                                            class="inline-flex items-center justify-center min-w-[170px] rounded-lg px-4 py-2.5 text-sm font-semibold text-on-surface-variant border border-outline-variant/30 bg-white hover:bg-secondary-container/20 hover:text-secondary transition-colors">
+                                        Aprobar acceso
+                                    </button>
+                                </form>
+
+                            </div>
                         </section>
 
                     </section>
