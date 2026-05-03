@@ -66,36 +66,13 @@
 
             <!-- Encabezado -->
             <div class="mb-3">
-                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
-                    <div>
-                        <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
-                            Registros de Descargas
-                        </h2>
-                        <p class="font-body text-on-surface-variant text-sm mt-1 max-w-3xl">
-                            Gestione y audite el flujo de información técnica de la plataforma en tiempo real.
-                        </p>
-                    </div>
-
-                    <section class="bg-primary-container text-on-primary rounded-xl px-4 py-3 ambient-shadow min-w-[300px] max-w-[390px]">
-                        <div class="flex items-start justify-between gap-3">
-                            <div class="flex items-start gap-3">
-                                <div class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-white font-bold text-sm shrink-0">
-                                    !
-                                </div>
-                                <div>
-                                    <h3 class="font-headline text-sm font-bold">Auditoría de descargas</h3>
-                                    <p class="text-[11px] text-white/70 mt-1 leading-relaxed">
-                                        Supervisa documentos descargados, usuarios, secciones y fechas de acceso.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <a th:href="@{/admin/registros/descargas/exportar(texto=${texto},tipo=${tipo},fechaInicio=${fechaInicio},fechaFin=${fechaFin})}"
-                               class="shrink-0 px-3 py-2 rounded-lg bg-secondary text-on-secondary text-[11px] font-bold hover:bg-[#005a3d] transition-colors">
-                                Exportar
-                            </a>
-                        </div>
-                    </section>
+                <div>
+                    <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                        Registros de Descargas
+                    </h2>
+                    <p class="font-body text-on-surface-variant text-sm mt-1 max-w-3xl">
+                        Gestione y audite el flujo de información técnica de la plataforma en tiempo real.
+                    </p>
                 </div>
             </div>
 
@@ -153,27 +130,33 @@
 
                     <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
+
                         <div class="flex justify-between items-start mb-3">
                             <div class="w-9 h-9 rounded-lg bg-secondary-container/30 text-secondary flex items-center justify-center shadow-sm">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14h2V5h14v14H5v2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                                    <path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9.414V19a2 2 0 01-2 2z"/>
                                 </svg>
                             </div>
+
                             <div class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                Acción
+                                Exportación
                             </div>
                         </div>
-                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1">Exportación</h4>
-                        <a th:href="@{/admin/registros/descargas/exportar(texto=${texto},tipo=${tipo},fechaInicio=${fechaInicio},fechaFin=${fechaFin})}"
-                           class="inline-flex mt-1 px-4 py-2 rounded-lg bg-secondary text-on-secondary text-xs font-bold hover:bg-[#005a3d] transition-colors">
-                            Exportar registros
-                        </a>
+
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1">
+                            Exportaciones
+                        </h4>
+
+                        <div class="text-3xl font-extrabold text-secondary"
+                             th:text="${totalExportaciones != null ? totalExportaciones : totalDescargas}">
+                            0
+                        </div>
                     </article>
                 </section>
 
                 <!-- Filtros -->
                 <form method="get" th:action="@{/admin/registros/descargas}"
-                      class="grid grid-cols-1 gap-2 mb-6 w-full xl:grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr_auto] xl:items-end">
+                      class="grid grid-cols-1 gap-2 mb-6 w-full xl:grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr_auto_auto_auto] xl:items-end">
 
                     <div>
                         <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
@@ -218,14 +201,50 @@
                                class="w-full px-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa] text-sm" />
                     </div>
 
+                    <!-- Limpiar filtros -->
+                    <a th:href="@{/admin/registros/descargas}"
+                       class="flex items-center justify-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition no-underline">
+                        <svg class="w-5 h-5 text-current"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <span class="text-sm font-medium whitespace-nowrap">Limpiar</span>
+                    </a>
+
+                    <!-- Filtrar -->
                     <button type="submit"
-                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                        <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            class="flex items-center justify-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                        <svg class="w-5 h-5 text-current"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
                                   d="M3 4a1 1 0 011-1h16a1 1 0 01.8 1.6L14 13.5V19a1 1 0 01-1.447.894l-3-1.5A1 1 0 019 17.5v-4L3.2 4.6A1 1 0 013 4z" />
                         </svg>
-                        <span class="text-sm font-medium">Filtros</span>
+                        <span class="text-sm font-medium whitespace-nowrap">Filtrar</span>
                     </button>
+
+                    <!-- Exportar -->
+                    <a th:href="@{/admin/registros/descargas/exportar(texto=${texto},tipo=${tipo},fechaInicio=${fechaInicio},fechaFin=${fechaFin})}"
+                       class="flex items-center justify-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition no-underline">
+                        <svg class="w-5 h-5 text-current"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9.414V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span class="text-sm font-medium whitespace-nowrap">Exportar</span>
+                    </a>
                 </form>
 
                 <!-- Tabla + paginación -->

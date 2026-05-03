@@ -106,16 +106,29 @@
 
             <!-- Header -->
             <div class="mb-5">
-                <div>
-                    <p class="mb-2 text-xs font-bold uppercase tracking-widest text-on-surface-variant">
-                        Gestión de usuarios &gt; Solicitudes pendientes
-                    </p>
-                    <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
-                        Solicitudes de Registro
-                    </h2>
-                    <p class="font-body text-on-surface-variant text-base mt-2">
-                        Revisa, valida y procesa nuevas solicitudes de acceso a la plataforma.
-                    </p>
+                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                    <div>
+                        <p class="mb-2 text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+                            Gestión de usuarios &gt; Solicitudes pendientes
+                        </p>
+                        <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                            Solicitudes de Registro
+                        </h2>
+                        <p class="font-body text-on-surface-variant text-base mt-2">
+                            Revisa, valida y procesa nuevas solicitudes de acceso a la plataforma.
+                        </p>
+                    </div>
+
+                    <a th:href="@{/admin/usuarios/gestion}"
+                       class="self-start flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition no-underline">
+                        <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span class="text-sm font-medium">Volver</span>
+                    </a>
                 </div>
             </div>
 
@@ -237,10 +250,20 @@
                                    class="w-full h-12 pl-10 pr-4 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]">
                         </div>
 
-                        <button type="submit"
-                                class="h-12 flex items-center justify-center gap-2 px-5 text-white bg-secondary rounded-lg hover:bg-[#005a3d] transition">
-                            <span class="text-sm font-bold">Buscar</span>
-                        </button>
+                        <a th:href="@{/admin/usuarios/solicitudes}"
+                           class="h-12 flex items-center justify-center gap-2 px-5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition no-underline"
+                           title="Limpiar filtros">
+                            <svg class="w-5 h-5"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                            <span class="text-sm font-medium whitespace-nowrap">Limpiar</span>
+                        </a>
 
                         <button type="button"
                                 onclick="document.getElementById('modalFiltrosSolicitudes').classList.remove('hidden')"
@@ -337,14 +360,15 @@
                                     </a>
                                     <form th:action="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario} + '/aceptar'}" method="post">
                                         <button type="submit"
-                                                class="rounded-lg bg-secondary px-3 py-2 text-sm font-bold text-on-secondary hover:bg-[#005a3d] transition-colors">
+                                                class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
                                             Aceptar
                                         </button>
                                     </form>
+
                                     <form th:action="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario} + '/denegar'}" method="post">
                                         <input type="hidden" name="motivo" value="Solicitud denegada por administrador">
                                         <button type="submit"
-                                                class="rounded-lg bg-error px-3 py-2 text-sm font-bold text-on-error hover:bg-[#991b1b] transition-colors">
+                                                class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-error-container hover:text-error transition-colors">
                                             Denegar
                                         </button>
                                     </form>
