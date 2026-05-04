@@ -16,6 +16,7 @@ import com.example.proyectoreciclame.Repository.UsuarioEmpresaRepository;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
 import com.example.proyectoreciclame.Service.CorreoService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 import java.time.LocalDateTime;
 
@@ -57,8 +60,14 @@ public class AuthController {
         this.politicaContrasenaRepository = politicaContrasenaRepository;
     }
 
+    @Value("${google.recaptcha.site-key}")
+    private String recaptchaSiteKey;
+
     @GetMapping("/login")
-    public String login() {
+    public String login(@RequestParam(required = false) String correo,
+                        Model model) {
+        model.addAttribute("recaptchaSiteKey", recaptchaSiteKey);
+        model.addAttribute("correoIngresado", correo);
         return "auth/login";
     }
 

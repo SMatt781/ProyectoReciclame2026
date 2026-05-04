@@ -4,6 +4,7 @@ import com.example.proyectoreciclame.Entity.RegistroDescarga;
 import com.example.proyectoreciclame.Entity.RegistroSesion;
 import com.example.proyectoreciclame.Repository.RegistroDescargaRepository;
 import com.example.proyectoreciclame.Repository.RegistroSesionRepository;
+import com.example.proyectoreciclame.util.PaginationUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -66,6 +67,11 @@ public class AdminRegistroController {
         model.addAttribute("hasPrevious", pagina.hasPrevious());
         model.addAttribute("hasNext", pagina.hasNext());
 
+        model.addAttribute(
+                "pageNumbers",
+                PaginationUtils.buildPageNumbers(page, pagina.getTotalPages())
+        );
+
         model.addAttribute("texto", texto);
         model.addAttribute("fecha", fecha);
         model.addAttribute("rol", rol);
@@ -98,6 +104,11 @@ public class AdminRegistroController {
         model.addAttribute("totalPages", pagina.getTotalPages());
         model.addAttribute("hasPrevious", pagina.hasPrevious());
         model.addAttribute("hasNext", pagina.hasNext());
+
+        model.addAttribute(
+                "pageNumbers",
+                PaginationUtils.buildPageNumbers(page, pagina.getTotalPages())
+        );
 
         model.addAttribute("texto", texto);
         model.addAttribute("tipo", tipo);

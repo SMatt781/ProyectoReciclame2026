@@ -426,13 +426,27 @@
 
                             <!-- Números -->
                             <div id="pageNumbers" class="flex gap-2">
-                                <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-                                    th:href="@{/admin/usuarios/gestion(page=${i}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}" th:text="${i + 1}"
-                                    th:class="${i == currentPage} ?
-                'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
-                :
-                'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container transition'">
-                                </a>
+
+                                <span th:each="p : ${pageNumbers}">
+
+                                    <!-- Puntos suspensivos -->
+                                    <span th:if="${p == '...'}"
+                                          class="w-10 h-10 flex items-center justify-center text-sm font-bold text-on-surface-variant">
+                                        ...
+                                    </span>
+
+                                    <!-- Número de página -->
+                                    <a th:if="${p != '...'}"
+                                       th:href="@{/admin/usuarios/gestion(page=${p}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}"
+                                       th:text="${p + 1}"
+                                       th:class="${p == currentPage} ?
+                                       'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
+                                       :
+                                       'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container transition'">
+                                    </a>
+
+                                </span>
+
                             </div>
 
                             <!-- Botón siguiente -->

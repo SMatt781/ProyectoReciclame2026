@@ -883,6 +883,38 @@
         let currentPage = 1;
         const pageSize = 5;
 
+        function buildVisiblePages(currentPage, totalPages) {
+            const pages = [];
+
+            if (totalPages <= 7) {
+                for (let i = 1; i <= totalPages; i++) {
+                    pages.push(i);
+                }
+                return pages;
+            }
+
+            pages.push(1);
+
+            let start = Math.max(2, currentPage - 1);
+            let end = Math.min(totalPages - 1, currentPage + 1);
+
+            if (start > 2) {
+                pages.push('...');
+            }
+
+            for (let i = start; i <= end; i++) {
+                pages.push(i);
+            }
+
+            if (end < totalPages - 1) {
+                pages.push('...');
+            }
+
+            pages.push(totalPages);
+
+            return pages;
+        }
+        
         function renderPagination() {
             if (!paginationContainer) return;
 
@@ -917,16 +949,30 @@
 
             if (pageNumbersContainer) {
                 pageNumbersContainer.innerHTML = '';
-                for (let i = 1; i <= totalPages; i++) {
+
+                const visiblePages = buildVisiblePages(currentPage, totalPages);
+
+                visiblePages.forEach(page => {
+                    if (page === '...') {
+                        const span = document.createElement('span');
+                        span.textContent = '...';
+                        span.className = 'w-10 h-10 flex items-center justify-center text-sm font-bold text-on-surface-variant';
+                        pageNumbersContainer.appendChild(span);
+                        return;
+                    }
+
                     const btn = document.createElement('button');
-                    btn.textContent = i;
-                    btn.className = `w-10 h-10 rounded-full flex items-center justify-center transition-colors font-label text-sm font-semibold ${i === currentPage ? 'bg-secondary text-on-secondary shadow-md' : 'text-on-surface-variant hover:bg-surface-container'}`;
+                    btn.type = 'button';
+                    btn.textContent = page;
+                    btn.className = `w-10 h-10 rounded-full flex items-center justify-center transition-colors font-label text-sm font-semibold ${page === currentPage ? 'bg-secondary text-on-secondary shadow-md' : 'text-on-surface-variant hover:bg-surface-container'}`;
+
                     btn.addEventListener('click', () => {
-                        currentPage = i;
+                        currentPage = page;
                         renderPagination();
                     });
+
                     pageNumbersContainer.appendChild(btn);
-                }
+                });
             }
         }
 

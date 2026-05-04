@@ -59,6 +59,7 @@ public class AdminEstudiosController {
         model.addAttribute("currentSection", "admin-estudios");
         model.addAttribute("currentPage", "estudios");
 
+
         model.addAttribute("estudios", estudioRepository.filtrarAdmin(
                 (search != null && !search.isBlank()) ? search : null,
                 anio,
