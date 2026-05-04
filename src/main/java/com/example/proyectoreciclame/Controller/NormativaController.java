@@ -6,6 +6,8 @@ import com.example.proyectoreciclame.Entity.Normativa;
 import com.example.proyectoreciclame.Repository.NormativaRepository;
 import com.example.proyectoreciclame.Service.NormativaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -229,12 +231,22 @@ public class NormativaController {
         if (detalle == null || detalle.getNormativa() == null) {
             return "redirect:/normativas";
         }
-        
+
         model.addAttribute("detalle", detalle);
         model.addAttribute("normativa", detalle.getNormativa());
         model.addAttribute("currentPage", "repoNormativo");
 
-        if (detalle.getNormativa().getAcceso() == Normativa.AccesoNormativa.PAGO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean esVisualizador = authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_VISUALIZADOR"));
+
+        if (esVisualizador) {
+            if (detalle.getNormativa().getAcceso() == Normativa.AccesoNormativa.PAGO) {
+                return "socio/visualizadorNormativaPago";
+            } else {
+                return "visualizador/visualizadorNormativa";
+            }
+        } else if (detalle.getNormativa().getAcceso() == Normativa.AccesoNormativa.PAGO) {
             return "socio/visualizadorNormativaPago";
         } else {
             return "socio/visualizadorNormativa";

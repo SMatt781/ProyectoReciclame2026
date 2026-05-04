@@ -45,7 +45,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         } else if (esSocio) {
             response.sendRedirect("/socio");
         } else if (esVisualizador) {
-            response.sendRedirect("/estudios");
+            response.sendRedirect("/visualizador");
         } else {
             response.sendRedirect("/login");
         }

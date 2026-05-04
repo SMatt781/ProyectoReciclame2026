@@ -142,7 +142,8 @@
 
 
                 <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6 flex flex-col">
-                    <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+                    <!-- Reduced Metrics for Visualizador Role -->
+                    <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
                         <article
                             class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container">
@@ -160,32 +161,10 @@
                                 </span>
                             </div>
                             <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                                Total estudios
+                                Total estudios disponibles
                             </h4>
                             <div class="text-3xl font-extrabold text-on-primary-fixed"
                                 th:text="${totalEstudios}">0</div>
-                        </article>
-
-                        <article
-                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200"></div>
-                            <div class="flex justify-between items-start mb-3">
-                                <div
-                                    class="bg-blue-100 text-blue-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
-                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path d="M12 3a1 1 0 011 1v8.59l2.3-2.3a1 1 0 111.4 1.42l-4 4a1 1 0 01-1.4 0l-4-4a1 1 0 111.4-1.42L11 12.59V4a1 1 0 011-1zm-7 14a1 1 0 011 1v1h12v-1a1 1 0 112 0v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2a1 1 0 011-1z" />
-                                    </svg>
-                                </div>
-                                <span
-                                    class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                    Descargas
-                                </span>
-                            </div>
-                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                                Descargas de estudios
-                            </h4>
-                            <div class="text-3xl font-extrabold text-on-primary-fixed"
-                                th:text="${totalDescargasEstudios}">0</div>
                         </article>
 
                         <article
@@ -200,11 +179,11 @@
                                 </div>
                                 <span
                                     class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                    Recientes
+                                    Consultados
                                 </span>
                             </div>
                             <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                                Añadidos en 30 días
+                                Consultados en 30 días
                             </h4>
                             <div class="text-3xl font-extrabold text-on-primary-fixed"
                                 th:text="${estudiosRecientes}">0</div>

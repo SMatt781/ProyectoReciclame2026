@@ -140,7 +140,7 @@
 
                 </div>
 
-                <!-- STATS SECTION -->
+                <!-- STATS SECTION - Reduced Metrics for Visualizador -->
                 <div class="flex flex-col xl:flex-row gap-8 mb-12 bg-white rounded-xl p-6 w-full shadow-sm border border-outline-variant/30">
 
                     <!-- LEFT: Donut Chart & Legend -->
@@ -166,7 +166,7 @@
                                         th:attr="stroke-dasharray=${dashOtro}, transform=${'rotate(' + startOtro + ' 60 60)'}" />
                                 </svg>
                                 <p class="text-4xl font-bold text-[#1a1a1a] mt-4" th:text="${totalNormas}">142</p>
-                                <p class="text-xs text-[#999] uppercase tracking-wider">NORMAS</p>
+                                <p class="text-xs text-[#999] uppercase tracking-wider">NORMAS DISPONIBLES</p>
                             </div>
 
                             <!-- Legend -->
@@ -238,11 +238,11 @@
                     <div class="hidden xl:block w-px bg-outline-variant/30"></div>
                     <div class="block xl:hidden h-px w-full bg-outline-variant/30"></div>
 
-                    <!-- RIGHT: Stacked Bar Charts -->
+                    <!-- RIGHT: Alcance Distribution (Simplified) -->
                     <div class="flex-1 flex flex-col gap-8 min-w-0 xl:min-w-[400px]">
-                        <!-- Chart 1: Nacional vs Internacional by estado -->
+                        <!-- Chart: Distribución por Alcance -->
                         <div>
-                            <h3 class="text-lg font-bold text-[#1a1a1a] mb-4">Estado por alcance</h3>
+                            <h3 class="text-lg font-bold text-[#1a1a1a] mb-4">Distribución por alcance</h3>
                             <div class="space-y-4">
                                 <!-- Row: Nacional -->
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
@@ -310,7 +310,7 @@
                                     <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0" th:text="${intTotal ?: 0}">0</div>
                                 </div>
 
-                                <!-- Legend for Chart 1 -->
+                                <!-- Legend -->
                                 <div class="flex flex-wrap gap-4 mt-3">
                                     <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#1D9E75]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Vigente</span></div>
                                     <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#EF9F27]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Publicada</span></div>
@@ -321,52 +321,11 @@
                             </div>
                         </div>
 
-                        <!-- Chart 2: Tipo de acceso by alcance -->
-                        <div>
-                            <h3 class="text-lg font-bold text-[#1a1a1a] mb-4">Alcance por tipo de acceso</h3>
-                            <div class="space-y-4">
-                                <!-- Row: Gratis -->
-                                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                                    <div class="w-32 text-sm font-bold text-[#666] shrink-0">GRATUITO</div>
-                                    <div class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
-                                        <div th:if="${gratisNac != null and gratisNac > 0}"
-                                             th:style="'width: ' + (${gratisNac} * 100.0 / ${gratisTotal != null and gratisTotal > 0 ? gratisTotal : 1}) + '%'"
-                                             class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Nacional">
-                                            <span th:text="${gratisNac}"></span>
-                                        </div>
-                                        <div th:if="${gratisInt != null and gratisInt > 0}"
-                                             th:style="'width: ' + (${gratisInt} * 100.0 / ${gratisTotal != null and gratisTotal > 0 ? gratisTotal : 1}) + '%'"
-                                             class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Internacional">
-                                            <span th:text="${gratisInt}"></span>
-                                        </div>
-                                    </div>
-                                    <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0" th:text="${gratisTotal ?: 0}">0</div>
-                                </div>
-
-                                <!-- Row: Pago -->
-                                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                                    <div class="w-32 text-sm font-bold text-[#666] shrink-0">DE PAGO</div>
-                                    <div class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
-                                        <div th:if="${pagoNac != null and pagoNac > 0}"
-                                             th:style="'width: ' + (${pagoNac} * 100.0 / ${pagoTotal != null and pagoTotal > 0 ? pagoTotal : 1}) + '%'"
-                                             class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Nacional">
-                                            <span th:text="${pagoNac}"></span>
-                                        </div>
-                                        <div th:if="${pagoInt != null and pagoInt > 0}"
-                                             th:style="'width: ' + (${pagoInt} * 100.0 / ${pagoTotal != null and pagoTotal > 0 ? pagoTotal : 1}) + '%'"
-                                             class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Internacional">
-                                            <span th:text="${pagoInt}"></span>
-                                        </div>
-                                    </div>
-                                    <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0" th:text="${pagoTotal ?: 0}">0</div>
-                                </div>
-
-                                <!-- Legend for Chart 2 -->
-                                <div class="flex flex-wrap gap-4 mt-3">
-                                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#1D9E75]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Nacional</span></div>
-                                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#378ADD]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Internacional</span></div>
-                                </div>
-                            </div>
+                        <!-- Info Note -->
+                        <div class="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                            <p class="text-xs text-blue-800 font-medium">
+                                <strong>Centro de Lectura Protegida:</strong> Acceso restringido a contenido gratuito en modo de consulta.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -781,47 +740,25 @@
 
                 <hr class="border-outline-variant/30">
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Acceso -->
-                    <section>
-                        <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Acceso
-                        </h3>
-                        <div class="flex flex-wrap gap-6">
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" name="acceso" value="GRATIS"
-                                    th:checked="${selectedAccesos != null and #lists.contains(selectedAccesos, 'GRATIS')}"
-                                    class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
-                                <span class="text-sm font-body uppercase tracking-wide">Gratuito</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" name="acceso" value="PAGO"
-                                    th:checked="${selectedAccesos != null and #lists.contains(selectedAccesos, 'PAGO')}"
-                                    class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
-                                <span class="text-sm font-body uppercase tracking-wide">De Pago</span>
-                            </label>
-                        </div>
-                    </section>
-
-                    <!-- Obligatoriedad -->
-                    <section>
-                        <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">
-                            Obligatoriedad</h3>
-                        <div class="flex flex-wrap gap-6">
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" name="obligatoriedad" value="Legal Vinculante"
-                                    th:checked="${selectedObligatoriedades != null and #lists.contains(selectedObligatoriedades, 'Legal Vinculante')}"
-                                    class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
-                                <span class="text-sm font-body uppercase tracking-wide">Legal Vinculante</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" name="obligatoriedad" value="No vinculante"
-                                    th:checked="${selectedObligatoriedades != null and #lists.contains(selectedObligatoriedades, 'No vinculante')}"
-                                    class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
-                                <span class="text-sm font-body uppercase tracking-wide">No Vinculante</span>
-                            </label>
-                        </div>
-                    </section>
-                </div>
+                <!-- Obligatoriedad -->
+                <section>
+                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">
+                        Obligatoriedad</h3>
+                    <div class="flex flex-wrap gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="obligatoriedad" value="Legal Vinculante"
+                                th:checked="${selectedObligatoriedades != null and #lists.contains(selectedObligatoriedades, 'Legal Vinculante')}"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Legal Vinculante</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="obligatoriedad" value="No vinculante"
+                                th:checked="${selectedObligatoriedades != null and #lists.contains(selectedObligatoriedades, 'No vinculante')}"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">No Vinculante</span>
+                        </label>
+                    </div>
+                </section>
 
                 <div class="pt-6 mt-4 flex justify-end gap-3 border-t border-outline-variant/30">
                     <button type="submit"
