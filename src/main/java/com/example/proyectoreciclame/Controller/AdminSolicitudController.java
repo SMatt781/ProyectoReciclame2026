@@ -6,6 +6,7 @@ import com.example.proyectoreciclame.Entity.Usuario;
 import com.example.proyectoreciclame.Repository.SolicitudRegistroRepository;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
 import com.example.proyectoreciclame.Service.CorreoService;
+import com.example.proyectoreciclame.util.PaginationUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -118,6 +119,11 @@ public class AdminSolicitudController {
         model.addAttribute("totalPages", pagina.getTotalPages());
         model.addAttribute("hasPrevious", pagina.hasPrevious());
         model.addAttribute("hasNext", pagina.hasNext());
+
+        model.addAttribute(
+                "pageNumbers",
+                PaginationUtils.buildPageNumbers(page, pagina.getTotalPages())
+        );
 
         model.addAttribute("totalPendientes",
                 usuarioRepository.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE"));

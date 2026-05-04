@@ -1,5 +1,6 @@
 package com.example.proyectoreciclame.Security;
 
+import com.example.proyectoreciclame.Service.RecaptchaService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -7,6 +8,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
@@ -15,15 +17,18 @@ public class SecurityConfig {
     private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
     private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
     private final CustomUserDetailsService customUserDetailsService;
+    private final RecaptchaService recaptchaService;
 
     public SecurityConfig(CustomUserDetailsService customUserDetailsService,
                           CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler,
                           CustomAuthenticationFailureHandler customAuthenticationFailureHandler,
-                          CustomLogoutSuccessHandler customLogoutSuccessHandler) {
+                          CustomLogoutSuccessHandler customLogoutSuccessHandler,
+                          RecaptchaService recaptchaService) {
         this.customUserDetailsService = customUserDetailsService;
         this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
         this.customAuthenticationFailureHandler = customAuthenticationFailureHandler;
         this.customLogoutSuccessHandler = customLogoutSuccessHandler;
+        this.recaptchaService = recaptchaService;
     }
 
     @Bean
@@ -57,6 +62,10 @@ public class SecurityConfig {
                         .requestMatchers("/socio/**").hasRole("SOCIO")
                         .requestMatchers("/visualizador/**").hasRole("VISUALIZADOR")
                         .anyRequest().authenticated()
+                )
+                .addFilterBefore(
+                        new RecaptchaLoginFilter(recaptchaService),
+                        UsernamePasswordAuthenticationFilter.class
                 )
                 .formLogin(login -> login
                         .loginPage("/login")

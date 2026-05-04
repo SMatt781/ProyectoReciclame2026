@@ -13,6 +13,7 @@ import com.example.proyectoreciclame.Repository.UsuarioRepository;
 import com.example.proyectoreciclame.Repository.RolRepository;
 import com.example.proyectoreciclame.Repository.UsuarioEmpresaRepository;
 
+import com.example.proyectoreciclame.util.PaginationUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -138,6 +139,11 @@ public class AdminUsuarioController {
         model.addAttribute("usuariosActivos", usuarioRepository.countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta.ACTIVO));
         model.addAttribute("usuariosBloqueados", usuarioRepository.countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta.BLOQUEADO));
         model.addAttribute("usuariosPendientes", usuarioRepository.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE"));
+
+        model.addAttribute(
+                "pageNumbers",
+                PaginationUtils.buildPageNumbers(page, paginaUsuarios.getTotalPages())
+        );
 
         model.addAttribute("modal", modal);
 
@@ -505,6 +511,11 @@ public class AdminUsuarioController {
         model.addAttribute("totalPages", paginaUsuarios.getTotalPages());
         model.addAttribute("hasPrevious", paginaUsuarios.hasPrevious());
         model.addAttribute("hasNext", paginaUsuarios.hasNext());
+
+        model.addAttribute(
+                "pageNumbers",
+                PaginationUtils.buildPageNumbers(page, paginaUsuarios.getTotalPages())
+        );
 
         model.addAttribute("totalUsuarios", usuarioRepository.countByEliminadoEnIsNull());
         model.addAttribute("usuariosActivos", usuarioRepository.countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta.ACTIVO));

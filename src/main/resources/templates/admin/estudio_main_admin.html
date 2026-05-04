@@ -663,6 +663,38 @@
         let isGridView = localStorage.getItem('estudiosViewMode') !== 'list';
         let currentPage = 1;
 
+        function buildVisiblePages(currentPage, totalPages) {
+            const pages = [];
+
+            if (totalPages <= 7) {
+                for (let i = 1; i <= totalPages; i++) {
+                    pages.push(i);
+                }
+                return pages;
+            }
+
+            pages.push(1);
+
+            let start = Math.max(2, currentPage - 1);
+            let end = Math.min(totalPages - 1, currentPage + 1);
+
+            if (start > 2) {
+                pages.push('...');
+            }
+
+            for (let i = start; i <= end; i++) {
+                pages.push(i);
+            }
+
+            if (end < totalPages - 1) {
+                pages.push('...');
+            }
+
+            pages.push(totalPages);
+
+            return pages;
+        }
+
         function renderPagination() {
             if (!paginationContainer) return;
 
@@ -709,16 +741,30 @@
             nextPageBtn.disabled = currentPage === totalPages;
 
             pageNumbersContainer.innerHTML = '';
-            for (let i = 1; i <= totalPages; i++) {
+
+            const visiblePages = buildVisiblePages(currentPage, totalPages);
+
+            visiblePages.forEach(page => {
+                if (page === '...') {
+                    const span = document.createElement('span');
+                    span.textContent = '...';
+                    span.className = 'w-10 h-10 flex items-center justify-center text-sm font-bold text-on-surface-variant';
+                    pageNumbersContainer.appendChild(span);
+                    return;
+                }
+
                 const btn = document.createElement('button');
-                btn.textContent = i;
-                btn.className = `w-10 h-10 rounded-lg text-sm font-bold transition-colors ${i === currentPage ? 'bg-secondary text-on-secondary' : 'text-on-surface-variant hover:bg-surface-container'}`;
+                btn.type = 'button';
+                btn.textContent = page;
+                btn.className = `w-10 h-10 rounded-lg text-sm font-bold transition-colors ${page === currentPage ? 'bg-secondary text-on-secondary' : 'text-on-surface-variant hover:bg-surface-container'}`;
+
                 btn.addEventListener('click', () => {
-                    currentPage = i;
+                    currentPage = page;
                     renderPagination();
                 });
+
                 pageNumbersContainer.appendChild(btn);
-            }
+            });
         }
 
         if (toggleViewBtn) {
@@ -779,63 +825,7 @@
         renderPagination();
     });
 </script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const openFiltersBtn = document.getElementById('openFiltersModal');
-        const closeFiltersBtn = document.getElementById('closeFiltersModal');
-        const closeFiltersModalBtn = document.getElementById('closeFiltersModalBtn');
-        const filtersModal = document.getElementById('filtersModal');
-        const modalContent = filtersModal.querySelector('div');
 
-        const openModal = () => {
-            filtersModal.classList.remove('opacity-0', 'pointer-events-none');
-            modalContent.classList.remove('scale-95');
-            modalContent.classList.add('scale-100');
-        };
-
-        const closeModal = () => {
-            filtersModal.classList.add('opacity-0', 'pointer-events-none');
-            modalContent.classList.remove('scale-100');
-            modalContent.classList.add('scale-95');
-        };
-
-        if (openFiltersBtn) openFiltersBtn.addEventListener('click', openModal);
-        if (closeFiltersBtn) closeFiltersBtn.addEventListener('click', closeModal);
-        if (closeFiltersModalBtn) closeFiltersModalBtn.addEventListener('click', closeModal);
-
-        filtersModal.addEventListener('click', (e) => {
-            if (e.target === filtersModal) closeModal();
-        });
-
-        const toggleViewBtn = document.getElementById('toggleViewBtn');
-        const gridView = document.getElementById('gridView');
-        const listView = document.getElementById('listView');
-        const iconList = document.getElementById('icon-list');
-        const iconGrid = document.getElementById('icon-grid');
-
-        let isGridView = true;
-
-        if (toggleViewBtn) {
-            toggleViewBtn.addEventListener('click', () => {
-                isGridView = !isGridView;
-
-                if (isGridView) {
-                    gridView.classList.remove('hidden');
-                    listView.classList.add('hidden');
-                    listView.classList.remove('flex');
-                    iconList.classList.remove('hidden');
-                    iconGrid.classList.add('hidden');
-                } else {
-                    gridView.classList.add('hidden');
-                    listView.classList.remove('hidden');
-                    listView.classList.add('flex');
-                    iconList.classList.add('hidden');
-                    iconGrid.classList.remove('hidden');
-                }
-            });
-        }
-    });
-</script>
 <div id="modalNuevoEstudio" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="w-full max-w-[800px] bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden relative">
 
