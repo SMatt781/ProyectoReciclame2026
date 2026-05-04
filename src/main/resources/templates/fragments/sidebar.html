@@ -65,7 +65,8 @@
             </a>
         </div>
 
-        <div th:if="${usuarioRol == null or #strings.equalsIgnoreCase(usuarioRol,'SOCIO') or #strings.equalsIgnoreCase(usuarioRol,'VISUALIZADOR')}">
+        <!-- Socio Navigation -->
+        <div th:if="${usuarioRol == null or #strings.equalsIgnoreCase(usuarioRol,'SOCIO')}">
             <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
                th:classappend="${currentPage == 'inicio'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
                th:href="@{/socio}">
@@ -85,6 +86,32 @@
             <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
                th:classappend="${currentPage == 'repoNormativo'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
                th:href="@{/normativas}">
+                <div th:replace="~{fragments/icons.html :: icon-normativas-sidebar}"></div>
+                Repositorio Normativo
+            </a>
+        </div>
+
+        <!-- Visualizador Navigation -->
+        <div th:if="${#strings.equalsIgnoreCase(usuarioRol,'VISUALIZADOR')}">
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+               th:classappend="${currentPage == 'visualizador'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+               th:href="@{/visualizador}">
+                <svg class="w-5 h-5 text-current flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                </svg>
+                Inicio
+            </a>
+
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+               th:classappend="${currentPage == 'visualizadorEstudios'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+               th:href="@{/visualizador/estudios}">
+                <div th:replace="~{fragments/icons.html :: icon-estudios-sidebar}"></div>
+                Estudios
+            </a>
+
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+               th:classappend="${currentPage == 'visualizadorRepoNormativo'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+               th:href="@{/visualizador/normativas}">
                 <div th:replace="~{fragments/icons.html :: icon-normativas-sidebar}"></div>
                 Repositorio Normativo
             </a>

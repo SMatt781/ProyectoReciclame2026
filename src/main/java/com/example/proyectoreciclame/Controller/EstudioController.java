@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -123,7 +125,13 @@ public class EstudioController {
         model.addAttribute("estudio", estudio);
         model.addAttribute("currentPage", "estudios");
 
-        if (estudio.getTipoAcceso() == Estudio.TipoAcceso.DESCARGA) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean esVisualizador = authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_VISUALIZADOR"));
+
+        if (esVisualizador) {
+            return "visualizador/visualizadorEstudio";
+        } else if (estudio.getTipoAcceso() == Estudio.TipoAcceso.DESCARGA) {
             return "socio/visualizadorEstudioDescargable";
         } else {
             return "socio/visualizadorEstudio";
