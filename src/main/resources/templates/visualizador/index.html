@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Panel de Visualizador - Reciclame</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7f9fb",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#cfe9d9",
+                        "tertiary-container": "#092016",
+                        "primary-container": "#021d30",
+                        "on-secondary-container": "#00743a",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#b1c9e2",
+                        "on-surface-variant": "#43474c",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "outline-variant": "#c3c7cd",
+                        "on-secondary-fixed": "#00210c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006d37",
+                        "surface-variant": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#354c40",
+                        "on-secondary": "#ffffff",
+                        "outline": "#73777d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-container": "#71897c",
+                        "tertiary-fixed-dim": "#b3ccbd",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#496177",
+                        "on-secondary-fixed-variant": "#005228",
+                        "on-primary-container": "#6f869e",
+                        "secondary-container": "#6bfe9c",
+                        "on-tertiary-fixed": "#092016",
+                        "secondary-fixed": "#6bfe9c",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#021d30",
+                        "on-primary-fixed-variant": "#31495e",
+                        "primary-fixed": "#cde5ff",
+                        "secondary-fixed-dim": "#4ae183",
+                        "primary-fixed-dim": "#b1c9e2"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+
+        .icon-sm {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .icon-md {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .icon-lg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .icon-xl {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+    <!-- SideNavBar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Main Content Canvas -->
+    <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+        <!-- TopAppBar -->
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+        <!-- Main Scrollable Content -->
+        <main class="flex-1 overflow-y-auto px-8 py-6">
+            <div class="w-full">
+                <!-- Page Header -->
+                <header class="mb-8">
+                    <h1 class="font-headline text-[2.5rem] leading-tight font-bold text-on-primary-fixed mb-4">
+                        Bienvenido al Centro de Lectura
+                    </h1>
+                    <p class="font-body text-on-surface-variant text-lg max-w-2xl">
+                        Accede a nuestro repositorio de estudios e información normativa en modo de lectura protegida.
+                    </p>
+                </header>
+
+                <!-- Quick Access Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
+                    <!-- Estudios Card -->
+                    <a href="/visualizador/estudios"
+                       class="group bg-surface-container-lowest rounded-2xl p-8 ambient-shadow ghost-border hover:shadow-lg transition-shadow duration-300">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 rounded-lg bg-secondary-container flex items-center justify-center text-secondary">
+                                <svg class="icon-lg" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
+                                </svg>
+                            </div>
+                            <svg class="icon-md text-on-surface-variant group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                        <h2 class="font-headline text-xl font-bold text-on-primary-fixed mb-2">
+                            Estudios del Sector
+                        </h2>
+                        <p class="font-body text-on-surface-variant">
+                            Explora investigaciones, análisis y reportes sobre economía circular y gestión de residuos.
+                        </p>
+                    </a>
+
+                    <!-- Normativas Card -->
+                    <a href="/visualizador/normativas"
+                       class="group bg-surface-container-lowest rounded-2xl p-8 ambient-shadow ghost-border hover:shadow-lg transition-shadow duration-300">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 rounded-lg bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
+                                <svg class="icon-lg" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 9.5h-3V5h3v7.5z" />
+                                </svg>
+                            </div>
+                            <svg class="icon-md text-on-surface-variant group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                        <h2 class="font-headline text-xl font-bold text-on-primary-fixed mb-2">
+                            Repositorio Normativo
+                        </h2>
+                        <p class="font-body text-on-surface-variant">
+                            Consulta leyes, reglamentos y normativas en modo lectura protegida.
+                        </p>
+                    </a>
+                </div>
+
+                <!-- Info Section -->
+                <div class="mt-12 max-w-2xl">
+                    <div class="bg-blue-50 rounded-xl p-6 border border-blue-200">
+                        <div class="flex items-start gap-4">
+                            <svg class="icon-md text-blue-600 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                            </svg>
+                            <div>
+                                <h3 class="font-headline text-lg font-bold text-blue-900 mb-2">Modo de Lectura Protegida</h3>
+                                <p class="font-body text-blue-800 text-sm leading-relaxed">
+                                    Los documentos en esta sección están protegidos contra descargas, copias y capturas de pantalla.
+                                    Puedes consultar el contenido en línea de forma segura. El acceso está restringido a usuarios autorizados.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>
