@@ -395,6 +395,9 @@
             window.addEventListener('DOMContentLoaded', () => {
                 const hayError = document.querySelector('[data-flash-error]');
                 if (hayError) openModal();
+                // ── NUEVO: abrir modal si viene desde el dashboard ──
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('openModal') === 'true') openModal();
             });
 
             // ── Modal Estado Admin ────────────────────────────────────────────────────────
@@ -458,6 +461,41 @@
                         this.classList.remove('flex');
                     }
                 });
+            });
+            // ── Dropdown filtro estado ────────────────────────────────────────────────
+            function toggleDropdownEstado() {
+                document.getElementById('dropdownEstado').classList.toggle('hidden');
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+
+                // Sincronizar label del botón al seleccionar
+                document.querySelectorAll('input[name="estado"]').forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        const labels = { '': 'Estado', 'ACTIVO': 'Activos', 'BLOQUEADO': 'Bloqueados' };
+                        document.getElementById('labelEstado').textContent = labels[this.value] || 'Estado';
+                        document.getElementById('estadoHidden').value = this.value;
+                        document.getElementById('dropdownEstado').classList.add('hidden');
+                    });
+                });
+
+                // Cerrar dropdown al hacer clic fuera
+                document.addEventListener('click', function(e) {
+                    const wrapper = document.getElementById('dropdownEstadoWrapper');
+                    if (wrapper && !wrapper.contains(e.target)) {
+                        document.getElementById('dropdownEstado').classList.add('hidden');
+                    }
+                });
+
+                // Deshabilitar radios al hacer submit para no duplicar el parámetro
+                document.addEventListener('submit', function(e) {
+                    const form = e.target.closest('form[action="/superadmin/administradores"]');
+                    if (form) {
+                        form.querySelectorAll('input[name="estado"][type="radio"]')
+                            .forEach(r => r.disabled = true);
+                    }
+                });
+
             });
         </script>
 
@@ -551,34 +589,73 @@
 
             </section>
 
-            <form action="/superadmin/administradores" method="get" class="flex items-center gap-4 mb-6 w-full">
-                <div class="flex-1 relative">
-        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#999] text-xl">
-            search
-        </span>
+            <form action="/superadmin/administradores" method="get"
+                  class="flex items-center gap-3 mb-6 w-full flex-wrap">
 
-                    <input
-                            class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]"
-                            placeholder="Buscar administrador por nombre o correo..."
-                            type="text"
-                            name="texto"
-                            th:value="${param.texto}" />
+                <!-- Input de búsqueda -->
+                <div class="flex-1 relative min-w-[200px]">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#999] text-xl">search</span>
+                    <input class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]"
+                           placeholder="Buscar administrador por nombre o correo..."
+                           type="text"
+                           name="texto"
+                           th:value="${texto}"/>
                 </div>
 
-                <div class="flex items-center gap-2 shrink-0">
-                    <a th:if="${texto != null and !#strings.isEmpty(texto)}"
-                       th:href="@{/superadmin/administradores}"
-                       class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                        <span class="material-symbols-outlined text-xl">close</span>
-                        <span class="text-sm font-medium">Limpiar</span>
-                    </a>
-
-                    <button type="button"
-                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                        <span class="material-symbols-outlined text-xl">download</span>
-                        <span class="text-sm font-medium">Exportar</span>
+                <!-- Filtro de estado — dropdown -->
+                <div class="relative shrink-0" id="dropdownEstadoWrapper">
+                    <button type="button" id="btnDropdownEstado"
+                            onclick="toggleDropdownEstado()"
+                            class="flex items-center gap-2 px-4 py-2.5 border border-[#e0e0e0] bg-white rounded-lg hover:bg-slate-50 transition text-sm text-slate-600 min-w-[140px] justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-xl text-slate-400">filter_list</span>
+                            <span id="labelEstado"
+                                  th:text="${estado == 'ACTIVO'} ? 'Activos' : (${estado == 'BLOQUEADO'} ? 'Bloqueados' : 'Estado')">
+                Estado
+            </span>
+                        </div>
+                        <span class="material-symbols-outlined text-base text-slate-400">expand_more</span>
                     </button>
+                    <!-- Lista desplegable -->
+                    <div id="dropdownEstado"
+                         class="hidden absolute left-0 top-full mt-1 bg-white border border-[#e0e0e0] rounded-lg shadow-lg z-50 min-w-[160px] overflow-hidden">
+                        <label class="flex items-center gap-2 px-4 py-2.5 text-sm cursor-pointer hover:bg-slate-50 transition">
+                            <input type="radio" name="estado" value="" class="accent-[#416656]"
+                                   th:checked="${estado == null}"/>
+                            <span>Todos</span>
+                        </label>
+                        <label class="flex items-center gap-2 px-4 py-2.5 text-sm cursor-pointer hover:bg-slate-50 transition border-t border-slate-100">
+                            <input type="radio" name="estado" value="ACTIVO" class="accent-[#416656]"
+                                   th:checked="${estado == 'ACTIVO'}"/>
+                            <span class="text-secondary font-semibold">Activos</span>
+                        </label>
+                        <label class="flex items-center gap-2 px-4 py-2.5 text-sm cursor-pointer hover:bg-slate-50 transition border-t border-slate-100">
+                            <input type="radio" name="estado" value="BLOQUEADO" class="accent-red-500"
+                                   th:checked="${estado == 'BLOQUEADO'}"/>
+                            <span class="text-red-600 font-semibold">Bloqueados</span>
+                        </label>
+                    </div>
+                    <!-- Input hidden para preservar valor si el dropdown está cerrado -->
+                    <input type="hidden" name="estado" id="estadoHidden"
+                           th:value="${estado != null} ? ${estado} : ''"/>
                 </div>
+
+                <!-- Botón Buscar -->
+                <button type="submit"
+                        class="flex items-center gap-2 px-4 py-2.5 bg-secondary text-white font-semibold rounded-lg hover:bg-[#005a3d] transition shrink-0">
+                    <span class="material-symbols-outlined text-xl">search</span>
+                    <span class="text-sm">Buscar</span>
+                </button>
+
+                <!-- Limpiar -->
+                <a th:if="${(texto != null and !#strings.isEmpty(texto)) or estado != null}"
+                   href="/superadmin/administradores"
+                   class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition shrink-0">
+                    <span class="material-symbols-outlined text-xl">close</span>
+                    <span class="text-sm font-medium">Limpiar</span>
+                </a>
+
+
             </form>
 
 
@@ -696,7 +773,14 @@
                               <span class="material-symbols-outlined">chevron_right</span>
                         </span>
                     </div>
-
+                    <!-- Exportar — debajo de la tabla -->
+                    <div class="flex justify-end mt-3">
+                        <button type="button"
+                                class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-slate-500 border border-[#e0e0e0] bg-white rounded-lg hover:bg-slate-50 hover:text-secondary transition">
+                            <span class="material-symbols-outlined text-xl">download</span>
+                            Exportar tabla
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -804,11 +888,6 @@
         </div>
     </div>
 </div>
-<button onclick="openModal()"
-        class="fixed bottom-10 right-10 w-16 h-16 bg-emerald-500 text-slate-950 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50 group">
-    <span class="material-symbols-outlined text-3xl">add</span>
-    <span class="absolute right-full mr-4 bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Nuevo Administrador</span>
-</button>
 <!-- ══════════════════════════════════════════════
      MODAL — Confirmar Cambio de Estado Admin
      ══════════════════════════════════════════════ -->

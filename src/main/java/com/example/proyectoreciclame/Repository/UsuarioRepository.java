@@ -202,4 +202,25 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
       AND ue.usuario.estadoAprobacion = 'APROBADO'
 """)
     long countEmpresasRegistradas();
+
+    // Para filtrar por estado + rol (sin texto)
+    @Query("SELECT u FROM Usuario u WHERE u.rol.idRol IN :rolIds " +
+            "AND u.eliminadoEn IS NULL " +
+            "AND u.estadoCuenta = :estado")
+    Page<Usuario> findByRolIdInAndEstadoCuentaAndEliminadoEnIsNull(
+            @Param("rolIds") List<Integer> rolIds,
+            @Param("estado") Usuario.EstadoCuenta estado,
+            Pageable pageable);
+
+    // Para filtrar por texto + estado + rol (combinado)
+    @Query("SELECT u FROM Usuario u WHERE u.rol.idRol IN :rolIds " +
+            "AND u.eliminadoEn IS NULL " +
+            "AND u.estadoCuenta = :estado " +
+            "AND (LOWER(u.nombres) LIKE LOWER(CONCAT('%',:texto,'%')) " +
+            "OR LOWER(u.correo) LIKE LOWER(CONCAT('%',:texto,'%')))")
+    Page<Usuario> buscarEnGestionConEstado(
+            @Param("texto") String texto,
+            @Param("rolIds") List<Integer> rolIds,
+            @Param("estado") Usuario.EstadoCuenta estado,
+            Pageable pageable);
 }
