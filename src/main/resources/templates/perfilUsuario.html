@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mi Perfil - Recíclame</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#f7f9fb",
+                        "background": "#f7f9fb",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container": "#eceef0",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-variant": "#e0e3e5",
+                        "outline-variant": "#c3c7cd",
+                        "on-surface": "#191c1e",
+                        "on-surface-variant": "#43474c",
+                        "primary": "#006494",
+                        "secondary": "#00743a",
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"]
+                    },
+                },
+
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-surface text-on-surface font-sans h-full overflow-hidden">
+
+<div class="flex h-full w-full">
+
+    <div th:replace="${sessionUser.rol == 'SUPERADMIN'} ? ~{fragments/sidebar_superadmin :: sidebar} : ~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+        <main class="flex-1 overflow-y-auto px-8 py-8">
+            <div class="max-w-5xl mx-auto">
+
+                <div class="mb-8">
+                    <h1 class="text-[32px] font-bold text-[#001B2E] tracking-tight">Mi Perfil</h1>
+                    <p class="text-on-surface-variant">Gestiona tu información personal y los datos de tu cuenta.</p>
+                </div>
+
+                <div th:if="${mensaje}" class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-2xl flex items-center gap-3 animate-fade-in">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                    <span th:text="${mensaje}" class="font-medium"></span>
+                </div>
+
+                <!-- Mensaje éxito -->
+                <div th:if="${mensajeContrasena}"
+                     class="mx-8 mt-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-2xl flex items-center gap-3">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    <span th:text="${mensajeContrasena}" class="font-medium text-sm"></span>
+                </div>
+
+                <!-- Mensaje error -->
+                <div th:if="${errorContrasena}"
+                     class="mx-8 mt-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-2xl flex items-center gap-3">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span th:text="${errorContrasena}" class="font-medium text-sm"></span>
+                </div>
+
+                <div class="bg-surface-container-lowest rounded-[32px] border border-outline-variant/30 shadow-sm overflow-hidden">
+
+                    <div class="p-8 border-b border-outline-variant/20 bg-gradient-to-r from-surface-container-low to-transparent">
+                        <div class="flex items-center gap-6">
+                            <div class="relative group">
+                                <div class="w-24 h-24 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-3xl font-bold border-4 border-white shadow-sm overflow-hidden">
+                                    <img th:if="${usuario.urlAvatar != null}" th:src="${usuario.urlAvatar}" alt="Foto" class="w-full h-full object-cover">
+                                    <span th:if="${usuario.urlAvatar == null}" th:text="${sessionUser.iniciales}">US</span>
+                                </div>
+                                <button class="absolute -bottom-2 -right-2 p-2 bg-white rounded-xl shadow-md border border-outline-variant hover:bg-surface-container transition-all">
+                                    <svg class="w-4 h-4 text-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /></svg>
+                                </button>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-[#001B2E]" th:text="${usuario.nombres + ' ' + usuario.apellidoPaterno}">Nombre Usuario</h2>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-tighter rounded-full" th:text="${sessionUser.rol}">ROL</span>
+                                    <span class="text-on-surface-variant text-sm" th:text="${usuario.correo}">correo@ejemplo.com</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form th:action="@{/perfil/guardar}" method="post" class="p-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Nombres</label>
+                                <input type="text" name="nombres" th:value="${usuario.nombres}"
+                                       class="w-full px-4 py-3 rounded-2xl bg-surface-container-low border-transparent focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-medium">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Apellido Paterno</label>
+                                <input type="text" name="apellidoPaterno" th:value="${usuario.apellidoPaterno}"
+                                       class="w-full px-4 py-3 rounded-2xl bg-surface-container-low border-transparent focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-medium">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Apellido Materno</label>
+                                <input type="text" name="apellidoMaterno" th:value="${usuario.apellidoMaterno}"
+                                       class="w-full px-4 py-3 rounded-2xl bg-surface-container-low border-transparent focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-medium">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1 text-opacity-50">DNI (No editable)</label>
+                                <input type="text" th:value="${usuario.dni}" readonly
+                                       class="w-full px-4 py-3 rounded-2xl bg-surface-container/50 border-transparent text-on-surface-variant/60 cursor-not-allowed font-medium">
+                            </div>
+
+                            <div th:if="${usuarioEmpresa != null}" class="space-y-2">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Razón Social</label>
+                                <input type="text" name="razonSocial" th:value="${usuarioEmpresa.razonSocial}"
+                                       class="w-full px-4 py-3 rounded-2xl bg-surface-container-low border-transparent focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-medium">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Teléfono</label>
+                                <input type="text" name="telefono" th:value="${usuario.telefono}"
+                                       class="w-full px-4 py-3 rounded-2xl bg-surface-container-low border-transparent focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-medium">
+                            </div>
+                        </div>
+
+                        <div class="mt-12 pt-8 border-t border-outline-variant/20 flex justify-end items-center gap-4">
+                            <button type="button" onclick="location.reload()"
+                                    class="px-6 py-3 text-sm font-bold text-on-surface-variant hover:text-red-600 transition-colors">
+                                Descartar cambios
+                            </button>
+                            <button type="submit"
+                                    class="px-10 py-3.5 bg-[#001B2E] text-white rounded-2xl font-bold shadow-lg hover:bg-primary transition-all flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                Guardar Perfil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <!-- ── CAMBIAR CONTRASEÑA ────────────────────────────────────── -->
+                <div class="mt-8 bg-surface-container-lowest rounded-[32px] border border-outline-variant/30 shadow-sm overflow-hidden">
+
+                    <div class="p-8 border-b border-outline-variant/20 bg-gradient-to-r from-surface-container-low to-transparent">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-[#001B2E]">Cambiar Contraseña</h3>
+                                <p class="text-sm text-on-surface-variant">Actualiza tu contraseña de acceso.</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <form th:action="@{/perfil/cambiar-contrasena}" method="post" class="p-8">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-8">
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">
+                                    Contraseña Actual
+                                </label>
+                                <input type="password" name="contrasenaActual" id="contrasenaActual" required
+                                       placeholder="••••••••"
+                                       class="w-full px-4 py-3 rounded-2xl bg-surface-container-low border-transparent
+                              focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10
+                              transition-all font-medium">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">
+                                    Nueva Contraseña
+                                </label>
+                                <input type="password" name="nuevaContrasena" id="nuevaContrasena" required
+                                       placeholder="••••••••"
+                                       class="w-full px-4 py-3 rounded-2xl bg-surface-container-low border-transparent
+                              focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10
+                              transition-all font-medium">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">
+                                    Confirmar Nueva Contraseña
+                                </label>
+                                <input type="password" name="confirmarContrasena" id="confirmarContrasena" required
+                                       placeholder="••••••••"
+                                       class="w-full px-4 py-3 rounded-2xl bg-surface-container-low border-transparent
+                              focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10
+                              transition-all font-medium">
+                            </div>
+                        </div>
+
+                        <!-- ── Requisitos dinámicos ──────────────────────────────── -->
+                        <div class="mt-6 p-5 bg-surface-container-low/60 rounded-2xl border border-outline-variant/20">
+                            <p class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-3">
+                                Requisitos de seguridad
+                            </p>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+                                <!-- Longitud mínima — siempre visible -->
+                                <div class="flex items-center gap-2" id="req-len">
+                                    <div class="w-5 h-5 rounded-full border-2 border-outline-variant flex items-center justify-center flex-shrink-0 transition-all" id="icon-len">
+                                        <svg class="w-3 h-3 hidden text-white" id="check-len" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-xs text-on-surface-variant font-medium" id="label-len">
+                        Mínimo <span th:text="${pwdMinLen}">8</span> caracteres
+                    </span>
+                                </div>
+
+                                <!-- Mayúscula — solo si la política lo requiere -->
+                                <div th:if="${pwdMayuscula}" class="flex items-center gap-2" id="req-upper">
+                                    <div class="w-5 h-5 rounded-full border-2 border-outline-variant flex items-center justify-center flex-shrink-0 transition-all" id="icon-upper">
+                                        <svg class="w-3 h-3 hidden text-white" id="check-upper" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-xs text-on-surface-variant font-medium">Una mayúscula</span>
+                                </div>
+
+                                <!-- Número -->
+                                <div th:if="${pwdNumero}" class="flex items-center gap-2" id="req-num">
+                                    <div class="w-5 h-5 rounded-full border-2 border-outline-variant flex items-center justify-center flex-shrink-0 transition-all" id="icon-num">
+                                        <svg class="w-3 h-3 hidden text-white" id="check-num" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-xs text-on-surface-variant font-medium">Un número</span>
+                                </div>
+
+                                <!-- Símbolo -->
+                                <div th:if="${pwdSimbolo}" class="flex items-center gap-2" id="req-sym">
+                                    <div class="w-5 h-5 rounded-full border-2 border-outline-variant flex items-center justify-center flex-shrink-0 transition-all" id="icon-sym">
+                                        <svg class="w-3 h-3 hidden text-white" id="check-sym" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-xs text-on-surface-variant font-medium">Un símbolo</span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="mt-8 pt-6 border-t border-outline-variant/20 flex justify-end">
+                            <button type="submit"
+                                    class="px-10 py-3.5 bg-[#001B2E] text-white rounded-2xl font-bold shadow-lg
+                           hover:bg-primary transition-all flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                                Actualizar Contraseña
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+<!-- ── Script validación dinámica ───────────────────────────────── -->
+<script th:inline="javascript">
+    const minLen    = /*[[${pwdMinLen}]]*/ 8;
+    const needUpper = /*[[${pwdMayuscula}]]*/ true;
+    const needNum   = /*[[${pwdNumero}]]*/ true;
+    const needSym   = /*[[${pwdSimbolo}]]*/ true;
+
+    const input = document.getElementById('nuevaContrasena');
+    if (input) {
+        input.addEventListener('input', () => {
+            const v = input.value;
+            setReq('len',   v.length >= minLen);
+            if (needUpper) setReq('upper', /[A-ZÁÉÍÓÚÑ]/.test(v));
+            if (needNum)   setReq('num',   /\d/.test(v));
+            if (needSym)   setReq('sym',   /[^A-Za-zÁÉÍÓÚáéíóúÑñ0-9]/.test(v));
+        });
+    }
+
+    function setReq(key, ok) {
+        const icon  = document.getElementById('icon-' + key);
+        const check = document.getElementById('check-' + key);
+        if (!icon || !check) return;
+
+        if (ok) {
+            icon.classList.remove('border-outline-variant');
+            icon.classList.add('bg-secondary', 'border-secondary');
+            check.classList.remove('hidden');
+        } else {
+            icon.classList.add('border-outline-variant');
+            icon.classList.remove('bg-secondary', 'border-secondary');
+            check.classList.add('hidden');
+        }
+    }
+</script>
+
+</html>

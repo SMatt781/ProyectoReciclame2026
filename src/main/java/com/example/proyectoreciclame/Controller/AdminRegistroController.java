@@ -76,6 +76,12 @@ public class AdminRegistroController {
         model.addAttribute("fecha", fecha);
         model.addAttribute("rol", rol);
 
+        Double promedio = registroSesionRepository.getPromedioDuracion();
+        model.addAttribute("promedioDuracion", promedio != null ? Math.round(promedio) : 0);
+        model.addAttribute("ultimaSesion", registroSesionRepository.getUltimaSesion());
+        model.addAttribute("totalActivos", registroSesionRepository.countUsuariosActivos());
+        model.addAttribute("usuarioFrecuente", registroSesionRepository.getUsuarioMasFrecuente());
+
         return "admin/registros-actividad";
     }
 

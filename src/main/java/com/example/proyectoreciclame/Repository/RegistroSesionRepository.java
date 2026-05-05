@@ -63,4 +63,24 @@ public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, 
                                                   @Param("fechaInicio") LocalDateTime fechaInicio,
                                                   @Param("fechaFin") LocalDateTime fechaFin);
     List<RegistroSesion> findByUsuarioAndEstado(Usuario usuario, String estado);
+
+    // 1. Promedio de duración (en minutos)
+    @Query("SELECT AVG(rs.duracionMinutos) FROM RegistroSesion rs WHERE rs.duracionMinutos IS NOT NULL")
+    Double getPromedioDuracion();
+
+    // 2. Fecha de la última sesión
+    @Query("SELECT MAX(rs.fechaInicio) FROM RegistroSesion rs")
+    LocalDateTime getUltimaSesion();
+
+    // 3. Total de usuarios activos (con sesión 'VIGENTE')
+    @Query("SELECT COUNT(DISTINCT rs.usuario.idUsuario) FROM RegistroSesion rs WHERE rs.estado = 'VIGENTE'")
+    long countUsuariosActivos();
+
+    // 4. Nombre del usuario más frecuente
+    @Query(value = "SELECT CONCAT(u.nombres, ' ', u.apellido_paterno) " +
+            "FROM registro_sesiones rs " +
+            "JOIN usuarios u ON rs.id_usuario = u.id_usuario " +
+            "GROUP BY rs.id_usuario " +
+            "ORDER BY COUNT(rs.id_sesion) DESC LIMIT 1", nativeQuery = true)
+    String getUsuarioMasFrecuente();
 }
