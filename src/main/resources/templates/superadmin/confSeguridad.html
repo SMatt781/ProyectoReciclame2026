@@ -211,22 +211,22 @@
                             </td>
 
                             <td class="px-6 py-4">
-                                <div class="flex justify-center gap-1.5 flex-wrap">
-
+                                <div class="flex justify-center gap-3">
+                                    <!-- Editar -->
                                     <a th:href="@{/superadmin/confSeguridad/editar/{id}(id=${dominio.idDominio}, page=${currentPage}, texto=${texto})}"
-                                       class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
-                                        Editar
+                                       class="text-slate-400 hover:text-[#059669] transition-colors">
+                                        <span class="material-symbols-outlined text-[22px]">edit</span>
                                     </a>
 
+                                    <!-- Eliminar -->
                                     <form th:action="@{/superadmin/confSeguridad/eliminar}" method="post" style="display:inline"
                                           onsubmit="return confirm('¿Estás seguro de que deseas eliminar este dominio?')">
                                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                                         <input type="hidden" name="idDominio" th:value="${dominio.idDominio}"/>
                                         <input type="hidden" name="page" th:value="${currentPage}"/>
                                         <input type="hidden" name="texto" th:value="${texto}"/>
-                                        <button type="submit"
-                                                class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-error-container hover:text-error transition-colors">
-                                            Eliminar
+                                        <button type="submit" class="text-slate-400 hover:text-red-500 transition-colors">
+                                            <span class="material-symbols-outlined text-[22px]">delete</span>
                                         </button>
                                     </form>
 

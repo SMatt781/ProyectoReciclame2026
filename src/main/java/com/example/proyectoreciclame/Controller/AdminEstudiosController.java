@@ -25,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Controller
 public class AdminEstudiosController {
@@ -85,8 +86,10 @@ public class AdminEstudiosController {
             @RequestParam("descripcion") String descripcion,
             @RequestParam("anio") Integer anio,
             @RequestParam("formato") String formato,
+            @RequestParam(value = "estado", required = false) String estado,
             @RequestParam(value = "archivo", required = false) org.springframework.web.multipart.MultipartFile archivo,
             org.springframework.web.servlet.mvc.support.RedirectAttributes attr
+
     ) {
 
         try {
@@ -106,7 +109,9 @@ public class AdminEstudiosController {
             }
 
             // 🔹 valores por defecto
-            estudio.setEstado(com.example.proyectoreciclame.Entity.Estudio.EstadoEstudio.BORRADOR);
+            estudio.setEstado(Estudio.EstadoEstudio.valueOf(
+                    estado != null && !estado.isBlank() ? estado : "BORRADOR"
+            ));
             estudio.setTipoAcceso(com.example.proyectoreciclame.Entity.Estudio.TipoAcceso.DESCARGA);
             estudio.setFechaPublicacion(java.time.LocalDate.now());
             estudio.setIndiceRelevancia(Integer.valueOf(1));
@@ -217,7 +222,7 @@ public class AdminEstudiosController {
         model.addAttribute("selectedObligatoriedades", obligatoriedad);
 
         // 🔥 OBTENER TODAS LAS NORMATIVAS (para dashboard)
-        java.util.List<Normativa> lista = normativaRepository.findAll();
+        java.util.List<Normativa> lista = normativaRepository.findAllNormativas();
 
 // TOTAL
         long totalNormas = lista.size();
@@ -438,6 +443,12 @@ public class AdminEstudiosController {
             @RequestParam(value = "anio", required = false) Integer anio,
             @RequestParam(value = "tipoNorma", required = false) String tipoNorma,
             @RequestParam(value = "estado", required = false) String estado,
+            @RequestParam(value = "acceso", required = false) String acceso,
+
+            // 🔥 NUEVO
+            @RequestParam(value = "alcance", required = false) String alcance,
+            @RequestParam(value = "categorias", required = false) java.util.List<Integer> categorias,
+
             @RequestParam(value = "archivo", required = false) org.springframework.web.multipart.MultipartFile archivo,
             @RequestParam(value = "enlace", required = false) String enlace,
             org.springframework.web.servlet.mvc.support.RedirectAttributes attr
@@ -471,9 +482,19 @@ public class AdminEstudiosController {
                     estado != null && !estado.isBlank() ? estado : "VIGENTE"
             ));
 
-            n.setAcceso(com.example.proyectoreciclame.Entity.Normativa.AccesoNormativa.GRATIS);
-            n.setAlcance(com.example.proyectoreciclame.Entity.Normativa.AlcanceNormativa.NACIONAL);
+            n.setAcceso(com.example.proyectoreciclame.Entity.Normativa.AccesoNormativa.valueOf(
+                    acceso != null && !acceso.isBlank() ? acceso : "GRATIS"
+            ));            n.setAlcance(
+                    com.example.proyectoreciclame.Entity.Normativa.AlcanceNormativa.valueOf(
+                            alcance != null && !alcance.isBlank() ? alcance : "NACIONAL"
+                    )
+            );
             n.setObligatoriedad("Legal Vinculante");
+
+            // 🔥 guardar categorías
+            if (categorias != null && !categorias.isEmpty()) {
+                n.setCategorias(categoriaRepository.findAllById(categorias));
+            }
 
             com.example.proyectoreciclame.Entity.Usuario usuario =
                     usuarioRepository.findById(1L)
@@ -596,11 +617,13 @@ public class AdminEstudiosController {
                 .orElseThrow(() -> new RuntimeException("Normativa no encontrada"));
 
         model.addAttribute("normativa", normativa);
+        model.addAttribute("currentPage", "repoNormativo");
         model.addAttribute("currentSection", "admin-normativas");
 
-        return "admin/repo_main_admin";
+        return "admin/ver_normativa_admin";
+
     }
-    @GetMapping("/admin/normativas/{id}/eliminar")
+    @PostMapping("/admin/normativas/{id}/eliminar")
     public String eliminarNormativa(@PathVariable Long id,
                                     RedirectAttributes attr) {
         normativaRepository.deleteById(id);
@@ -625,12 +648,18 @@ public class AdminEstudiosController {
             @PathVariable Long id,
             @RequestParam String titulo,
             @RequestParam String organismoEmisor,
-            @RequestParam String codigo,
+            @RequestParam(required = false) String codigo,
             @RequestParam Integer anio,
             @RequestParam String tipoNorma,
             @RequestParam String estado,
+            @RequestParam(required = false) String alcance,
+            @RequestParam(required = false) List<Integer> categorias,
+            @RequestParam(required = false) String enlace,
+            @RequestParam(required = false) String acceso,
+
             RedirectAttributes attr
     ) {
+
         Normativa n = normativaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Normativa no encontrada"));
 
@@ -640,12 +669,95 @@ public class AdminEstudiosController {
         n.setAnio(anio);
         n.setTipoNorma(Normativa.TipoNorma.valueOf(tipoNorma));
         n.setEstado(Normativa.EstadoNormativa.valueOf(estado));
+        if (acceso != null && !acceso.isBlank()) {
+            n.setAcceso(Normativa.AccesoNormativa.valueOf(acceso));
+        }
+        if (alcance != null) {
+            n.setAlcance(Normativa.AlcanceNormativa.valueOf(alcance));
+        }
+
+        if (categorias != null) {
+            n.setCategorias(categoriaRepository.findAllById(categorias));
+        }
+
+        if (enlace != null) {
+            n.setEnlaceExterno(enlace);
+        }
+
+
         n.setFechaActualizacion(java.time.LocalDateTime.now());
 
         normativaRepository.save(n);
 
         attr.addFlashAttribute("msg", "Normativa actualizada correctamente");
+
         return "redirect:/admin/normativas";
+    }
+
+    @GetMapping("/admin/estudios/eliminar/{id}")
+    public String eliminarEstudio(@PathVariable Long id, RedirectAttributes attr) {
+        Estudio estudio = estudioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Estudio no encontrado"));
+
+        estudio.setEstado(Estudio.EstadoEstudio.DEROGADO);
+        estudio.setFechaActualizacion(java.time.LocalDateTime.now());
+
+        estudioRepository.save(estudio);
+
+        attr.addFlashAttribute("msg", "Estudio eliminado correctamente");
+        return "redirect:/admin/estudios";
+    }
+
+    @GetMapping("/admin/estudios/editar/{id}")
+    public String editarEstudio(@PathVariable Long id, Model model) {
+        Estudio estudio = estudioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Estudio no encontrado"));
+
+        model.addAttribute("estudioEdit", estudio);
+        model.addAttribute("currentPage", "estudios");
+        model.addAttribute("currentSection", "admin-estudios");
+
+        return "admin/estudio_main_admin";
+    }
+    @PostMapping("/admin/estudios/{id}/actualizar")
+    public String actualizarEstudio(
+            @PathVariable Long id,
+            @RequestParam("nombre") String nombre,
+            @RequestParam("descripcion") String descripcion,
+            @RequestParam("anio") Integer anio,
+            @RequestParam("formato") String formato,
+            @RequestParam(value = "estado", required = false) String estado,
+            @RequestParam(value = "archivo", required = false) org.springframework.web.multipart.MultipartFile archivo,
+            RedirectAttributes attr
+    ) {
+        try {
+            Estudio estudio = estudioRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Estudio no encontrado"));
+
+            estudio.setTitulo(nombre);
+            estudio.setDescripcion(descripcion);
+            estudio.setAnio(anio);
+
+            if (formato.toUpperCase().contains("PDF")) {
+                estudio.setFormato(Estudio.FormatoEstudio.PDF);
+            } else {
+                estudio.setFormato(Estudio.FormatoEstudio.PPTX);
+            }
+            if (estado != null && !estado.isBlank()) {
+                estudio.setEstado(Estudio.EstadoEstudio.valueOf(estado));
+            }
+
+            estudio.setFechaActualizacion(java.time.LocalDateTime.now());
+
+            estudioRepository.save(estudio);
+
+            attr.addFlashAttribute("msg", "Estudio actualizado correctamente");
+
+        } catch (Exception e) {
+            attr.addFlashAttribute("msgError", "Error: " + e.getMessage());
+        }
+
+        return "redirect:/admin/estudios";
     }
 
 

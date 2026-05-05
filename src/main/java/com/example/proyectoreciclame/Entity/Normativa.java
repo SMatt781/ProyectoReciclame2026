@@ -110,9 +110,9 @@ public class Normativa {
 
     @ManyToMany
     @JoinTable(
-        name = "normativa_categoria",
-        joinColumns = @JoinColumn(name = "id_normativa"),
-        inverseJoinColumns = @JoinColumn(name = "id_categoria")
+            name = "normativa_categoria",
+            joinColumns = @JoinColumn(name = "id_normativa"),
+            inverseJoinColumns = @JoinColumn(name = "id_categoria")
     )
     private List<Categoria> categorias;
 

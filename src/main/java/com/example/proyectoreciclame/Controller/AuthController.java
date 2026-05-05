@@ -26,6 +26,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.example.proyectoreciclame.Repository.RegistroSesionRepository;
+import com.example.proyectoreciclame.Entity.RegistroSesion;
+import java.util.List;
 
 
 import java.time.LocalDateTime;
@@ -41,6 +44,7 @@ public class AuthController {
     private final CorreoService correoService;
     private final DominioAutorizadoRepository dominioAutorizadoRepository;
     private final PoliticaContrasenaRepository politicaContrasenaRepository;
+    private final RegistroSesionRepository registroSesionRepository;
 
     public AuthController(UsuarioRepository usuarioRepository,
                           RolRepository rolRepository,
@@ -49,7 +53,7 @@ public class AuthController {
                           BCryptPasswordEncoder passwordEncoder,
                           CorreoService correoService,
                           DominioAutorizadoRepository dominioAutorizadoRepository,
-                          PoliticaContrasenaRepository politicaContrasenaRepository) {
+                          PoliticaContrasenaRepository politicaContrasenaRepository,RegistroSesionRepository registroSesionRepository) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.usuarioEmpresaRepository = usuarioEmpresaRepository;
@@ -58,6 +62,7 @@ public class AuthController {
         this.correoService = correoService;
         this.dominioAutorizadoRepository = dominioAutorizadoRepository;
         this.politicaContrasenaRepository = politicaContrasenaRepository;
+        this.registroSesionRepository = registroSesionRepository;
     }
 
     @Value("${google.recaptcha.site-key}")
@@ -73,6 +78,23 @@ public class AuthController {
 
     @GetMapping("/post-login")
     public String postLogin(Authentication authentication) {
+        Usuario usuario = usuarioRepository.findByCorreoIgnoreCase(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        List<RegistroSesion> sesionesVigentes =
+                registroSesionRepository.findByUsuarioAndEstado(usuario, "VIGENTE");
+
+        for (RegistroSesion s : sesionesVigentes) {
+            s.setEstado("FINALIZADA");
+            s.setFechaFin(LocalDateTime.now());
+        }
+        registroSesionRepository.saveAll(sesionesVigentes);
+
+        RegistroSesion nuevaSesion = new RegistroSesion();
+        nuevaSesion.setUsuario(usuario);
+        nuevaSesion.setFechaInicio(LocalDateTime.now());
+        nuevaSesion.setEstado("VIGENTE");
+        registroSesionRepository.save(nuevaSesion);
         if (authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_SUPERADMIN"))) {
             return "redirect:/superadmin/dashboard";
