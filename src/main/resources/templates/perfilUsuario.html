@@ -5,8 +5,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mi Perfil - Recíclame</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
     </style>
@@ -28,6 +34,7 @@
                         "on-surface-variant": "#43474c",
                         "primary": "#006494",
                         "secondary": "#00743a",
+                        "primary-container": "#021d30",
                     },
                     fontFamily: {
                         headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
@@ -53,8 +60,20 @@
             <div class="max-w-5xl mx-auto">
 
                 <div class="mb-8">
-                    <h1 class="text-[32px] font-bold text-[#001B2E] tracking-tight">Mi Perfil</h1>
-                    <p class="text-on-surface-variant">Gestiona tu información personal y los datos de tu cuenta.</p>
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                        <div>
+                            <h1 class="text-[32px] font-bold text-[#001B2E] tracking-tight">Mi Perfil</h1>
+                            <p class="text-on-surface-variant">Gestiona tu información personal y los datos de tu cuenta.</p>
+                        </div>
+
+                        <button onclick="history.back()"
+                                class="self-start flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                            <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                            <span class="text-sm font-medium">Volver</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div th:if="${mensaje}" class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-2xl flex items-center gap-3 animate-fade-in">
