@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#001a42",
+                    "surface-dim": "#cbdbf5",
+                    "outline-variant": "#c6c6cd",
+                    "on-tertiary-fixed": "#001a42",
+                    "on-surface": "#0b1c30",
+                    "tertiary-fixed": "#d8e2ff",
+                    "primary-fixed": "#dae2fd",
+                    "error": "#ba1a1a",
+                    "surface-bright": "#f8f9ff",
+                    "primary": "#000000",
+                    "surface": "#f8f9ff",
+                    "inverse-primary": "#bec6e0",
+                    "surface-container-highest": "#d3e4fe",
+                    "on-surface-variant": "#45464d",
+                    "surface-variant": "#d3e4fe",
+                    "on-secondary-container": "#476c5b",
+                    "primary-container": "#131b2e",
+                    "inverse-surface": "#213145",
+                    "on-primary-fixed": "#131b2e",
+                    "on-secondary": "#ffffff",
+                    "on-primary-container": "#7c839b",
+                    "on-tertiary-container": "#3980f4",
+                    "on-error": "#ffffff",
+                    "secondary-container": "#c3ecd7",
+                    "secondary-fixed": "#c3ecd7",
+                    "background": "#f8f9ff",
+                    "primary-fixed-dim": "#bec6e0",
+                    "surface-tint": "#565e74",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#adc6ff",
+                    "secondary-fixed-dim": "#a8cfbc",
+                    "outline": "#76777d",
+                    "on-secondary-fixed": "#002115",
+                    "tertiary": "#000000",
+                    "surface-container-high": "#dce9ff",
+                    "on-tertiary": "#ffffff",
+                    "on-background": "#0b1c30",
+                    "error-container": "#ffdad6",
+                    "inverse-on-surface": "#eaf1ff",
+                    "surface-container": "#e5eeff",
+                    "surface-container-low": "#eff4ff",
+                    "secondary": "#416656",
+                    "on-tertiary-fixed-variant": "#004395",
+                    "on-secondary-fixed-variant": "#294e3f",
+                    "on-primary-fixed-variant": "#3f465c",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "xxl": "1rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sidebar-width": "260px",
+                    "gutter-md": "24px",
+                    "stack-md": "16px",
+                    "container-padding": "40px",
+                    "stack-sm": "8px",
+                    "stack-lg": "32px"
+            },
+            "fontFamily": {
+                    "plus-jakarta": ["Plus Jakarta Sans", "sans-serif"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "display-xl": ["Plus Jakarta Sans"],
+                    "body-sm": ["Plus Jakarta Sans"],
+                    "title-lg": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "title-lg": ["18px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="bg-surface-dim min-h-screen flex items-center justify-center p-4">
+<!-- Modal Backdrop -->
+<div class="fixed inset-0 bg-on-surface/40 backdrop-blur-sm z-40"></div>
+<!-- Modal Container -->
+<div class="relative z-50 w-full max-w-lg bg-surface-container-lowest rounded-xxl shadow-xl overflow-hidden border border-slate-100">
+<!-- Header -->
+<div class="px-8 pt-8 pb-6 flex justify-between items-start">
+<div>
+<h1 class="text-2xl font-black text-slate-900 tracking-tight">Crear Nuevo Administrador</h1>
+<p class="text-sm text-slate-500 mt-1">Completa los datos para asignar un nuevo perfil de gestión.</p>
+</div>
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<!-- Form Content -->
+<form class="px-8 pb-8 space-y-6">
+<!-- Campo: Nombres y Apellidos -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant block">NOMBRES Y APELLIDOS*</label>
+<div class="relative">
+<input class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl focus:ring-2 font-body-md text-body-md text-on-surface placeholder:text-outline transition-all focus:ring-emerald-500/20 focus:border-emerald-500" placeholder="Ej. Juan Pérez" type="text"/>
+</div>
+</div>
+<!-- Campo: Correo Electrónico -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant block">CORREO ELECTRÓNICO*</label>
+<div class="relative">
+<input class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl focus:ring-2 font-body-md text-body-md text-on-surface placeholder:text-outline transition-all focus:ring-emerald-500/20 focus:border-emerald-500" placeholder="usuario@reciclame.org" type="email"/>
+</div>
+</div>
+<!-- Fila: Rol y Contraseña -->
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant block">ROL</label>
+<div class="relative">
+<select class="w-full h-12 px-4 bg-surface-container-lowest border border-outline-variant rounded-xl focus:ring-2 font-body-md text-body-md text-on-surface transition-all focus:ring-emerald-500/20 focus:border-emerald-500">
+<option selected="">Administrador</option>
+<option>Editor</option>
+<option>Visualizador</option>
+</select>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant block">CONTRASEÑA TEMPORAL*</label>
+<div class="relative flex items-center">
+<input class="w-full h-12 pl-4 pr-12 bg-surface-container-lowest border border-outline-variant rounded-xl focus:ring-2 font-body-md text-body-md text-on-surface transition-all focus:ring-emerald-500/20 focus:border-emerald-500" type="password" value="••••••••"/>
+<button class="absolute right-2 top-1/2 -translate-y-1/2 p-2 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Checkbox: Invitación -->
+<div class="flex items-center gap-3 pt-2">
+<div class="relative flex items-center">
+<input checked="" class="w-5 h-5 rounded border-outline-variant cursor-pointer focus:ring-emerald-500/20 focus:border-emerald-500 text-emerald-500 focus:ring-emerald-500" id="invite" type="checkbox"/>
+</div>
+<label class="font-body-sm text-body-sm text-on-surface cursor-pointer select-none" for="invite">
+                    Enviar invitación por correo electrónico automáticamente
+                </label>
+</div>
+</form>
+<!-- Footer -->
+<div class="px-8 py-6 bg-slate-50 flex items-center justify-end gap-4 border-t border-slate-100">
+<button class="px-6 py-3 font-semibold text-slate-500 hover:text-slate-900 transition-colors" type="button">
+                Cancelar
+            </button>
+<button class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 px-8 py-3 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-emerald-500/20" type="submit">Crear Administrador</button>
+</div>
+</div>
+<!-- Background Context Element -->
+<div class="hidden">
+<img data-alt="professional modern workspace background with soft office lighting and clean desk setup, blurred aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5MwckI2K50Zg7u3B79gn4rmmEkYttKHlh80Davbj3lwnBpnGBG8t3W7MT0Ol2T8aPl31YK5v_4zzkhnXWqbFhPtbwNyqTJbg7id-VB9aReUB4Ai7yDdJ-qJzL6F0cj99ofbciD4YDDr5NxRmJSqZtiE72z9SupkivjPdxGansTKumVmTZ4RRynfaYwZjbg8lRUnD5LzJSkTyNvoePaZrjzgqO3EIRAdVbWQ2OXxAGwiD0XN04KooNmOyF-TordEMxUvV7KmGScA"/>
+</div>
+</body></html>

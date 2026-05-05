@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, Long> {
@@ -61,4 +62,5 @@ public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, 
     long countActiveDaysByUsuarioIdUsuarioBetween(@Param("idUsuario") Long idUsuario,
                                                   @Param("fechaInicio") LocalDateTime fechaInicio,
                                                   @Param("fechaFin") LocalDateTime fechaFin);
+    List<RegistroSesion> findByUsuarioAndEstado(Usuario usuario, String estado);
 }
