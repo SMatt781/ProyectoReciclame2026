@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recíclame - Solicitudes de Registro</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7f9fb",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#cfe9d9",
+                        "tertiary-container": "#092016",
+                        "primary-container": "#021d30",
+                        "on-secondary-container": "#00743a",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#b1c9e2",
+                        "on-surface-variant": "#43474c",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "outline-variant": "#c3c7cd",
+                        "on-secondary-fixed": "#00210c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006d37",
+                        "surface-variant": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#354c40",
+                        "on-secondary": "#ffffff",
+                        "outline": "#73777d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-container": "#71897c",
+                        "tertiary-fixed-dim": "#b3ccbd",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#496177",
+                        "on-secondary-fixed-variant": "#005228",
+                        "on-primary-container": "#6f869e",
+                        "secondary-container": "#6bfe9c",
+                        "on-tertiary-fixed": "#092016",
+                        "secondary-fixed": "#6bfe9c",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#021d30",
+                        "on-primary-fixed-variant": "#31495e",
+                        "primary-fixed": "#cde5ff",
+                        "secondary-fixed-dim": "#4ae183",
+                        "primary-fixed-dim": "#b1c9e2"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+
+        .icon-sm { width: 1.25rem; height: 1.25rem; }
+        .icon-md { width: 1.5rem; height: 1.5rem; }
+        .icon-lg { width: 2rem; height: 2rem; }
+        .icon-xl { width: 2.5rem; height: 2.5rem; }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="flex-1 overflow-y-auto px-8 py-3">
+        <div class="w-full">
+
+            <!-- Header -->
+            <div class="mb-5">
+                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                    <div>
+                        <p class="mb-2 text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+                            Gestión de usuarios &gt; Solicitudes pendientes
+                        </p>
+                        <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                            Solicitudes de Registro
+                        </h2>
+                        <p class="font-body text-on-surface-variant text-base mt-2">
+                            Revisa, valida y procesa nuevas solicitudes de acceso a la plataforma.
+                        </p>
+                    </div>
+
+                    <a th:href="@{/admin/usuarios/gestion}"
+                       class="self-start flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition no-underline">
+                        <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span class="text-sm font-medium">Volver</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
+
+                <!-- KPIs -->
+                <section class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4 mb-8">
+                    <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-amber-200"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="bg-amber-100 text-amber-600 rounded-lg w-10 h-10 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                Pendiente
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
+                                Pendientes de aprobación
+                            </h4>
+                            <div class="text-4xl font-extrabold text-amber-600" th:text="${totalPendientes}"></div>
+                        </div>
+                    </article>
+
+                    <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="bg-secondary-container/30 text-secondary rounded-lg w-10 h-10 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.98 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                Activos
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
+                                Total usuarios activos
+                            </h4>
+                            <div class="text-4xl font-extrabold text-on-primary-fixed"
+                                 th:text="${totalUsuariosActivos}">
+                                0
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="bg-blue-100 text-blue-600 rounded-lg w-10 h-10 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                Empresas
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
+                                Empresas registradas
+                            </h4>
+                            <div class="text-4xl font-extrabold text-on-primary-fixed"
+                                 th:text="${empresasRegistradas}">
+                                0
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-outline to-surface-variant"></div>
+                        <div class="flex justify-between items-start mb-5">
+                            <div class="bg-surface-container text-on-surface-variant rounded-lg w-10 h-10 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                                </svg>
+                            </div>
+                            <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">
+                                Hoy
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
+                                Solicitudes hoy
+                            </h4>
+                            <div class="text-4xl font-extrabold text-on-primary-fixed"
+                                 th:text="${solicitudesHoy}">
+                                0
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- Barra superior -->
+                <div class="mb-6 w-full">
+                    <form th:action="@{/admin/usuarios/solicitudes}"
+                          method="get"
+                          class="grid grid-cols-1 xl:grid-cols-[1fr_auto_auto_auto] gap-4 items-stretch w-full">
+
+                        <div class="relative w-full">
+                            <svg class="w-5 h-5 text-[#999] absolute left-3 top-1/2 -translate-y-1/2"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+
+                            <input type="text"
+                                   name="search"
+                                   th:value="${search}"
+                                   placeholder="Buscar por nombre, apellido, correo, DNI o empresa"
+                                   class="w-full h-12 pl-10 pr-4 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]">
+                        </div>
+
+                        <a th:href="@{/admin/usuarios/solicitudes}"
+                           class="h-12 flex items-center justify-center gap-2 px-5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition no-underline"
+                           title="Limpiar filtros">
+                            <svg class="w-5 h-5"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                            <span class="text-sm font-medium whitespace-nowrap">Limpiar</span>
+                        </a>
+
+                        <button type="button"
+                                onclick="document.getElementById('modalFiltrosSolicitudes').classList.remove('hidden')"
+                                class="h-12 flex items-center justify-center gap-2 px-5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                            <svg class="w-5 h-5 text-current"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M3 4a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9zm7-7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm7 0a1 1 0 011-1h2a1 1 0 011 1v16a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zm-7 12a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 01-1-1v-4z" />
+                            </svg>
+                            <span class="text-sm font-medium whitespace-nowrap">Filtros avanzados</span>
+                        </button>
+
+                        <a th:href="@{/admin/usuarios/solicitudes/exportar(search=${search}, rol=${rolSeleccionado}, dateStart=${dateStart}, dateEnd=${dateEnd})}"
+                           class="h-12 flex items-center justify-center gap-2 px-5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition no-underline">
+                            <svg class="w-5 h-5 text-current"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zM11 3L5.5 8.5l1.42 1.41L11 5.83V15h2V5.83l4.08 4.08L18.5 8.5 12 3z" />
+                            </svg>
+                            <span class="text-sm font-medium whitespace-nowrap">Exportar</span>
+                        </a>
+
+                        <input type="hidden" name="rol" th:value="${rolSeleccionado}">
+                        <input type="hidden" name="dateStart" th:value="${dateStart}">
+                        <input type="hidden" name="dateEnd" th:value="${dateEnd}">
+                    </form>
+                </div>
+
+                <!-- Tabla div-grid -->
+                <div class="flex flex-col">
+                    <div class="overflow-x-auto w-full pb-4" th:if="${not #lists.isEmpty(solicitudes)}">
+                        <div class="flex flex-col gap-4 min-w-[1200px] w-full">
+
+                            <!-- Cabecera -->
+                            <div class="hidden md:grid grid-cols-[240px_100px_180px_150px_100px_150px_1fr] gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                                <div>Nombre</div>
+                                <div>DNI</div>
+                                <div>Email</div>
+                                <div>Empresa</div>
+                                <div>Rol</div>
+                                <div>Fecha solicitud</div>
+                                <div class="text-right">Acciones</div>
+                            </div>
+
+                            <!-- Filas -->
+                            <div th:each="s : ${solicitudes}"
+                                 class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[240px_100px_180px_150px_100px_150px_1fr] gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+
+                                <!-- Nombre -->
+                                <div class="flex items-center gap-3 w-full">
+                                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary-container/30 text-sm font-bold text-secondary"
+                                         th:text="${s.iniciales}"></div>
+                                    <div>
+                                        <p class="text-sm font-bold leading-tight text-on-primary-fixed group-hover:text-secondary transition-colors"
+                                           th:text="${s.nombreCompleto}"></p>
+                                        <p class="text-[11px] leading-tight text-on-surface-variant" th:text="${s.estado}"></p>
+                                    </div>
+                                </div>
+
+                                <!-- DNI -->
+                                <div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant"
+                                     th:text="${s.dni}"></div>
+
+                                <!-- Email -->
+                                <div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant"
+                                     th:text="${s.correo}"></div>
+
+                                <!-- Empresa -->
+                                <div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant italic">--</div>
+
+                                <!-- Rol -->
+                                <div class="flex justify-start w-full md:w-auto">
+                                    <span class="rounded-full bg-secondary-container/20 px-3 py-1 text-[10px] font-extrabold uppercase text-secondary"
+                                          th:text="${s.rolSolicitado}"></span>
+                                </div>
+
+                                <!-- Fecha solicitud -->
+                                <div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant"
+                                     th:text="${s.fechaSolicitud}"></div>
+
+                                <!-- Acciones -->
+                                <div class="flex justify-end w-full md:w-auto items-center gap-2 flex-wrap">
+                                    <a th:href="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario}}"
+                                       class="inline-flex items-center rounded-lg px-3 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container transition-colors">
+                                        Ver
+                                    </a>
+                                    <form th:action="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario} + '/aceptar'}" method="post">
+                                        <button type="submit"
+                                                class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
+                                            Aceptar
+                                        </button>
+                                    </form>
+
+                                    <form th:action="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario} + '/denegar'}" method="post">
+                                        <input type="hidden" name="motivo" value="Solicitud denegada por administrador">
+                                        <button type="submit"
+                                                class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-error-container hover:text-error transition-colors">
+                                            Denegar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mensaje vacío -->
+                    <div th:if="${#lists.isEmpty(solicitudes)}"
+                         class="py-12 flex flex-col items-center justify-center text-center bg-surface-container-lowest rounded-xl border border-outline-variant/30 border-dashed mt-6">
+                        <svg class="w-16 h-16 text-outline-variant mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                  d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        <h3 class="text-lg font-bold text-on-surface mb-2">No hay solicitudes pendientes</h3>
+                        <p class="text-sm text-on-surface-variant max-w-md">No se encontraron solicitudes que coincidan con los filtros aplicados.</p>
+                    </div>
+                </div>
+
+                <!-- Paginación -->
+                <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-6">
+                    <a th:if="${hasPrevious}"
+                       th:href="@{/admin/usuarios/solicitudes(page=${currentPage - 1}, search=${search}, rol=${rolSeleccionado}, dateStart=${dateStart}, dateEnd=${dateEnd})}"
+                       class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </a>
+
+                    <span th:if="${!hasPrevious}"
+                          class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </span>
+
+                    <div id="pageNumbers" class="flex gap-2">
+
+                        <span th:each="p : ${pageNumbers}">
+
+                            <span th:if="${p == '...'}"
+                                  class="w-10 h-10 flex items-center justify-center text-sm font-bold text-on-surface-variant">
+                                ...
+                            </span>
+
+                            <a th:if="${p != '...'}"
+                               th:href="@{/admin/usuarios/solicitudes(page=${p}, search=${search}, rol=${rolSeleccionado}, dateStart=${dateStart}, dateEnd=${dateEnd})}"
+                               th:text="${p + 1}"
+                               th:class="${p == currentPage} ?
+                               'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
+                               :
+                               'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container transition'">
+                            </a>
+
+                        </span>
+
+                    </div>
+
+                    <a th:if="${hasNext}"
+                       th:href="@{/admin/usuarios/solicitudes(page=${currentPage + 1}, search=${search}, rol=${rolSeleccionado}, dateStart=${dateStart}, dateEnd=${dateEnd})}"
+                       class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+
+                    <span th:if="${!hasNext}"
+                          class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 5l7 7-7 7" />
+                        </svg>
+                    </span>
+                </div>
+
+                <!-- Acciones masivas -->
+                <div class="mx-auto mt-6 flex w-fit items-center gap-4 rounded-[1.25rem] bg-primary-container px-5 py-3 text-white ambient-shadow">
+                    <span class="text-sm font-bold">1 solicitud seleccionada</span>
+                    <button class="rounded-lg bg-secondary px-4 py-2 text-sm font-bold text-on-secondary hover:bg-[#005a3d] transition-colors">
+                        Aprobar seleccionados
+                    </button>
+                    <button class="rounded-lg border border-error/40 px-4 py-2 text-sm font-bold text-red-200 hover:bg-white/5 transition-colors">
+                        Rechazar seleccionados
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</div>
+
+<div id="modalFiltrosSolicitudes"
+     class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 relative">
+
+        <button type="button"
+                onclick="document.getElementById('modalFiltrosSolicitudes').classList.add('hidden')"
+                class="absolute top-4 right-4 text-gray-400 hover:bg-gray-100 p-2 rounded-full">
+            ✕
+        </button>
+
+        <h3 class="text-xl font-extrabold text-on-primary-fixed mb-2">
+            Filtros avanzados
+        </h3>
+
+        <p class="text-sm text-on-surface-variant mb-6">
+            Filtra las solicitudes pendientes por rol y rango de fecha de solicitud.
+        </p>
+
+        <form th:action="@{/admin/usuarios/solicitudes}" method="get" class="space-y-5">
+
+            <input type="hidden" name="search" th:value="${search}">
+
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-2">
+                    Rol solicitado
+                </label>
+
+                <select name="rol"
+                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low text-sm">
+                    <option value="">Todos</option>
+                    <option value="SOCIO" th:selected="${rolSeleccionado == 'SOCIO'}">Socio</option>
+                    <option value="VISUALIZADOR" th:selected="${rolSeleccionado == 'VISUALIZADOR'}">Visualizador</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-2">
+                        Desde
+                    </label>
+                    <input type="date"
+                           name="dateStart"
+                           th:value="${dateStart}"
+                           class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-2">
+                        Hasta
+                    </label>
+                    <input type="date"
+                           name="dateEnd"
+                           th:value="${dateEnd}"
+                           class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low text-sm">
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4 border-t border-outline-variant/30">
+                <a th:href="@{/admin/usuarios/solicitudes}"
+                   class="px-5 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-on-surface font-bold text-sm hover:bg-surface-container transition no-underline">
+                    Limpiar
+                </a>
+
+                <button type="submit"
+                        class="px-5 py-2.5 rounded-lg bg-secondary text-on-secondary font-bold text-sm hover:bg-[#005a3d] transition">
+                    Aplicar filtros
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

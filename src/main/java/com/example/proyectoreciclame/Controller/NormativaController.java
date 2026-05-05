@@ -1,0 +1,243 @@
+package com.example.proyectoreciclame.Controller;
+
+import com.example.proyectoreciclame.Dto.NormativaDTO;
+import com.example.proyectoreciclame.Dto.NormativaDetalleDTO;
+import com.example.proyectoreciclame.Entity.Normativa;
+import com.example.proyectoreciclame.Repository.NormativaRepository;
+import com.example.proyectoreciclame.Service.NormativaService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Controller
+@RequestMapping("/normativas")
+public class NormativaController {
+
+    @Autowired
+    private NormativaRepository normativaRepository;
+    
+    @Autowired
+    private NormativaService normativaService;
+
+    @GetMapping
+    public String listarNormativas(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false, name = "yearSelect") Integer anio,
+            @RequestParam(required = false) String dateStart,
+            @RequestParam(required = false) String dateEnd,
+            @RequestParam(required = false) List<String> categoria,
+            @RequestParam(required = false) List<String> estado,
+            @RequestParam(required = false) List<String> acceso,
+            @RequestParam(required = false) List<String> alcance,
+            @RequestParam(required = false) List<String> obligatoriedad,
+            Model model) {
+
+        List<Normativa> normativas;
+
+        boolean hasCategoriaParam = categoria != null && !categoria.isEmpty();
+        boolean hasEstadoParam = estado != null && !estado.isEmpty();
+        boolean hasAccesoParam = acceso != null && !acceso.isEmpty();
+        boolean hasAlcanceParam = alcance != null && !alcance.isEmpty();
+        boolean hasObligatoriedadParam = obligatoriedad != null && !obligatoriedad.isEmpty();
+
+        if (search != null && !search.trim().isEmpty()) {
+            normativas = normativaRepository.findByKeyword(search);
+        } else if (anio != null || hasEstadoParam || hasAccesoParam || hasAlcanceParam || hasCategoriaParam || hasObligatoriedadParam || dateStart != null || dateEnd != null) {
+            boolean hasAnio = anio != null;
+            boolean hasEstados = hasEstadoParam;
+            boolean hasAccesos = hasAccesoParam;
+            boolean hasAlcance = hasAlcanceParam;
+            boolean hasObligatoriedad = hasObligatoriedadParam;
+            boolean hasCategoria = hasCategoriaParam;
+
+            java.time.LocalDateTime fechaInicio = null;
+            java.time.LocalDateTime fechaFin = null;
+
+            if (dateStart != null && !dateStart.isEmpty()) {
+                fechaInicio = java.time.LocalDate.parse(dateStart).atStartOfDay();
+            }
+            if (dateEnd != null && !dateEnd.isEmpty()) {
+                fechaFin = java.time.LocalDate.parse(dateEnd).atTime(23, 59, 59);
+            }
+
+            if (hasEstados) {
+                estado = estado.stream().map(e -> e.replace(" ", "_")).collect(Collectors.toList());
+            }
+
+            normativas = normativaRepository.findWithAdvancedFilters(hasAnio, anio, fechaInicio, fechaFin, hasEstados, estado, hasAccesos,
+                    acceso, hasAlcance, alcance, hasObligatoriedad, obligatoriedad, hasCategoria, categoria);
+        } else {
+            normativas = normativaRepository.findAllNormativas();
+        }
+
+        List<NormativaDTO> normativasDTO = normativas.stream()
+                .map(NormativaDTO::fromEntity)
+                .collect(Collectors.toList());
+
+        int totalNormas = normativasDTO.size();
+        long countEc = normativasDTO.stream()
+                .filter(n -> n.categorias() != null && n.categorias().stream()
+                        .anyMatch(c -> c.equalsIgnoreCase("Economía circular")))
+                .count();
+        long countGr = normativasDTO.stream()
+                .filter(n -> n.categorias() != null && n.categorias().stream()
+                        .anyMatch(c -> c.equalsIgnoreCase("Gestión de residuos")))
+                .count();
+        long countEe = normativasDTO.stream()
+                .filter(n -> n.categorias() != null && n.categorias().stream()
+                        .anyMatch(c -> c.equalsIgnoreCase("Envases y Embalajes")))
+                .count();
+        long countRep = normativasDTO.stream()
+                .filter(n -> n.categorias() != null && n.categorias().stream()
+                        .anyMatch(c -> c.equalsIgnoreCase("Ley REP") || c.equalsIgnoreCase("Responsabilidad Extendida")))
+                .count();
+        long countOtro = normativasDTO.stream()
+                .filter(n -> n.categorias() != null && n.categorias().stream()
+                        .anyMatch(c -> c.equalsIgnoreCase("Otro")))
+                .count();
+
+        double pctEc = totalNormas > 0 ? (countEc * 100.0) / totalNormas : 0.0;
+        double pctGr = totalNormas > 0 ? (countGr * 100.0) / totalNormas : 0.0;
+        double pctEe = totalNormas > 0 ? (countEe * 100.0) / totalNormas : 0.0;
+        double pctRep = totalNormas > 0 ? (countRep * 100.0) / totalNormas : 0.0;
+        double pctOtro = totalNormas > 0 ? (countOtro * 100.0) / totalNormas : 0.0;
+
+        long totalCategorias = countEc + countGr + countEe + countRep + countOtro;
+        double donutPctEc = totalCategorias > 0 ? (countEc * 100.0) / totalCategorias : 0.0;
+        double donutPctGr = totalCategorias > 0 ? (countGr * 100.0) / totalCategorias : 0.0;
+        double donutPctEe = totalCategorias > 0 ? (countEe * 100.0) / totalCategorias : 0.0;
+        double donutPctRep = totalCategorias > 0 ? (countRep * 100.0) / totalCategorias : 0.0;
+        double donutPctOtro = totalCategorias > 0 ? (countOtro * 100.0) / totalCategorias : 0.0;
+
+        double angleEc = donutPctEc * 3.6;
+        double angleGr = donutPctGr * 3.6;
+        double angleEe = donutPctEe * 3.6;
+        double angleRep = donutPctRep * 3.6;
+        double angleOtro = donutPctOtro * 3.6;
+
+        double startEc = 0.0;
+        double startGr = startEc + angleEc;
+        double startEe = startGr + angleGr;
+        double startRep = startEe + angleEe;
+        double startOtro = startRep + angleRep;
+
+        double circumference = 2 * Math.PI * 45;
+        String dashEc = (donutPctEc / 100.0 * circumference) + " " + (circumference - (donutPctEc / 100.0 * circumference));
+        String dashGr = (donutPctGr / 100.0 * circumference) + " " + (circumference - (donutPctGr / 100.0 * circumference));
+        String dashEe = (donutPctEe / 100.0 * circumference) + " " + (circumference - (donutPctEe / 100.0 * circumference));
+        String dashRep = (donutPctRep / 100.0 * circumference) + " " + (circumference - (donutPctRep / 100.0 * circumference));
+        String dashOtro = (donutPctOtro / 100.0 * circumference) + " " + (circumference - (donutPctOtro / 100.0 * circumference));
+
+        // CHarts logic
+
+        long nacVigente = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "VIGENTE".equalsIgnoreCase(n.estado())).count();
+        long nacPublicada = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "PUBLICADA".equalsIgnoreCase(n.estado())).count();
+        long nacConsulta = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "CONSULTA PUBLICA".equalsIgnoreCase(n.estado())).count();
+        long nacBorrador = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "BORRADOR EN PROCESO".equalsIgnoreCase(n.estado())).count();
+        long nacDerogada = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "DEROGADA".equalsIgnoreCase(n.estado())).count();
+        long nacTotal = nacVigente + nacPublicada + nacConsulta + nacBorrador + nacDerogada;
+
+        long intVigente = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "VIGENTE".equalsIgnoreCase(n.estado())).count();
+        long intPublicada = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "PUBLICADA".equalsIgnoreCase(n.estado())).count();
+        long intConsulta = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "CONSULTA PUBLICA".equalsIgnoreCase(n.estado())).count();
+        long intBorrador = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "BORRADOR EN PROCESO".equalsIgnoreCase(n.estado())).count();
+        long intDerogada = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "DEROGADA".equalsIgnoreCase(n.estado())).count();
+        long intTotal = intVigente + intPublicada + intConsulta + intBorrador + intDerogada;
+
+        long gratisNac = normativasDTO.stream().filter(n -> "GRATIS".equalsIgnoreCase(n.acceso()) && "NACIONAL".equalsIgnoreCase(n.alcance())).count();
+        long gratisInt = normativasDTO.stream().filter(n -> "GRATIS".equalsIgnoreCase(n.acceso()) && "INTERNACIONAL".equalsIgnoreCase(n.alcance())).count();
+        long gratisTotal = gratisNac + gratisInt;
+
+        long pagoNac = normativasDTO.stream().filter(n -> "PAGO".equalsIgnoreCase(n.acceso()) && "NACIONAL".equalsIgnoreCase(n.alcance())).count();
+        long pagoInt = normativasDTO.stream().filter(n -> "PAGO".equalsIgnoreCase(n.acceso()) && "INTERNACIONAL".equalsIgnoreCase(n.alcance())).count();
+        long pagoTotal = pagoNac + pagoInt;
+
+        model.addAttribute("normativas", normativasDTO);
+        model.addAttribute("currentPage", "repoNormativo");
+        model.addAttribute("totalNormas", totalNormas);
+        model.addAttribute("countEc", countEc);
+        model.addAttribute("countGr", countGr);
+        model.addAttribute("countEe", countEe);
+        model.addAttribute("countRep", countRep);
+        model.addAttribute("countOtro", countOtro);
+        model.addAttribute("pctEc", pctEc);
+        model.addAttribute("pctGr", pctGr);
+        model.addAttribute("pctEe", pctEe);
+        model.addAttribute("pctRep", pctRep);
+        model.addAttribute("pctOtro", pctOtro);
+        model.addAttribute("angleEc", angleEc);
+        model.addAttribute("angleGr", angleGr);
+        model.addAttribute("angleEe", angleEe);
+        model.addAttribute("angleRep", angleRep);
+        model.addAttribute("angleOtro", angleOtro);
+        model.addAttribute("startEc", startEc);
+        model.addAttribute("startGr", startGr);
+        model.addAttribute("startEe", startEe);
+        model.addAttribute("startRep", startRep);
+        model.addAttribute("startOtro", startOtro);
+        model.addAttribute("dashEc", dashEc);
+        model.addAttribute("dashGr", dashGr);
+        model.addAttribute("dashEe", dashEe);
+        model.addAttribute("dashRep", dashRep);
+        model.addAttribute("dashOtro", dashOtro);
+
+        model.addAttribute("nacVigente", nacVigente);
+        model.addAttribute("nacPublicada", nacPublicada);
+        model.addAttribute("nacConsulta", nacConsulta);
+        model.addAttribute("nacBorrador", nacBorrador);
+        model.addAttribute("nacDerogada", nacDerogada);
+        model.addAttribute("nacTotal", nacTotal);
+
+        model.addAttribute("intVigente", intVigente);
+        model.addAttribute("intPublicada", intPublicada);
+        model.addAttribute("intConsulta", intConsulta);
+        model.addAttribute("intBorrador", intBorrador);
+        model.addAttribute("intDerogada", intDerogada);
+        model.addAttribute("intTotal", intTotal);
+
+        model.addAttribute("gratisNac", gratisNac);
+        model.addAttribute("gratisInt", gratisInt);
+        model.addAttribute("gratisTotal", gratisTotal);
+
+        model.addAttribute("pagoNac", pagoNac);
+        model.addAttribute("pagoInt", pagoInt);
+        model.addAttribute("pagoTotal", pagoTotal);
+
+        // Return filter params so we can retain them in the UI
+        model.addAttribute("searchQuery", search);
+        model.addAttribute("selectedYear", anio);
+        model.addAttribute("dateStart", dateStart);
+        model.addAttribute("dateEnd", dateEnd);
+        model.addAttribute("selectedCategorias", categoria);
+        model.addAttribute("selectedEstados", estado);
+        model.addAttribute("selectedAccesos", acceso);
+        model.addAttribute("selectedAlcances", alcance);
+        model.addAttribute("selectedObligatoriedades", obligatoriedad);
+
+        return "socio/repoNormativo";
+    }
+
+    @GetMapping("/{id}")
+    public String verNormativa(@org.springframework.web.bind.annotation.PathVariable Long id, Model model) {
+        NormativaDetalleDTO detalle = normativaService.obtenerDetalleConContexto(id);
+        if (detalle == null || detalle.getNormativa() == null) {
+            return "redirect:/normativas";
+        }
+        
+        model.addAttribute("detalle", detalle);
+        model.addAttribute("normativa", detalle.getNormativa());
+        model.addAttribute("currentPage", "repoNormativo");
+
+        if (detalle.getNormativa().getAcceso() == Normativa.AccesoNormativa.PAGO) {
+            return "socio/visualizadorNormativaPago";
+        } else {
+            return "socio/visualizadorNormativa";
+        }
+    }
+}

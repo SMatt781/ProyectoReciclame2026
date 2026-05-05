@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>Registro | Recíclame</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#006c49",
+                        "primary-container": "#10b981",
+                        "secondary": "#0f172a",
+                        "surface": "#f7f9fb",
+                        "on-surface-variant": "#3c4a42",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.75rem",
+                        "lg": "1.5rem",
+                        "xl": "2rem",
+                        "full": "9999px"
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+        }
+
+        .brand-font {
+            font-weight: 800;
+            letter-spacing: -0.05em;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-surface-container-lowest antialiased overflow-x-hidden">
+<main class="flex min-h-screen w-full">
+
+    <section class="relative hidden lg:flex lg:w-[35%] flex-col justify-between p-10 bg-secondary text-white overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(16,185,129,0.2),transparent_30%),linear-gradient(180deg,#0f172a_0%,#0b1220_100%)]"></div>
+            <div class="absolute -left-16 top-20 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl"></div>
+            <div class="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-emerald-300/10 blur-3xl"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-secondary/40 via-transparent to-secondary/90"></div>
+        </div>
+
+        <div class="relative z-10">
+            <div class="flex items-center gap-2">
+                <svg class="w-8 h-8 text-primary-container fill-current" viewBox="0 0 24 24">
+                    <path d="M12 3c2.7 0 5.18 1.07 7 2.82M21 12c0 2.7-1.07 5.18-2.82 7M12 21c-2.7 0-5.18-1.07-7-2.82M3 12c0-2.7 1.07-5.18 2.82-7"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"/>
+                </svg>
+                <span class="text-2xl brand-font">Recíclame</span>
+            </div>
+        </div>
+
+        <div class="relative z-10">
+            <div class="bg-secondary/40 backdrop-blur-md p-6 rounded-xl border border-white/10 shadow-2xl">
+                <p class="text-lg font-medium leading-snug italic mb-4">
+                    "La madurez circular no es una meta, es un proceso continuo de diseño consciente."
+                </p>
+                <div class="flex flex-col">
+                    <span class="font-bold text-primary-container uppercase tracking-widest text-[10px]">
+                        Mesa de Innovación
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="flex w-full lg:w-[65%] items-center justify-center p-6 md:p-10 bg-white overflow-y-auto">
+        <div class="w-full max-w-lg">
+
+            <header class="mb-6">
+                <h1 class="text-3xl font-extrabold text-secondary tracking-tight mb-1">
+                    Únete al Repositorio
+                </h1>
+                <p class="text-on-surface-variant text-sm">
+                    Crea tu cuenta para visualizar el contenido exclusivo.
+                </p>
+            </header>
+
+            <div class="flex gap-3 mb-8">
+                <a th:href="@{/registro/socio}"
+                   class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-surface-container-low text-secondary text-sm font-semibold hover:bg-surface-container-high transition-all">
+                    Socio
+                </a>
+
+                <a th:href="@{/registro/visualizador}"
+                   class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-secondary text-white text-sm font-bold shadow-md transition-all">
+                    Visualizador
+                </a>
+            </div>
+
+            <form th:action="@{/registro/visualizador}"
+                  th:object="${registroForm}"
+                  method="post"
+                  class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
+
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}"/>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        Nombres
+                    </label>
+                    <input th:field="*{nombres}"
+                           type="text"
+                           placeholder="Ej. Javier"
+                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"/>
+                    <p th:if="${#fields.hasErrors('nombres')}"
+                       th:errors="*{nombres}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        Apellido paterno
+                    </label>
+                    <input th:field="*{apellidoPaterno}"
+                           type="text"
+                           placeholder="Ej. Salvador"
+                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"/>
+                    <p th:if="${#fields.hasErrors('apellidoPaterno')}"
+                       th:errors="*{apellidoPaterno}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        Apellido materno
+                    </label>
+                    <input th:field="*{apellidoMaterno}"
+                           type="text"
+                           placeholder="Ej. Sotelo"
+                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"/>
+                    <p th:if="${#fields.hasErrors('apellidoMaterno')}"
+                       th:errors="*{apellidoMaterno}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        DNI
+                    </label>
+                    <input th:field="*{dni}"
+                           type="text"
+                           placeholder="8 dígitos"
+                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"/>
+                    <p th:if="${#fields.hasErrors('dni')}"
+                       th:errors="*{dni}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        Teléfono
+                    </label>
+                    <input th:field="*{telefono}"
+                           type="tel"
+                           placeholder="+51 987..."
+                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"/>
+                    <p th:if="${#fields.hasErrors('telefono')}"
+                       th:errors="*{telefono}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="space-y-1 md:col-span-2">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        Correo corporativo
+                    </label>
+                    <input th:field="*{correo}"
+                           type="email"
+                           placeholder="javier@empresa.com"
+                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"/>
+                    <p th:if="${#fields.hasErrors('correo')}"
+                       th:errors="*{correo}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        Contraseña
+                    </label>
+
+                    <div class="relative">
+                        <input id="passwordVisualizador"
+                               name="password"
+                               th:value="${registroForm.password}"
+                               type="password"
+                               placeholder="••••••••"
+                               th:data-min-length="${passwordMinLength != null ? passwordMinLength : 10}"
+                               th:data-require-upper="${passwordRequireUpper != null ? passwordRequireUpper : true}"
+                               th:data-require-number="${passwordRequireNumber != null ? passwordRequireNumber : true}"
+                               th:data-require-symbol="${passwordRequireSymbol != null ? passwordRequireSymbol : true}"
+                               oninput="evaluarPassword(this.value, 'Visualizador')"
+                               class="w-full px-4 py-2.5 pr-10 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"/>
+
+                        <button type="button"
+                                class="absolute right-3 top-2.5 text-slate-400"
+                                onclick="togglePassword('passwordVisualizador')">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="flex gap-1 mt-1.5">
+                        <div id="barVisualizador1" class="h-1 flex-1 rounded-full bg-slate-200"></div>
+                        <div id="barVisualizador2" class="h-1 flex-1 rounded-full bg-slate-200"></div>
+                        <div id="barVisualizador3" class="h-1 flex-1 rounded-full bg-slate-200"></div>
+                        <div id="barVisualizador4" class="h-1 flex-1 rounded-full bg-slate-200"></div>
+                    </div>
+
+                    <p id="passwordMsgVisualizador" class="text-[11px] font-bold ml-1 text-slate-400">
+                        Ingresa una contraseña.
+                    </p>
+
+                    <ul class="text-[10px] text-on-surface-variant ml-1 space-y-0.5">
+                        <li id="ruleVisualizadorLength"
+                            th:text="'• Mínimo ' + (${passwordMinLength != null ? passwordMinLength : 10}) + ' caracteres'">
+                            • Mínimo 10 caracteres
+                        </li>
+                        <li id="ruleVisualizadorUpper">• Al menos una mayúscula</li>
+                        <li id="ruleVisualizadorNumber">• Al menos un número</li>
+                        <li id="ruleVisualizadorSymbol">• Al menos un símbolo</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        Confirmar contraseña
+                    </label>
+
+                    <div class="relative">
+                        <input id="confirmPasswordVisualizador"
+                               name="confirmPassword"
+                               th:value="${registroForm.confirmPassword}"
+                               type="password"
+                               placeholder="••••••••"
+                               class="w-full px-4 py-2.5 pr-10 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"/>
+
+                        <button type="button"
+                                class="absolute right-3 top-2.5 text-slate-400"
+                                onclick="togglePassword('confirmPasswordVisualizador')">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <p th:if="${#fields.hasErrors('confirmPassword')}"
+                       th:errors="*{confirmPassword}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="md:col-span-2 flex items-start gap-2 py-1">
+                    <input th:field="*{aceptaTerminos}"
+                           id="termsVisualizador"
+                           type="checkbox"
+                           class="mt-0.5 h-4 w-4 rounded border-0 bg-surface-container-low text-primary-container focus:ring-primary-container"/>
+                    <label for="termsVisualizador" class="text-[11px] text-on-surface-variant leading-tight">
+                        Acepto los
+                        <a href="#" class="text-secondary font-bold underline decoration-primary-container">Términos</a>
+                        y la
+                        <a href="#" class="text-secondary font-bold underline decoration-primary-container">Privacidad</a>.
+                    </label>
+                </div>
+
+                <div class="md:col-span-2">
+                    <p th:if="${#fields.hasErrors('aceptaTerminos')}"
+                       th:errors="*{aceptaTerminos}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="md:col-span-2 mt-2">
+                    <button type="submit"
+                            class="w-full py-3.5 rounded-full bg-secondary text-white text-sm font-bold flex items-center justify-center gap-3 group transition-all hover:bg-slate-800">
+                        Solicitar Registro
+                        <svg class="w-4 h-4 transition-transform group-hover:translate-x-1 fill-current"
+                             viewBox="0 0 24 24">
+                            <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+
+            <footer class="mt-8 text-center">
+                <p class="text-xs text-on-surface-variant">
+                    ¿Ya tienes una cuenta?
+                    <a th:href="@{/login}" class="text-primary-container font-bold hover:underline">
+                        Inicia sesión
+                    </a>
+                </p>
+            </footer>
+        </div>
+    </section>
+</main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordVisualizador = document.getElementById("passwordVisualizador");
+
+        if (passwordVisualizador && passwordVisualizador.value) {
+            evaluarPassword(passwordVisualizador.value, "Visualizador");
+        }
+    });
+
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        input.type = input.type === "password" ? "text" : "password";
+    }
+
+    function evaluarPassword(password, prefix) {
+        const input = document.getElementById(`password${prefix}`);
+
+        const minLength = parseInt(input.dataset.minLength || "10");
+        const requireUpper = input.dataset.requireUpper === "true";
+        const requireNumber = input.dataset.requireNumber === "true";
+        const requireSymbol = input.dataset.requireSymbol === "true";
+
+        const rules = {
+            length: password.length >= minLength,
+            upper: /[A-ZÁÉÍÓÚÑ]/.test(password),
+            number: /\d/.test(password),
+            symbol: /[^A-Za-zÁÉÍÓÚáéíóúÑñ0-9]/.test(password)
+        };
+
+        const score = [
+            rules.length,
+            requireUpper ? rules.upper : true,
+            requireNumber ? rules.number : true,
+            requireSymbol ? rules.symbol : true
+        ].filter(Boolean).length;
+
+        pintarBarras(prefix, score);
+        pintarMensaje(prefix, password, score);
+
+        setRuleColor(`rule${prefix}Length`, rules.length);
+        setRuleColor(`rule${prefix}Upper`, !requireUpper || rules.upper);
+        setRuleColor(`rule${prefix}Number`, !requireNumber || rules.number);
+        setRuleColor(`rule${prefix}Symbol`, !requireSymbol || rules.symbol);
+    }
+
+    function pintarBarras(prefix, score) {
+        const bars = [
+            document.getElementById(`bar${prefix}1`),
+            document.getElementById(`bar${prefix}2`),
+            document.getElementById(`bar${prefix}3`),
+            document.getElementById(`bar${prefix}4`)
+        ];
+
+        bars.forEach((bar, index) => {
+            bar.className = "h-1 flex-1 rounded-full bg-slate-200";
+
+            if (index < score) {
+                if (score <= 1) {
+                    bar.className = "h-1 flex-1 rounded-full bg-red-500";
+                } else if (score === 2) {
+                    bar.className = "h-1 flex-1 rounded-full bg-amber-500";
+                } else if (score === 3) {
+                    bar.className = "h-1 flex-1 rounded-full bg-blue-500";
+                } else {
+                    bar.className = "h-1 flex-1 rounded-full bg-primary-container";
+                }
+            }
+        });
+    }
+
+    function pintarMensaje(prefix, password, score) {
+        const msg = document.getElementById(`passwordMsg${prefix}`);
+
+        if (!password) {
+            msg.textContent = "Ingresa una contraseña.";
+            msg.className = "text-[11px] font-bold ml-1 text-slate-400";
+        } else if (score <= 1) {
+            msg.textContent = "Contraseña débil.";
+            msg.className = "text-[11px] font-bold ml-1 text-red-600";
+        } else if (score === 2) {
+            msg.textContent = "Contraseña media.";
+            msg.className = "text-[11px] font-bold ml-1 text-amber-600";
+        } else if (score === 3) {
+            msg.textContent = "Contraseña buena.";
+            msg.className = "text-[11px] font-bold ml-1 text-blue-600";
+        } else {
+            msg.textContent = "Contraseña segura.";
+            msg.className = "text-[11px] font-bold ml-1 text-primary";
+        }
+    }
+
+    function setRuleColor(id, ok) {
+        const item = document.getElementById(id);
+        if (!item) return;
+
+        item.className = ok
+            ? "text-[10px] text-primary font-bold"
+            : "text-[10px] text-on-surface-variant";
+    }
+</script>
+</body>
+</html>

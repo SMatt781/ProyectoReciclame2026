@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Recíclame - Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7f9fb",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#cfe9d9",
+                        "tertiary-container": "#092016",
+                        "primary-container": "#021d30",
+                        "on-secondary-container": "#00743a",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#b1c9e2",
+                        "on-surface-variant": "#43474c",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "outline-variant": "#c3c7cd",
+                        "on-secondary-fixed": "#00210c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006d37",
+                        "surface-variant": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#354c40",
+                        "on-secondary": "#ffffff",
+                        "outline": "#73777d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-container": "#71897c",
+                        "tertiary-fixed-dim": "#b3ccbd",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#496177",
+                        "on-secondary-fixed-variant": "#005228",
+                        "on-primary-container": "#6f869e",
+                        "secondary-container": "#6bfe9c",
+                        "on-tertiary-fixed": "#092016",
+                        "secondary-fixed": "#6bfe9c",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#021d30",
+                        "on-primary-fixed-variant": "#31495e",
+                        "primary-fixed": "#cde5ff",
+                        "secondary-fixed-dim": "#4ae183",
+                        "primary-fixed-dim": "#b1c9e2"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" rel="stylesheet" />
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+
+        .donut-segment {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden">
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="flex-1 overflow-y-auto px-4 sm:px-6 py-2">
+
+        <div class="w-full h-full">
+
+            <div class="mb-3">
+                <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                    Dashboard
+                </h2>
+                <p class="font-body text-on-surface-variant text-sm mt-1 max-w-3xl">
+                    Control central para la gestión y supervisión del repositorio circular.
+                </p>
+            </div>
+
+            <div class="bg-transparent border border-outline-variant/30 rounded-xl p-4 mb-4 flex flex-col">
+
+                <!-- KPIs -->
+                <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
+
+                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
+
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="bg-emerald-50 text-secondary rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <span class="material-symbols-outlined text-xl">verified</span>
+                            </div>
+
+                            <span class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                Vigente
+                            </span>
+                        </div>
+
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                            Normativas vigentes
+                        </h4>
+
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${normativasVigentes}">
+                            84
+                        </div>
+                    </article>
+
+                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200"></div>
+
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="bg-orange-100 text-orange-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <span class="material-symbols-outlined text-xl">publish</span>
+                            </div>
+
+                            <span class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                Publicado
+                            </span>
+                        </div>
+
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                            Estudios vigentes
+                        </h4>
+
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${estudiosVigentes}">
+                            28
+                        </div>
+                    </article>
+
+                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200"></div>
+
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="bg-blue-100 text-blue-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <span class="material-symbols-outlined text-xl">forum</span>
+                            </div>
+
+                            <span class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                Consulta
+                            </span>
+                        </div>
+
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                            Consulta pública
+                        </h4>
+
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${normativasConsulta}">
+                            16
+                        </div>
+                    </article>
+
+                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container"></div>
+
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="bg-error-container text-error rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <span class="material-symbols-outlined text-xl">cancel</span>
+                            </div>
+
+                            <span class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                Derogada
+                            </span>
+                        </div>
+
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                            Normativas derogadas
+                        </h4>
+
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${normativasDerogadas}">
+                            14
+                        </div>
+                    </article>
+
+                </section>
+
+                <!-- Distribución + últimas actualizaciones -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+
+                    <section class="lg:col-span-2 bg-surface-container-lowest rounded-[1.25rem] p-5 sm:p-6 ambient-shadow ghost-border min-h-[220px]">
+                        <h3 class="text-base font-extrabold text-on-primary-fixed mb-5">
+                            Distribución por temática
+                        </h3>
+
+                        <div class="flex flex-col sm:flex-row items-center justify-around gap-6">
+
+                            <div class="relative h-36 w-36 sm:h-40 sm:w-40 shrink-0">
+                                <svg class="h-full w-full -rotate-90 transform" viewBox="0 0 36 36">
+                                    <circle class="text-surface-container"
+                                            cx="18"
+                                            cy="18"
+                                            fill="transparent"
+                                            r="16"
+                                            stroke="currentColor"
+                                            stroke-width="3">
+                                    </circle>
+
+                                    <circle class="donut-segment"
+                                            cx="18"
+                                            cy="18"
+                                            fill="transparent"
+                                            r="16"
+                                            stroke="#006d42"
+                                            th:attr="stroke-dasharray=${dashEe}"
+                                            stroke-width="4">
+                                    </circle>
+
+                                    <circle class="donut-segment"
+                                            cx="18"
+                                            cy="18"
+                                            fill="transparent"
+                                            r="16"
+                                            stroke="#f59e0b"
+                                            th:attr="stroke-dasharray=${dashGr}, stroke-dashoffset=${offsetGr}"
+                                            stroke-width="4">
+                                    </circle>
+
+                                    <circle class="donut-segment"
+                                            cx="18"
+                                            cy="18"
+                                            fill="transparent"
+                                            r="16"
+                                            stroke="#3b82f6"
+                                            th:attr="stroke-dasharray=${dashRep}, stroke-dashoffset=${offsetRep}"
+                                            stroke-width="4">
+                                    </circle>
+
+                                    <circle class="donut-segment"
+                                            cx="18"
+                                            cy="18"
+                                            fill="transparent"
+                                            r="16"
+                                            stroke="#ef4444"
+                                            th:attr="stroke-dasharray=${dashOtro}, stroke-dashoffset=${offsetOtro}"
+                                            stroke-width="4">
+                                    </circle>
+                                </svg>
+
+                                <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                                    <span class="text-2xl font-black" th:text="${totalNormas}">142</span>
+                                    <span class="text-[9px] font-bold uppercase">Total</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-3 w-full">
+                                <div class="flex items-center justify-between text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <div class="h-2.5 w-2.5 rounded-full bg-secondary"></div>
+                                        <span>Envases</span>
+                                    </div>
+                                    <span class="font-bold" th:text="${countEe}">56</span>
+                                </div>
+
+                                <div class="flex items-center justify-between text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <div class="h-2.5 w-2.5 rounded-full bg-orange-500"></div>
+                                        <span>Residuos</span>
+                                    </div>
+                                    <span class="font-bold" th:text="${countGr}">35</span>
+                                </div>
+
+                                <div class="flex items-center justify-between text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <div class="h-2.5 w-2.5 rounded-full bg-blue-500"></div>
+                                        <span>Responsabilidad extendida</span>
+                                    </div>
+                                    <span class="font-bold" th:text="${countRep}">28</span>
+                                </div>
+
+                                <div class="flex items-center justify-between text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <div class="h-2.5 w-2.5 rounded-full bg-error"></div>
+                                        <span>Otros</span>
+                                    </div>
+                                    <span class="font-bold" th:text="${countOtro}">23</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </section>
+
+                    <section class="bg-surface-container-lowest rounded-[1.25rem] p-5 sm:p-6 ambient-shadow ghost-border overflow-hidden min-h-[220px]">
+                        <h3 class="text-base font-extrabold text-on-primary-fixed mb-4">
+                            Últimas actualizaciones
+                        </h3>
+
+                        <div class="space-y-4">
+
+                            <div th:if="${#lists.isEmpty(ultimasActualizaciones)}"
+                                 class="text-sm text-on-surface-variant">
+                                No hay actualizaciones recientes.
+                            </div>
+
+                            <div class="flex items-center gap-3"
+                                 th:each="novedad : ${ultimasActualizaciones}">
+
+                                <div class="bg-surface-container p-2 rounded-md shrink-0">
+                                    <span class="material-symbols-outlined text-base"
+                                          th:text="${novedad.tipo == 'Normativa' ? 'description' : 'article'}">
+                                        description
+                                    </span>
+                                </div>
+
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold truncate"
+                                       th:text="${novedad.nombre}">
+                                        Ley de Envases - PE
+                                    </p>
+                                    <p class="text-[10px] text-on-surface-variant"
+                                       th:text="${novedad.fechaRelativa}">
+                                        Hace 2 horas
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </section>
+
+                </div>
+
+                <!-- Accesos inferiores -->
+                <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    <a th:href="@{/admin/estudios}"
+                       class="group bg-primary-container p-6 rounded-[1.25rem] ambient-shadow flex items-center justify-between min-h-[90px] no-underline">
+                        <div>
+                            <h3 class="text-lg font-extrabold text-white">
+                                Estudios Reciclame
+                            </h3>
+                            <p class="text-xs text-white/70">
+                                Investigaciones técnicas.
+                            </p>
+                        </div>
+
+                        <span class="material-symbols-outlined text-white text-3xl">
+                            arrow_forward
+                        </span>
+                    </a>
+
+                    <a th:href="@{/admin/normativas}"
+                       class="group bg-surface-container-lowest p-6 rounded-[1.25rem] ambient-shadow ghost-border flex items-center justify-between min-h-[90px] no-underline">
+                        <div>
+                            <h3 class="text-lg font-extrabold text-on-primary-fixed">
+                                Normativas
+                            </h3>
+                            <p class="text-xs text-on-surface-variant">
+                                Base legal actualizada.
+                            </p>
+                        </div>
+
+                        <span class="material-symbols-outlined text-secondary text-3xl">
+                            arrow_forward
+                        </span>
+                    </a>
+
+                </section>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

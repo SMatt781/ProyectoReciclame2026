@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html class="light h-full" lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Registro | Recíclame</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#006c49",
+                        "primary-container": "#10b981",
+                        "secondary": "#0f172a",
+                        "surface": "#f7f9fb",
+                        "on-surface-variant": "#3c4a42",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.75rem",
+                        "lg": "1.5rem",
+                        "xl": "2rem",
+                        "full": "9999px"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .brand-font {
+            font-weight: 800;
+            letter-spacing: -0.05em;
+        }
+    </style>
+</head>
+
+<body class="bg-surface-container-lowest min-h-screen antialiased overflow-x-hidden">
+<main class="flex min-h-screen w-full">
+
+    <section class="hidden lg:flex lg:w-[35%] relative overflow-hidden flex-col justify-between p-10 bg-secondary text-white">
+        <div class="absolute inset-0 z-0">
+            <img class="w-full h-full object-cover opacity-50"
+                 alt="Bosque"
+                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXcO6OUR9PxZJLCzfFz3IZ_ybQ4-DgKKosfDRPu5Wb48Zq38imshgI8Wk5sUvdBBbBRRn1ylsrPOFzO6POZxYRs9XkJd-n-3DJ7s95r4Wr7LzyVtJxYUrHTA9Vue77rsRPCDq8-2eCDUMZcAR1vd3tLc_SN_ZQEpS2QmQ6hT7sClfGfOKBdaeQ3h7BY8IaX9qwK5HwU8XV5HY3V6HX1EhVdQTq0TDrs7lUeqecPtFfTDlDgN-YYG1EBrE7GHDtkA87WyI2h952W7E"/>
+            <div class="absolute inset-0 bg-gradient-to-b from-secondary/40 via-transparent to-secondary/90"></div>
+        </div>
+
+        <div class="relative z-10">
+            <div class="flex items-center gap-2">
+                <svg class="w-8 h-8 text-primary-container fill-current" viewBox="0 0 24 24">
+                    <path d="M17 17h5l-4 4-4-4h3V9c0-2.21-1.79-4-4-4S9 6.79 9 9h2c0-1.1.9-2 2-2s2 .9 2 2v8h-3l4 4 4-4zM7 7H2l4-4 4 4H7v8c0 2.21 1.79 4 4 4s4-1.79 4-4h-2c0 1.1-.9 2-2 2s-2-.9-2-2V7z"/>
+                </svg>
+                <span class="text-2xl brand-font">Recíclame</span>
+            </div>
+        </div>
+
+        <div class="relative z-10">
+            <div class="bg-secondary/40 backdrop-blur-md p-6 rounded-xl border border-white/10">
+                <p class="text-lg font-medium leading-snug italic mb-4">
+                    "La madurez circular no es una meta, es un proceso continuo."
+                </p>
+                <div class="flex flex-col">
+                    <span class="font-bold text-primary-container uppercase tracking-widest text-[10px]">
+                        Mesa de Innovación
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="w-full lg:w-[65%] bg-white flex items-center justify-center p-6 md:p-10 overflow-y-auto">
+        <div class="w-full max-w-lg">
+
+            <header class="mb-6">
+                <h1 class="text-3xl font-extrabold text-secondary tracking-tight mb-1">
+                    Únete al Repositorio
+                </h1>
+                <p class="text-on-surface-variant text-sm">
+                    Crea tu cuenta para acceder al contenido exclusivo.
+                </p>
+            </header>
+
+            <div class="flex gap-3 mb-8">
+                <a th:href="@{/registro/socio}"
+                   class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-secondary text-white text-sm font-bold shadow-md">
+                    Socio
+                </a>
+
+                <a th:href="@{/registro/visualizador}"
+                   class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-surface-container-low text-secondary text-sm font-semibold hover:bg-surface-container-high">
+                    Visualizador
+                </a>
+            </div>
+
+            <form th:action="@{/registro/socio}"
+                  th:object="${registroForm}"
+                  method="post"
+                  class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
+
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}"/>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        Nombres
+                    </label>
+                    <input th:field="*{nombres}"
+                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
+                           placeholder="Ej. Javier"
+                           type="text"/>
+                    <p th:if="${#fields.hasErrors('nombres')}"
+                       th:errors="*{nombres}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        Apellido paterno
+                    </label>
+                    <input th:field="*{apellidoPaterno}"
+                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
+                           placeholder="Ej. Salvador"
+                           type="text"/>
+                    <p th:if="${#fields.hasErrors('apellidoPaterno')}"
+                       th:errors="*{apellidoPaterno}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        Apellido materno
+                    </label>
+                    <input th:field="*{apellidoMaterno}"
+                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
+                           placeholder="Ej. Sotelo"
+                           type="text"/>
+                    <p th:if="${#fields.hasErrors('apellidoMaterno')}"
+                       th:errors="*{apellidoMaterno}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        DNI
+                    </label>
+                    <input th:field="*{dni}"
+                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
+                           placeholder="8 dígitos"
+                           type="text"/>
+                    <p th:if="${#fields.hasErrors('dni')}"
+                       th:errors="*{dni}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        RUC
+                    </label>
+                    <input th:field="*{ruc}"
+                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
+                           placeholder="11 dígitos"
+                           type="text"/>
+                    <p th:if="${#fields.hasErrors('ruc')}"
+                       th:errors="*{ruc}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        Teléfono
+                    </label>
+                    <input th:field="*{telefono}"
+                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
+                           placeholder="+51 987..."
+                           type="tel"/>
+                    <p th:if="${#fields.hasErrors('telefono')}"
+                       th:errors="*{telefono}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="space-y-1 md:col-span-2">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        Correo corporativo
+                    </label>
+                    <input th:field="*{correo}"
+                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
+                           placeholder="nombre@empresa.com"
+                           type="email"/>
+                    <p th:if="${#fields.hasErrors('correo')}"
+                       th:errors="*{correo}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        Contraseña
+                    </label>
+
+                    <div class="relative">
+                        <input id="passwordSocio"
+                               name="password"
+                               th:value="${registroForm.password}"
+                               class="w-full px-4 py-2.5 pr-10 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
+                               placeholder="••••••••"
+                               type="password"
+                               th:data-min-length="${passwordMinLength != null ? passwordMinLength : 10}"
+                               th:data-require-upper="${passwordRequireUpper != null ? passwordRequireUpper : true}"
+                               th:data-require-number="${passwordRequireNumber != null ? passwordRequireNumber : true}"
+                               th:data-require-symbol="${passwordRequireSymbol != null ? passwordRequireSymbol : true}"
+                               oninput="evaluarPassword(this.value, 'Socio')"/>
+
+                        <button type="button"
+                                class="absolute right-3 top-2.5 text-slate-400"
+                                onclick="togglePassword('passwordSocio')">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="flex gap-1 mt-1.5">
+                        <div id="barSocio1" class="h-1 flex-1 rounded-full bg-slate-200"></div>
+                        <div id="barSocio2" class="h-1 flex-1 rounded-full bg-slate-200"></div>
+                        <div id="barSocio3" class="h-1 flex-1 rounded-full bg-slate-200"></div>
+                        <div id="barSocio4" class="h-1 flex-1 rounded-full bg-slate-200"></div>
+                    </div>
+
+                    <p id="passwordMsgSocio" class="text-[11px] font-bold ml-1 text-slate-400">
+                        Ingresa una contraseña.
+                    </p>
+
+                    <ul class="text-[10px] text-on-surface-variant ml-1 space-y-0.5">
+                        <li id="ruleSocioLength"
+                            th:text="'• Mínimo ' + (${passwordMinLength != null ? passwordMinLength : 10}) + ' caracteres'">
+                            • Mínimo 10 caracteres
+                        </li>
+                        <li id="ruleSocioUpper">• Al menos una mayúscula</li>
+                        <li id="ruleSocioNumber">• Al menos un número</li>
+                        <li id="ruleSocioSymbol">• Al menos un símbolo</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        Confirmar contraseña
+                    </label>
+
+                    <div class="relative">
+                        <input id="confirmPasswordSocio"
+                               name="confirmPassword"
+                               th:value="${registroForm.confirmPassword}"
+                               class="w-full px-4 py-2.5 pr-10 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
+                               placeholder="••••••••"
+                               type="password"/>
+
+                        <button type="button"
+                                class="absolute right-3 top-2.5 text-slate-400"
+                                onclick="togglePassword('confirmPasswordSocio')">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <p th:if="${#fields.hasErrors('confirmPassword')}"
+                       th:errors="*{confirmPassword}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="md:col-span-2 flex items-start gap-2 py-1">
+                    <input th:field="*{aceptaTerminos}"
+                           class="mt-0.5 h-4 w-4 rounded border-0 bg-surface-container-low text-primary-container focus:ring-primary-container"
+                           id="termsSocio"
+                           type="checkbox"/>
+                    <label class="text-[11px] text-on-surface-variant leading-tight" for="termsSocio">
+                        Acepto los
+                        <a class="text-secondary font-bold underline decoration-primary-container" href="#">Términos</a>
+                        y la
+                        <a class="text-secondary font-bold underline decoration-primary-container" href="#">Privacidad</a>.
+                    </label>
+                </div>
+
+                <div class="md:col-span-2">
+                    <p th:if="${#fields.hasErrors('aceptaTerminos')}"
+                       th:errors="*{aceptaTerminos}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <div class="md:col-span-2 mt-2">
+                    <button type="submit"
+                            class="w-full py-3.5 rounded-full bg-secondary text-white text-sm font-bold flex items-center justify-center gap-3 group transition-all hover:bg-slate-800">
+                        Solicitar Registro
+                        <svg class="w-4 h-4 transition-transform group-hover:translate-x-1 fill-current"
+                             viewBox="0 0 24 24">
+                            <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+
+            <footer class="mt-8 text-center">
+                <p class="text-xs text-on-surface-variant">
+                    ¿Ya tienes una cuenta?
+                    <a th:href="@{/login}" class="text-primary-container font-bold hover:underline">
+                        Inicia sesión
+                    </a>
+                </p>
+            </footer>
+        </div>
+    </section>
+</main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordSocio = document.getElementById("passwordSocio");
+
+        if (passwordSocio && passwordSocio.value) {
+            evaluarPassword(passwordSocio.value, "Socio");
+        }
+    });
+
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        input.type = input.type === "password" ? "text" : "password";
+    }
+
+    function evaluarPassword(password, prefix) {
+        const input = document.getElementById(`password${prefix}`);
+
+        const minLength = parseInt(input.dataset.minLength || "10");
+        const requireUpper = input.dataset.requireUpper === "true";
+        const requireNumber = input.dataset.requireNumber === "true";
+        const requireSymbol = input.dataset.requireSymbol === "true";
+
+        const rules = {
+            length: password.length >= minLength,
+            upper: /[A-ZÁÉÍÓÚÑ]/.test(password),
+            number: /\d/.test(password),
+            symbol: /[^A-Za-zÁÉÍÓÚáéíóúÑñ0-9]/.test(password)
+        };
+
+        const score = [
+            rules.length,
+            requireUpper ? rules.upper : true,
+            requireNumber ? rules.number : true,
+            requireSymbol ? rules.symbol : true
+        ].filter(Boolean).length;
+
+        pintarBarras(prefix, score);
+        pintarMensaje(prefix, password, score);
+
+        setRuleColor(`rule${prefix}Length`, rules.length);
+        setRuleColor(`rule${prefix}Upper`, !requireUpper || rules.upper);
+        setRuleColor(`rule${prefix}Number`, !requireNumber || rules.number);
+        setRuleColor(`rule${prefix}Symbol`, !requireSymbol || rules.symbol);
+    }
+
+    function pintarBarras(prefix, score) {
+        const bars = [
+            document.getElementById(`bar${prefix}1`),
+            document.getElementById(`bar${prefix}2`),
+            document.getElementById(`bar${prefix}3`),
+            document.getElementById(`bar${prefix}4`)
+        ];
+
+        bars.forEach((bar, index) => {
+            bar.className = "h-1 flex-1 rounded-full bg-slate-200";
+
+            if (index < score) {
+                if (score <= 1) {
+                    bar.className = "h-1 flex-1 rounded-full bg-red-500";
+                } else if (score === 2) {
+                    bar.className = "h-1 flex-1 rounded-full bg-amber-500";
+                } else if (score === 3) {
+                    bar.className = "h-1 flex-1 rounded-full bg-blue-500";
+                } else {
+                    bar.className = "h-1 flex-1 rounded-full bg-primary-container";
+                }
+            }
+        });
+    }
+
+    function pintarMensaje(prefix, password, score) {
+        const msg = document.getElementById(`passwordMsg${prefix}`);
+
+        if (!password) {
+            msg.textContent = "Ingresa una contraseña.";
+            msg.className = "text-[11px] font-bold ml-1 text-slate-400";
+        } else if (score <= 1) {
+            msg.textContent = "Contraseña débil.";
+            msg.className = "text-[11px] font-bold ml-1 text-red-600";
+        } else if (score === 2) {
+            msg.textContent = "Contraseña media.";
+            msg.className = "text-[11px] font-bold ml-1 text-amber-600";
+        } else if (score === 3) {
+            msg.textContent = "Contraseña buena.";
+            msg.className = "text-[11px] font-bold ml-1 text-blue-600";
+        } else {
+            msg.textContent = "Contraseña segura.";
+            msg.className = "text-[11px] font-bold ml-1 text-primary";
+        }
+    }
+
+    function setRuleColor(id, ok) {
+        const item = document.getElementById(id);
+        if (!item) return;
+
+        item.className = ok
+            ? "text-[10px] text-primary font-bold"
+            : "text-[10px] text-on-surface-variant";
+    }
+</script>
+</body>
+</html>
