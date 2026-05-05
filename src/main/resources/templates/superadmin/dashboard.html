@@ -65,8 +65,9 @@
                 <p class="text-on-surface-variant text-sm mt-0.5">Resumen del estado del sistema Recíclame</p>
             </div>
             <div class="flex items-center gap-3">
-                <a th:href="@{/superadmin/administradores}"
-                   class="flex items-center gap-2 bg-secondary text-white font-bold px-5 py-2.5 rounded-xl hover:bg-[#005a3d] transition-all text-sm shadow-sm">
+                <!-- DESPUÉS -->
+                <a th:href="@{/superadmin/administradores(openModal=true)}"
+                   class="flex items-center gap-2 bg-secondary text-white font-bold px-5 py-2.5 rounded-xl ...">
                     <span class="material-symbols-outlined text-[18px]">person_add</span>
                     Añadir Administrador
                 </a>

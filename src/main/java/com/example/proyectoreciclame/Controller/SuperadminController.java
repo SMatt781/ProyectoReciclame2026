@@ -83,15 +83,26 @@ public class SuperadminController {
     public String showAdministradores(
             Model model,
             @RequestParam(value = "texto", required = false) String texto,
+            @RequestParam(value = "estado", required = false) String estado,
             @RequestParam(value = "page", defaultValue = "0") int page
     ) {
         PageRequest pageable = PageRequest.of(
                 page, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "idUsuario"));
 
         Page<Usuario> administradores;
-        if (texto != null && !texto.isBlank()) {
+
+        if (texto != null && !texto.isBlank() && estado != null && !estado.isBlank()) {
+            // Búsqueda + filtro de estado combinados
+            administradores = usuarioRepository
+                    .buscarEnGestionConEstado(texto, ROL_ADMIN_IDS,
+                            Usuario.EstadoCuenta.valueOf(estado), pageable);
+        } else if (texto != null && !texto.isBlank()) {
             administradores = usuarioRepository
                     .buscarEnGestion(texto, ROL_ADMIN_IDS, pageable);
+        } else if (estado != null && !estado.isBlank()) {
+            administradores = usuarioRepository
+                    .findByRolIdInAndEstadoCuentaAndEliminadoEnIsNull(
+                            ROL_ADMIN_IDS, Usuario.EstadoCuenta.valueOf(estado), pageable);
         } else {
             administradores = usuarioRepository
                     .findByRol_IdInAndEliminadoEnIsNull(ROL_ADMIN_IDS, pageable);
@@ -102,7 +113,7 @@ public class SuperadminController {
                         Usuario::getIdUsuario,
                         admin -> formatearUltimoAcceso(admin.getUltimoAcceso())
                 ));
-
+        model.addAttribute("estado", estado);
         model.addAttribute("ultimoAccesoTexto", ultimoAccesoTexto);
         model.addAttribute("titulo", "Administradores");
         model.addAttribute("currentSection", "superadmin-administradores");
@@ -424,17 +435,27 @@ public class SuperadminController {
     public String showConfSeguridad(
             Model model,
             @RequestParam(defaultValue = "0") int page,
+            @RequestParam(value = "estadoDominio", required = false) String estadoDominio,
             @RequestParam(value = "texto", required = false) String texto
     ) {
         model.addAttribute("titulo", "Configuración de Seguridad");
         model.addAttribute("currentSection", "superadmin-conf-seguridad");
+        model.addAttribute("estadoDominio", estadoDominio);
 
         PageRequest pageable = PageRequest.of(page, 3, Sort.by("fechaRegistro").descending());
+
         Page<DominioAutorizado> dominiosPage;
 
-        if (texto != null && !texto.trim().isEmpty()) {
+        if (texto != null && !texto.isBlank() && estadoDominio != null) {
+            boolean activo = estadoDominio.equals("activo");
+            dominiosPage = dominioAutorizadoRepository
+                    .findByNombreDominioContainingIgnoreCaseAndEstado(texto.trim(), activo, pageable);
+        } else if (texto != null && !texto.isBlank()) {
             dominiosPage = dominioAutorizadoRepository
                     .findByNombreDominioContainingIgnoreCase(texto.trim(), pageable);
+        } else if (estadoDominio != null) {
+            boolean activo = estadoDominio.equals("activo");
+            dominiosPage = dominioAutorizadoRepository.findByEstado(activo, pageable);
         } else {
             dominiosPage = dominioAutorizadoRepository.findAll(pageable);
         }
