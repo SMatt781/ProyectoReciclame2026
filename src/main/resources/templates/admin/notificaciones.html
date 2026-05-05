@@ -122,142 +122,135 @@
             <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
 
                 <!-- Tabs -->
-                <div class="flex flex-wrap gap-6 mb-8 border-b border-surface-variant">
-                    <button class="pb-3 text-secondary font-bold text-sm border-b-2 border-secondary">
+                <div class="flex flex-wrap gap-6 mb-8 border-b border-surface-variant" id="notificationTabs">
+                    <button data-filter="ALL" class="pb-3 text-secondary font-bold text-sm border-b-2 border-secondary">
                         Todas las actividades
                     </button>
-                    <button class="pb-3 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors">
-                        Normativas
-                    </button>
-                    <button class="pb-3 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors">
+                    <button data-filter="ESTUDIO" class="pb-3 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors">
                         Estudios
                     </button>
-                    <button class="pb-3 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors">
-                        Solicitudes
+                    <button data-filter="NORMATIVA" class="pb-3 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors">
+                        Normativas
                     </button>
-                    <button class="pb-3 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors">
-                        Sistema
+                    <button data-filter="SOLICITUD"
+                            th:if="${usuarioRol == 'ADMIN' || usuarioRol == 'SUPERADMIN'}"
+                            class="pb-3 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors">
+                        Solicitudes
                     </button>
                 </div>
 
                 <!-- Cards -->
                 <div class="space-y-5">
+                    <div id="emptyNotificationsGlobal"
+                         th:if="${notificaciones == null or #lists.isEmpty(notificaciones)}"
+                         class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border text-on-surface-variant">
+                        No hay notificaciones nuevas por ahora.
+                    </div>
 
-                    <!-- Card 1 -->
-                    <div class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border flex items-start gap-4 relative group hover:-translate-y-1 transition-transform duration-300">
-                        <div class="w-11 h-11 bg-secondary-container/30 rounded-xl flex items-center justify-center flex-shrink-0 text-secondary">
-                            <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-6 14H7v-2h6v2zm4-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-                            </svg>
+                    <div id="emptyNotificationsFilter"
+                         class="hidden bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border text-on-surface-variant">
+                        No hay notificaciones nuevas por ahora.
+                    </div>
+
+                    <div th:each="n : ${notificaciones}"
+                         th:attr="data-tipo=${n.tipo}"
+                         class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border flex items-start gap-4 relative group hover:-translate-y-1 transition-transform duration-300">
+                        <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                             th:classappend="${n.tipo == 'SOLICITUD' ? ' bg-surface-container text-on-surface-variant' : (n.tipo == 'BIENVENIDA' ? ' bg-secondary-container/30 text-secondary' : ' bg-blue-100 text-primary-container')}">
+                            <div th:switch="${n.tipo}">
+                                <svg th:case="'SOLICITUD'" class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M15 12c2.21 0 4-1.79 4-4S17.21 4 15 4s-4 1.79-4 4 1.79 4 4 4zm-6 0c2.21 0 4-1.79 4-4S11.21 4 9 4 5 5.79 5 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm6 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.98 1.97 3.45v2h8v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                                <svg th:case="'BIENVENIDA'" class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 3l2.09 4.24L19 8l-3.45 3.36L16.18 16 12 13.77 7.82 16l.63-4.64L5 8l4.91-.76L12 3z"/>
+                                </svg>
+                                <svg th:case="*" class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/>
+                                </svg>
+                            </div>
                         </div>
 
                         <div class="flex-1 pr-8">
                             <div class="flex justify-between items-center mb-1 gap-4">
-                                <span class="text-secondary font-bold text-[11px] uppercase tracking-wider">Documento publicado</span>
+                                <span class="text-secondary font-bold text-[11px] uppercase tracking-wider"
+                                      th:text="${n.etiqueta}">Documento publicado</span>
                                 <div class="flex items-center gap-3">
-                                    <span class="text-on-surface-variant text-xs">hace 5 min</span>
-                                    <div class="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
+                                    <span class="text-on-surface-variant text-xs" th:text="${n.tiempo}">Hace un momento</span>
                                 </div>
                             </div>
 
-                            <h3 class="text-lg font-bold text-on-primary-fixed mb-2">Nueva normativa publicada</h3>
-                            <p class="text-on-surface-variant text-sm leading-relaxed">
-                                Se ha incorporado la directiva 2024/EC sobre plásticos de un solo uso al repositorio.
-                            </p>
-                        </div>
-
-                        <div class="absolute bottom-5 right-6">
-                            <input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
-                        </div>
-                    </div>
-
-                    <!-- Card 2 -->
-                    <div class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border flex items-start gap-4 relative group hover:-translate-y-1 transition-transform duration-300">
-                        <div class="w-11 h-11 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0 text-primary-container">
-                            <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/>
-                            </svg>
-                        </div>
-
-                        <div class="flex-1 pr-8">
-                            <div class="flex justify-between items-center mb-1 gap-4">
-                                <span class="text-secondary font-bold text-[11px] uppercase tracking-wider">Documento publicado</span>
-                                <div class="flex items-center gap-3">
-                                    <span class="text-on-surface-variant text-xs">hace 24 min</span>
-                                    <div class="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
-                                </div>
-                            </div>
-
-                            <h3 class="text-lg font-bold text-on-primary-fixed mb-2">Nuevo estudio publicado</h3>
-                            <p class="text-on-surface-variant text-sm leading-relaxed">
-                                Se ha actualizado el estudio XXXX sobre economía circular y gestión de residuos.
-                            </p>
-                        </div>
-
-                        <div class="absolute bottom-5 right-6">
-                            <input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
-                        </div>
-                    </div>
-
-                    <!-- Card 3 -->
-                    <div class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border flex items-start gap-4 relative group hover:-translate-y-1 transition-transform duration-300">
-                        <div class="w-11 h-11 bg-surface-container rounded-xl flex items-center justify-center flex-shrink-0 text-on-surface-variant">
-                            <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M15 12c2.21 0 4-1.79 4-4S17.21 4 15 4s-4 1.79-4 4 1.79 4 4 4zm-6 0c2.21 0 4-1.79 4-4S11.21 4 9 4 5 5.79 5 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm6 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.98 1.97 3.45v2h8v-2c0-2.66-5.33-4-8-4z"/>
-                            </svg>
-                        </div>
-
-                        <div class="flex-1 pr-8">
-                            <div class="flex justify-between items-center mb-1 gap-4">
-                                <span class="text-on-surface-variant font-bold text-[11px] uppercase tracking-wider">Consulta pública</span>
-                                <div class="flex items-center gap-3">
-                                    <span class="text-on-surface-variant text-xs">hace 2 h</span>
-                                    <div class="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
-                                </div>
-                            </div>
-
-                            <h3 class="text-lg font-bold text-on-primary-fixed mb-2">Solicitud de verificación pendiente</h3>
-                            <p class="text-on-surface-variant text-sm leading-relaxed mb-4">
-                                El usuario XXXXX XXXXX solicita registro y validación de perfil.
+                            <h3 class="text-lg font-bold text-on-primary-fixed mb-2" th:text="${n.titulo}">Titulo</h3>
+                            <p class="text-on-surface-variant text-sm leading-relaxed" th:text="${n.mensaje}">
+                                Mensaje de notificacion.
                             </p>
 
-                            <button class="px-4 py-2 bg-surface-container text-primary-container font-semibold rounded-lg text-sm hover:bg-surface-container-high transition-colors">
-                                Revisar perfil
-                            </button>
-                        </div>
-
-                        <div class="absolute bottom-5 right-6">
-                            <input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+                            <a th:if="${n.enlace != null}" th:href="${n.enlace}"
+                               class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-surface-container text-primary-container font-semibold rounded-lg text-sm hover:bg-surface-container-high transition-colors">
+                                Ver detalle
+                            </a>
                         </div>
                     </div>
-                </div>
-
-                <!-- Pagination -->
-                <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8">
-                    <button class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                        </svg>
-                    </button>
-
-                    <div class="flex gap-2">
-                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors bg-secondary text-on-secondary">1</button>
-                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors text-on-surface-variant hover:bg-surface-container">2</button>
-                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors text-on-surface-variant hover:bg-surface-container">3</button>
-                        <span class="w-10 h-10 flex items-center justify-center text-outline-variant font-bold">...</span>
-                        <button class="w-10 h-10 rounded-lg text-sm font-bold transition-colors text-on-surface-variant hover:bg-surface-container">8</button>
-                    </div>
-
-                    <button class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </button>
                 </div>
             </div>
         </div>
     </main>
 </div>
+
+<script>
+    (function () {
+        var tabs = document.querySelectorAll("#notificationTabs button[data-filter]");
+        var cards = document.querySelectorAll("[data-tipo]");
+        var emptyGlobal = document.getElementById("emptyNotificationsGlobal");
+        var emptyFilter = document.getElementById("emptyNotificationsFilter");
+
+        function setActive(tab) {
+            tabs.forEach(function (btn) {
+                btn.classList.remove("text-secondary", "font-bold", "border-b-2", "border-secondary");
+                btn.classList.add("text-on-surface-variant", "font-semibold");
+            });
+            tab.classList.add("text-secondary", "font-bold", "border-b-2", "border-secondary");
+            tab.classList.remove("text-on-surface-variant", "font-semibold");
+        }
+
+        function applyFilter(filter) {
+            var visibleCount = 0;
+            cards.forEach(function (card) {
+                var tipo = card.getAttribute("data-tipo") || "";
+                if (filter === "ALL") {
+                    card.classList.remove("hidden");
+                    visibleCount += 1;
+                    return;
+                }
+                if (tipo.toUpperCase().indexOf(filter) === 0) {
+                    card.classList.remove("hidden");
+                    visibleCount += 1;
+                } else {
+                    card.classList.add("hidden");
+                }
+            });
+
+            if (emptyFilter) {
+                if (visibleCount === 0 && (!emptyGlobal || emptyGlobal.classList.contains("hidden"))) {
+                    emptyFilter.classList.remove("hidden");
+                } else {
+                    emptyFilter.classList.add("hidden");
+                }
+            }
+        }
+
+        tabs.forEach(function (tab) {
+            tab.addEventListener("click", function () {
+                var filter = tab.getAttribute("data-filter") || "ALL";
+                setActive(tab);
+                applyFilter(filter);
+            });
+        });
+
+        if (tabs.length > 0) {
+            applyFilter("ALL");
+        }
+    })();
+</script>
 
 </body>
 </html>
