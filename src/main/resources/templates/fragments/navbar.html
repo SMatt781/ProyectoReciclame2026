@@ -10,7 +10,7 @@
     <div class="flex items-center gap-6 ml-auto">
 
         <!-- Notifications -->
-        <a th:href="@{/admin/notificaciones}"
+        <a th:href="${usuarioRol == 'ADMIN' || usuarioRol == 'SUPERADMIN' ? '/admin/notificaciones' : (usuarioRol == 'SOCIO' ? '/socio/notificaciones' : '/visualizador/notificaciones')}"
            class="text-slate-500 dark:text-slate-400 hover:text-[#2ECC71] transition-colors relative inline-flex items-center justify-center">
             <svg class="w-6 h-6 text-current" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V2c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 3.36 6 5.92 6 9v5l-2 2v1h16v-1l-2-2z"/>
@@ -19,7 +19,7 @@
             <span th:if="${notificacionesNoLeidas != null and notificacionesNoLeidas > 0}"
                   th:text="${notificacionesNoLeidas}"
                   class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center border border-surface-container-lowest">
-    </span>
+            </span>
         </a>
 
         <!-- Profile Card -->

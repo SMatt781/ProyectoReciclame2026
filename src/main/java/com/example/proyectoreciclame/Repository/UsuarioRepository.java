@@ -187,6 +187,17 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     );
 
     @Query("""
+    SELECT u
+    FROM Usuario u
+    LEFT JOIN FETCH u.rol r
+    LEFT JOIN FETCH u.usuarioEmpresa ue
+    WHERE u.estadoAprobacion = 'PENDIENTE'
+      AND u.eliminadoEn IS NULL
+    ORDER BY u.fechaRegistro DESC
+""")
+    List<Usuario> findSolicitudesPendientes(Pageable pageable);
+
+    @Query("""
     SELECT COUNT(u)
     FROM Usuario u
     WHERE u.estadoCuenta = 'ACTIVO'

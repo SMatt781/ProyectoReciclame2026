@@ -14,4 +14,5 @@ public interface DominioAutorizadoRepository extends JpaRepository<DominioAutori
     boolean existsByNombreDominioIgnoreCase(String nombreDominio);
     List<DominioAutorizado> findByEstadoTrue();
     long countByEstadoTrue();
+    long countByEstadoFalse();
 }
