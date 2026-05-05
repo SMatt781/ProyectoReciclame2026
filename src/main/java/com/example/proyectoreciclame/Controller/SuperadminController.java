@@ -391,13 +391,32 @@ public class SuperadminController {
 
 
 
-    // Nuevo método para el Estado del Monitor
     @GetMapping("/estadoSistema")
     public String showEstadoSistema(Model model) {
         model.addAttribute("titulo", "Estado del Sistema");
         model.addAttribute("currentSection", "superadmin-estado-sistema");
-        // Aquí podrías agregar más lógica si necesitas información adicional
-        return "superadmin/estadoSistema"; // Vista del estado del sistema
+
+        // ── Datos reales de la BD ─────────────────────────────────────────
+        model.addAttribute("totalAdmins",
+                usuarioRepository.countByRol_IdInAndEliminadoEnIsNull(ROL_ADMIN_IDS));
+        model.addAttribute("activeAdmins",
+                usuarioRepository.countActiveAdminsByRole(ROL_ADMIN_IDS));
+        model.addAttribute("blockedAdmins",
+                usuarioRepository.countBlockedAdminsByRole(ROL_ADMIN_IDS));
+        model.addAttribute("totalDominiosActivos",
+                dominioAutorizadoRepository.countByEstadoTrue());
+        model.addAttribute("totalDominiosInactivos",
+                dominioAutorizadoRepository.countByEstadoFalse()); // agregar al repo
+        model.addAttribute("totalUsuariosActivos",
+                usuarioRepository.countUsuariosActivosAprobados());
+        model.addAttribute("politica",
+                politicaContrasenaRepository.findById(1).orElse(null));
+
+        // ── Cloud-ready (estáticos por ahora) ────────────────────────────
+        // Cuando tengas métricas reales, pasa: cpuUso, ramUso, storageUso,
+        // smtpOnline, latenciaMs, uptimeDias, upTimeHoras
+
+        return "superadmin/estadoSistema";
     }
 
     // Nuevo método para la Configuración de Seguridad

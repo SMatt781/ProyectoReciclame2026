@@ -1,172 +1,742 @@
 <!DOCTYPE html>
 <html class="light" lang="es">
 <head>
-    <title>Recíclame - Estado del sistema</title>
+    <title>Recíclame - Estado del Sistema</title>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
-                    "colors": {
-                        "on-secondary": "#ffffff",
-                        "secondary-fixed": "#c3ecd7",
-                        "surface-container-high": "#dce9ff",
-                        "surface-container-lowest": "#ffffff",
-                        "surface-container": "#e5eeff",
-                        "on-primary-fixed-variant": "#3f465c",
-                        "on-background": "#0b1c30",
-                        "inverse-surface": "#213145",
-                        "on-surface-variant": "#45464d",
-                        "on-primary-fixed": "#131b2e",
-                        "surface": "#f8f9ff",
-                        "on-surface": "#0b1c30",
-                        "primary": "#000000",
-                        "secondary": "#416656",
-                        "on-primary-container": "#7c839b",
-                        "error": "#ba1a1a"
+                    colors: {
+                        "on-secondary": "#ffffff", "secondary-fixed": "#c3ecd7",
+                        "surface-container-high": "#dce9ff", "surface-container-lowest": "#ffffff",
+                        "surface-container": "#e5eeff", "on-primary-fixed-variant": "#3f465c",
+                        "on-background": "#0b1c30", "inverse-surface": "#213145",
+                        "on-tertiary-container": "#3980f4", "on-secondary-container": "#476c5b",
+                        "inverse-on-surface": "#eaf1ff", "on-error": "#ffffff",
+                        "surface-bright": "#f8f9ff", "on-tertiary": "#ffffff",
+                        "surface-tint": "#565e74", "background": "#f8f9ff",
+                        "surface-dim": "#cbdbf5", "on-tertiary-fixed-variant": "#004395",
+                        "tertiary-container": "#001a42", "on-error-container": "#93000a",
+                        "on-surface-variant": "#45464d", "primary-container": "#131b2e",
+                        "on-secondary-fixed": "#002115", "error": "#ba1a1a",
+                        "outline-variant": "#c6c6cd", "secondary-fixed-dim": "#a8cfbc",
+                        "on-primary-container": "#7c839b", "tertiary-fixed-dim": "#adc6ff",
+                        "primary": "#000000", "secondary": "#416656",
+                        "surface-container-highest": "#d3e4fe", "on-tertiary-fixed": "#001a42",
+                        "surface-variant": "#d3e4fe", "surface-container-low": "#eff4ff",
+                        "primary-fixed-dim": "#bec6e0", "on-primary-fixed": "#131b2e",
+                        "on-secondary-fixed-variant": "#294e3f", "error-container": "#ffdad6",
+                        "primary-fixed": "#dae2fd", "outline": "#76777d",
+                        "on-surface": "#0b1c30", "inverse-primary": "#bec6e0",
+                        "secondary-container": "#c3ecd7", "on-primary": "#ffffff",
+                        "tertiary-fixed": "#d8e2ff", "surface": "#f8f9ff", "tertiary": "#000000"
                     },
-                    "fontFamily": {
-                        "body": ["Plus Jakarta Sans", "sans-serif"],
-                        "headline": ["Plus Jakarta Sans", "sans-serif"]
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                    fontFamily: {
+                        "sans": ["Plus Jakarta Sans", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
                     }
                 }
             }
         }
     </script>
     <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* ── Indicadores de pulso (puntos de estado vivos) ── */
+        @keyframes pulse-ring {
+            0%   { transform: scale(1);   opacity: 0.6; }
+            70%  { transform: scale(2.2); opacity: 0; }
+            100% { transform: scale(2.2); opacity: 0; }
         }
-        body {
-            background-color: #f8f9ff;
+        .pulse-dot::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 9999px;
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        .pulse-dot-green::before  { background: #22c55e; }
+        .pulse-dot-amber::before  { background: #f59e0b; }
+        .pulse-dot-red::before    { background: #ef4444; }
+
+        /* ── Barra de progreso animada al cargar ── */
+        @keyframes fill-bar {
+            from { width: 0; }
+        }
+        .bar-animated { animation: fill-bar 1.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+        /* ── Terminal log ── */
+        .log-terminal {
+            background: #0d1117;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .log-line { border-left: 2px solid transparent; }
+        .log-line:hover { background: rgba(255,255,255,0.03); border-left-color: #416656; }
+
+        /* ── Gauge circular SVG ── */
+        .gauge-track  { stroke: #e2e8f0; }
+        .gauge-fill   { transition: stroke-dashoffset 1.2s cubic-bezier(0.16,1,0.3,1); }
+
+        /* ── Uptime bar blocks ── */
+        .uptime-block { flex: 1; height: 28px; border-radius: 3px; }
+
+        /* ── Card hover lift ── */
+        .card-lift { transition: box-shadow 0.2s, transform 0.2s; }
+        .card-lift:hover { box-shadow: 0 8px 24px rgba(65,102,86,0.10); transform: translateY(-1px); }
+
+        /* ── Línea divisora técnica ── */
+        .tech-divider {
+            background: repeating-linear-gradient(
+                    90deg, #c6c6cd 0, #c6c6cd 4px, transparent 4px, transparent 12px
+            );
+            height: 1px;
         }
     </style>
 </head>
 
-<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+<body class="bg-surface text-on-surface h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
 
+<!-- ══ SIDEBAR (fragmento Thymeleaf) ══ -->
 <div th:replace="~{fragments/sidebar_superadmin :: sidebar}"></div>
 
 <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+
+    <!-- ══ NAVBAR (fragmento Thymeleaf) ══ -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-    <main class="flex-1 overflow-y-auto px-6 py-2">
-        <div class="space-y-6">
+    <main class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
 
-            <div class="mb-3">
-                <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
-                    Estado del sistema
-                </h2>
-                <p class="font-body text-on-surface-variant text-sm mt-1 max-w-3xl">
-                    Monitorización en tiempo real de los servicios, infraestructura y salud general de la plataforma Recíclame.
+        <!-- ══════════════════════════════════════════════════════════════
+             ENCABEZADO — Versión + estado global
+             Variables: ${appVersion}, ${buildEnv}, ${uptimePct}
+             ══════════════════════════════════════════════════════════════ -->
+        <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+
+            <!-- Título técnico -->
+            <div>
+                <div class="flex items-center gap-2.5 mb-1.5">
+                    <h2 class="font-extrabold text-[1.875rem] text-on-primary-fixed leading-tight tracking-tight">
+                        Estado del Sistema
+                    </h2>
+                    <!-- Badge versión -->
+                    <span class="font-mono text-[11px] font-bold bg-primary-container text-on-primary-container px-2.5 py-1 rounded-lg tracking-wider">
+                        <!-- th:text="${appVersion} ?: 'v1.0.0-dev'" -->
+                        v1.0.0-dev
+                    </span>
+                    <!-- Badge entorno -->
+                    <span class="font-mono text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-1 rounded-lg uppercase tracking-widest">
+                        <!-- th:text="${buildEnv} ?: 'LOCAL'" -->
+                        LOCAL
+                    </span>
+                </div>
+                <p class="text-on-surface-variant text-sm">
+                    Infraestructura · Base de datos · Sesiones · Logs de sistema
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white rounded-xl p-8 border border-slate-100 shadow-sm flex items-center justify-between">
-                    <div class="space-y-6 flex-1">
-                        <div>
-                            <h3 class="text-lg font-bold text-on-primary-fixed mb-1">Uso de Almacenamiento</h3>
-                            <p class="text-sm text-on-primary-container">Capacidad total disponible en clúster</p>
-                        </div>
-                        <div class="space-y-4">
-                            <div class="space-y-2">
-                                <div class="flex justify-between text-sm">
-                                    <span class="font-semibold text-on-primary-fixed">SQL Main</span>
-                                    <span class="text-on-primary-container text-xs">1.8 TB / 2.1 TB</span>
-                                </div>
-                                <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                                    <div class="bg-black h-full rounded-full" style="width: 85%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="relative w-32 h-32 flex items-center justify-center ml-8">
-                        <svg class="w-full h-full transform -rotate-90">
-                            <circle class="text-slate-100" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-width="10"></circle>
-                            <circle class="text-black" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-dasharray="364.4" stroke-dashoffset="54.6" stroke-width="10"></circle>
-                        </svg>
-                        <div class="absolute flex flex-col items-center">
-                            <span class="text-2xl font-bold">85%</span>
-                        </div>
-                    </div>
+            <!-- Panel de uptime global + timestamp -->
+            <div class="flex items-center gap-3 bg-white border border-slate-100 rounded-2xl px-4 py-3 shadow-sm">
+                <div class="relative w-3 h-3 flex-shrink-0">
+                    <span class="absolute inset-0 rounded-full bg-emerald-500 pulse-dot pulse-dot-green"></span>
+                    <span class="block w-3 h-3 rounded-full bg-emerald-500 relative z-10"></span>
                 </div>
-
-                <div class="bg-white rounded-xl p-8 border border-slate-100 shadow-sm flex flex-col justify-between">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="text-lg font-bold text-on-primary-fixed mb-1">Usuarios Activos</h3>
-                            <p class="text-sm text-on-primary-container">Sesiones concurrentes hoy</p>
-                        </div>
-                        <div class="flex items-center gap-1 text-secondary font-bold text-xs bg-secondary/10 px-2 py-1 rounded-lg">
-                            <span class="material-symbols-outlined text-xs">trending_up</span>+12%
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <span class="text-5xl font-extrabold text-on-primary-fixed tracking-tighter">1,284</span>
-                    </div>
+                <div>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Uptime global</p>
+                    <!-- th:text="${uptimePct} + '%'" -->
+                    <p class="font-mono text-lg font-bold text-secondary">99.8%</p>
+                </div>
+                <div class="w-px h-8 bg-slate-200 mx-1"></div>
+                <div>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Última comprobación</p>
+                    <!-- th:text="${#temporals.format(fechaUltimaCheck,'dd/MM/yyyy HH:mm')}" -->
+                    <p class="font-mono text-xs font-medium text-slate-700">—/—/—— ——:——</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-white rounded-xl p-6 border border-slate-100 shadow-sm flex items-center gap-6">
-                    <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-black text-2xl">speed</span>
-                    </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             FILA 1 — Métricas de Servidor (CPU · RAM · Disco · Latencia BD)
+             Variables: ${cpuUsage}, ${ramUsage}, ${diskUsage}, ${dbLatencyMs}
+             ══════════════════════════════════════════════════════════════ -->
+        <div class="grid grid-cols-2 xl:grid-cols-4 gap-3">
+
+            <!-- CPU -->
+            <div class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
+                <div class="flex justify-between items-start mb-4">
                     <div>
-                        <h4 class="text-xs font-semibold text-on-primary-container uppercase tracking-wider">Latencia Promedio</h4>
-                        <p class="text-2xl font-bold text-on-primary-fixed">24ms</p>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">CPU</p>
+                        <p class="font-mono text-3xl font-bold text-on-primary-fixed">
+                            <!-- th:text="${cpuUsage} + '%'" -->
+                            <span id="cpu-val">34</span>%
+                        </p>
+                    </div>
+                    <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[20px]">memory</span>
                     </div>
                 </div>
-                <div class="bg-white rounded-xl p-6 border border-slate-100 shadow-sm flex items-center gap-6">
-                    <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-black text-2xl">memory</span>
+                <!-- Barra de progreso -->
+                <div class="space-y-1">
+                    <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <!-- th:style="'--target:' + ${cpuUsage} + '%'" -->
+                        <div id="cpu-bar" class="h-full bg-gradient-to-r from-secondary to-secondary-container bar-animated rounded-full" style="width: 34%;"></div>
                     </div>
-                    <div>
-                        <h4 class="text-xs font-semibold text-on-primary-container uppercase tracking-wider">CPU Core Load</h4>
-                        <p class="text-2xl font-bold text-on-primary-fixed">14.2%</p>
-                    </div>
+                    <p class="text-[10px] text-slate-400 font-mono">Núcleo promedio · 4 vCPU</p>
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl p-8 border border-slate-100 shadow-sm">
-                <div class="flex justify-between items-center mb-6">
+            <!-- RAM -->
+            <div class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
+                <div class="flex justify-between items-start mb-4">
                     <div>
-                        <h3 class="text-lg font-bold text-on-primary-fixed mb-1">Uptime del Sistema</h3>
-                        <p class="text-sm text-on-primary-container">Disponibilidad de los últimos 30 días</p>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Memoria RAM</p>
+                        <p class="font-mono text-3xl font-bold text-blue-600">
+                            <!-- th:text="${ramUsage} + '%'" -->
+                            <span id="ram-val">61</span>%
+                        </p>
                     </div>
-                    <div class="text-secondary font-bold text-sm">99.98%</div>
+                    <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[20px]">developer_board</span>
+                    </div>
                 </div>
-                <div class="flex gap-1 h-8">
-                    <div class="flex-1 bg-secondary/80 rounded-sm"></div>
-                    <div class="flex-1 bg-secondary/80 rounded-sm"></div>
-                    <div class="flex-1 bg-secondary/80 rounded-sm"></div>
-                    <div class="flex-1 bg-secondary/80 rounded-sm"></div>
-                    <div class="flex-1 bg-error/80 rounded-sm"></div> <div class="flex-1 bg-secondary/80 rounded-sm" th:each="i : ${#numbers.sequence(1, 20)}"></div>
+                <div class="space-y-1">
+                    <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <!-- th:style="'--target:' + ${ramUsage} + '%'" -->
+                        <div id="ram-bar" class="h-full bg-gradient-to-r from-blue-500 to-blue-300 bar-animated rounded-full" style="width: 61%;"></div>
+                    </div>
+                    <p class="text-[10px] text-slate-400 font-mono">
+                        <!-- th:text="${ramUsadaMb} + ' MB / ' + ${ramTotalMb} + ' MB'" -->
+                        — MB / — MB
+                    </p>
                 </div>
             </div>
 
-            <div>
-                <h3 class="text-lg font-bold text-on-primary-fixed mb-4">Alertas Recientes</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4">
-                        <span class="material-symbols-outlined text-secondary">cloud_done</span>
-                        <div>
-                            <p class="text-sm font-bold">Backup completado</p>
-                            <p class="text-xs text-on-primary-container">Hace 2 horas</p>
+            <!-- Disco -->
+            <div class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Almacenamiento</p>
+                        <p class="font-mono text-3xl font-bold text-amber-600">
+                            <!-- th:text="${diskUsage} + '%'" -->
+                            <span id="disk-val">78</span>%
+                        </p>
+                    </div>
+                    <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[20px]">hard_drive</span>
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <!-- th:style="'--target:' + ${diskUsage} + '%'" -->
+                        <div id="disk-bar" class="h-full bg-gradient-to-r from-amber-500 to-amber-300 bar-animated rounded-full" style="width: 78%;"></div>
+                    </div>
+                    <p class="text-[10px] text-slate-400 font-mono">
+                        <!-- th:text="${diskUsadoGb} + ' GB / ' + ${diskTotalGb} + ' GB'" -->
+                        — GB / — GB
+                    </p>
+                </div>
+            </div>
+
+            <!-- Latencia BD -->
+            <div class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Latencia BD</p>
+                        <p class="font-mono text-3xl font-bold text-secondary">
+                            <!-- th:text="${dbLatencyMs} + 'ms'" -->
+                            24ms
+                        </p>
+                    </div>
+                    <div class="w-9 h-9 rounded-xl bg-secondary-container/30 text-secondary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[20px]">bolt</span>
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <!-- Barra inversa: más rápido = mejor. Threshold 200ms = 100% de barra roja -->
+                    <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-secondary to-secondary-container bar-animated rounded-full" style="width: 12%;"></div>
+                    </div>
+                    <p class="text-[10px] text-slate-400 font-mono">Threshold: &lt;100ms Óptimo</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             FILA 2 — Sesiones activas | Salud BD (tablas críticas)
+             Variables: ${sesionesActivas}, ${sesionesHoy}, ${dbConexionOk},
+                        ${totalUsuarios}, ${totalRoles}, ${totalDominios},
+                        ${totalNormativas}, ${totalEstudios}, ${totalChatSesiones},
+                        ${totalAuditoria}, ${totalNotificaciones}
+             ══════════════════════════════════════════════════════════════ -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+
+            <!-- ── Sesiones activas (columna izq) ── -->
+            <div class="bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden card-lift">
+
+                <!-- Header -->
+                <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px] text-secondary">sensors</span>
+                        Sesiones en Tiempo Real
+                    </h3>
+                    <div class="flex items-center gap-1.5">
+                        <div class="relative w-2.5 h-2.5">
+                            <span class="absolute inset-0 rounded-full bg-emerald-500 pulse-dot pulse-dot-green"></span>
+                            <span class="block w-2.5 h-2.5 rounded-full bg-emerald-500 relative z-10"></span>
                         </div>
+                        <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">En vivo</span>
+                    </div>
+                </div>
+
+                <div class="p-5 space-y-4">
+
+                    <!-- Contador principal -->
+                    <div class="bg-gradient-to-br from-primary-container to-slate-800 rounded-2xl p-5 text-white relative overflow-hidden">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Sesiones Activas</p>
+                        <!-- th:text="${sesionesActivas}" -->
+                        <p class="font-mono text-5xl font-bold text-white leading-none">—</p>
+                        <p class="text-[10px] text-slate-400 mt-2 font-mono">usuarios conectados ahora</p>
+                        <div class="absolute bottom-0 right-0 opacity-10">
+                            <span class="material-symbols-outlined" style="font-size:80px;">group</span>
+                        </div>
+                    </div>
+
+                    <!-- Métricas secundarias -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1">Sesiones hoy</p>
+                            <!-- th:text="${sesionesHoy}" -->
+                            <p class="font-mono text-xl font-bold text-on-primary-fixed">—</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1">Intentos fallidos</p>
+                            <!-- th:text="${intentosFallidosHoy}" -->
+                            <p class="font-mono text-xl font-bold text-red-500">—</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1">Récuperaciones</p>
+                            <!-- th:text="${recuperacionesActivas}" -->
+                            <p class="font-mono text-xl font-bold text-amber-600">—</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3">
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1">Solicitudes reg.</p>
+                            <!-- th:text="${solicitudesPendientes}" -->
+                            <p class="font-mono text-xl font-bold text-blue-600">—</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ── Salud de la Base de Datos (2 columnas) ── -->
+            <div class="xl:col-span-2 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden card-lift">
+
+                <!-- Header -->
+                <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px] text-blue-500">database</span>
+                        Salud de la Base de Datos
+                        <span class="font-mono text-[10px] text-slate-400 font-normal">— reciclame · MySQL 8.0+</span>
+                    </h3>
+                    <!-- Estado de conexión: cambiar th:class según ${dbConexionOk} -->
+                    <div class="flex items-center gap-1.5">
+                        <div class="relative w-2.5 h-2.5">
+                            <!-- th:classappend="${dbConexionOk} ? 'bg-emerald-500 pulse-dot-green' : 'bg-red-500 pulse-dot-red'" -->
+                            <span class="absolute inset-0 rounded-full bg-emerald-500 pulse-dot pulse-dot-green"></span>
+                            <span class="block w-2.5 h-2.5 rounded-full bg-emerald-500 relative z-10"
+                                  th:class="${dbConexionOk} ? 'block w-2.5 h-2.5 rounded-full bg-emerald-500 relative z-10' : 'block w-2.5 h-2.5 rounded-full bg-red-500 relative z-10'">
+                            </span>
+                        </div>
+                        <!-- th:text="${dbConexionOk} ? 'Conexión OK' : 'Sin conexión'" -->
+                        <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Conexión OK</span>
+                    </div>
+                </div>
+
+                <div class="p-5">
+
+                    <!-- Tabla de conteo por entidad crítica -->
+                    <!-- Variables: ${totalUsuarios}, ${totalRoles}, ${totalDominios}, ${totalNormativas},
+                                   ${totalEstudios}, ${totalPublicaciones}, ${totalChatSesiones},
+                                   ${totalAuditoria}, ${totalNotificaciones}, ${totalIndicadores} -->
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4">
+
+                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[12px]">group</span> usuarios
+                            </p>
+                            <p class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalUsuarios}">—</p>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[12px]">shield</span> roles
+                            </p>
+                            <p class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalRoles}">—</p>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[12px]">domain</span> dominios
+                            </p>
+                            <p class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalDominios}">—</p>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[12px]">policy</span> normativas
+                            </p>
+                            <p class="font-mono text-xl font-bold text-secondary" th:text="${totalNormativas}">—</p>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[12px]">science</span> estudios
+                            </p>
+                            <p class="font-mono text-xl font-bold text-secondary" th:text="${totalEstudios}">—</p>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[12px]">article</span> publicaciones
+                            </p>
+                            <p class="font-mono text-xl font-bold text-blue-600" th:text="${totalPublicaciones}">—</p>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[12px]">chat</span> chat
+                            </p>
+                            <p class="font-mono text-xl font-bold text-blue-600" th:text="${totalChatSesiones}">—</p>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[12px]">manage_search</span> auditoría
+                            </p>
+                            <p class="font-mono text-xl font-bold text-amber-600" th:text="${totalAuditoria}">—</p>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[12px]">notifications</span> notif.
+                            </p>
+                            <p class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalNotificaciones}">—</p>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[12px]">bar_chart</span> indicadores
+                            </p>
+                            <p class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalIndicadores}">—</p>
+                        </div>
+
+                    </div>
+
+                    <!-- Barra de uptime 30 días -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Uptime BD — últimos 30 días</p>
+                            <!-- th:text="${uptimeBdPct} + '%'" -->
+                            <span class="font-mono text-[10px] font-bold text-secondary">99.8%</span>
+                        </div>
+                        <div class="flex gap-0.5 h-5">
+                            <!-- 25 días OK -->
+                            <div th:each="i : ${#numbers.sequence(1, 25)}" class="uptime-block bg-secondary/60 rounded-sm" title="Operativo"></div>
+                            <!-- 1 día con incidente (ejemplo) -->
+                            <div class="uptime-block bg-error/60 rounded-sm" title="Incidente"></div>
+                            <!-- 4 días OK -->
+                            <div th:each="i : ${#numbers.sequence(1, 4)}" class="uptime-block bg-secondary/60 rounded-sm" title="Operativo"></div>
+                        </div>
+                        <div class="flex justify-between mt-1">
+                            <span class="font-mono text-[9px] text-slate-400">Hace 30 días</span>
+                            <span class="font-mono text-[9px] text-slate-400">Hoy</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             FILA 3 — Versión / Deploy info + Log de errores
+             Variables: ${appVersion}, ${buildDate}, ${gitCommit},
+                        ${javaVersion}, ${springVersion}, ${logEntries}
+             ══════════════════════════════════════════════════════════════ -->
+        <div class="grid grid-cols-1 xl:grid-cols-5 gap-4">
+
+            <!-- ── Panel de despliegue (2 cols) ── -->
+            <div class="xl:col-span-2 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden card-lift">
+
+                <div class="px-5 py-4 border-b border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px] text-slate-500">rocket_launch</span>
+                        Despliegue Actual
+                    </h3>
+                </div>
+
+                <div class="p-5 space-y-3">
+
+                    <!-- Fila: versión -->
+                    <div class="flex items-center justify-between py-2 border-b border-dashed border-slate-100">
+                        <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-[14px]">tag</span> Versión
+                        </span>
+                        <!-- th:text="${appVersion} ?: 'v1.0.0-dev'" -->
+                        <span class="font-mono text-xs font-bold text-on-primary-fixed bg-slate-50 px-2 py-0.5 rounded">v1.0.0-dev</span>
+                    </div>
+
+                    <!-- Fila: entorno -->
+                    <div class="flex items-center justify-between py-2 border-b border-dashed border-slate-100">
+                        <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-[14px]">cloud</span> Entorno
+                        </span>
+                        <!-- th:text="${buildEnv} ?: 'LOCAL'" -->
+                        <span class="font-mono text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">LOCAL</span>
+                    </div>
+
+                    <!-- Fila: fecha de build -->
+                    <div class="flex items-center justify-between py-2 border-b border-dashed border-slate-100">
+                        <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-[14px]">calendar_today</span> Build
+                        </span>
+                        <!-- th:text="${buildDate}" -->
+                        <span class="font-mono text-xs text-slate-700">——/——/————</span>
+                    </div>
+
+                    <!-- Fila: commit -->
+                    <div class="flex items-center justify-between py-2 border-b border-dashed border-slate-100">
+                        <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-[14px]">commit</span> Commit
+                        </span>
+                        <!-- th:text="${gitCommit}" -->
+                        <span class="font-mono text-xs text-slate-500 bg-slate-50 px-2 py-0.5 rounded">—————</span>
+                    </div>
+
+                    <!-- Fila: Java -->
+                    <div class="flex items-center justify-between py-2 border-b border-dashed border-slate-100">
+                        <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-[14px]">coffee</span> Java
+                        </span>
+                        <!-- th:text="${javaVersion}" -->
+                        <span class="font-mono text-xs text-slate-700">——</span>
+                    </div>
+
+                    <!-- Fila: Spring Boot -->
+                    <div class="flex items-center justify-between py-2">
+                        <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-[14px]">eco</span> Spring Boot
+                        </span>
+                        <!-- th:text="${springVersion}" -->
+                        <span class="font-mono text-xs text-slate-700">——</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ── Log de errores — terminal (3 cols) ── -->
+            <div class="xl:col-span-3 rounded-[1.25rem] border border-slate-800 shadow-sm overflow-hidden">
+
+                <!-- Header estilo terminal -->
+                <div class="bg-slate-900 px-5 py-3 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="flex gap-1.5">
+                            <span class="w-3 h-3 rounded-full bg-red-500 opacity-80"></span>
+                            <span class="w-3 h-3 rounded-full bg-amber-400 opacity-80"></span>
+                            <span class="w-3 h-3 rounded-full bg-emerald-400 opacity-80"></span>
+                        </div>
+                        <span class="font-mono text-[10px] text-slate-400 ml-2">reciclame.log — últimas entradas</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="relative w-2 h-2">
+                            <span class="absolute inset-0 rounded-full bg-emerald-400 pulse-dot pulse-dot-green"></span>
+                            <span class="block w-2 h-2 rounded-full bg-emerald-400 relative z-10"></span>
+                        </div>
+                        <span class="font-mono text-[9px] text-emerald-400 uppercase tracking-widest">live</span>
+                    </div>
+                </div>
+
+                <!-- Cuerpo del terminal -->
+                <div class="log-terminal px-0 py-2 min-h-[240px] max-h-[280px] overflow-y-auto">
+
+                    <!--
+                        THYMELEAF: Itera sobre ${logEntries} (List<LogEntry>)
+                        donde LogEntry tiene: nivel (INFO|WARN|ERROR), timestamp, mensaje
+
+                        <tr th:each="entry : ${logEntries}" class="log-line flex gap-3 px-4 py-1.5 cursor-default">
+                            <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40" th:text="${entry.timestamp}"></span>
+                            <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0"
+                                  th:classappend="${entry.nivel == 'ERROR'} ? 'text-red-400' : (${entry.nivel == 'WARN'} ? 'text-amber-400' : 'text-emerald-400')"
+                                  th:text="${entry.nivel}"></span>
+                            <span class="font-mono text-[10px] text-slate-300" th:text="${entry.mensaje}"></span>
+                        </tr>
+
+                        Si la lista está vacía, mostrar el bloque vacío de abajo.
+                    -->
+
+                    <!-- Entradas de ejemplo / placeholder estático (eliminar al conectar con el controller) -->
+                    <div class="log-line flex gap-3 px-4 py-1.5 cursor-default">
+                        <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40">——/——/—— ——:——:——</span>
+                        <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0 text-emerald-400">INFO</span>
+                        <span class="font-mono text-[10px] text-slate-300">Servidor iniciado en puerto 8080</span>
+                    </div>
+                    <div class="log-line flex gap-3 px-4 py-1.5 cursor-default">
+                        <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40">——/——/—— ——:——:——</span>
+                        <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0 text-emerald-400">INFO</span>
+                        <span class="font-mono text-[10px] text-slate-300">Conexión BD establecida · reciclame@localhost</span>
+                    </div>
+                    <div class="log-line flex gap-3 px-4 py-1.5 cursor-default">
+                        <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40">——/——/—— ——:——:——</span>
+                        <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0 text-amber-400">WARN</span>
+                        <span class="font-mono text-[10px] text-slate-300">Uso de disco superó el 75% — revisar almacenamiento</span>
+                    </div>
+                    <div class="log-line flex gap-3 px-4 py-1.5 cursor-default">
+                        <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40">——/——/—— ——:——:——</span>
+                        <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0 text-emerald-400">INFO</span>
+                        <span class="font-mono text-[10px] text-slate-300">Backup automático completado correctamente</span>
+                    </div>
+                    <div class="log-line flex gap-3 px-4 py-1.5 cursor-default">
+                        <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40">——/——/—— ——:——:——</span>
+                        <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0 text-red-400">ERROR</span>
+                        <span class="font-mono text-[10px] text-slate-300">Timeout al intentar conectar con servicio externo</span>
+                    </div>
+                    <div class="log-line flex gap-3 px-4 py-1.5 cursor-default">
+                        <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40">——/——/—— ——:——:——</span>
+                        <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0 text-emerald-400">INFO</span>
+                        <span class="font-mono text-[10px] text-slate-300">Política de contraseña actualizada por SUPERADMIN</span>
+                    </div>
+                    <div class="log-line flex gap-3 px-4 py-1.5 cursor-default">
+                        <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40">——/——/—— ——:——:——</span>
+                        <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0 text-emerald-400">INFO</span>
+                        <span class="font-mono text-[10px] text-slate-300">Caché limpiada manualmente por operador</span>
+                    </div>
+                    <!-- Cursor parpadeante estilo terminal -->
+                    <div class="px-4 py-1">
+                        <span class="font-mono text-[10px] text-secondary animate-pulse">█</span>
                     </div>
                 </div>
             </div>
 
         </div>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             FILA 4 — Herramientas de Mantenimiento Operacional
+             Nota: Estas son acciones de sistema, NO CRUDs de negocio.
+             Endpoints sugeridos (POST):
+               /superadmin/sistema/limpiar-cache
+               /superadmin/sistema/exportar-backup
+               /superadmin/sistema/resetear-sesiones
+               /superadmin/sistema/reindexar-bd
+             ══════════════════════════════════════════════════════════════ -->
+        <div class="bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
+
+            <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px] text-slate-500">construction</span>
+                    Herramientas de Mantenimiento Operacional
+                </h3>
+                <span class="text-[10px] text-slate-400 font-mono">Acciones irreversibles — úsalas con cuidado</span>
+            </div>
+
+            <div class="px-5 py-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+
+                <!-- Limpiar caché -->
+                <form th:action="@{/superadmin/sistema/limpiar-cache}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit"
+                            onclick="return confirm('¿Confirmas la limpieza de caché del sistema?')"
+                            class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border border-slate-200 hover:bg-secondary-container/20 hover:border-secondary/30 transition-colors group text-left">
+                        <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 group-hover:bg-secondary-container/30 group-hover:text-secondary flex items-center justify-center flex-shrink-0 transition-colors">
+                            <span class="material-symbols-outlined text-[22px]">cached</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-700 group-hover:text-secondary transition-colors">Limpiar Caché</p>
+                            <p class="text-[10px] text-slate-400 font-mono">Libera memoria temporal del servidor</p>
+                        </div>
+                    </button>
+                </form>
+
+                <!-- Exportar backup SQL -->
+                <form th:action="@{/superadmin/sistema/exportar-backup}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit"
+                            class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border border-slate-200 hover:bg-blue-50 hover:border-blue-200 transition-colors group text-left">
+                        <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 group-hover:bg-blue-100 group-hover:text-blue-600 flex items-center justify-center flex-shrink-0 transition-colors">
+                            <span class="material-symbols-outlined text-[22px]">backup</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">Exportar Backup SQL</p>
+                            <p class="text-[10px] text-slate-400 font-mono">Descarga snapshot de la base de datos</p>
+                        </div>
+                    </button>
+                </form>
+
+                <!-- Resetear sesiones activas -->
+                <form th:action="@{/superadmin/sistema/resetear-sesiones}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit"
+                            onclick="return confirm('¿Cerrar todas las sesiones activas? Los usuarios tendrán que volver a iniciar sesión.')"
+                            class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border border-slate-200 hover:bg-amber-50 hover:border-amber-200 transition-colors group text-left">
+                        <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 group-hover:bg-amber-100 group-hover:text-amber-600 flex items-center justify-center flex-shrink-0 transition-colors">
+                            <span class="material-symbols-outlined text-[22px]">logout</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-700 group-hover:text-amber-600 transition-colors">Resetear Sesiones</p>
+                            <p class="text-[10px] text-slate-400 font-mono">Cierra todas las sesiones activas</p>
+                        </div>
+                    </button>
+                </form>
+
+                <!-- Reindexar BD -->
+                <form th:action="@{/superadmin/sistema/reindexar-bd}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit"
+                            onclick="return confirm('¿Iniciar reindexación de la base de datos? Puede tardar varios segundos.')"
+                            class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border border-slate-200 hover:bg-red-50 hover:border-red-200 transition-colors group text-left">
+                        <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 group-hover:bg-red-100 group-hover:text-red-500 flex items-center justify-center flex-shrink-0 transition-colors">
+                            <span class="material-symbols-outlined text-[22px]">database_sync</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-700 group-hover:text-red-500 transition-colors">Reindexar BD</p>
+                            <p class="text-[10px] text-slate-400 font-mono">Optimiza índices de la base de datos</p>
+                        </div>
+                    </button>
+                </form>
+
+            </div>
+        </div>
+
     </main>
 </div>
+
+<!-- ══ Script: actualiza barras de progreso desde variables Thymeleaf ══
+     Descomenta y adapta cuando el controller pase los valores reales.
+
+<script th:inline="javascript">
+    const cpuUsage  = /*[[${cpuUsage}]]*/ 34;
+    const ramUsage  = /*[[${ramUsage}]]*/ 61;
+    const diskUsage = /*[[${diskUsage}]]*/ 78;
+
+    document.getElementById('cpu-bar').style.width  = cpuUsage  + '%';
+    document.getElementById('ram-bar').style.width  = ramUsage  + '%';
+    document.getElementById('disk-bar').style.width = diskUsage + '%';
+
+    document.getElementById('cpu-val').textContent  = cpuUsage;
+    document.getElementById('ram-val').textContent  = ramUsage;
+    document.getElementById('disk-val').textContent = diskUsage;
+</script>
+══ -->
+
 </body>
 </html>
