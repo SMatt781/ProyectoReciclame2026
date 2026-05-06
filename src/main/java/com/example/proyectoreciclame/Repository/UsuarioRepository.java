@@ -242,4 +242,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     @Query("SELECT u FROM Usuario u WHERE u.rol.idRol IN :rolIds AND u.eliminadoEn IS NULL")
     List<Usuario> findByRolIdInAndEliminadoEnIsNull(@Param("rolIds") List<Integer> rolIds);
+
+    boolean existsByCorreo(String correo);
 }

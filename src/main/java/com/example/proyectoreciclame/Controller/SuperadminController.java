@@ -2,6 +2,7 @@ package com.example.proyectoreciclame.Controller;
 
 import com.example.proyectoreciclame.Entity.*;
 import com.example.proyectoreciclame.Repository.*;
+import com.example.proyectoreciclame.Service.CorreoService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -45,6 +46,7 @@ public class SuperadminController {
     private final RecuperacionPasswordRepository recuperacionPasswordRepository;
     private final SolicitudRegistroRepository solicitudRegistroRepository;
     private final org.springframework.core.env.Environment env;
+    private final CorreoService correoService;
 
     public SuperadminController(UsuarioRepository usuarioRepository,
                                 DominioAutorizadoRepository dominioAutorizadoRepository,
@@ -58,6 +60,7 @@ public class SuperadminController {
                                 IntentoLoginRepository intentoLoginRepository,
                                 RecuperacionPasswordRepository recuperacionPasswordRepository,
                                 SolicitudRegistroRepository solicitudRegistroRepository,
+                                CorreoService correoService,
                                 org.springframework.core.env.Environment env) {
         this.usuarioRepository = usuarioRepository;
         this.dominioAutorizadoRepository = dominioAutorizadoRepository;
@@ -71,6 +74,7 @@ public class SuperadminController {
         this.intentoLoginRepository = intentoLoginRepository;
         this.recuperacionPasswordRepository = recuperacionPasswordRepository;
         this.solicitudRegistroRepository = solicitudRegistroRepository;
+        this.correoService = correoService;
         this.env = env;
     }
 
@@ -174,7 +178,7 @@ public class SuperadminController {
         usuario.setCorreo(correoCompleto);
 
         // 1. Validar unicidad de correo
-        if (usuarioRepository.existsByCorreoAndEliminadoEnIsNull(correoCompleto)) {
+        if (usuarioRepository.existsByCorreo(correoCompleto)) {
             redirectAttributes.addFlashAttribute("error",
                     "Ya existe un administrador con ese correo electrónico.");
             return "redirect:/superadmin/administradores";
@@ -231,8 +235,19 @@ public class SuperadminController {
         // 6. Guardar
         usuarioRepository.save(usuario);
 
+        // Enviar correo con credenciales al nuevo administrador
+        try {
+            correoService.enviarCredencialesAdministrador(
+                    correoCompleto,
+                    usuario.getNombres(),
+                    rawPassword
+            );
+        } catch (Exception e) {
+            System.out.println("ERROR al enviar correo: " + e.getMessage());
+        }
+
         redirectAttributes.addFlashAttribute("success",
-                "Administrador creado exitosamente.");
+                "Administrador creado exitosamente. Se envió un correo con las credenciales a " + correoCompleto + ".");
 
         crearNotificacionSuperadmin(
                 "Nuevo administrador creado",
