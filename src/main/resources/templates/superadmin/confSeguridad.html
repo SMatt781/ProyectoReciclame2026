@@ -109,7 +109,8 @@
 
             <!-- Mensajes flash -->
             <div th:if="${success}"
-                 class="flex items-center gap-3 rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-green-800 text-sm">
+                 data-flash-success
+                 class="flash-message mx-0 mb-3 flex items-center gap-3 rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-green-800 text-sm">
                 <span class="material-symbols-outlined text-green-600" style="font-size:20px">check_circle</span>
                 <span th:text="${success}"></span>
             </div>
@@ -840,6 +841,16 @@
                 document.getElementById('modalCrearDominio').classList.remove('hidden');
             }
         }
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const flashes = document.querySelectorAll('[data-flash-success], [data-flash-error], .flash-message');
+        flashes.forEach(function(el) {
+            setTimeout(function() {
+                el.style.transition = 'opacity 0.5s ease';
+                el.style.opacity = '0';
+                setTimeout(function() { el.remove(); }, 500);
+            }, 4000);
+        });
     });
     function abrirConfirmarEstado(id, nombre, nuevoEstado) {
         const modal   = document.getElementById('modalConfirmEstado');
