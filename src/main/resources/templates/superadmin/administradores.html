@@ -148,6 +148,20 @@
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <main class="flex-1 overflow-y-auto px-6 py-2">
+        <!-- ── Mensajes flash ─────────────────────────────────────────────────── -->
+        <div th:if="${success}"
+             data-flash-success
+             class="mx-0 mb-3 flex items-center gap-3 rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-green-800 text-sm">
+            <span class="material-symbols-outlined text-green-600" style="font-size:20px">check_circle</span>
+            <span th:text="${success}"></span>
+        </div>
+
+        <div th:if="${error}"
+             data-flash-error
+             class="mx-0 mb-3 flex items-center gap-3 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-red-800 text-sm">
+            <span class="material-symbols-outlined text-red-600" style="font-size:20px">error</span>
+            <span th:text="${error}"></span>
+        </div>
         <div class="mb-3">
             <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
                 <div>
@@ -571,19 +585,32 @@
 
                     <div class="flex justify-between items-start mb-3">
                         <div class="w-9 h-9 rounded-lg bg-secondary-container/30 text-secondary flex items-center justify-center shadow-sm">
-                            <span class="material-symbols-outlined text-[20px]">verified_user</span>
+                            <span class="material-symbols-outlined text-[20px]">person_add</span>
                         </div>
-
                         <div class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                            Rating
+                            Reciente
                         </div>
                     </div>
 
-                    <div>
+                    <div th:if="${ultimoAdmin != null}">
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                            Estado de seguridad
+                            Último creado
                         </h4>
-                        <div class="text-3xl font-extrabold text-secondary">A+</div>
+                        <p class="text-sm font-extrabold text-secondary truncate"
+                           th:text="${ultimoAdmin.nombres + ' ' + ultimoAdmin.apellidoPaterno}">
+                        </p>
+                        <p class="text-[11px] text-on-surface-variant mt-0.5"
+                           th:text="${ultimoAccesoTexto.get(ultimoAdmin.idUsuario) != null}
+                            ? ${ultimoAccesoTexto.get(ultimoAdmin.idUsuario)}
+                            : 'Recién creado'">
+                        </p>
+                    </div>
+
+                    <div th:if="${ultimoAdmin == null}">
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                            Último creado
+                        </h4>
+                        <p class="text-sm text-on-surface-variant">Sin registros aún</p>
                     </div>
                 </article>
 
@@ -775,11 +802,11 @@
                     </div>
                     <!-- Exportar — debajo de la tabla -->
                     <div class="flex justify-end mt-3">
-                        <button type="button"
-                                class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-slate-500 border border-[#e0e0e0] bg-white rounded-lg hover:bg-slate-50 hover:text-secondary transition">
+                        <a th:href="@{/superadmin/administradores/exportar}"
+                           class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-slate-500 border border-[#e0e0e0] bg-white rounded-lg hover:bg-slate-50 hover:text-secondary transition">
                             <span class="material-symbols-outlined text-xl">download</span>
                             Exportar tabla
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
