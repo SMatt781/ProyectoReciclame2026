@@ -114,6 +114,7 @@
                 <span th:text="${success}"></span>
             </div>
             <div th:if="${error}"
+                 data-flash-error
                  class="flex items-center gap-3 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-red-800 text-sm">
                 <span class="material-symbols-outlined text-red-600" style="font-size:20px">error</span>
                 <span th:text="${error}"></span>
@@ -331,11 +332,11 @@
                 </div>
                 <!-- Exportar — debajo de la tabla -->
                 <div class="flex justify-end mt-3">
-                    <button type="button"
-                            class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-slate-500 border border-[#e0e0e0] bg-white rounded-lg hover:bg-slate-50 hover:text-secondary transition">
+                    <a th:href="@{/superadmin/confSeguridad/exportar}"
+                       class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-slate-500 border border-[#e0e0e0] bg-white rounded-lg hover:bg-slate-50 hover:text-secondary transition">
                         <span class="material-symbols-outlined text-xl">download</span>
                         Exportar tabla
-                    </button>
+                    </a>
                 </div>
             </div>
 

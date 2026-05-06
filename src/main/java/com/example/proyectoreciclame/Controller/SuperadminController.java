@@ -4,10 +4,8 @@ import com.example.proyectoreciclame.Entity.DominioAutorizado;
 import com.example.proyectoreciclame.Entity.PoliticaContrasena;
 import com.example.proyectoreciclame.Entity.Rol;
 import com.example.proyectoreciclame.Entity.Usuario;
-import com.example.proyectoreciclame.Repository.DominioAutorizadoRepository;
-import com.example.proyectoreciclame.Repository.PoliticaContrasenaRepository;
-import com.example.proyectoreciclame.Repository.RolRepository;
-import com.example.proyectoreciclame.Repository.UsuarioRepository;
+import com.example.proyectoreciclame.Repository.*;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,7 +15,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,17 +39,41 @@ public class SuperadminController {
     private final BCryptPasswordEncoder passwordEncoder;
     private final RolRepository rolRepository;
     private final PoliticaContrasenaRepository politicaContrasenaRepository;
+    private final NormativaRepository normativaRepository;
+    private final EstudioRepository estudioRepository;
+    private final NotificacionRepository notificacionRepository;
+    private final RegistroSesionRepository registroSesionRepository;
+    private final IntentoLoginRepository intentoLoginRepository;
+    private final RecuperacionPasswordRepository recuperacionPasswordRepository;
+    private final SolicitudRegistroRepository solicitudRegistroRepository;
+    private final org.springframework.core.env.Environment env;
 
     public SuperadminController(UsuarioRepository usuarioRepository,
                                 DominioAutorizadoRepository dominioAutorizadoRepository,
                                 BCryptPasswordEncoder passwordEncoder,
                                 RolRepository rolRepository,
-                                PoliticaContrasenaRepository politicaContrasenaRepository) {
+                                PoliticaContrasenaRepository politicaContrasenaRepository,
+                                NormativaRepository normativaRepository,
+                                EstudioRepository estudioRepository,
+                                NotificacionRepository notificacionRepository,
+                                RegistroSesionRepository registroSesionRepository,
+                                IntentoLoginRepository intentoLoginRepository,
+                                RecuperacionPasswordRepository recuperacionPasswordRepository,
+                                SolicitudRegistroRepository solicitudRegistroRepository,
+                                org.springframework.core.env.Environment env) {
         this.usuarioRepository = usuarioRepository;
         this.dominioAutorizadoRepository = dominioAutorizadoRepository;
         this.passwordEncoder = passwordEncoder;
         this.rolRepository = rolRepository;
         this.politicaContrasenaRepository = politicaContrasenaRepository;
+        this.normativaRepository = normativaRepository;
+        this.estudioRepository = estudioRepository;
+        this.notificacionRepository = notificacionRepository;
+        this.registroSesionRepository = registroSesionRepository;
+        this.intentoLoginRepository = intentoLoginRepository;
+        this.recuperacionPasswordRepository = recuperacionPasswordRepository;
+        this.solicitudRegistroRepository = solicitudRegistroRepository;
+        this.env = env;
     }
 
     @GetMapping("/dashboard")
@@ -133,7 +157,8 @@ public class SuperadminController {
                 dominioAutorizadoRepository.findByEstadoTrue());
         model.addAttribute("politica",
                 politicaContrasenaRepository.findById(1).orElse(null));
-
+        model.addAttribute("ultimoAdmin",
+                usuarioRepository.findUltimoAdminCreado(ROL_ADMIN_IDS).orElse(null));
         return "superadmin/administradores";
     }
 
@@ -407,25 +432,49 @@ public class SuperadminController {
         model.addAttribute("titulo", "Estado del Sistema");
         model.addAttribute("currentSection", "superadmin-estado-sistema");
 
-        // ── Datos reales de la BD ─────────────────────────────────────────
-        model.addAttribute("totalAdmins",
-                usuarioRepository.countByRol_IdInAndEliminadoEnIsNull(ROL_ADMIN_IDS));
-        model.addAttribute("activeAdmins",
-                usuarioRepository.countActiveAdminsByRole(ROL_ADMIN_IDS));
-        model.addAttribute("blockedAdmins",
-                usuarioRepository.countBlockedAdminsByRole(ROL_ADMIN_IDS));
-        model.addAttribute("totalDominiosActivos",
-                dominioAutorizadoRepository.countByEstadoTrue());
-        model.addAttribute("totalDominiosInactivos",
-                dominioAutorizadoRepository.countByEstadoFalse()); // agregar al repo
-        model.addAttribute("totalUsuariosActivos",
-                usuarioRepository.countUsuariosActivosAprobados());
-        model.addAttribute("politica",
-                politicaContrasenaRepository.findById(1).orElse(null));
+        // ── Conteos de tablas críticas ────────────────────────────────────
+        model.addAttribute("totalUsuarios",
+                usuarioRepository.countByEliminadoEnIsNull());
+        model.addAttribute("totalRoles",
+                rolRepository.count());
+        model.addAttribute("totalDominios",
+                dominioAutorizadoRepository.count());
+        model.addAttribute("totalNormativas",
+                normativaRepository.count());
+        model.addAttribute("totalEstudios",
+                estudioRepository.count());
+        model.addAttribute("totalNotificaciones",
+                notificacionRepository.count());
 
-        // ── Cloud-ready (estáticos por ahora) ────────────────────────────
-        // Cuando tengas métricas reales, pasa: cpuUso, ramUso, storageUso,
-        // smtpOnline, latenciaMs, uptimeDias, upTimeHoras
+        // ── Sesiones y seguridad ──────────────────────────────────────────
+        LocalDateTime inicioDia = LocalDate.now().atStartOfDay();
+        model.addAttribute("sesionesActivas",
+                registroSesionRepository.countSesionesActivas());
+        model.addAttribute("sesionesHoy",
+                registroSesionRepository.countByFechaInicioAfter(inicioDia));
+        model.addAttribute("intentosFallidosHoy",
+                intentoLoginRepository.countByFechaAfterAndExitosoFalse(inicioDia));
+        model.addAttribute("recuperacionesActivas",
+                recuperacionPasswordRepository.countByUsadoFalse());
+        model.addAttribute("solicitudesPendientes",
+                solicitudRegistroRepository.countByEstado("PENDIENTE"));
+
+        // ── Latencia BD ───────────────────────────────────────────────────
+        long t0 = System.currentTimeMillis();
+        rolRepository.count();
+        long latencia = System.currentTimeMillis() - t0;
+        model.addAttribute("dbLatencyMs", latencia);
+        model.addAttribute("dbConexionOk", true);
+
+        // ── Info de despliegue ────────────────────────────────────────────
+        model.addAttribute("appVersion",
+                env.getProperty("app.version", "v1.0.0-dev"));
+        model.addAttribute("buildEnv",
+                env.getProperty("app.env", "LOCAL"));
+        model.addAttribute("javaVersion",
+                System.getProperty("java.version"));
+        model.addAttribute("springVersion",
+                org.springframework.core.SpringVersion.getVersion());
 
         return "superadmin/estadoSistema";
     }
@@ -690,5 +739,111 @@ public class SuperadminController {
         return "redirect:/superadmin/confSeguridad";
     }
 
+    // ── Exportar Administradores a Excel ─────────────────────────────────────
+    @GetMapping("/administradores/exportar")
+    public void exportarAdministradores(HttpServletResponse response) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=administradores.xlsx");
 
+        List<Usuario> admins = usuarioRepository.findByRolIdInAndEliminadoEnIsNull(ROL_ADMIN_IDS);
+
+        try (org.apache.poi.xssf.usermodel.XSSFWorkbook workbook =
+                     new org.apache.poi.xssf.usermodel.XSSFWorkbook()) {
+
+            org.apache.poi.xssf.usermodel.XSSFSheet sheet =
+                    workbook.createSheet("Administradores");
+
+            // Estilos
+            org.apache.poi.xssf.usermodel.XSSFCellStyle headerStyle =
+                    workbook.createCellStyle();
+            org.apache.poi.xssf.usermodel.XSSFFont headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
+            headerStyle.setFillForegroundColor(
+                    new org.apache.poi.xssf.usermodel.XSSFColor(
+                            new byte[]{(byte)65, (byte)102, (byte)86}, null));
+            headerStyle.setFillPattern(
+                    org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
+            org.apache.poi.xssf.usermodel.XSSFFont whiteFont = workbook.createFont();
+            whiteFont.setColor(org.apache.poi.ss.usermodel.IndexedColors.WHITE.getIndex());
+            whiteFont.setBold(true);
+            headerStyle.setFont(whiteFont);
+
+            // Cabecera
+            org.apache.poi.ss.usermodel.Row header = sheet.createRow(0);
+            String[] cols = {"ID", "Nombres", "Apellido Paterno", "Apellido Materno",
+                    "Correo", "DNI", "Teléfono", "Estado", "Último Acceso"};
+            for (int i = 0; i < cols.length; i++) {
+                org.apache.poi.ss.usermodel.Cell cell = header.createCell(i);
+                cell.setCellValue(cols[i]);
+                cell.setCellStyle(headerStyle);
+                sheet.setColumnWidth(i, 5000);
+            }
+
+            // Datos
+            int rowNum = 1;
+            for (Usuario admin : admins) {
+                org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(admin.getIdUsuario());
+                row.createCell(1).setCellValue(admin.getNombres());
+                row.createCell(2).setCellValue(admin.getApellidoPaterno());
+                row.createCell(3).setCellValue(
+                        admin.getApellidoMaterno() != null ? admin.getApellidoMaterno() : "");
+                row.createCell(4).setCellValue(admin.getCorreo());
+                row.createCell(5).setCellValue(
+                        admin.getDni() != null ? admin.getDni() : "");
+                row.createCell(6).setCellValue(
+                        admin.getTelefono() != null ? admin.getTelefono() : "");
+                row.createCell(7).setCellValue(admin.getEstadoCuenta().name());
+                row.createCell(8).setCellValue(
+                        admin.getUltimoAcceso() != null
+                                ? admin.getUltimoAcceso().toString() : "Sin registro");
+            }
+
+            workbook.write(response.getOutputStream());
+        }
+    }
+
+    // ── Exportar Dominios a Excel ─────────────────────────────────────────────
+    @GetMapping("/confSeguridad/exportar")
+    public void exportarDominios(HttpServletResponse response) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=dominios.xlsx");
+
+        List<DominioAutorizado> dominios = dominioAutorizadoRepository.findAll();
+
+        try (org.apache.poi.xssf.usermodel.XSSFWorkbook workbook =
+                     new org.apache.poi.xssf.usermodel.XSSFWorkbook()) {
+
+            org.apache.poi.xssf.usermodel.XSSFSheet sheet =
+                    workbook.createSheet("Dominios");
+
+            // Cabecera
+            org.apache.poi.ss.usermodel.Row header = sheet.createRow(0);
+            String[] cols = {"ID", "Dominio", "Estado", "Fecha Registro", "Añadido Por"};
+            for (int i = 0; i < cols.length; i++) {
+                org.apache.poi.ss.usermodel.Cell cell = header.createCell(i);
+                cell.setCellValue(cols[i]);
+                sheet.setColumnWidth(i, 5000);
+            }
+
+            // Datos
+            int rowNum = 1;
+            for (DominioAutorizado dom : dominios) {
+                org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(dom.getIdDominio());
+                row.createCell(1).setCellValue(dom.getNombreDominio());
+                row.createCell(2).setCellValue(Boolean.TRUE.equals(dom.getEstado()) ? "ACTIVO" : "INACTIVO");
+                row.createCell(3).setCellValue(
+                        dom.getFechaRegistro() != null
+                                ? dom.getFechaRegistro().toString() : "");
+                row.createCell(4).setCellValue(
+                        dom.getUsuarioCreador() != null
+                                ? dom.getUsuarioCreador().getNombres() + " "
+                                + dom.getUsuarioCreador().getApellidoPaterno() : "");
+            }
+
+            workbook.write(response.getOutputStream());
+        }
+    }
 }

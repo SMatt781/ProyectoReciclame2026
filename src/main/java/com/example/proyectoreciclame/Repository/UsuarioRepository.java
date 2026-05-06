@@ -234,4 +234,12 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
             @Param("rolIds") List<Integer> rolIds,
             @Param("estado") Usuario.EstadoCuenta estado,
             Pageable pageable);
+
+    @Query("SELECT u FROM Usuario u WHERE u.rol.idRol IN :rolIds " +
+            "AND u.eliminadoEn IS NULL " +
+            "ORDER BY u.idUsuario DESC LIMIT 1")
+    Optional<Usuario> findUltimoAdminCreado(@Param("rolIds") List<Integer> rolIds);
+
+    @Query("SELECT u FROM Usuario u WHERE u.rol.idRol IN :rolIds AND u.eliminadoEn IS NULL")
+    List<Usuario> findByRolIdInAndEliminadoEnIsNull(@Param("rolIds") List<Integer> rolIds);
 }
