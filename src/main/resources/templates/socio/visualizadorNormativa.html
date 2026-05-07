@@ -190,9 +190,9 @@
                             <div class="absolute inset-0 bg-white/50 z-10 pointer-events-none"></div>
                             <div class="relative w-full h-full" style="z-index: 20;">
                                 <!-- PDF Iframe -->
-                                <iframe th:if="${normativa.archivoUrl != null}" 
-                                        th:src="${normativa.archivoUrl} + '#toolbar=0&navpanes=0&scrollbar=0'" 
-                                        class="w-full h-full border-0 flex-1" 
+                                <iframe id="pdfViewer"
+                                        th:if="${normativa.archivoUrl != null}"
+                                        class="w-full h-full border-0 flex-1"
                                         oncontextmenu="return false;"></iframe>
                                         
                                 <div th:if="${normativa.archivoUrl == null}" class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
@@ -408,23 +408,45 @@
         </main>
     </div>
     <script>
-        // Security logic for document viewer
-        document.addEventListener('DOMContentLoaded', function() {
+        // Load pre-signed URL and setup document viewer
+        document.addEventListener('DOMContentLoaded', async function() {
+            const normativaId = window.location.pathname.split('/').pop();
+            const pdfViewer = document.getElementById('pdfViewer');
             const viewerContainer = document.getElementById('viewerContainer');
-            
+
+            try {
+                // Fetch pre-signed URL from backend
+                const response = await fetch(`/documentos/normativa/${normativaId}/presigned-url`);
+                if (!response.ok) {
+                    throw new Error('Failed to get presigned URL');
+                }
+                const data = await response.json();
+                const presignedUrl = data.url;
+
+                // Set iframe src with presigned URL
+                if (pdfViewer) {
+                    pdfViewer.src = presignedUrl + '#toolbar=0&navpanes=0&scrollbar=0';
+                }
+            } catch (error) {
+                console.error('Error loading document:', error);
+                if (pdfViewer) {
+                    pdfViewer.style.display = 'none';
+                }
+            }
+
             // Block context menu (right click)
             document.addEventListener('contextmenu', event => event.preventDefault());
 
             // Block common screen capture/print shortcuts
             document.addEventListener('keydown', function(e) {
                 // Ctrl+P, Ctrl+S, Ctrl+C, PrintScreen
-                if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'c' || e.key === 'C')) || 
+                if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'c' || e.key === 'C')) ||
                     e.key === 'PrintScreen' || e.key === 'F12') {
                     e.preventDefault();
                     return false;
                 }
             });
-            
+
             // Clear clipboard if PrintScreen is pressed
             window.addEventListener('keyup', function(e) {
                 if (e.key == 'PrintScreen') {

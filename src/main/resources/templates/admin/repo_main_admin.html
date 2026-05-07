@@ -1030,7 +1030,33 @@
                     <option value="DEROGADA">Derogada</option>
                 </select>
 
-                <input name="archivo" type="file">
+                <!-- Sección de Archivo con feedback visual -->
+                <div id="fileUploadZoneNormativa" class="relative border-2 border-dashed border-[#dbe4ef] rounded-2xl min-h-[200px] px-6 py-8 flex flex-col items-center justify-center bg-white hover:bg-[#f8fbff] hover:border-[#059669]/40 transition-all cursor-pointer group">
+                    <!-- Contenido por defecto (sin archivo) -->
+                    <div id="fileUploadDefaultNormativa" class="flex flex-col items-center justify-center text-center max-w-xl mx-auto">
+                        <div class="w-16 h-16 bg-[#edf7f2] rounded-2xl flex items-center justify-center text-[#10b981] mb-4 group-hover:scale-110 transition-transform">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-[#0f172a]">Selecciona el archivo PDF</h4>
+                        <p class="mt-2 text-sm text-[#94a3b8]">Máximo 20MB</p>
+                    </div>
+
+                    <!-- Contenido cuando archivo está seleccionado -->
+                    <div id="fileUploadConfirmNormativa" class="hidden flex flex-col items-center justify-center text-center max-w-xl mx-auto w-full">
+                        <div class="w-16 h-16 bg-[#dcfce7] rounded-2xl flex items-center justify-center text-[#10b981] mb-4 animate-pulse">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-[#059669]">Archivo listo ✓</h4>
+                        <p id="selectedFileNameNormativa" class="mt-2 text-sm text-[#0f172a] font-semibold break-words">documento.pdf</p>
+                    </div>
+
+                    <input id="archivoInputNormativa" name="archivo" type="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
+                </div>
+
                 <input name="enlace" type="url" placeholder="Enlace externo">
             </div>
 
@@ -1048,6 +1074,73 @@
         </form>
     </div>
 </div>
+
+<script>
+    // Manejar selección de archivo para normativas
+    const fileInputNormativa = document.getElementById('archivoInputNormativa');
+    const fileUploadZoneNormativa = document.getElementById('fileUploadZoneNormativa');
+    const fileUploadDefaultNormativa = document.getElementById('fileUploadDefaultNormativa');
+    const fileUploadConfirmNormativa = document.getElementById('fileUploadConfirmNormativa');
+    const selectedFileNameNormativa = document.getElementById('selectedFileNameNormativa');
+
+    // Cuando se selecciona un archivo
+    fileInputNormativa.addEventListener('change', function(e) {
+        if (this.files.length > 0) {
+            const fileName = this.files[0].name;
+            const fileSize = (this.files[0].size / 1024 / 1024).toFixed(2);
+
+            // Mostrar nombre del archivo
+            selectedFileNameNormativa.textContent = fileName + ' (' + fileSize + ' MB)';
+
+            // Cambiar UI
+            fileUploadDefaultNormativa.classList.add('hidden');
+            fileUploadConfirmNormativa.classList.remove('hidden');
+
+            // Cambiar color del borde a verde
+            fileUploadZoneNormativa.classList.remove('border-[#dbe4ef]', 'hover:border-[#059669]/40', 'hover:bg-[#f8fbff]');
+            fileUploadZoneNormativa.classList.add('border-[#10b981]', 'bg-[#f0fdf4]');
+        } else {
+            // Si se cancela, volver a estado por defecto
+            resetFileUploadNormativa();
+        }
+    });
+
+    // Función para resetear el UI del archivo
+    function resetFileUploadNormativa() {
+        fileUploadDefaultNormativa.classList.remove('hidden');
+        fileUploadConfirmNormativa.classList.add('hidden');
+        fileUploadZoneNormativa.classList.remove('border-[#10b981]', 'bg-[#f0fdf4]');
+        fileUploadZoneNormativa.classList.add('border-[#dbe4ef]', 'hover:border-[#059669]/40', 'hover:bg-[#f8fbff]');
+    }
+
+    // Permitir hacer clic en el área para seleccionar archivo
+    fileUploadZoneNormativa.addEventListener('click', function() {
+        fileInputNormativa.click();
+    });
+
+    // Drag and drop
+    fileUploadZoneNormativa.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        fileUploadZoneNormativa.classList.add('bg-[#dbeafe]', 'border-blue-400');
+    });
+
+    fileUploadZoneNormativa.addEventListener('dragleave', function() {
+        fileUploadZoneNormativa.classList.remove('bg-[#dbeafe]', 'border-blue-400');
+    });
+
+    fileUploadZoneNormativa.addEventListener('drop', function(e) {
+        e.preventDefault();
+        fileUploadZoneNormativa.classList.remove('bg-[#dbeafe]', 'border-blue-400');
+
+        if (e.dataTransfer.files.length > 0) {
+            fileInputNormativa.files = e.dataTransfer.files;
+            // Triggear evento change manualmente
+            const event = new Event('change', { bubbles: true });
+            fileInputNormativa.dispatchEvent(event);
+        }
+    });
+</script>
+
 </body>
 
 </html>

@@ -204,9 +204,9 @@
                         <div class="absolute inset-0 bg-white/50 z-10 pointer-events-none"></div>
                         <div class="relative w-full h-full" style="z-index: 20;">
                             <!-- PDF Iframe -->
-                            <iframe th:if="${estudio.archivoUrl != null}" 
-                                    th:src="${estudio.archivoUrl} + '#toolbar=0&navpanes=0&scrollbar=0'" 
-                                    class="w-full h-full border-0 flex-1" 
+                            <iframe id="pdfViewer"
+                                    th:if="${estudio.archivoUrl != null}"
+                                    class="w-full h-full border-0 flex-1"
                                     oncontextmenu="return false;"></iframe>
                                     
                             <div th:if="${estudio.archivoUrl == null}" class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
@@ -288,7 +288,7 @@
                             </div>
                             <!-- INSERTED BUTTON BELOW THE BLOCK AS DIRECTED -->
                             <div class="col-span-2 pt-2">
-                                <button
+                                <button id="downloadBtn"
                                     class="w-full bg-[#041533] hover:bg-[#00743a] text-white font-bold text-lg py-3.5 px-4 rounded-[14px] flex items-center justify-center gap-3 transition-colors shadow-sm">
                                     <svg class="w-6 h-6 shrink-0" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
@@ -320,23 +320,61 @@
         </main>
     </div>
     <script>
-        // Security logic for document viewer
-        document.addEventListener('DOMContentLoaded', function() {
+        // Load pre-signed URL and setup document viewer
+        document.addEventListener('DOMContentLoaded', async function() {
+            const estudiotId = window.location.pathname.split('/').pop();
+            const pdfViewer = document.getElementById('pdfViewer');
+            const downloadBtn = document.getElementById('downloadBtn');
             const viewerContainer = document.getElementById('viewerContainer');
-            
+
+            try {
+                // Fetch pre-signed URL from backend
+                const response = await fetch(`/documentos/estudio/${estudiotId}/presigned-url`);
+                if (!response.ok) {
+                    throw new Error('Failed to get presigned URL');
+                }
+                const data = await response.json();
+                const presignedUrl = data.url;
+                const fileName = data.nombreArchivo;
+
+                // Set iframe src with presigned URL
+                if (pdfViewer) {
+                    pdfViewer.src = presignedUrl + '#toolbar=0&navpanes=0&scrollbar=0';
+                }
+
+                // Setup download button
+                if (downloadBtn) {
+                    downloadBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        // Create a link element and trigger download
+                        const link = document.createElement('a');
+                        link.href = presignedUrl;
+                        link.download = fileName || 'documento.pdf';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading document:', error);
+                if (pdfViewer) {
+                    pdfViewer.style.display = 'none';
+                }
+            }
+
             // Block context menu (right click)
             document.addEventListener('contextmenu', event => event.preventDefault());
 
             // Block common screen capture/print shortcuts
             document.addEventListener('keydown', function(e) {
                 // Ctrl+P, Ctrl+S, Ctrl+C, PrintScreen
-                if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'c' || e.key === 'C')) || 
+                if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'c' || e.key === 'C')) ||
                     e.key === 'PrintScreen' || e.key === 'F12') {
                     e.preventDefault();
                     return false;
                 }
             });
-            
+
             // Clear clipboard if PrintScreen is pressed
             window.addEventListener('keyup', function(e) {
                 if (e.key == 'PrintScreen') {
