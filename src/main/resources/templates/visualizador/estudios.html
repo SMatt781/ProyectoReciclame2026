@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Estudios del Sector - Reciclame</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7f9fb",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#cfe9d9",
+                        "tertiary-container": "#092016",
+                        "primary-container": "#021d30",
+                        "on-secondary-container": "#00743a",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#b1c9e2",
+                        "on-surface-variant": "#43474c",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "outline-variant": "#c3c7cd",
+                        "on-secondary-fixed": "#00210c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006d37",
+                        "surface-variant": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#354c40",
+                        "on-secondary": "#ffffff",
+                        "outline": "#73777d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-container": "#71897c",
+                        "tertiary-fixed-dim": "#b3ccbd",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#496177",
+                        "on-secondary-fixed-variant": "#005228",
+                        "on-primary-container": "#6f869e",
+                        "secondary-container": "#6bfe9c",
+                        "on-tertiary-fixed": "#092016",
+                        "secondary-fixed": "#6bfe9c",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#021d30",
+                        "on-primary-fixed-variant": "#31495e",
+                        "primary-fixed": "#cde5ff",
+                        "secondary-fixed-dim": "#4ae183",
+                        "primary-fixed-dim": "#b1c9e2"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+
+        /* SVG Icon utility */
+        .icon-sm {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .icon-md {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .icon-lg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .icon-xl {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+    <!-- SideNavBar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Main Content Canvas -->
+    <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+
+        <!-- TopAppBar -->
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+
+
+        <!-- Main Scrollable Content -->
+        <main class="flex-1 overflow-y-auto px-8 py-3">
+            <div class="w-full">
+                <!-- Page Header -->
+                <div class="mb-5">
+                    <div>
+                        <h2
+                            class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                            Estudios del Sector</h2>
+                        <p class="font-body text-on-surface-variant text-base mt-2">
+                            Explora nuestra colección curada de investigaciones, análisis y reportes sobre economía
+                            circular y gestión de residuos.
+                        </p>
+                    </div>
+
+                </div>
+
+
+
+                <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6 flex flex-col">
+                    <!-- Reduced Metrics for Visualizador Role -->
+                    <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
+                        <article
+                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container">
+                            </div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div
+                                    class="bg-emerald-50 text-secondary rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M3 6a2 2 0 012-2h8l2 2h4a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V6zm2 0v11h14V8h-4.5L12.5 6H5z" />
+                                    </svg>
+                                </div>
+                                <span
+                                    class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                    Repositorio
+                                </span>
+                            </div>
+                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                                Total estudios disponibles
+                            </h4>
+                            <div class="text-3xl font-extrabold text-on-primary-fixed"
+                                th:text="${totalEstudios}">0</div>
+                        </article>
+
+                        <article
+                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200"></div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div
+                                    class="bg-orange-100 text-orange-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M12 7a1 1 0 011 1v4.17l2.24 1.3a1 1 0 11-1 1.74l-2.7-1.56A1 1 0 0111 12V8a1 1 0 011-1zm0-5a10 10 0 100 20 10 10 0 000-20zm0 2a8 8 0 110 16 8 8 0 010-16z" />
+                                    </svg>
+                                </div>
+                                <span
+                                    class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                    Consultados
+                                </span>
+                            </div>
+                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                                Consultados en 30 días
+                            </h4>
+                            <div class="text-3xl font-extrabold text-on-primary-fixed"
+                                th:text="${estudiosRecientes}">0</div>
+                        </article>
+
+                        <article
+                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container"></div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div
+                                    class="bg-error-container text-error rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M7 2a1 1 0 011 1v1h8V3a1 1 0 112 0v1h1a2 2 0 012 2v2H3V6a2 2 0 012-2h1V3a1 1 0 011-1zm14 8H3v9a2 2 0 002 2h14a2 2 0 002-2v-9z" />
+                                    </svg>
+                                </div>
+                                <span
+                                    class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                    Publicación
+                                </span>
+                            </div>
+                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                                Año más activo
+                            </h4>
+                            <div class="text-3xl font-extrabold text-on-primary-fixed"
+                                th:text="${anioMasActivo}">-</div>
+                        </article>
+                    </section>
+
+
+
+                    <!-- Search Bar -->
+                    <form action="/visualizador/estudios" method="GET" class="flex gap-4 mb-6 w-full">
+                        <div class="flex-1 relative">
+                            <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <input type="text" name="search" placeholder="Buscar en el repositorio..."
+                                class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
+                        </div>
+                        <a href="/visualizador/estudios"
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
+                            title="Limpiar filtros">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            <span class="text-sm font-medium">Limpiar</span>
+                        </a>
+                        <button type="button" id="openFiltersModal"
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                            <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
+                            <span class="text-sm font-medium">Filtros avanzados</span>
+                        </button>
+                        <button type="button" id="toggleViewBtn"
+                            class="h-12 w-12 flex items-center justify-center bg-white text-slate-700 rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors"
+                            title="Cambiar vista">
+                            <svg id="icon-list" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                            </svg>
+                        </button>
+                    </form>
+
+
+                    <!-- Mensaje No hay documentos -->
+                    <div th:if="${#lists.isEmpty(estudios)}" class="text-center py-10">
+                        <p class="text-lg font-bold text-on-surface-variant">No hay documentos disponibles</p>
+                    </div>
+
+                    <!-- Cards Grid -->
+                    <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                         th:if="${not #lists.isEmpty(estudios)}">
+                        <!-- Card 1: Dynamic -->
+                        <article th:each="estudio, stat : ${estudios}"
+                                 class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden"
+                                 th:classappend="${estudio.estado == 'DEROGADO' ? 'bg-opacity-80' : ''}">
+                            <div th:classappend="${estudio.estado == 'VIGENTE' ? 'bg-gradient-to-r from-secondary to-secondary-container' : (estudio.estado == 'BORRADOR' ? 'bg-gradient-to-r from-outline to-surface-variant' : 'bg-gradient-to-r from-error to-error-container')}"
+                                 class="absolute top-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+                            <div class="flex justify-between items-start mb-5"
+                                 th:classappend="${estudio.estado == 'DEROGADO' ? 'opacity-70' : ''}">
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm"
+                                     th:classappend="${estudio.formato == 'PDF' ? 'bg-error-container text-on-error-container' :
+                                                    (estudio.formato == 'PPTX' ? 'bg-orange-100 text-orange-600' :
+                                                    (estudio.formato == 'XLSX' ? 'bg-emerald-100 text-emerald-700' :
+                                                    'bg-surface-container-high text-outline'))}">
+                                    <th:block th:switch="${estudio.formato}">
+                                        <th:block th:case="'PDF'">
+                                            <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
+                                        </th:block>
+                                        <th:block th:case="'PPTX'">
+                                            <div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div>
+                                        </th:block>
+                                        <th:block th:case="'XLSX'">
+                                            <div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div>
+                                        </th:block>
+                                        <th:block th:case="*">
+                                            <div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div>
+                                        </th:block>
+                                    </th:block>
+                                </div>
+                                <div
+                                        class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
+                                    <span th:text="${estudio.anio}">2024</span>
+                                    <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                                    <span th:text="${estudio.formato}">PDF</span>
+                                </div>
+                            </div>
+                            <div class="flex-1" th:classappend="${estudio.estado == 'DEROGADO' ? 'opacity-70' : ''}">
+                                <h4 th:text="${estudio.titulo}"
+                                    th:classappend="${estudio.estado == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}"
+                                    class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
+                                    Análisis de Ciclo de Vida de Envases PET en Perú</h4>
+                                <p th:text="${estudio.descripcion}"
+                                   class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
+                                    Estudio exhaustivo...</p>
+                            </div>
+                            <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
+                                <div class="flex items-center gap-1.5"
+                                     th:classappend="${estudio.estado == 'VIGENTE' ? 'text-secondary' : (estudio.estado == 'BORRADOR' ? 'text-outline' : 'text-error')}">
+                                    <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                        <path th:if="${estudio.estado == 'VIGENTE'}"
+                                              d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                        <path th:if="${estudio.estado == 'BORRADOR'}"
+                                              d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                        <path th:if="${estudio.estado == 'DEROGADO'}"
+                                              d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                    </svg>
+                                    <span th:text="${estudio.estado}"
+                                          class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
+                                </div>
+                                <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link"
+                                   th:href="@{/estudios/{id}(id=${estudio.id})}">
+                                    Ver Estudio
+                                    <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                         fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </article>
+                    </div>
+
+                    <!-- List View (Hidden by Default) -->
+                    <!-- List View (Hidden by Default) -->
+                    <div id="listView" class="hidden flex-col gap-4" th:if="${not #lists.isEmpty(estudios)}">
+                        <!-- Header -->
+                        <div
+                                class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                            <div class="col-span-6 lg:col-span-5">Nombre</div>
+                            <div class="col-span-2 text-center">Estado</div>
+                            <div class="col-span-1 text-center">Formato</div>
+                            <div class="col-span-1 text-center">Año</div>
+                            <div class="col-span-2 lg:col-span-3 text-right">Acción</div>
+                        </div>
+
+                        <div th:each="estudio, stat : ${estudios}"
+                             class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                            <div class="col-span-6 lg:col-span-5 flex items-center gap-4 w-full">
+                                <h4 th:text="${estudio.titulo}"
+                                    class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors line-clamp-2"
+                                    th:classappend="${estudio.estado == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}">
+                                    Análisis de Ciclo de Vida de Envases PET en Perú</h4>
+                            </div>
+                            <div class="col-span-2 flex justify-center w-full md:w-auto">
+                                <div class="flex items-center gap-1.5"
+                                     th:classappend="${estudio.estado == 'VIGENTE' ? 'text-secondary' : (estudio.estado == 'BORRADOR' ? 'text-outline' : 'text-error')}">
+                                    <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                        <path th:if="${estudio.estado == 'VIGENTE'}"
+                                              d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                        <path th:if="${estudio.estado == 'BORRADOR'}"
+                                              d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                        <path th:if="${estudio.estado == 'DEROGADO'}"
+                                              d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                    </svg>
+                                    <span th:text="${estudio.estado}"
+                                          class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
+                                </div>
+                            </div>
+                            <div class="col-span-1 flex justify-center w-full md:w-auto">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm shrink-0"
+                                         th:classappend="${estudio.formato == 'PDF' ? 'bg-error-container text-on-error-container' :
+                                                        (estudio.formato == 'PPTX' ? 'bg-orange-100 text-orange-600' :
+                                                        (estudio.formato == 'XLSX' ? 'bg-emerald-100 text-emerald-700' :
+                                                        'bg-surface-container-high text-outline'))}">
+                                        <th:block th:switch="${estudio.formato}">
+                                            <th:block th:case="'PDF'">
+                                                <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
+                                            </th:block>
+                                            <th:block th:case="'PPTX'">
+                                                <div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div>
+                                            </th:block>
+                                            <th:block th:case="'XLSX'">
+                                                <div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div>
+                                            </th:block>
+                                            <th:block th:case="*">
+                                                <div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div>
+                                            </th:block>
+                                        </th:block>
+                                    </div>
+                                    <span th:text="${estudio.formato}"
+                                          class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">PDF</span>
+                                </div>
+                            </div>
+                            <div class="col-span-1 flex justify-center w-full md:w-auto">
+                            <span th:text="${estudio.anio}"
+                                  class="text-sm font-body text-on-surface-variant font-medium">2024</span>
+                            </div>
+                            <div class="col-span-2 lg:col-span-3 flex justify-end w-full md:w-auto">
+                                <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link"
+                                   th:href="@{/estudios/{id}(id=${estudio.id})}">
+                                    Ver Estudio <svg
+                                        class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                        fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
+                                </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Controles de Paginación -->
+                    <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8 hidden"
+                         th:if="${not #lists.isEmpty(estudios)}">
+                        <button id="prevPageBtn"
+                                class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <div id="pageNumbers" class="flex gap-2"></div>
+                        <button id="nextPageBtn"
+                                class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+        </main>
+    </div>
+    <!-- Filtros Avanzados Modal -->
+    <div id="filtersModal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 transition-opacity opacity-0 pointer-events-none duration-300">
+        <div
+            class="bg-surface text-on-surface w-full max-w-2xl rounded-[1.5rem] p-6 sm:p-8 flex flex-col relative scale-95 transition-transform duration-300 shadow-xl max-h-full overflow-y-auto">
+            <!-- Close button -->
+            <button id="closeFiltersModal"
+                class="absolute top-6 right-6 p-2 rounded-full hover:bg-surface-container text-on-surface-variant transition-colors">
+                <svg class="icon-md" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                </svg>
+            </button>
+
+            <h2 class="text-2xl font-headline font-bold text-on-primary-fixed mb-6">Filtros Avanzados</h2>
+
+            <form id="filtersForm" action="/visualizador/estudios" method="GET" class="space-y-6">
+                <!-- Fecha -->
+                <section>
+                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Fecha</h3>
+                    <div class="space-y-4">
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="dateType" value="year"
+                                    class="text-secondary focus:ring-secondary form-radio" checked>
+                                <span class="text-sm font-semibold">Año</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="dateType" value="range"
+                                    class="text-secondary focus:ring-secondary form-radio">
+                                <span class="text-sm font-semibold">Rango de fechas</span>
+                            </label>
+                        </div>
+
+                        <!-- Año Select -->
+                        <div id="yearContainer">
+                            <select id="yearSelect" name="yearSelect"
+                                class="w-full sm:w-1/2 appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
+                                <option value="">Seleccione un año</option>
+                                <!-- JS will populate 1990 - Current Year -->
+                            </select>
+                        </div>
+
+                        <!-- Rango Input -->
+                        <div id="rangeContainer" class="hidden flex flex-col sm:flex-row gap-4">
+                            <div class="flex-1">
+                                <label
+                                    class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
+                                    Inicio</label>
+                                <input type="date" id="dateStart" name="dateStart"
+                                    class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
+                            </div>
+                            <div class="flex-1">
+                                <label
+                                    class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
+                                    Fin</label>
+                                <input type="date" id="dateEnd" name="dateEnd"
+                                    class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
+                            </div>
+                        </div>
+                        <p id="dateError" class="text-error text-xs font-semibold hidden">La Fecha Incial no puede ser
+                            mayor que la Fecha Final.</p>
+                    </div>
+                </section>
+
+                <hr class="border-outline-variant/30">
+
+                <!-- Formato -->
+                <section>
+                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Formato</h3>
+                    <div class="flex flex-wrap gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="format" value="PDF"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body">PDF</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="format" value="PPTX"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body">PPTX</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="format" value="DOCX"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body">DOCX</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="format" value="XLSX"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body">.XLSX</span>
+                        </label>
+                    </div>
+                </section>
+
+                <hr class="border-outline-variant/30">
+
+                <!-- Estado -->
+                <section>
+                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Estado</h3>
+                    <div class="flex flex-wrap gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="estado" value="VIGENTE"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Vigente</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="estado" value="DEROGADO"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Derogado</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="estado" value="BORRADOR"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Borrador</span>
+                        </label>
+                    </div>
+                </section>
+
+                <div class="pt-6 mt-4 flex justify-end gap-3 border-t border-outline-variant/30">
+                    <button type="submit"
+                        class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary font-bold text-sm hover:bg-[#00210c] transition-colors shadow-sm cursor-pointer">
+                        Aplicar Filtros
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script de Lógica para el Modal -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const openFiltersBtn = document.getElementById('openFiltersModal');
+            const closeFiltersBtn = document.getElementById('closeFiltersModal');
+            const filtersModal = document.getElementById('filtersModal');
+            const modalContent = filtersModal.querySelector('div');
+
+            // Populating years
+            const yearSelect = document.getElementById('yearSelect');
+            const currentYear = new Date().getFullYear();
+            for (let y = currentYear; y >= 1990; y--) {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = y;
+                yearSelect.appendChild(opt);
+            }
+
+            const openModal = () => {
+                filtersModal.classList.remove('opacity-0', 'pointer-events-none');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            };
+
+            const closeModal = () => {
+                filtersModal.classList.add('opacity-0', 'pointer-events-none');
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-95');
+            };
+
+            openFiltersBtn.addEventListener('click', openModal);
+            closeFiltersBtn.addEventListener('click', closeModal);
+            filtersModal.addEventListener('click', (e) => {
+                if (e.target === filtersModal) closeModal();
+            });
+
+            // Toggle Logic
+            const dateTypeRadios = document.querySelectorAll('input[name="dateType"]');
+            const yearContainer = document.getElementById('yearContainer');
+            const rangeContainer = document.getElementById('rangeContainer');
+            const dateError = document.getElementById('dateError');
+
+            dateTypeRadios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    if (e.target.value === 'year') {
+                        yearContainer.classList.remove('hidden');
+                        rangeContainer.classList.add('hidden');
+                        dateError.classList.add('hidden');
+                    } else {
+                        yearContainer.classList.add('hidden');
+                        rangeContainer.classList.remove('hidden');
+                    }
+                });
+            });
+
+            // Validation
+            const dateStart = document.getElementById('dateStart');
+            const dateEnd = document.getElementById('dateEnd');
+            const filtersForm = document.getElementById('filtersForm');
+
+            filtersForm.addEventListener('submit', (e) => {
+                const checkedDateType = document.querySelector('input[name="dateType"]:checked');
+                const isRange = checkedDateType && checkedDateType.value === 'range';
+
+                if (isRange) {
+                    yearSelect.name = '';
+                    if (!dateStart.value && !dateEnd.value) {
+                        checkedDateType.name = '';
+                    }
+                } else {
+                    dateStart.name = '';
+                    dateEnd.name = '';
+                    if (!yearSelect.value) {
+                        if (checkedDateType) checkedDateType.name = '';
+                        yearSelect.name = '';
+                    }
+                }
+
+                if (isRange && dateStart.value && dateEnd.value) {
+                    if (new Date(dateStart.value) > new Date(dateEnd.value)) {
+                        e.preventDefault(); // Bloqueamos el envío porque hay error
+                        dateError.classList.remove('hidden');
+                        return;
+                    } else {
+                        dateError.classList.add('hidden');
+                    }
+                }
+            });
+
+
+            // Toggle View & Pagination Logic
+            const toggleViewBtn = document.getElementById('toggleViewBtn');
+            const gridView = document.getElementById('gridView');
+            const listView = document.getElementById('listView');
+            const iconList = document.getElementById('icon-list');
+            const iconGrid = document.getElementById('icon-grid');
+
+            const gridItems = document.querySelectorAll('.grid-item');
+            const listItems = document.querySelectorAll('.list-item');
+            const paginationContainer = document.getElementById('paginationContainer');
+            const pageNumbersContainer = document.getElementById('pageNumbers');
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+
+            let isGridView = true;
+            let currentPage = 1;
+
+            function renderPagination() {
+                if (!paginationContainer) return;
+
+                const totalItems = isGridView ? gridItems.length : listItems.length;
+                const pageSize = 6;
+                const totalPages = Math.ceil(totalItems / pageSize) || 1;
+
+                if (currentPage > totalPages) currentPage = 1;
+
+                if (totalPages <= 1) {
+                    paginationContainer.classList.add('hidden');
+                    paginationContainer.classList.remove('flex');
+                } else {
+                    paginationContainer.classList.remove('hidden');
+                    paginationContainer.classList.add('flex');
+                }
+
+                const startIndex = (currentPage - 1) * pageSize;
+                const endIndex = startIndex + pageSize;
+
+                if (isGridView) {
+                    gridItems.forEach((item, index) => {
+                        if (index >= startIndex && index < endIndex) {
+                            item.classList.remove('hidden');
+                            item.classList.add('flex');
+                        } else {
+                            item.classList.add('hidden');
+                            item.classList.remove('flex');
+                        }
+                    });
+                } else {
+                    listItems.forEach((item, index) => {
+                        if (index >= startIndex && index < endIndex) {
+                            item.classList.remove('hidden');
+                            item.classList.add('flex', 'md:grid');
+                        } else {
+                            item.classList.add('hidden');
+                            item.classList.remove('flex', 'md:grid');
+                        }
+                    });
+                }
+
+                prevPageBtn.disabled = currentPage === 1;
+                nextPageBtn.disabled = currentPage === totalPages;
+
+                pageNumbersContainer.innerHTML = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    const btn = document.createElement('button');
+                    btn.textContent = i;
+                    btn.className = `w-10 h-10 rounded-lg text-sm font-bold transition-colors ${i === currentPage ? 'bg-secondary text-on-secondary' : 'text-on-surface-variant hover:bg-surface-container'}`;
+                    btn.addEventListener('click', () => {
+                        currentPage = i;
+                        renderPagination();
+                    });
+                    pageNumbersContainer.appendChild(btn);
+                }
+            }
+
+            if (toggleViewBtn) {
+                toggleViewBtn.addEventListener('click', () => {
+                    isGridView = !isGridView;
+                    if (isGridView) {
+                        gridView.classList.remove('hidden');
+                        listView.classList.add('hidden');
+                        listView.classList.remove('flex');
+                        iconList.classList.remove('hidden');
+                        iconGrid.classList.add('hidden');
+                    } else {
+                        gridView.classList.add('hidden');
+                        listView.classList.remove('hidden');
+                        listView.classList.add('flex');
+                        iconList.classList.add('hidden');
+                        iconGrid.classList.remove('hidden');
+                    }
+                    currentPage = 1;
+                    renderPagination();
+                });
+            }
+
+            if (prevPageBtn) {
+                prevPageBtn.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderPagination();
+                    }
+                });
+            }
+
+            if (nextPageBtn) {
+                nextPageBtn.addEventListener('click', () => {
+                    const totalItems = isGridView ? gridItems.length : listItems.length;
+                    const pageSize = 6;
+                    if (currentPage < Math.ceil(totalItems / pageSize)) {
+                        currentPage++;
+                        renderPagination();
+                    }
+                });
+            }
+
+            // Inicializar paginación
+            renderPagination();
+        });
+    </script>
+</body>
+
+</html>
+

@@ -20,4 +20,5 @@ public interface RecuperacionPasswordRepository extends JpaRepository<Recuperaci
     long countByUsuarioAndUsadoFalseAndFechaExpiracionAfter(
             Usuario usuario, LocalDateTime fecha
     );
+    long countByUsadoFalse();
 }
