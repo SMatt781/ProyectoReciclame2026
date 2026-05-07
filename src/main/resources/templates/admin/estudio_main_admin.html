@@ -1021,13 +1021,13 @@
                             // Mostrar nombre del archivo
                             selectedFileName.textContent = fileName + ' (' + fileSize + ' MB)';
 
-                            // Cambiar UI
-                            fileUploadDefault.classList.add('hidden');
-                            fileUploadConfirm.classList.remove('hidden');
+                            // Cambiar UI - Usar display en lugar de clase hidden
+                            fileUploadDefault.style.display = 'none';
+                            fileUploadConfirm.style.display = 'flex';
 
                             // Cambiar color del borde a verde
-                            fileUploadZone.classList.remove('border-[#dbe4ef]', 'hover:border-[#059669]/40', 'hover:bg-[#f8fbff]');
-                            fileUploadZone.classList.add('border-[#10b981]', 'bg-[#f0fdf4]');
+                            fileUploadZone.style.borderColor = '#10b981';
+                            fileUploadZone.style.backgroundColor = '#f0fdf4';
                         } else {
                             // Si se cancela, volver a estado por defecto
                             resetFileUpload();
@@ -1036,10 +1036,10 @@
 
                     // Función para resetear el UI del archivo
                     function resetFileUpload() {
-                        fileUploadDefault.classList.remove('hidden');
-                        fileUploadConfirm.classList.add('hidden');
-                        fileUploadZone.classList.remove('border-[#10b981]', 'bg-[#f0fdf4]');
-                        fileUploadZone.classList.add('border-[#dbe4ef]', 'hover:border-[#059669]/40', 'hover:bg-[#f8fbff]');
+                        fileUploadDefault.style.display = 'flex';
+                        fileUploadConfirm.style.display = 'none';
+                        fileUploadZone.style.borderColor = '#dbe4ef';
+                        fileUploadZone.style.backgroundColor = 'white';
                     }
 
                     // Permitir hacer clic en el área para cambiar archivo
@@ -1050,16 +1050,21 @@
                     // Drag and drop
                     fileUploadZone.addEventListener('dragover', function(e) {
                         e.preventDefault();
-                        fileUploadZone.classList.add('bg-[#dbeafe]', 'border-blue-400');
+                        fileUploadZone.style.backgroundColor = '#dbeafe';
+                        fileUploadZone.style.borderColor = '#3b82f6';
                     });
 
                     fileUploadZone.addEventListener('dragleave', function() {
-                        fileUploadZone.classList.remove('bg-[#dbeafe]', 'border-blue-400');
+                        if (fileInput.files.length === 0) {
+                            fileUploadZone.style.backgroundColor = 'white';
+                            fileUploadZone.style.borderColor = '#dbe4ef';
+                        }
                     });
 
                     fileUploadZone.addEventListener('drop', function(e) {
                         e.preventDefault();
-                        fileUploadZone.classList.remove('bg-[#dbeafe]', 'border-blue-400');
+                        fileUploadZone.style.backgroundColor = 'white';
+                        fileUploadZone.style.borderColor = '#dbe4ef';
 
                         if (e.dataTransfer.files.length > 0) {
                             fileInput.files = e.dataTransfer.files;
