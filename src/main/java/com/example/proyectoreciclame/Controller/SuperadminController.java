@@ -1,13 +1,10 @@
 package com.example.proyectoreciclame.Controller;
 
-import com.example.proyectoreciclame.Entity.DominioAutorizado;
-import com.example.proyectoreciclame.Entity.PoliticaContrasena;
-import com.example.proyectoreciclame.Entity.Rol;
-import com.example.proyectoreciclame.Entity.Usuario;
-import com.example.proyectoreciclame.Repository.DominioAutorizadoRepository;
-import com.example.proyectoreciclame.Repository.PoliticaContrasenaRepository;
-import com.example.proyectoreciclame.Repository.RolRepository;
-import com.example.proyectoreciclame.Repository.UsuarioRepository;
+import com.example.proyectoreciclame.Entity.*;
+import com.example.proyectoreciclame.Repository.*;
+import com.example.proyectoreciclame.Service.CorreoService;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,7 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,17 +38,44 @@ public class SuperadminController {
     private final BCryptPasswordEncoder passwordEncoder;
     private final RolRepository rolRepository;
     private final PoliticaContrasenaRepository politicaContrasenaRepository;
+    private final NormativaRepository normativaRepository;
+    private final EstudioRepository estudioRepository;
+    private final NotificacionRepository notificacionRepository;
+    private final RegistroSesionRepository registroSesionRepository;
+    private final IntentoLoginRepository intentoLoginRepository;
+    private final RecuperacionPasswordRepository recuperacionPasswordRepository;
+    private final SolicitudRegistroRepository solicitudRegistroRepository;
+    private final org.springframework.core.env.Environment env;
+    private final CorreoService correoService;
 
     public SuperadminController(UsuarioRepository usuarioRepository,
                                 DominioAutorizadoRepository dominioAutorizadoRepository,
                                 BCryptPasswordEncoder passwordEncoder,
                                 RolRepository rolRepository,
-                                PoliticaContrasenaRepository politicaContrasenaRepository) {
+                                PoliticaContrasenaRepository politicaContrasenaRepository,
+                                NormativaRepository normativaRepository,
+                                EstudioRepository estudioRepository,
+                                NotificacionRepository notificacionRepository,
+                                RegistroSesionRepository registroSesionRepository,
+                                IntentoLoginRepository intentoLoginRepository,
+                                RecuperacionPasswordRepository recuperacionPasswordRepository,
+                                SolicitudRegistroRepository solicitudRegistroRepository,
+                                CorreoService correoService,
+                                org.springframework.core.env.Environment env) {
         this.usuarioRepository = usuarioRepository;
         this.dominioAutorizadoRepository = dominioAutorizadoRepository;
         this.passwordEncoder = passwordEncoder;
         this.rolRepository = rolRepository;
         this.politicaContrasenaRepository = politicaContrasenaRepository;
+        this.normativaRepository = normativaRepository;
+        this.estudioRepository = estudioRepository;
+        this.notificacionRepository = notificacionRepository;
+        this.registroSesionRepository = registroSesionRepository;
+        this.intentoLoginRepository = intentoLoginRepository;
+        this.recuperacionPasswordRepository = recuperacionPasswordRepository;
+        this.solicitudRegistroRepository = solicitudRegistroRepository;
+        this.correoService = correoService;
+        this.env = env;
     }
 
     @GetMapping("/dashboard")
@@ -83,15 +109,26 @@ public class SuperadminController {
     public String showAdministradores(
             Model model,
             @RequestParam(value = "texto", required = false) String texto,
+            @RequestParam(value = "estado", required = false) String estado,
             @RequestParam(value = "page", defaultValue = "0") int page
     ) {
         PageRequest pageable = PageRequest.of(
                 page, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "idUsuario"));
 
         Page<Usuario> administradores;
-        if (texto != null && !texto.isBlank()) {
+
+        if (texto != null && !texto.isBlank() && estado != null && !estado.isBlank()) {
+            // Búsqueda + filtro de estado combinados
+            administradores = usuarioRepository
+                    .buscarEnGestionConEstado(texto, ROL_ADMIN_IDS,
+                            Usuario.EstadoCuenta.valueOf(estado), pageable);
+        } else if (texto != null && !texto.isBlank()) {
             administradores = usuarioRepository
                     .buscarEnGestion(texto, ROL_ADMIN_IDS, pageable);
+        } else if (estado != null && !estado.isBlank()) {
+            administradores = usuarioRepository
+                    .findByRolIdInAndEstadoCuentaAndEliminadoEnIsNull(
+                            ROL_ADMIN_IDS, Usuario.EstadoCuenta.valueOf(estado), pageable);
         } else {
             administradores = usuarioRepository
                     .findByRol_IdInAndEliminadoEnIsNull(ROL_ADMIN_IDS, pageable);
@@ -102,7 +139,7 @@ public class SuperadminController {
                         Usuario::getIdUsuario,
                         admin -> formatearUltimoAcceso(admin.getUltimoAcceso())
                 ));
-
+        model.addAttribute("estado", estado);
         model.addAttribute("ultimoAccesoTexto", ultimoAccesoTexto);
         model.addAttribute("titulo", "Administradores");
         model.addAttribute("currentSection", "superadmin-administradores");
@@ -122,7 +159,8 @@ public class SuperadminController {
                 dominioAutorizadoRepository.findByEstadoTrue());
         model.addAttribute("politica",
                 politicaContrasenaRepository.findById(1).orElse(null));
-
+        model.addAttribute("ultimoAdmin",
+                usuarioRepository.findUltimoAdminCreado(ROL_ADMIN_IDS).orElse(null));
         return "superadmin/administradores";
     }
 
@@ -140,7 +178,7 @@ public class SuperadminController {
         usuario.setCorreo(correoCompleto);
 
         // 1. Validar unicidad de correo
-        if (usuarioRepository.existsByCorreoAndEliminadoEnIsNull(correoCompleto)) {
+        if (usuarioRepository.existsByCorreo(correoCompleto)) {
             redirectAttributes.addFlashAttribute("error",
                     "Ya existe un administrador con ese correo electrónico.");
             return "redirect:/superadmin/administradores";
@@ -197,8 +235,26 @@ public class SuperadminController {
         // 6. Guardar
         usuarioRepository.save(usuario);
 
+        // Enviar correo con credenciales al nuevo administrador
+        try {
+            correoService.enviarCredencialesAdministrador(
+                    correoCompleto,
+                    usuario.getNombres(),
+                    rawPassword
+            );
+        } catch (Exception e) {
+            System.out.println("ERROR al enviar correo: " + e.getMessage());
+        }
+
         redirectAttributes.addFlashAttribute("success",
-                "Administrador creado exitosamente.");
+                "Administrador creado exitosamente. Se envió un correo con las credenciales a " + correoCompleto + ".");
+
+        crearNotificacionSuperadmin(
+                "Nuevo administrador creado",
+                "Se creó el administrador " + correoCompleto + " correctamente.",
+                "ADMIN_CREADO",
+                "/superadmin/administradores"
+        );
         return "redirect:/superadmin/administradores";
     }
 
@@ -247,6 +303,8 @@ public class SuperadminController {
         model.addAttribute("modalEditar", true);
         model.addAttribute("listaDominios",
                 dominioAutorizadoRepository.findByEstadoTrue());
+
+
 
         return "superadmin/administradores";
     }
@@ -304,6 +362,14 @@ public class SuperadminController {
         usuarioRepository.save(admin);
 
         redirectAttributes.addFlashAttribute("success", "Administrador actualizado correctamente.");
+
+        crearNotificacionSuperadmin(
+                "Administrador editado",
+                "Se actualizaron los datos de " + nombres + " " + apellidoPaterno + ".",
+                "ADMIN_EDITADO",
+                "/superadmin/administradores"
+        );
+
         return "redirect:/superadmin/administradores?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
     }
@@ -336,6 +402,13 @@ public class SuperadminController {
         admin.setActualizadoEn(LocalDateTime.now());
         usuarioRepository.save(admin);
 
+        crearNotificacionSuperadmin(
+                estaBloqueado ? "Administrador desbloqueado" : "Administrador bloqueado",
+                (estaBloqueado ? "Se desbloqueó" : "Se bloqueó") + " la cuenta de " + admin.getNombres() + " " + admin.getApellidoPaterno(),
+                "ADMIN_BLOQUEADO",
+                "/superadmin/administradores"
+        );
+
         return "redirect:/superadmin/administradores?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
     }
@@ -362,6 +435,14 @@ public class SuperadminController {
 
         redirectAttributes.addFlashAttribute("success",
                 "Administrador eliminado correctamente.");
+
+        crearNotificacionSuperadmin(
+                "Administrador eliminado",
+                "Se eliminó la cuenta de " + admin.getNombres() + " " + admin.getApellidoPaterno(),
+                "ADMIN_ELIMINADO",
+                "/superadmin/administradores"
+        );
+
         return "redirect:/superadmin/administradores?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
     }
@@ -391,13 +472,75 @@ public class SuperadminController {
 
 
 
-    // Nuevo método para el Estado del Monitor
     @GetMapping("/estadoSistema")
-    public String showEstadoSistema(Model model) {
+    public String showEstadoSistema(Model model,
+                                    org.springframework.security.core.Authentication authentication) {
         model.addAttribute("titulo", "Estado del Sistema");
         model.addAttribute("currentSection", "superadmin-estado-sistema");
-        // Aquí podrías agregar más lógica si necesitas información adicional
-        return "superadmin/estadoSistema"; // Vista del estado del sistema
+
+        // ── Conteos de tablas críticas ────────────────────────────────────
+        model.addAttribute("totalUsuarios",
+                usuarioRepository.countByEliminadoEnIsNull());
+        model.addAttribute("totalRoles",
+                rolRepository.count());
+        model.addAttribute("totalDominios",
+                dominioAutorizadoRepository.count());
+        model.addAttribute("totalNormativas",
+                normativaRepository.count());
+        model.addAttribute("totalEstudios",
+                estudioRepository.count());
+        model.addAttribute("totalNotificaciones",
+                notificacionRepository.count());
+
+        // ── Sesiones y seguridad ──────────────────────────────────────────
+        LocalDateTime inicioDia = LocalDate.now().atStartOfDay();
+        model.addAttribute("sesionesActivas",
+                registroSesionRepository.countSesionesActivas());
+        model.addAttribute("sesionesHoy",
+                registroSesionRepository.countByFechaInicioAfter(inicioDia));
+        model.addAttribute("intentosFallidosHoy",
+                intentoLoginRepository.countByFechaAfterAndExitosoFalse(inicioDia));
+        model.addAttribute("recuperacionesActivas",
+                recuperacionPasswordRepository.countByUsadoFalse());
+        model.addAttribute("solicitudesPendientes",
+                solicitudRegistroRepository.countByEstado("PENDIENTE"));
+
+        // ── Latencia BD ───────────────────────────────────────────────────
+        long t0 = System.currentTimeMillis();
+        rolRepository.count();
+        long latencia = System.currentTimeMillis() - t0;
+        model.addAttribute("dbLatencyMs", latencia);
+        model.addAttribute("dbConexionOk", true);
+
+        // ── Info de despliegue ────────────────────────────────────────────
+        model.addAttribute("appVersion",
+                env.getProperty("app.version", "v1.0.0-dev"));
+        model.addAttribute("buildEnv",
+                env.getProperty("app.env", "LOCAL"));
+        model.addAttribute("javaVersion",
+                System.getProperty("java.version"));
+        model.addAttribute("springVersion",
+                org.springframework.core.SpringVersion.getVersion());
+
+        Usuario superadmin = usuarioRepository
+                .findByCorreoWithRol(authentication.getName()).orElse(null);
+        Long superadminId = superadmin != null ? superadmin.getIdUsuario() : null;
+        // ── Alerta automática si hay muchos intentos fallidos ─────────────────
+        long intentosFallidos = intentoLoginRepository.countByFechaAfterAndExitosoFalse(inicioDia);
+        if (intentosFallidos >= 5 && superadminId != null) {
+            boolean yaExisteAlerta = notificacionRepository
+                    .existsAlertaSistemaHoy(superadminId, "SISTEMA_ALERTA", inicioDia);
+            if (!yaExisteAlerta) {
+                crearNotificacionSuperadmin(
+                        "⚠️ Alerta de seguridad",
+                        "Se detectaron " + intentosFallidos + " intentos de login fallidos hoy. Revisa la actividad del sistema.",
+                        "SISTEMA_ALERTA",
+                        "/superadmin/estadoSistema"
+                );
+            }
+        }
+
+        return "superadmin/estadoSistema";
     }
 
     // Nuevo método para la Configuración de Seguridad
@@ -405,17 +548,27 @@ public class SuperadminController {
     public String showConfSeguridad(
             Model model,
             @RequestParam(defaultValue = "0") int page,
+            @RequestParam(value = "estadoDominio", required = false) String estadoDominio,
             @RequestParam(value = "texto", required = false) String texto
     ) {
         model.addAttribute("titulo", "Configuración de Seguridad");
         model.addAttribute("currentSection", "superadmin-conf-seguridad");
+        model.addAttribute("estadoDominio", estadoDominio);
 
         PageRequest pageable = PageRequest.of(page, 3, Sort.by("fechaRegistro").descending());
+
         Page<DominioAutorizado> dominiosPage;
 
-        if (texto != null && !texto.trim().isEmpty()) {
+        if (texto != null && !texto.isBlank() && estadoDominio != null) {
+            boolean activo = estadoDominio.equals("activo");
+            dominiosPage = dominioAutorizadoRepository
+                    .findByNombreDominioContainingIgnoreCaseAndEstado(texto.trim(), activo, pageable);
+        } else if (texto != null && !texto.isBlank()) {
             dominiosPage = dominioAutorizadoRepository
                     .findByNombreDominioContainingIgnoreCase(texto.trim(), pageable);
+        } else if (estadoDominio != null) {
+            boolean activo = estadoDominio.equals("activo");
+            dominiosPage = dominioAutorizadoRepository.findByEstado(activo, pageable);
         } else {
             dominiosPage = dominioAutorizadoRepository.findAll(pageable);
         }
@@ -478,6 +631,14 @@ public class SuperadminController {
         dominioAutorizadoRepository.save(nuevo);
 
         redirectAttributes.addFlashAttribute("success", "Dominio '" + dominio + "' añadido correctamente.");
+
+        crearNotificacionSuperadmin(
+                "Dominio añadido",
+                "Se añadió el dominio " + dominio + " correctamente.",
+                "DOMINIO_CREADO",
+                "/superadmin/confSeguridad"
+        );
+
         return "redirect:/superadmin/confSeguridad?page=" + page;
     }
 
@@ -578,6 +739,14 @@ public class SuperadminController {
         dominioAutorizadoRepository.deleteById(idDominio);
 
         redirectAttributes.addFlashAttribute("success", "Dominio eliminado correctamente.");
+
+        crearNotificacionSuperadmin(
+                "Dominio eliminado",
+                "Se eliminó el dominio " + idDominio + " del sistema.",
+                "DOMINIO_ELIMINADO",
+                "/superadmin/confSeguridad"
+        );
+
         return "redirect:/superadmin/confSeguridad?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
     }
@@ -604,6 +773,13 @@ public class SuperadminController {
         String accion = nuevoEstado ? "activado" : "desactivado";
         redirectAttributes.addFlashAttribute("success",
                 "Dominio '" + dominio.getNombreDominio() + "' " + accion + " correctamente.");
+
+        crearNotificacionSuperadmin(
+                nuevoEstado ? "Dominio activado" : "Dominio desactivado",
+                "El dominio " + dominio.getNombreDominio() + " fue " + (nuevoEstado ? "activado" : "desactivado") + ".",
+                "DOMINIO_DESACTIVADO",
+                "/superadmin/confSeguridad"
+        );
 
         return "redirect:/superadmin/confSeguridad?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
@@ -650,5 +826,223 @@ public class SuperadminController {
         return "redirect:/superadmin/confSeguridad";
     }
 
+    // ── Exportar Administradores a Excel ─────────────────────────────────────
+    @GetMapping("/administradores/exportar")
+    public void exportarAdministradores(HttpServletResponse response) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=administradores.xlsx");
+
+        List<Usuario> admins = usuarioRepository.findByRolIdInAndEliminadoEnIsNull(ROL_ADMIN_IDS);
+
+        try (org.apache.poi.xssf.usermodel.XSSFWorkbook workbook =
+                     new org.apache.poi.xssf.usermodel.XSSFWorkbook()) {
+
+            org.apache.poi.xssf.usermodel.XSSFSheet sheet =
+                    workbook.createSheet("Administradores");
+
+            // Estilos
+            org.apache.poi.xssf.usermodel.XSSFCellStyle headerStyle =
+                    workbook.createCellStyle();
+            org.apache.poi.xssf.usermodel.XSSFFont headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
+            headerStyle.setFillForegroundColor(
+                    new org.apache.poi.xssf.usermodel.XSSFColor(
+                            new byte[]{(byte)65, (byte)102, (byte)86}, null));
+            headerStyle.setFillPattern(
+                    org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
+            org.apache.poi.xssf.usermodel.XSSFFont whiteFont = workbook.createFont();
+            whiteFont.setColor(org.apache.poi.ss.usermodel.IndexedColors.WHITE.getIndex());
+            whiteFont.setBold(true);
+            headerStyle.setFont(whiteFont);
+
+            // Cabecera
+            org.apache.poi.ss.usermodel.Row header = sheet.createRow(0);
+            String[] cols = {"ID", "Nombres", "Apellido Paterno", "Apellido Materno",
+                    "Correo", "DNI", "Teléfono", "Estado", "Último Acceso"};
+            for (int i = 0; i < cols.length; i++) {
+                org.apache.poi.ss.usermodel.Cell cell = header.createCell(i);
+                cell.setCellValue(cols[i]);
+                cell.setCellStyle(headerStyle);
+                sheet.setColumnWidth(i, 5000);
+            }
+
+            // Datos
+            int rowNum = 1;
+            for (Usuario admin : admins) {
+                org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(admin.getIdUsuario());
+                row.createCell(1).setCellValue(admin.getNombres());
+                row.createCell(2).setCellValue(admin.getApellidoPaterno());
+                row.createCell(3).setCellValue(
+                        admin.getApellidoMaterno() != null ? admin.getApellidoMaterno() : "");
+                row.createCell(4).setCellValue(admin.getCorreo());
+                row.createCell(5).setCellValue(
+                        admin.getDni() != null ? admin.getDni() : "");
+                row.createCell(6).setCellValue(
+                        admin.getTelefono() != null ? admin.getTelefono() : "");
+                row.createCell(7).setCellValue(admin.getEstadoCuenta().name());
+                row.createCell(8).setCellValue(
+                        admin.getUltimoAcceso() != null
+                                ? admin.getUltimoAcceso().toString() : "Sin registro");
+            }
+
+            workbook.write(response.getOutputStream());
+        }
+    }
+
+    // ── Exportar Dominios a Excel ─────────────────────────────────────────────
+    @GetMapping("/confSeguridad/exportar")
+    public void exportarDominios(HttpServletResponse response) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=dominios.xlsx");
+
+        List<DominioAutorizado> dominios = dominioAutorizadoRepository.findAll();
+
+        try (org.apache.poi.xssf.usermodel.XSSFWorkbook workbook =
+                     new org.apache.poi.xssf.usermodel.XSSFWorkbook()) {
+
+            org.apache.poi.xssf.usermodel.XSSFSheet sheet =
+                    workbook.createSheet("Dominios");
+
+            // Cabecera
+            org.apache.poi.ss.usermodel.Row header = sheet.createRow(0);
+            String[] cols = {"ID", "Dominio", "Estado", "Fecha Registro", "Añadido Por"};
+            for (int i = 0; i < cols.length; i++) {
+                org.apache.poi.ss.usermodel.Cell cell = header.createCell(i);
+                cell.setCellValue(cols[i]);
+                sheet.setColumnWidth(i, 5000);
+            }
+
+            // Datos
+            int rowNum = 1;
+            for (DominioAutorizado dom : dominios) {
+                org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(dom.getIdDominio());
+                row.createCell(1).setCellValue(dom.getNombreDominio());
+                row.createCell(2).setCellValue(Boolean.TRUE.equals(dom.getEstado()) ? "ACTIVO" : "INACTIVO");
+                row.createCell(3).setCellValue(
+                        dom.getFechaRegistro() != null
+                                ? dom.getFechaRegistro().toString() : "");
+                row.createCell(4).setCellValue(
+                        dom.getUsuarioCreador() != null
+                                ? dom.getUsuarioCreador().getNombres() + " "
+                                + dom.getUsuarioCreador().getApellidoPaterno() : "");
+            }
+
+            workbook.write(response.getOutputStream());
+        }
+    }
+    private void crearNotificacionSuperadmin(String titulo, String mensaje,
+                                             String tipo, String enlace) {
+        try {
+            // Buscar al superadmin (rol id = 1)
+            List<Integer> rolSuperadmin = List.of(1);
+            usuarioRepository.findByRolIdInAndEliminadoEnIsNull(rolSuperadmin)
+                    .forEach(superadmin -> {
+                        Notificacion n = new Notificacion();
+                        n.setUsuario(superadmin);
+                        n.setTitulo(titulo);
+                        n.setMensaje(mensaje);
+                        n.setTipo(tipo);
+                        n.setEnlaceReferencia(enlace);
+                        n.setLeido(false);
+                        n.setFecha(LocalDateTime.now());
+                        notificacionRepository.save(n);
+                    });
+        } catch (Exception e) {
+            System.out.println("ERROR notificación: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+    }
+
+    @GetMapping("/notificaciones")
+    public String showNotificaciones(Model model,
+                                     org.springframework.security.core.Authentication authentication) {
+        Usuario superadmin = usuarioRepository
+                .findByCorreoWithRol(authentication.getName()).orElse(null);
+        if (superadmin == null) return "redirect:/superadmin/dashboard";
+
+        List<Notificacion> notificaciones = notificacionRepository
+                .findByUsuarioIdOrderByFechaDesc(superadmin.getIdUsuario());
+
+        // Formatear tiempo relativo
+        LocalDateTime now = LocalDateTime.now();
+        List<java.util.Map<String, Object>> notificacionesVm = notificaciones.stream()
+                .map(n -> {
+                    java.util.Map<String, Object> vm = new java.util.HashMap<>();
+                    vm.put("titulo", n.getTitulo());
+                    vm.put("mensaje", n.getMensaje());
+                    vm.put("tipo", n.getTipo());
+                    vm.put("leido", n.getLeido());
+                    vm.put("enlace", n.getEnlaceReferencia());
+                    vm.put("fecha", n.getFecha());
+                    vm.put("id", n.getIdNotificacion());
+                    vm.put("tiempo", formatearUltimoAcceso(n.getFecha()));
+                    // Etiqueta legible por tipo
+                    String etiqueta = switch (n.getTipo() != null ? n.getTipo() : "") {
+                        case "ADMIN_CREADO"       -> "Nuevo administrador";
+                        case "ADMIN_BLOQUEADO"    -> "Admin bloqueado";
+                        case "ADMIN_ELIMINADO"    -> "Admin eliminado";
+                        case "DOMINIO_CREADO"     -> "Dominio añadido";
+                        case "DOMINIO_DESACTIVADO"-> "Dominio desactivado";
+                        case "SOLICITUD"          -> "Solicitud pendiente";
+                        case "ADMIN_EDITADO"          -> "Admin editado";
+                        case "DOMINIO_ELIMINADO"      -> "Dominio eliminado";
+                        case "SISTEMA_ALERTA" -> "Alerta del sistema";
+                        default                  -> "Sistema";
+                    };
+                    vm.put("etiqueta", etiqueta);
+                    return vm;
+                })
+                .toList();
+
+        model.addAttribute("notificaciones", notificacionesVm);
+        model.addAttribute("totalNoLeidas",
+                notificacionRepository.countNoLeidasByUsuario(superadmin.getIdUsuario()));
+        model.addAttribute("titulo", "Notificaciones");
+        model.addAttribute("currentSection", "superadmin-notificaciones");
+        return "superadmin/notificaciones";
+    }
+
+    @PostMapping("/notificaciones/marcar-leidas")
+    @Transactional
+    public String marcarTodasLeidas(
+            org.springframework.security.core.Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+        Usuario superadmin = usuarioRepository
+                .findByCorreoWithRol(authentication.getName()).orElse(null);
+        if (superadmin != null) {
+            notificacionRepository
+                    .findByUsuarioIdOrderByFechaDesc(superadmin.getIdUsuario())
+                    .forEach(n -> {
+                        n.setLeido(true);
+                        notificacionRepository.save(n);
+                    });
+        }
+        redirectAttributes.addFlashAttribute("success", "Todas las notificaciones marcadas como leídas.");
+        return "redirect:/superadmin/notificaciones";
+    }
+
+
+    @PostMapping("/notificaciones/marcar-leida/{id}")
+    public String marcarLeida(@PathVariable Long id,
+                              org.springframework.security.core.Authentication authentication,
+                              RedirectAttributes redirectAttributes) {
+        Usuario superadmin = usuarioRepository
+                .findByCorreoWithRol(authentication.getName()).orElse(null);
+        if (superadmin == null) return "redirect:/superadmin/notificaciones";
+
+        notificacionRepository.findById(id).ifPresent(n -> {
+            if (n.getUsuario().getIdUsuario().equals(superadmin.getIdUsuario())) {
+                n.setLeido(true);
+                notificacionRepository.save(n);
+            }
+        });
+
+        redirectAttributes.addFlashAttribute("success", "Notificación marcada como leída.");
+        return "redirect:/superadmin/notificaciones";
+    }
 
 }

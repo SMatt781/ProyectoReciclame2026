@@ -77,31 +77,49 @@
       <div class="space-y-6">
         <div class="space-y-3">
           <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Temática Principal</label>
-          <div class="grid grid-cols-3 md:flex md:flex-wrap gap-2">
-            <button class="px-4 py-3 rounded-xl border border-gray-100 bg-[#f8faff] text-gray-400 flex flex-col items-center justify-center transition-all hover:bg-white hover:border-[#059669] group">
-              <span class="font-bold text-sm text-gray-600">EC</span>
-              <span class="text-[8px] uppercase tracking-tighter mt-1">E. Circular</span>
-            </button>
-            <button class="px-4 py-3 rounded-xl border-2 border-[#059669] bg-white text-[#059669] flex flex-col items-center justify-center relative transition-all">
-              <span class="font-black text-sm">GR</span>
-              <span class="text-[8px] font-bold uppercase tracking-tighter mt-1">G. Residuos</span>
-              <div class="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[#059669] rounded-full flex items-center justify-center">
-                <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"></path></svg>
-              </div>
-            </button>
-            <button class="px-4 py-3 rounded-xl border border-gray-100 bg-[#f8faff] text-gray-400 flex flex-col items-center justify-center transition-all">
-              <span class="font-bold text-sm text-gray-600">EE</span>
-              <span class="text-[8px] uppercase tracking-tighter mt-1">E. Eficiente</span>
-            </button>
-            <button class="px-4 py-3 rounded-xl border border-gray-100 bg-[#f8faff] text-gray-400 flex flex-col items-center justify-center transition-all">
-              <span class="font-bold text-sm text-gray-600">REP</span>
-              <span class="text-[8px] uppercase tracking-tighter mt-1">Resp. Ext</span>
-            </button>
-            <button class="px-4 py-3 rounded-xl border border-gray-100 bg-[#f8faff] text-gray-400 flex flex-col items-center justify-center transition-all">
-              <span class="font-bold text-sm text-gray-600">...</span>
-              <span class="text-[8px] uppercase tracking-tighter mt-1">Otro</span>
-            </button>
-          </div>
+            <div class="grid grid-cols-3 md:flex md:flex-wrap gap-2">
+
+                <label class="cursor-pointer">
+                    <input type="checkbox" name="categorias" value="1" class="peer hidden">
+                    <div class="px-4 py-3 rounded-xl border border-gray-100 bg-[#f8faff] text-gray-400 flex flex-col items-center justify-center transition-all hover:bg-white hover:border-[#059669] peer-checked:border-2 peer-checked:border-[#059669] peer-checked:bg-white peer-checked:text-[#059669]">
+                        <span class="font-bold text-sm">EC</span>
+                        <span class="text-[8px] uppercase tracking-tighter mt-1">E. Circular</span>
+                    </div>
+                </label>
+
+                <label class="cursor-pointer">
+                    <input type="checkbox" name="categorias" value="2" class="peer hidden">
+                    <div class="px-4 py-3 rounded-xl border-2 border-[#059669] bg-white text-[#059669] flex flex-col items-center justify-center relative">
+                        <span class="font-black text-sm">GR</span>
+                        <span class="text-[8px] font-bold uppercase tracking-tighter mt-1">G. Residuos</span>
+                    </div>
+                </label>
+
+                <label class="cursor-pointer">
+                    <input type="checkbox" name="categorias" value="3" class="peer hidden">
+                    <div class="px-4 py-3 rounded-xl border border-gray-100 bg-[#f8faff] text-gray-400 flex flex-col items-center justify-center transition-all peer-checked:border-2 peer-checked:border-[#059669] peer-checked:bg-white peer-checked:text-[#059669]">
+                        <span class="font-bold text-sm">EE</span>
+                        <span class="text-[8px] uppercase tracking-tighter mt-1">E. Eficiente</span>
+                    </div>
+                </label>
+
+                <label class="cursor-pointer">
+                    <input type="checkbox" name="categorias" value="4" class="peer hidden">
+                    <div class="px-4 py-3 rounded-xl border border-gray-100 bg-[#f8faff] text-gray-400 flex flex-col items-center justify-center transition-all peer-checked:border-2 peer-checked:border-[#059669] peer-checked:bg-white peer-checked:text-[#059669]">
+                        <span class="font-bold text-sm">REP</span>
+                        <span class="text-[8px] uppercase tracking-tighter mt-1">Resp. Ext</span>
+                    </div>
+                </label>
+
+                <label class="cursor-pointer">
+                    <input type="checkbox" name="categorias" value="5" class="peer hidden">
+                    <div class="px-4 py-3 rounded-xl border border-gray-100 bg-[#f8faff] text-gray-400 flex flex-col items-center justify-center transition-all peer-checked:border-2 peer-checked:border-[#059669] peer-checked:bg-white peer-checked:text-[#059669]">
+                        <span class="font-bold text-sm">...</span>
+                        <span class="text-[8px] uppercase tracking-tighter mt-1">Otro</span>
+                    </div>
+                </label>
+
+            </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="space-y-2">
@@ -140,29 +158,57 @@
         <div class="w-1 h-5 bg-[#059669] rounded-full"></div>
         <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Alcance Geográfico</h2>
       </header>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="p-4 rounded-xl border-2 border-[#059669] bg-[#f0f9f6] flex items-center gap-4 cursor-pointer relative">
-          <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-[#059669] shadow-sm">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-          </div>
-          <div>
-            <h3 class="text-sm font-bold text-gray-800">Nacional</h3>
-            <p class="text-[10px] text-gray-500 uppercase font-medium">Territorio Local</p>
-          </div>
-          <div class="ml-auto w-5 h-5 bg-[#059669] rounded-full flex items-center justify-center">
-            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
-          </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <!-- NACIONAL -->
+            <label class="cursor-pointer">
+                <input type="radio" name="alcance" value="NACIONAL" class="peer hidden" checked>
+
+                <div class="p-4 rounded-xl border-2 border-[#059669] bg-[#f0f9f6] flex items-center gap-4 cursor-pointer relative peer-checked:border-[#059669] peer-checked:bg-[#f0f9f6]">
+
+                    <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-[#059669] shadow-sm">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012 2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-800">Nacional</h3>
+                        <p class="text-[10px] text-gray-500 uppercase font-medium">Territorio Local</p>
+                    </div>
+
+                    <div class="ml-auto w-5 h-5 bg-[#059669] rounded-full flex items-center justify-center">
+                        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+                        </svg>
+                    </div>
+
+                </div>
+            </label>
+
+            <!-- INTERNACIONAL -->
+            <label class="cursor-pointer">
+                <input type="radio" name="alcance" value="INTERNACIONAL" class="peer hidden">
+
+                <div class="p-4 rounded-xl border border-gray-100 bg-[#f8faff] flex items-center gap-4 cursor-pointer hover:bg-white hover:border-gray-200 transition-all peer-checked:border-2 peer-checked:border-[#059669] peer-checked:bg-[#f0f9f6]">
+
+                    <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-gray-400 shadow-sm">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-400">Internacional</h3>
+                        <p class="text-[10px] text-gray-400 uppercase font-medium">Tratados / Global</p>
+                    </div>
+
+                </div>
+            </label>
+
         </div>
-        <div class="p-4 rounded-xl border border-gray-100 bg-[#f8faff] flex items-center gap-4 cursor-pointer hover:bg-white hover:border-gray-200 transition-all">
-          <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-gray-400 shadow-sm">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-          </div>
-          <div>
-            <h3 class="text-sm font-bold text-gray-400">Internacional</h3>
-            <p class="text-[10px] text-gray-400 uppercase font-medium">Tratados / Global</p>
-          </div>
-        </div>
-      </div>
     </section>
     <!-- Section: Acceso al Documento (Merged from IMAGE_3) -->
     <section class="space-y-6 pt-2">

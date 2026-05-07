@@ -1,33 +1,149 @@
 package com.example.proyectoreciclame.Controller;
 
+import com.example.proyectoreciclame.Dto.EstudioDTO;
 import com.example.proyectoreciclame.Dto.NormativaDTO;
 import com.example.proyectoreciclame.Dto.NormativaDetalleDTO;
+import com.example.proyectoreciclame.Entity.Estudio;
 import com.example.proyectoreciclame.Entity.Normativa;
+import com.example.proyectoreciclame.Repository.EstudioRepository;
 import com.example.proyectoreciclame.Repository.NormativaRepository;
+import com.example.proyectoreciclame.Repository.RegistroDescargaRepository;
 import com.example.proyectoreciclame.Service.NormativaService;
+import com.example.proyectoreciclame.util.PaginationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/normativas")
-public class NormativaController {
+@RequestMapping("/visualizador")
+public class VisualizadorController {
+
+    @Autowired
+    private EstudioRepository estudioRepository;
 
     @Autowired
     private NormativaRepository normativaRepository;
-    
+
     @Autowired
     private NormativaService normativaService;
 
+    @Autowired
+    private RegistroDescargaRepository registroDescargaRepository;
+
     @GetMapping
+    public String inicio(Model model) {
+        model.addAttribute("currentPage", "visualizador");
+        return "visualizador/index";
+    }
+
+    @GetMapping("/estudios")
+    public String listarEstudios(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false, name = "yearSelect") Integer anio,
+            @RequestParam(required = false, name = "dateStart") String dateStartStr,
+            @RequestParam(required = false, name = "dateEnd") String dateEndStr,
+            @RequestParam(required = false) List<String> format,
+            @RequestParam(required = false) List<String> estado,
+            @RequestParam(defaultValue = "0") int page,
+            Model model) {
+
+        List<EstudioDTO> estudiosFiltrados;
+
+        if (search != null && !search.trim().isEmpty()) {
+            estudiosFiltrados = estudioRepository.findByTituloContainingIgnoreCaseDTO(search.trim());
+
+        } else if (anio != null
+                || (dateStartStr != null && !dateStartStr.isBlank())
+                || (dateEndStr != null && !dateEndStr.isBlank())
+                || (format != null && !format.isEmpty())
+                || (estado != null && !estado.isEmpty())) {
+
+            LocalDate dateStart = (dateStartStr != null && !dateStartStr.isBlank())
+                    ? LocalDate.parse(dateStartStr)
+                    : null;
+
+            LocalDate dateEnd = (dateEndStr != null && !dateEndStr.isBlank())
+                    ? LocalDate.parse(dateEndStr)
+                    : null;
+
+            boolean hasFormatos = format != null && !format.isEmpty();
+            boolean hasEstados = estado != null && !estado.isEmpty();
+
+            estudiosFiltrados = estudioRepository.findWithAdvancedFiltersDTO(
+                    anio,
+                    dateStart,
+                    dateEnd,
+                    hasFormatos,
+                    hasFormatos ? format : List.of(),
+                    hasEstados,
+                    hasEstados ? estado : List.of()
+            );
+
+        } else {
+            estudiosFiltrados = estudioRepository.findAllEstudioDTO();
+        }
+
+        int pageSize = 6;
+
+        Page<EstudioDTO> paginaEstudios = paginarLista(estudiosFiltrados, page, pageSize);
+
+        model.addAttribute("estudios", paginaEstudios.getContent());
+        model.addAttribute("currentPage", "visualizadorEstudios");
+
+        model.addAttribute("page", page);
+        model.addAttribute("totalPages", paginaEstudios.getTotalPages());
+        model.addAttribute("hasPrevious", paginaEstudios.hasPrevious());
+        model.addAttribute("hasNext", paginaEstudios.hasNext());
+
+        model.addAttribute(
+                "pageNumbers",
+                PaginationUtils.buildPageNumbers(page, paginaEstudios.getTotalPages())
+        );
+
+        model.addAttribute("search", search);
+        model.addAttribute("anioSeleccionado", anio);
+        model.addAttribute("dateStart", dateStartStr);
+        model.addAttribute("dateEnd", dateEndStr);
+        model.addAttribute("formatosSeleccionados", format);
+        model.addAttribute("estadosSeleccionados", estado);
+
+        // Metrics for visualizador
+        long totalEstudios = estudioRepository.countByEliminadoEnIsNull();
+        LocalDate limiteRecientes = LocalDate.now().minusDays(30);
+        long estudiosRecientes = estudioRepository.countByFechaPublicacionAfterAndEliminadoEnIsNull(limiteRecientes);
+        String anioMasActivo = resolveAnioMasActivo();
+
+        model.addAttribute("totalEstudios", totalEstudios);
+        model.addAttribute("estudiosRecientes", estudiosRecientes);
+        model.addAttribute("anioMasActivo", anioMasActivo);
+
+        return "visualizador/estudios";
+    }
+
+    @GetMapping("/estudios/{id}")
+    public String verEstudio(@PathVariable Long id, Model model) {
+        Estudio estudio = estudioRepository.findById(id).orElse(null);
+
+        if (estudio == null) {
+            return "redirect:/visualizador/estudios";
+        }
+
+        model.addAttribute("estudio", estudio);
+        model.addAttribute("currentPage", "visualizadorEstudios");
+
+        return "visualizador/visualizadorEstudio";
+    }
+
+    @GetMapping("/normativas")
     public String listarNormativas(
             @RequestParam(required = false) String search,
             @RequestParam(required = false, name = "yearSelect") Integer anio,
@@ -35,7 +151,6 @@ public class NormativaController {
             @RequestParam(required = false) String dateEnd,
             @RequestParam(required = false) List<String> categoria,
             @RequestParam(required = false) List<String> estado,
-            @RequestParam(required = false) List<String> acceso,
             @RequestParam(required = false) List<String> alcance,
             @RequestParam(required = false) List<String> obligatoriedad,
             Model model) {
@@ -44,16 +159,14 @@ public class NormativaController {
 
         boolean hasCategoriaParam = categoria != null && !categoria.isEmpty();
         boolean hasEstadoParam = estado != null && !estado.isEmpty();
-        boolean hasAccesoParam = acceso != null && !acceso.isEmpty();
         boolean hasAlcanceParam = alcance != null && !alcance.isEmpty();
         boolean hasObligatoriedadParam = obligatoriedad != null && !obligatoriedad.isEmpty();
 
         if (search != null && !search.trim().isEmpty()) {
             normativas = normativaRepository.findByKeyword(search);
-        } else if (anio != null || hasEstadoParam || hasAccesoParam || hasAlcanceParam || hasCategoriaParam || hasObligatoriedadParam || dateStart != null || dateEnd != null) {
+        } else if (anio != null || hasEstadoParam || hasAlcanceParam || hasCategoriaParam || hasObligatoriedadParam || dateStart != null || dateEnd != null) {
             boolean hasAnio = anio != null;
             boolean hasEstados = hasEstadoParam;
-            boolean hasAccesos = hasAccesoParam;
             boolean hasAlcance = hasAlcanceParam;
             boolean hasObligatoriedad = hasObligatoriedadParam;
             boolean hasCategoria = hasCategoriaParam;
@@ -72,8 +185,8 @@ public class NormativaController {
                 estado = estado.stream().map(e -> e.replace(" ", "_")).collect(Collectors.toList());
             }
 
-            normativas = normativaRepository.findWithAdvancedFilters(hasAnio, anio, fechaInicio, fechaFin, hasEstados, estado, hasAccesos,
-                    acceso, hasAlcance, alcance, hasObligatoriedad, obligatoriedad, hasCategoria, categoria);
+            normativas = normativaRepository.findWithAdvancedFilters(hasAnio, anio, fechaInicio, fechaFin, hasEstados, estado, false,
+                    null, hasAlcance, alcance, hasObligatoriedad, obligatoriedad, hasCategoria, categoria);
         } else {
             normativas = normativaRepository.findAllNormativas();
         }
@@ -83,6 +196,8 @@ public class NormativaController {
                 .collect(Collectors.toList());
 
         int totalNormas = normativasDTO.size();
+
+        // Calculate metrics for donut chart
         long countEc = normativasDTO.stream()
                 .filter(n -> n.categorias() != null && n.categorias().stream()
                         .anyMatch(c -> c.equalsIgnoreCase("Economía circular")))
@@ -136,8 +251,7 @@ public class NormativaController {
         String dashRep = (donutPctRep / 100.0 * circumference) + " " + (circumference - (donutPctRep / 100.0 * circumference));
         String dashOtro = (donutPctOtro / 100.0 * circumference) + " " + (circumference - (donutPctOtro / 100.0 * circumference));
 
-        // CHarts logic
-
+        // Calculate metrics for stacked bars
         long nacVigente = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "VIGENTE".equalsIgnoreCase(n.estado())).count();
         long nacPublicada = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "PUBLICADA".equalsIgnoreCase(n.estado())).count();
         long nacConsulta = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "CONSULTA PUBLICA".equalsIgnoreCase(n.estado())).count();
@@ -161,7 +275,7 @@ public class NormativaController {
         long pagoTotal = pagoNac + pagoInt;
 
         model.addAttribute("normativas", normativasDTO);
-        model.addAttribute("currentPage", "repoNormativo");
+        model.addAttribute("currentPage", "visualizadorRepoNormativo");
         model.addAttribute("totalNormas", totalNormas);
         model.addAttribute("countEc", countEc);
         model.addAttribute("countGr", countGr);
@@ -211,45 +325,65 @@ public class NormativaController {
         model.addAttribute("pagoInt", pagoInt);
         model.addAttribute("pagoTotal", pagoTotal);
 
-        // Return filter params so we can retain them in the UI
         model.addAttribute("searchQuery", search);
         model.addAttribute("selectedYear", anio);
         model.addAttribute("dateStart", dateStart);
         model.addAttribute("dateEnd", dateEnd);
         model.addAttribute("selectedCategorias", categoria);
         model.addAttribute("selectedEstados", estado);
-        model.addAttribute("selectedAccesos", acceso);
         model.addAttribute("selectedAlcances", alcance);
         model.addAttribute("selectedObligatoriedades", obligatoriedad);
 
-        return "socio/repoNormativo";
+        return "visualizador/normativas";
     }
 
-    @GetMapping("/{id}")
-    public String verNormativa(@org.springframework.web.bind.annotation.PathVariable Long id, Model model) {
+    @GetMapping("/normativas/{id}")
+    public String verNormativa(@PathVariable Long id, Model model) {
         NormativaDetalleDTO detalle = normativaService.obtenerDetalleConContexto(id);
         if (detalle == null || detalle.getNormativa() == null) {
-            return "redirect:/normativas";
+            return "redirect:/visualizador/normativas";
         }
 
         model.addAttribute("detalle", detalle);
         model.addAttribute("normativa", detalle.getNormativa());
-        model.addAttribute("currentPage", "repoNormativo");
+        model.addAttribute("currentPage", "visualizadorRepoNormativo");
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean esVisualizador = authentication != null && authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_VISUALIZADOR"));
+        return "visualizador/visualizadorNormativa";
+    }
 
-        if (esVisualizador) {
-            if (detalle.getNormativa().getAcceso() == Normativa.AccesoNormativa.PAGO) {
-                return "socio/visualizadorNormativaPago";
-            } else {
-                return "visualizador/visualizadorNormativa";
-            }
-        } else if (detalle.getNormativa().getAcceso() == Normativa.AccesoNormativa.PAGO) {
-            return "socio/visualizadorNormativaPago";
-        } else {
-            return "socio/visualizadorNormativa";
+    private String resolveAnioMasActivo() {
+        List<Object[]> resultados = estudioRepository.findActiveYearsByPublicacion();
+
+        if (resultados == null || resultados.isEmpty() || resultados.get(0)[0] == null) {
+            return "Sin datos";
         }
+
+        return String.valueOf(resultados.get(0)[0]);
+    }
+
+    private Page<EstudioDTO> paginarLista(List<EstudioDTO> lista, int page, int pageSize) {
+        if (lista == null || lista.isEmpty()) {
+            return new PageImpl<>(List.of(), PageRequest.of(0, pageSize), 0);
+        }
+
+        int total = lista.size();
+        int totalPages = (int) Math.ceil((double) total / pageSize);
+
+        if (page < 0) {
+            page = 0;
+        }
+
+        if (page >= totalPages) {
+            page = totalPages - 1;
+        }
+
+        Pageable pageable = PageRequest.of(page, pageSize);
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageSize, total);
+
+        List<EstudioDTO> contenido = lista.subList(start, end);
+
+        return new PageImpl<>(contenido, pageable, total);
     }
 }

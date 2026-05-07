@@ -65,7 +65,8 @@
             </a>
         </div>
 
-        <div th:if="${usuarioRol == null or #strings.equalsIgnoreCase(usuarioRol,'SOCIO') or #strings.equalsIgnoreCase(usuarioRol,'VISUALIZADOR')}">
+        <!-- Socio Navigation -->
+        <div th:if="${usuarioRol == null or #strings.equalsIgnoreCase(usuarioRol,'SOCIO')}">
             <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
                th:classappend="${currentPage == 'inicio'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
                th:href="@{/socio}">
@@ -85,6 +86,32 @@
             <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
                th:classappend="${currentPage == 'repoNormativo'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
                th:href="@{/normativas}">
+                <div th:replace="~{fragments/icons.html :: icon-normativas-sidebar}"></div>
+                Repositorio Normativo
+            </a>
+        </div>
+
+        <!-- Visualizador Navigation -->
+        <div th:if="${#strings.equalsIgnoreCase(usuarioRol,'VISUALIZADOR')}">
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+               th:classappend="${currentPage == 'visualizador'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+               th:href="@{/visualizador}">
+                <svg class="w-5 h-5 text-current flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                </svg>
+                Inicio
+            </a>
+
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+               th:classappend="${currentPage == 'visualizadorEstudios'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+               th:href="@{/visualizador/estudios}">
+                <div th:replace="~{fragments/icons.html :: icon-estudios-sidebar}"></div>
+                Estudios
+            </a>
+
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+               th:classappend="${currentPage == 'visualizadorRepoNormativo'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+               th:href="@{/visualizador/normativas}">
                 <div th:replace="~{fragments/icons.html :: icon-normativas-sidebar}"></div>
                 Repositorio Normativo
             </a>
@@ -153,7 +180,7 @@
                 </button>
             </header>
 
-            <form th:action="@{/admin/estudio_new}" method="post" class="flex flex-col max-h-[90vh] overflow-hidden text-left">
+            <form id="formEstudio" th:action="@{/admin/estudio_new}" method="post" enctype="multipart/form-data" class="flex flex-col max-h-[90vh] overflow-hidden text-left">
                 <div class="overflow-y-auto px-6 py-8 flex flex-col gap-10">
 
                     <section class="space-y-4">
@@ -165,18 +192,18 @@
                         <div class="space-y-6">
                             <div class="space-y-2">
                                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Nombre del Estudio</label>
-                                <input name="nombre" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300" placeholder="Ej. Análisis de Ciclo de Vida Textil" type="text"/>
+                                <input id="estudioNombre" name="nombre" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300" placeholder="Ej. Análisis de Ciclo de Vida Textil" type="text"/>
                             </div>
 
                             <div class="space-y-2">
                                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Objetivo / Descripción</label>
-                                <textarea name="descripcion" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all resize-none placeholder:text-gray-300" placeholder="Define el propósito y alcance de este nuevo estudio..." rows="3"></textarea>
+                                <textarea id="estudioDescripcion" name="descripcion" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all resize-none placeholder:text-gray-300" placeholder="Define el propósito y alcance de este nuevo estudio..." rows="3"></textarea>
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div class="space-y-2">
                                     <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Año</label>
-                                    <select name="anio" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                    <select id="estudioAnio" name="anio" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
                                         <option>2024</option>
                                         <option>2023</option>
                                         <option>2022</option>
@@ -185,9 +212,23 @@
 
                                 <div class="space-y-2">
                                     <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Formato</label>
-                                    <select name="formato" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                    <select id="estudioFormato" name="formato" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
                                         <option>Reporte Técnico (PDF)</option>
                                         <option>Planilla de Datos (XLSX)</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                                        Estado
+                                    </label>
+
+                                    <select id="estudioEstado" name="estado"
+                                            class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+
+                                        <option value="VIGENTE">Vigente</option>
+                                        <option value="BORRADOR">Borrador</option>
+                                        <option value="DEROGADO">Derogado</option>
+
                                     </select>
                                 </div>
                             </div>
@@ -250,35 +291,38 @@
                 </svg>
             </button>
 
-            <h2 class="text-2xl font-headline font-bold text-on-primary-fixed mb-6">Nueva Normativa</h2>
-
-            <form th:action="@{/admin/repo_new}" method="post" class="space-y-8">
+            <h2 id="tituloModalNormativa"
+                class="text-2xl font-headline font-bold text-on-primary-fixed mb-6">
+                Nueva Normativa
+            </h2>
+            <form id="formNormativa" th:action="@{/admin/repo_new}" method="post" class="space-y-8" onsubmit="return validarNormativaForm()">
 
                 <section>
                     <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Identificación</h3>
                     <div class="space-y-4">
                         <div>
                             <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Nombre de la Normativa</label>
-                            <input name="titulo" type="text" placeholder="Ej: Ley de Fomento a la Economía Circular"
-                                   class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 bg-surface-container-low text-sm" />
+                            <input id="normativaTitulo" name="titulo" type="text" required minlength="5"
+                                   placeholder="Ej: Ley de Fomento a la Economía Circular"
+                                   class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 bg-surface-container-low text-sm"/>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
                             <div class="md:col-span-6">
                                 <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Organismo / Ministerio</label>
-                                <input name="organismoEmisor" type="text" placeholder="Ej. Ministerio de Ambiente"
+                                <input id="normativaOrganismo" name="organismoEmisor" type="text" required minlength="3" placeholder="Ej. Ministerio de Ambiente"
                                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 bg-surface-container-low text-sm" />
                             </div>
 
                             <div class="md:col-span-3">
                                 <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Código</label>
-                                <input name="codigo" type="text" placeholder="N° 21.325"
+                                <input id="normativaCodigo" name="codigo" type="text" required minlength="2" placeholder="N° 21.325"
                                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 bg-surface-container-low text-sm" />
                             </div>
 
                             <div class="md:col-span-3">
                                 <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Año</label>
-                                <select name="anio"
+                                <select id="normativaAnio" name="anio" required
                                         class="w-full appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
                                     <option>2024</option>
                                     <option>2023</option>
@@ -293,21 +337,73 @@
 
                 <section>
                     <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Clasificación</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    <!-- TEMÁTICA PRINCIPAL -->
+                    <div class="mb-6">
+                        <label class="block text-xs font-bold text-on-surface-variant uppercase mb-2">Temática Principal</label>
+
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                            <label class="cursor-pointer">
+                                <input type="checkbox" name="categorias" value="1" class="peer hidden">
+                                <div class="px-4 py-3 rounded-lg border border-outline-variant/30 bg-surface-container-low text-center peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                    <p class="font-black text-secondary">EC</p>
+                                    <p class="text-[10px] font-bold uppercase text-on-surface-variant">E. Circular</p>
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer">
+                                <input type="checkbox" name="categorias" value="2" class="peer hidden">
+                                <div class="px-4 py-3 rounded-lg border border-outline-variant/30 bg-surface-container-low text-center peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                    <p class="font-black text-secondary">GR</p>
+                                    <p class="text-[10px] font-bold uppercase text-on-surface-variant">G. Residuos</p>
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer">
+                                <input type="checkbox" name="categorias" value="3" class="peer hidden">
+                                <div class="px-4 py-3 rounded-lg border border-outline-variant/30 bg-surface-container-low text-center peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                    <p class="font-black text-secondary">EE</p>
+                                    <p class="text-[10px] font-bold uppercase text-on-surface-variant">E. Eficiente</p>
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer">
+                                <input type="checkbox" name="categorias" value="4" class="peer hidden">
+                                <div class="px-4 py-3 rounded-lg border border-outline-variant/30 bg-surface-container-low text-center peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                    <p class="font-black text-secondary">REP</p>
+                                    <p class="text-[10px] font-bold uppercase text-on-surface-variant">Resp. Ext</p>
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer">
+                                <input type="checkbox" name="categorias" value="5" class="peer hidden">
+                                <div class="px-4 py-3 rounded-lg border border-outline-variant/30 bg-surface-container-low text-center peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                    <p class="font-black text-secondary">...</p>
+                                    <p class="text-[10px] font-bold uppercase text-on-surface-variant">Otro</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- TIPO Y ESTADO -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Tipo de Norma</label>
-                            <select name="tipoNorma"
+                            <select id="normativaTipo" name="tipoNorma" required
                                     class="w-full appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
                                 <option value="DECRETO_LEY">Decreto Ley</option>
                                 <option value="LEY_NACIONAL">Ley Nacional</option>
+                                <option value="DECRETO_SUPREMO">Decreto Supremo</option>
                                 <option value="REGLAMENTO">Reglamento</option>
+                                <option value="ANTEPROYECTO">Anteproyecto</option>
+                                <option value="HOJA_DE_RUTA">Hoja de Ruta</option>
                                 <option value="OTRO">Otro</option>
                             </select>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Estado Actual</label>
-                            <select name="estado"
+                            <select id="normativaEstado" name="estado" required
                                     class="w-full appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
                                 <option value="VIGENTE">Vigente</option>
                                 <option value="DEROGADA">Derogada</option>
@@ -315,6 +411,64 @@
                                 <option value="CONSULTA_PUBLICA">Consulta Pública</option>
                                 <option value="BORRADOR_EN_PROCESO">Borrador en Proceso</option>
                             </select>
+
+                        </div>
+                    </div>
+
+                    <!-- ALCANCE GEOGRÁFICO -->
+                    <div class="mt-6">
+                        <label class="block text-xs font-bold text-on-surface-variant uppercase mb-2">Alcance Geográfico</label>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="alcance" value="NACIONAL" class="peer hidden" checked>
+                                <div class="px-4 py-4 rounded-lg border border-outline-variant/30 bg-surface-container-low flex items-center gap-3 peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                    <span class="text-xl">🌎</span>
+                                    <div>
+                                        <p class="text-sm font-bold text-on-surface">Nacional</p>
+                                        <p class="text-[10px] uppercase font-bold text-on-surface-variant">Territorio local</p>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer">
+                                <input type="radio" name="alcance" value="INTERNACIONAL" class="peer hidden">
+                                <div class="px-4 py-4 rounded-lg border border-outline-variant/30 bg-surface-container-low flex items-center gap-3 peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                    <span class="text-xl">🌐</span>
+                                    <div>
+                                        <p class="text-sm font-bold text-on-surface">Internacional</p>
+                                        <p class="text-[10px] uppercase font-bold text-on-surface-variant">Tratados / Global</p>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- TIPO DE ACCESO -->
+                    <div class="mt-6">
+                        <label class="block text-xs font-bold text-on-surface-variant uppercase mb-2">Tipo de Acceso</label>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="acceso" value="GRATIS" class="peer hidden" checked>
+                                <div class="px-4 py-4 rounded-lg border border-outline-variant/30 bg-surface-container-low flex items-center gap-3 peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                    <span class="text-xl">🔓</span>
+                                    <div>
+                                        <p class="text-sm font-bold text-on-surface">Gratuito</p>
+                                        <p class="text-[10px] uppercase font-bold text-on-surface-variant">Acceso libre</p>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer">
+                                <input type="radio" name="acceso" value="PAGO" class="peer hidden">
+                                <div class="px-4 py-4 rounded-lg border border-outline-variant/30 bg-surface-container-low flex items-center gap-3 peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                    <span class="text-xl">🔒</span>
+                                    <div>
+                                        <p class="text-sm font-bold text-on-surface">De pago</p>
+                                        <p class="text-[10px] uppercase font-bold text-on-surface-variant">Requiere compra o suscripción</p>
+                                    </div>
+                                </div>
+                            </label>
                         </div>
                     </div>
                 </section>
@@ -337,7 +491,7 @@
                         Cancelar
                     </button>
 
-                    <button type="submit"
+                    <button id="btnGuardarNormativa" type="submit"
                             class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary font-bold text-sm hover:bg-[#00210c] transition-colors shadow-sm cursor-pointer">
                         Guardar Normativa
                     </button>
@@ -347,5 +501,35 @@
     </div>
 
 </aside>
+<script>
+    function validarNormativaForm() {
+        const titulo = document.getElementById('normativaTitulo').value.trim();
+        const organismo = document.getElementById('normativaOrganismo').value.trim();
+        const codigo = document.getElementById('normativaCodigo').value.trim();
+        const categorias = document.querySelectorAll('input[name="categorias"]:checked');
+
+        if (titulo.length < 5) {
+            alert('El nombre de la normativa debe tener al menos 5 caracteres.');
+            return false;
+        }
+
+        if (organismo.length < 3) {
+            alert('Debe ingresar un organismo o ministerio válido.');
+            return false;
+        }
+
+        if (codigo.length < 2) {
+            alert('Debe ingresar un código válido.');
+            return false;
+        }
+
+        if (categorias.length === 0) {
+            alert('Debe seleccionar al menos una temática principal.');
+            return false;
+        }
+
+        return true;
+    }
+</script>
 </body>
 </html>

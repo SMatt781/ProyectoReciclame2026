@@ -3,11 +3,15 @@ package com.example.proyectoreciclame.Service;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class CorreoService {
 
     private final JavaMailSender mailSender;
+
+    @Value("${app.url:http://localhost:8080}")
+    private String appUrl;
 
     public CorreoService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
@@ -77,5 +81,24 @@ public class CorreoService {
 
     private String obtenerNombreSeguro(String nombres) {
         return (nombres != null && !nombres.isBlank()) ? nombres : "usuario";
+    }
+
+    public void enviarCredencialesAdministrador(String destino, String nombres, String contrasenaTemp) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(destino);
+        message.setSubject("Recíclame - Tu cuenta de administrador ha sido creada");
+        message.setText(
+                "Hola " + obtenerNombreSeguro(nombres) + ".\n\n" +
+                        "El Superadministrador de Recíclame ha creado una cuenta de administrador para ti.\n\n" +
+                        "Tus credenciales de acceso son:\n" +
+                        "   Correo: " + destino + "\n" +
+                        "   Contraseña temporal: " + contrasenaTemp + "\n\n" +
+                        "Por seguridad, te recomendamos cambiar tu contraseña al iniciar sesión.\n" +
+                        "Para hacerlo, ingresa a la plataforma y usa la opción 'Olvidé mi contraseña'.\n\n" +
+                        "Ingresa desde:\n" +
+                        appUrl + "/login\n\n" +
+                        "Equipo Recíclame"
+        );
+        mailSender.send(message);
     }
 }
