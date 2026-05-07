@@ -435,23 +435,31 @@
                     </div>
 
                     <!-- Controles de Paginación -->
-                    <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8 hidden"
-                         th:if="${not #lists.isEmpty(estudios)}">
-                        <button id="prevPageBtn"
-                                class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
+                    <div class="flex justify-center items-center gap-2 mt-8"
+                         th:if="${totalPages != null and totalPages > 1}">
+                        <a th:href="@{/estudios(page=${page - 1}, search=${search}, yearSelect=${anioSeleccionado}, dateStart=${dateStart}, dateEnd=${dateEnd}, format=${formatosSeleccionados}, estado=${estadosSeleccionados})}"
+                           th:classappend="${!hasPrevious} ? 'pointer-events-none opacity-50' : ''"
+                           class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M15 19l-7-7 7-7" />
                             </svg>
-                        </button>
-                        <div id="pageNumbers" class="flex gap-2"></div>
-                        <button id="nextPageBtn"
-                                class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
+                        </a>
+                        <div class="flex gap-2">
+                            <a th:each="p : ${pageNumbers}"
+                               th:href="@{/estudios(page=${p}, search=${search}, yearSelect=${anioSeleccionado}, dateStart=${dateStart}, dateEnd=${dateEnd}, format=${formatosSeleccionados}, estado=${estadosSeleccionados})}"
+                               th:text="${p + 1}"
+                               th:classappend="${p == page} ? 'bg-secondary text-on-secondary' : 'text-on-surface-variant hover:bg-surface-container'"
+                               class="w-10 h-10 rounded-lg text-sm font-bold transition-colors flex items-center justify-center"></a>
+                        </div>
+                        <a th:href="@{/estudios(page=${page + 1}, search=${search}, yearSelect=${anioSeleccionado}, dateStart=${dateStart}, dateEnd=${dateEnd}, format=${formatosSeleccionados}, estado=${estadosSeleccionados})}"
+                           th:classappend="${!hasNext} ? 'pointer-events-none opacity-50' : ''"
+                           class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M9 5l7 7-7 7" />
                             </svg>
-                        </button>
+                        </a>
                     </div>
 
 
@@ -679,80 +687,14 @@
             });
 
 
-            // Toggle View & Pagination Logic
+            // Toggle View Logic
             const toggleViewBtn = document.getElementById('toggleViewBtn');
             const gridView = document.getElementById('gridView');
             const listView = document.getElementById('listView');
             const iconList = document.getElementById('icon-list');
             const iconGrid = document.getElementById('icon-grid');
 
-            const gridItems = document.querySelectorAll('.grid-item');
-            const listItems = document.querySelectorAll('.list-item');
-            const paginationContainer = document.getElementById('paginationContainer');
-            const pageNumbersContainer = document.getElementById('pageNumbers');
-            const prevPageBtn = document.getElementById('prevPageBtn');
-            const nextPageBtn = document.getElementById('nextPageBtn');
-
             let isGridView = true;
-            let currentPage = 1;
-
-            function renderPagination() {
-                if (!paginationContainer) return;
-
-                const totalItems = isGridView ? gridItems.length : listItems.length;
-                const pageSize = 6;
-                const totalPages = Math.ceil(totalItems / pageSize) || 1;
-
-                if (currentPage > totalPages) currentPage = 1;
-
-                if (totalPages <= 1) {
-                    paginationContainer.classList.add('hidden');
-                    paginationContainer.classList.remove('flex');
-                } else {
-                    paginationContainer.classList.remove('hidden');
-                    paginationContainer.classList.add('flex');
-                }
-
-                const startIndex = (currentPage - 1) * pageSize;
-                const endIndex = startIndex + pageSize;
-
-                if (isGridView) {
-                    gridItems.forEach((item, index) => {
-                        if (index >= startIndex && index < endIndex) {
-                            item.classList.remove('hidden');
-                            item.classList.add('flex');
-                        } else {
-                            item.classList.add('hidden');
-                            item.classList.remove('flex');
-                        }
-                    });
-                } else {
-                    listItems.forEach((item, index) => {
-                        if (index >= startIndex && index < endIndex) {
-                            item.classList.remove('hidden');
-                            item.classList.add('flex', 'md:grid');
-                        } else {
-                            item.classList.add('hidden');
-                            item.classList.remove('flex', 'md:grid');
-                        }
-                    });
-                }
-
-                prevPageBtn.disabled = currentPage === 1;
-                nextPageBtn.disabled = currentPage === totalPages;
-
-                pageNumbersContainer.innerHTML = '';
-                for (let i = 1; i <= totalPages; i++) {
-                    const btn = document.createElement('button');
-                    btn.textContent = i;
-                    btn.className = `w-10 h-10 rounded-lg text-sm font-bold transition-colors ${i === currentPage ? 'bg-secondary text-on-secondary' : 'text-on-surface-variant hover:bg-surface-container'}`;
-                    btn.addEventListener('click', () => {
-                        currentPage = i;
-                        renderPagination();
-                    });
-                    pageNumbersContainer.appendChild(btn);
-                }
-            }
 
             if (toggleViewBtn) {
                 toggleViewBtn.addEventListener('click', () => {
@@ -770,36 +712,13 @@
                         iconList.classList.add('hidden');
                         iconGrid.classList.remove('hidden');
                     }
-                    currentPage = 1;
-                    renderPagination();
                 });
             }
-
-            if (prevPageBtn) {
-                prevPageBtn.addEventListener('click', () => {
-                    if (currentPage > 1) {
-                        currentPage--;
-                        renderPagination();
-                    }
-                });
-            }
-
-            if (nextPageBtn) {
-                nextPageBtn.addEventListener('click', () => {
-                    const totalItems = isGridView ? gridItems.length : listItems.length;
-                    const pageSize = 6;
-                    if (currentPage < Math.ceil(totalItems / pageSize)) {
-                        currentPage++;
-                        renderPagination();
-                    }
-                });
-            }
-
-            // Inicializar paginación
-            renderPagination();
         });
     </script>
 </body>
 
 </html>
+
+
 

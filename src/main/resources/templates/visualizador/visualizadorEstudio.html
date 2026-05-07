@@ -184,9 +184,9 @@
                     <div class="flex-1 bg-surface-container flex flex-col p-4 sm:p-8 overflow-hidden relative" id="viewer-container">
                         <div class="w-full h-full bg-surface-container-lowest shadow-sm rounded-sm relative overflow-hidden flex flex-col min-h-[500px]">
 
-                            <!-- PDF Iframe -->
-                            <iframe th:if="${estudio.archivoUrl != null}"
-                                    th:src="${estudio.archivoUrl} + '#toolbar=0&navpanes=0'"
+                            <!-- PDF Iframe - src set via JS with presigned URL -->
+                            <iframe id="pdfViewer"
+                                    th:if="${estudio.archivoUrl != null}"
                                     class="w-full h-full border-0 flex-1"
                                     oncontextmenu="return false;"></iframe>
 
@@ -211,7 +211,22 @@
 
                 <!-- Security Scripts -->
                 <script>
-                    document.addEventListener('DOMContentLoaded', function() {
+                    document.addEventListener('DOMContentLoaded', async function() {
+                        // Load presigned URL for PDF viewer
+                        const estudioId = window.location.pathname.split('/').pop();
+                        const pdfViewer = document.getElementById('pdfViewer');
+                        if (pdfViewer) {
+                            try {
+                                const response = await fetch(`/documentos/estudio/${estudioId}/presigned-url`);
+                                if (response.ok) {
+                                    const data = await response.json();
+                                    pdfViewer.src = data.url + '#toolbar=0&navpanes=0';
+                                }
+                            } catch (e) {
+                                console.error('Error cargando documento:', e);
+                            }
+                        }
+
                         // Disable right click globally
                         document.addEventListener('contextmenu', event => event.preventDefault());
 

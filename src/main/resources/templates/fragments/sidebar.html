@@ -120,7 +120,7 @@
 
     <button type="button"
             th:if="${usuarioRol != null and #strings.equalsIgnoreCase(usuarioRol,'ADMIN') and currentPage == 'estudios'}"
-            onclick="document.getElementById('modalNuevoEstudio').classList.remove('hidden')"
+            onclick="abrirModalNuevoEstudio()"
             class="w-full bg-primary-container text-on-primary font-label font-bold text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-fixed-variant transition-colors ambient-shadow">
         <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
             <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
@@ -235,23 +235,62 @@
                         </div>
                     </section>
 
-                    <section class="space-y-6 pt-2">
+                    <section class="space-y-4 pt-2">
                         <div class="flex items-center gap-3">
                             <div class="w-1 h-5 bg-[#059669] rounded-full"></div>
                             <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Archivo</h2>
                         </div>
 
-                        <div class="relative border-2 border-dashed border-[#dbe4ef] rounded-2xl min-h-[280px] px-6 py-10 flex flex-col items-center justify-center bg-white hover:bg-[#f8fbff] hover:border-[#059669]/40 transition-all cursor-pointer group">
-                            <div class="flex flex-col items-center justify-center text-center max-w-xl mx-auto">
-                                <div class="w-20 h-20 bg-[#edf7f2] rounded-3xl flex items-center justify-center text-[#10b981] mb-6 group-hover:scale-110 transition-transform">
-                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        <!-- Input oculto — activado solo por el label -->
+                        <input id="archivoInputSidebar" name="archivo" type="file" accept=".pdf,.pptx" style="display:none;">
+
+                        <!-- Zona de drop -->
+                        <div id="dropZoneSidebar"
+                             class="border-2 border-dashed border-gray-200 rounded-2xl transition-all duration-200"
+                             style="background:#f9fafb;">
+
+                            <!-- Estado: sin archivo -->
+                            <div id="dropDefaultSidebar" class="flex flex-col items-center justify-center py-12 px-6 text-center">
+                                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+                                     style="background:#d1fae5;">
+                                    <svg class="w-7 h-7" style="color:#059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                                     </svg>
                                 </div>
-                                <h3 class="text-2xl font-extrabold text-[#0f172a] leading-tight">Haz clic para subir o arrastra un archivo</h3>
-                                <p class="mt-3 text-lg text-[#94a3b8]">Soportamos formatos PDF y PPTX con un límite de 20MB</p>
+                                <p class="text-base font-bold text-gray-700 mb-1">Arrastra tu archivo aquí</p>
+                                <p class="text-sm text-gray-400 mb-5">PDF o PPTX · máximo 50 MB</p>
+                                <label for="archivoInputSidebar"
+                                       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold text-white cursor-pointer"
+                                       style="background:#059669;"
+                                       onmouseover="this.style.background='#047857'" onmouseout="this.style.background='#059669'">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                    </svg>
+                                    Seleccionar archivo
+                                </label>
                             </div>
-                            <input name="archivo" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" type="file"/>
+
+                            <!-- Estado: archivo seleccionado -->
+                            <div id="dropSelectedSidebar" style="display:none;"
+                                 class="flex flex-col items-center justify-center py-12 px-6 text-center">
+                                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+                                     style="background:#d1fae5;">
+                                    <svg class="w-7 h-7" style="color:#059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                </div>
+                                <p class="text-base font-bold mb-1" style="color:#059669;">Archivo listo para subir</p>
+                                <p id="dropFileNameSidebar" class="text-sm font-semibold text-gray-700 mb-1 break-all">documento.pdf</p>
+                                <p id="dropFileSizeSidebar" class="text-xs text-gray-400 mb-5">0 MB</p>
+                                <label for="archivoInputSidebar"
+                                       class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-gray-600 cursor-pointer border border-gray-200"
+                                       style="background:#f3f4f6;"
+                                       onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                                    Cambiar archivo
+                                </label>
+                            </div>
                         </div>
                     </section>
                 </div>
@@ -280,6 +319,91 @@
             </form>
         </div>
     </div>
+
+    <script>
+        (function () {
+            var fileInput    = document.getElementById('archivoInputSidebar');
+            var dropZone     = document.getElementById('dropZoneSidebar');
+            var dropDefault  = document.getElementById('dropDefaultSidebar');
+            var dropSelected = document.getElementById('dropSelectedSidebar');
+            var dropFileName = document.getElementById('dropFileNameSidebar');
+            var dropFileSize = document.getElementById('dropFileSizeSidebar');
+
+            function mostrarSeleccionado(file) {
+                dropFileName.textContent = file.name;
+                dropFileSize.textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+                dropDefault.style.display  = 'none';
+                dropSelected.style.display = 'flex';
+                dropZone.style.borderColor = '#059669';
+                dropZone.style.background  = '#f0fdf4';
+            }
+
+            function mostrarDefault() {
+                dropDefault.style.display  = 'flex';
+                dropSelected.style.display = 'none';
+                dropZone.style.borderColor = '#e5e7eb';
+                dropZone.style.background  = '#f9fafb';
+            }
+
+            window.resetearArchivoSidebar = function () {
+                if (fileInput) fileInput.value = '';
+                mostrarDefault();
+            };
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function () {
+                    if (this.files && this.files.length > 0) {
+                        mostrarSeleccionado(this.files[0]);
+                    } else {
+                        mostrarDefault();
+                    }
+                });
+            }
+
+            if (dropZone) {
+                dropZone.addEventListener('dragover', function (e) {
+                    e.preventDefault();
+                    dropZone.style.borderColor = '#3b82f6';
+                    dropZone.style.background  = '#eff6ff';
+                });
+                dropZone.addEventListener('dragleave', function () {
+                    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                        mostrarDefault();
+                    } else {
+                        dropZone.style.borderColor = '#059669';
+                        dropZone.style.background  = '#f0fdf4';
+                    }
+                });
+                dropZone.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    var dt = e.dataTransfer;
+                    if (dt && dt.files && dt.files.length > 0) {
+                        fileInput.files = dt.files;
+                        mostrarSeleccionado(dt.files[0]);
+                    }
+                });
+            }
+        })();
+
+        function abrirModalNuevoEstudio() {
+            // Limpiar el formulario
+            var form = document.getElementById('formEstudio');
+            if (form) {
+                form.reset();
+                form.action = '/admin/estudio_new';
+            }
+            // Limpiar campos individuales por si acaso
+            var campos = ['estudioNombre', 'estudioDescripcion', 'estudioAnio', 'estudioFormato', 'estudioEstado'];
+            campos.forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.value = el.options ? el.options[0].value : '';
+            });
+            // Resetear UI del archivo
+            if (typeof resetearArchivoSidebar === 'function') resetearArchivoSidebar();
+            // Abrir modal
+            document.getElementById('modalNuevoEstudio').classList.remove('hidden');
+        }
+    </script>
 
     <div id="modalNuevaNormativa" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-surface text-on-surface w-full max-w-3xl rounded-[1.5rem] p-6 sm:p-8 flex flex-col relative scale-100 ambient-shadow max-h-[90vh] overflow-y-auto text-left">
