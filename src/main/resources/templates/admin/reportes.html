@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reportes de Uso - Recíclame</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#f7f9fb",
+                        "background": "#f7f9fb",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container": "#eceef0",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-variant": "#e0e3e5",
+                        "outline-variant": "#c3c7cd",
+                        "outline": "#73777d",
+                        "on-surface": "#191c1e",
+                        "on-surface-variant": "#43474c",
+                        "on-primary-fixed": "#021d30",
+                        "primary-container": "#021d30",
+                        "on-primary": "#ffffff",
+                        "secondary": "#006d37",
+                        "secondary-container": "#6bfe9c",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+
+        .icon-sm {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-secondary">
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="flex-1 overflow-y-auto px-6 py-2">
+        <div class="w-full h-full">
+
+            <!-- Encabezado -->
+            <div class="mb-3">
+                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
+                    <div>
+                        <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                            Reportes de Uso
+                        </h2>
+                        <p class="font-body text-on-surface-variant text-sm mt-1 max-w-3xl">
+                            Actividad de la plataforma, descargas y documentos más consultados por los socios.
+                        </p>
+                    </div>
+
+                    <!-- Botones de exportación -->
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <a th:href="@{/admin/registros/actividad/exportar}"
+                           class="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-outline-variant/30 bg-surface-container-lowest text-on-surface-variant text-sm font-bold hover:bg-surface-container transition ambient-shadow no-underline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9.414V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Exportar actividad
+                        </a>
+                        <a th:href="@{/admin/registros/descargas/exportar}"
+                           class="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-secondary text-on-secondary text-sm font-bold hover:bg-[#005a2f] transition ambient-shadow no-underline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9.414V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Exportar descargas
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── KPIs ── -->
+            <section class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-5">
+
+                <!-- Ingresos hoy -->
+                <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-outline to-surface-variant"></div>
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="w-9 h-9 rounded-lg bg-surface-container text-on-surface-variant flex items-center justify-center shadow-sm">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+                            </svg>
+                        </div>
+                        <div class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                            Hoy
+                        </div>
+                    </div>
+                    <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">Ingresos hoy</h4>
+                    <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${ingresosHoy}">0</div>
+                </article>
+
+                <!-- Ingresos esta semana -->
+                <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="w-9 h-9 rounded-lg bg-secondary-container/30 text-secondary flex items-center justify-center shadow-sm">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>
+                            </svg>
+                        </div>
+                        <div class="bg-secondary-container/20 text-secondary font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                            Semana
+                        </div>
+                    </div>
+                    <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">Ingresos esta semana</h4>
+                    <div class="text-3xl font-extrabold text-secondary" th:text="${ingresosSemana}">0</div>
+                </article>
+
+                <!-- Total descargas -->
+                <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-300"></div>
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shadow-sm">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                            </svg>
+                        </div>
+                        <div class="bg-blue-50 text-blue-600 font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                            Total
+                        </div>
+                    </div>
+                    <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">Total descargas</h4>
+                    <div class="text-3xl font-extrabold text-blue-600" th:text="${totalDescargas}">0</div>
+                </article>
+
+                <!-- Usuarios activos -->
+                <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-300"></div>
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shadow-sm">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.98 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                            </svg>
+                        </div>
+                        <div class="bg-amber-50 text-amber-600 font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                            30 días
+                        </div>
+                    </div>
+                    <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">Usuarios activos</h4>
+                    <div class="text-3xl font-extrabold text-amber-600" th:text="${usuariosActivos}">0</div>
+                </article>
+            </section>
+
+            <!-- ── Fila de gráficos ── -->
+            <div class="grid grid-cols-1 xl:grid-cols-[1.8fr_1fr] gap-4 mb-4">
+
+                <!-- Gráfico de barras: ingresos por día -->
+                <div class="bg-surface-container-lowest rounded-[1.25rem] p-5 ambient-shadow ghost-border">
+                    <h3 class="font-headline font-bold text-base text-on-primary-fixed mb-4">
+                        Ingresos por día — últimos 7 días
+                    </h3>
+                    <div style="position: relative; height: 180px; width: 100%;">
+                        <canvas id="graficoIngresos" style="display: block;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Dona: descargas por tipo -->
+                <div class="bg-surface-container-lowest rounded-[1.25rem] p-5 ambient-shadow ghost-border">
+                    <h3 class="font-headline font-bold text-base text-on-primary-fixed mb-4">
+                        Descargas por tipo
+                    </h3>
+                    <div class="flex items-center justify-center gap-8" style="min-height: 160px;">
+                        <div style="position: relative; width: 130px; height: 130px; flex-shrink: 0;">
+                            <canvas id="graficoDona" width="130" height="130" style="display: block;"></canvas>
+                            <!-- Número central -->
+                            <div class="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
+                                <span class="text-xl font-extrabold text-on-primary-fixed" th:text="${descargasEstudio + descargasNormativa}">0</span>
+                                <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wide">total</span>
+                            </div>
+                        </div>
+                        <!-- Leyenda -->
+                        <div class="flex flex-col gap-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 rounded-full bg-secondary flex-shrink-0"></div>
+                                <div>
+                                    <p class="text-sm font-bold text-on-primary-fixed">Normativas</p>
+                                    <p class="text-xs text-on-surface-variant" th:text="${descargasNormativa} + ' descargas'">0 descargas</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 rounded-full bg-blue-500 flex-shrink-0"></div>
+                                <div>
+                                    <p class="text-sm font-bold text-on-primary-fixed">Estudios</p>
+                                    <p class="text-xs text-on-surface-variant" th:text="${descargasEstudio} + ' descargas'">0 descargas</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Fila inferior ── -->
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-6">
+
+                <!-- Top 5 documentos más descargados -->
+                <div class="bg-surface-container-lowest rounded-[1.25rem] p-5 ambient-shadow ghost-border">
+                    <h3 class="font-headline font-bold text-base text-on-primary-fixed mb-4">
+                        Top 5 documentos más descargados
+                    </h3>
+
+                    <!-- Cabecera tabla -->
+                    <div class="grid grid-cols-[1fr_auto_auto] gap-2 pb-2 border-b border-outline-variant/30 mb-2">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Documento</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant text-center">Tipo</span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant text-right">Descargas</span>
+                    </div>
+
+                    <!-- Filas -->
+                    <div th:each="doc, stat : ${topDocumentos}"
+                         class="grid grid-cols-[1fr_auto_auto] gap-2 py-2.5 border-b border-outline-variant/20 items-center last:border-0">
+
+                        <!-- Nombre del documento -->
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="w-5 h-5 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center text-[10px] font-bold flex-shrink-0"
+                                  th:text="${stat.count}"></span>
+                            <span class="text-sm font-medium text-on-primary-fixed truncate"
+                                  th:text="${doc[0]}">Nombre documento</span>
+                        </div>
+
+                        <!-- Tipo badge -->
+                        <div class="flex justify-center">
+                            <span th:if="${doc[1] == 'ESTUDIO'}"
+                                  class="text-[10px] font-bold px-2 py-1 rounded-full bg-secondary-container/30 text-secondary">
+                                Estudio
+                            </span>
+                            <span th:if="${doc[1] == 'NORMATIVA'}"
+                                  class="text-[10px] font-bold px-2 py-1 rounded-full bg-blue-50 text-blue-600">
+                                Normativa
+                            </span>
+                        </div>
+
+                        <!-- Conteo -->
+                        <span class="text-sm font-extrabold text-on-primary-fixed text-right"
+                              th:text="${doc[2]}">0</span>
+                    </div>
+
+                    <!-- Estado vacío -->
+                    <div th:if="${#lists.isEmpty(topDocumentos)}"
+                         class="py-8 flex flex-col items-center justify-center text-center">
+                        <svg class="w-10 h-10 text-outline-variant mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                  d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                        </svg>
+                        <p class="text-sm font-bold text-on-surface-variant">Sin descargas registradas</p>
+                    </div>
+                </div>
+
+                <!-- Descargas por rol -->
+                <div class="bg-surface-container-lowest rounded-[1.25rem] p-5 ambient-shadow ghost-border">
+                    <h3 class="font-headline font-bold text-base text-on-primary-fixed mb-4">
+                        Descargas por rol de usuario
+                    </h3>
+
+                    <div class="flex flex-col gap-5">
+
+                        <!-- Barra Socio -->
+                        <div class="flex flex-col gap-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-bold text-on-primary-fixed">Socios</span>
+                                <span class="text-sm font-extrabold text-secondary" th:text="${descargasSocio}">0</span>
+                            </div>
+                            <div class="w-full bg-surface-container rounded-full h-2.5">
+                                <div class="bg-secondary h-2.5 rounded-full transition-all"
+                                     th:style="'width:' + ${totalDescargas > 0 ? (descargasSocio * 100 / totalDescargas) : 0} + '%'">
+                                </div>
+                            </div>
+                            <span class="text-[11px] text-on-surface-variant"
+                                  th:text="${totalDescargas > 0 ? #numbers.formatDecimal(descargasSocio * 100.0 / totalDescargas, 1, 1) : 0} + '% del total'">
+                                0% del total
+                            </span>
+                        </div>
+
+                        <!-- Barra Visualizador -->
+                        <div class="flex flex-col gap-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-bold text-on-primary-fixed">Visualizadores</span>
+                                <span class="text-sm font-extrabold text-blue-600" th:text="${descargasVisualizador}">0</span>
+                            </div>
+                            <div class="w-full bg-surface-container rounded-full h-2.5">
+                                <div class="bg-blue-500 h-2.5 rounded-full transition-all"
+                                     th:style="'width:' + ${totalDescargas > 0 ? (descargasVisualizador * 100 / totalDescargas) : 0} + '%'">
+                                </div>
+                            </div>
+                            <span class="text-[11px] text-on-surface-variant"
+                                  th:text="${totalDescargas > 0 ? #numbers.formatDecimal(descargasVisualizador * 100.0 / totalDescargas, 1, 1) : 0} + '% del total'">
+                                0% del total
+                            </span>
+                        </div>
+
+                        <!-- Separador -->
+                        <div class="border-t border-outline-variant/30 pt-4">
+                            <p class="text-[11px] text-on-surface-variant mb-3 font-bold uppercase tracking-widest">Accesos rápidos</p>
+                            <div class="flex gap-2">
+                                <a th:href="@{/admin/registros/actividad}"
+                                   class="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-surface-container text-on-surface-variant text-xs font-bold hover:bg-surface-container-high transition no-underline">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+                                    </svg>
+                                    Ver actividad
+                                </a>
+                                <a th:href="@{/admin/registros/descargas}"
+                                   class="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-surface-container text-on-surface-variant text-xs font-bold hover:bg-surface-container-high transition no-underline">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                                    </svg>
+                                    Ver descargas
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    // ── Datos del servidor ──────────────────────────────────────────────────
+    const diasLabels    = [[${diasLabels}]];
+    const diasValores   = [[${diasValores}]];
+    const descEst       = [[${descargasEstudio}]];
+    const descNor       = [[${descargasNormativa}]];
+
+    // ── Gráfico de barras: ingresos por día ─────────────────────────────────
+    const ctxBarras = document.getElementById('graficoIngresos').getContext('2d');
+    new Chart(ctxBarras, {
+        type: 'bar',
+        data: {
+            labels: diasLabels,
+            datasets: [{
+                label: 'Ingresos',
+                data: diasValores,
+                backgroundColor: diasValores.map((_, i) =>
+                    i === diasValores.length - 1 ? '#4ae183' : '#006d37'
+                ),
+                borderRadius: 6,
+                borderSkipped: false,
+                barThickness: 32,      // ← esto evita que se estiren
+                maxBarThickness: 48    // ← tope máximo
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ' ' + ctx.parsed.y + ' ingresos'
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        font: { family: 'Inter', size: 11, weight: '600' },
+                        color: '#73777d'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#f2f4f6' },
+                    ticks: {
+                        font: { family: 'Inter', size: 11 },
+                        color: '#73777d',
+                        stepSize: 1,
+                        precision: 0    // ← solo números enteros
+                    }
+                }
+            }
+        }
+    });
+
+    // ── Gráfico de dona: descargas por tipo ─────────────────────────────────
+    const ctxDona = document.getElementById('graficoDona').getContext('2d');
+    new Chart(ctxDona, {
+        type: 'doughnut',
+        data: {
+            labels: ['Normativas', 'Estudios'],
+            datasets: [{
+                data: [descNor, descEst],
+                backgroundColor: ['#006d37', '#3b82f6'],
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: false,       // ← false para que respete el tamaño del canvas
+            animation: false,
+            cutout: '70%',
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ' ' + ctx.label + ': ' + ctx.parsed + ' descargas'
+                    }
+                }
+            }
+        }
+    });
+
+    /*]]>*/
+</script>
+
+</body>
+</html>

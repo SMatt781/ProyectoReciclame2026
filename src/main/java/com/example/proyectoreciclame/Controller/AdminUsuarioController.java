@@ -5,15 +5,15 @@ import com.example.proyectoreciclame.Dto.UsuarioGestionDto;
 import com.example.proyectoreciclame.Dto.UsuarioBloqueoForm;
 import com.example.proyectoreciclame.Dto.UsuarioEditForm;
 
+import com.example.proyectoreciclame.Entity.HistorialRoles;
 import com.example.proyectoreciclame.Entity.Usuario;
 import com.example.proyectoreciclame.Entity.Rol;
 import com.example.proyectoreciclame.Entity.UsuarioEmpresa;
 
-import com.example.proyectoreciclame.Repository.UsuarioRepository;
-import com.example.proyectoreciclame.Repository.RolRepository;
-import com.example.proyectoreciclame.Repository.UsuarioEmpresaRepository;
+import com.example.proyectoreciclame.Repository.*;
 
 import com.example.proyectoreciclame.util.PaginationUtils;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,13 +45,19 @@ public class AdminUsuarioController {
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
     private final UsuarioEmpresaRepository usuarioEmpresaRepository;
+    private final HistorialRolesRepository historialRolesRepository;
+    private final IntentoLoginRepository intentoLoginRepository;
 
     public AdminUsuarioController(UsuarioRepository usuarioRepository,
                                   RolRepository rolRepository,
-                                  UsuarioEmpresaRepository usuarioEmpresaRepository) {
+                                  UsuarioEmpresaRepository usuarioEmpresaRepository,
+                                  HistorialRolesRepository historialRolesRepository,
+                                  IntentoLoginRepository intentoLoginRepository) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.usuarioEmpresaRepository = usuarioEmpresaRepository;
+        this.historialRolesRepository = historialRolesRepository;
+        this.intentoLoginRepository = intentoLoginRepository;
     }
 
     @GetMapping("/gestion")
@@ -65,7 +71,6 @@ public class AdminUsuarioController {
                                   @RequestParam(required = false) Long id,
                                   Model model) {
 
-
         Pageable pageable = PageRequest.of(page, 3);
         Page<Usuario> paginaUsuarios;
 
@@ -74,7 +79,7 @@ public class AdminUsuarioController {
             rol = rol.stream().map(String::toUpperCase).toList();
         }
         boolean hasEstados = estado != null && !estado.isEmpty();
-        
+
         LocalDateTime fechaInicio = null;
         LocalDateTime fechaFin = null;
         if (dateStart != null && !dateStart.isEmpty()) {
@@ -159,6 +164,12 @@ public class AdminUsuarioController {
             cargarModalBloqueo(id, model, false);
         }
 
+        // ── NUEVO: modal historial ────────────────────────────────────────────
+        if ("historial".equals(modal) && id != null) {
+            cargarModalHistorial(id, model);
+        }
+        // ──────────────────────────────────────────────────────────────────────
+
         return "admin/gestion-usuarios";
     }
 
@@ -194,14 +205,7 @@ public class AdminUsuarioController {
             paginaUsuarios = usuarioRepository.findAllGestionUsuarios(Pageable.unpaged());
         } else {
             paginaUsuarios = usuarioRepository.buscarEnGestionAvanzado(
-                    texto,
-                    hasRoles,
-                    rol,
-                    fechaInicio,
-                    fechaFin,
-                    hasEstados,
-                    estado,
-                    Pageable.unpaged()
+                    texto, hasRoles, rol, fechaInicio, fechaFin, hasEstados, estado, Pageable.unpaged()
             );
         }
 
@@ -218,18 +222,9 @@ public class AdminUsuarioController {
         Row header = sheet.createRow(0);
 
         String[] columnas = {
-                "ID",
-                "Nombres",
-                "Apellido paterno",
-                "Apellido materno",
-                "DNI",
-                "Correo",
-                "Teléfono",
-                "Empresa",
-                "Rol",
-                "Estado aprobación",
-                "Estado cuenta",
-                "Fecha registro"
+                "ID", "Nombres", "Apellido paterno", "Apellido materno",
+                "DNI", "Correo", "Teléfono", "Empresa", "Rol",
+                "Estado aprobación", "Estado cuenta", "Fecha registro"
         };
 
         for (int i = 0; i < columnas.length; i++) {
@@ -243,23 +238,14 @@ public class AdminUsuarioController {
         for (Usuario u : paginaUsuarios.getContent()) {
             Row row = sheet.createRow(rowIndex++);
 
-            String empresa = "-";
-
-            if (u.getUsuarioEmpresa() != null && u.getUsuarioEmpresa().getRazonSocial() != null) {
-                empresa = u.getUsuarioEmpresa().getRazonSocial();
-            }
+            String empresa = (u.getUsuarioEmpresa() != null && u.getUsuarioEmpresa().getRazonSocial() != null)
+                    ? u.getUsuarioEmpresa().getRazonSocial() : "-";
 
             String rolUsuario = u.getRol() != null && u.getRol().getNombre() != null
-                    ? u.getRol().getNombre()
-                    : "-";
+                    ? u.getRol().getNombre() : "-";
 
-            String estadoCuenta = u.getEstadoCuenta() != null
-                    ? u.getEstadoCuenta().name()
-                    : "-";
-
-            String fechaRegistro = u.getFechaRegistro() != null
-                    ? u.getFechaRegistro().format(formatter)
-                    : "-";
+            String estadoCuenta = u.getEstadoCuenta() != null ? u.getEstadoCuenta().name() : "-";
+            String fechaRegistro = u.getFechaRegistro() != null ? u.getFechaRegistro().format(formatter) : "-";
 
             row.createCell(0).setCellValue(u.getIdUsuario() != null ? u.getIdUsuario() : 0);
             row.createCell(1).setCellValue(u.getNombres() != null ? u.getNombres() : "-");
@@ -294,6 +280,7 @@ public class AdminUsuarioController {
                                 @RequestParam(required = false) String dateStart,
                                 @RequestParam(required = false) String dateEnd,
                                 @RequestParam(required = false) List<String> estado,
+                                Authentication authentication,   // ← agrega esto
                                 Model model) {
 
         Usuario usuario = usuarioRepository.findById(form.getIdUsuario()).orElse(null);
@@ -302,16 +289,18 @@ public class AdminUsuarioController {
         }
 
         Map<String, String> errores = validarFormularioEdicion(form);
-
         if (!errores.isEmpty()) {
             model.addAttribute("fieldErrors", errores);
             model.addAttribute("modal", "edit");
             model.addAttribute("editForm", form);
             model.addAttribute("roles", rolRepository.findAll());
-
             cargarVistaGestionBase(texto, rol, dateStart, dateEnd, estado, page, model);
             return "admin/gestion-usuarios";
         }
+
+        // ── Guardar el rol anterior ANTES de modificar ────────────────────────
+        Rol rolAnterior = usuario.getRol();
+        // ─────────────────────────────────────────────────────────────────────
 
         usuario.setNombres(form.getNombres().trim());
         usuario.setApellidoPaterno(form.getApellidoPaterno().trim());
@@ -321,14 +310,14 @@ public class AdminUsuarioController {
         usuario.setTelefono(form.getTelefono().trim());
         usuario.setActualizadoEn(LocalDateTime.now());
 
+        Rol rolNuevo = null;
         if (form.getIdRol() != null) {
-            Rol rolEntidad = rolRepository.findById(form.getIdRol()).orElse(null);
-            if (rolEntidad != null) {
-                usuario.setRol(rolEntidad);
+            rolNuevo = rolRepository.findById(form.getIdRol()).orElse(null);
+            if (rolNuevo != null) {
+                usuario.setRol(rolNuevo);
             }
         }
 
-        // Solo permitir volver de RECHAZADO a PENDIENTE
         if ("RECHAZADO".equalsIgnoreCase(usuario.getEstadoAprobacion())
                 && "PENDIENTE".equalsIgnoreCase(form.getEstadoAprobacion())) {
             usuario.setEstadoAprobacion("PENDIENTE");
@@ -337,7 +326,29 @@ public class AdminUsuarioController {
 
         usuarioRepository.save(usuario);
 
-        Optional<UsuarioEmpresa> usuarioEmpresaOpt = usuarioEmpresaRepository.findByUsuario_IdUsuario(usuario.getIdUsuario());
+        // ── Guardar en historial SOLO si el rol cambió ────────────────────────
+        boolean rolCambio = rolNuevo != null
+                && (rolAnterior == null || !rolAnterior.getIdRol().equals(rolNuevo.getIdRol()));
+
+        if (rolCambio) {
+            Usuario adminQueActua = usuarioRepository
+                    .findByCorreoWithRol(authentication.getName()).orElse(null);
+
+            HistorialRoles historial = new HistorialRoles();
+            historial.setUsuarioAfectado(usuario);
+            historial.setRolAnterior(rolAnterior);
+            historial.setRolNuevo(rolNuevo);
+            historial.setEstadoAnterior(usuario.getEstadoCuenta());
+            historial.setEstadoNuevo(usuario.getEstadoCuenta());
+            historial.setAutorizadoPor(adminQueActua);
+            historial.setMotivo("Cambio de rol por administrador");
+            historial.setFechaCambio(LocalDateTime.now());
+            historialRolesRepository.save(historial);
+        }
+        // ─────────────────────────────────────────────────────────────────────
+
+        Optional<UsuarioEmpresa> usuarioEmpresaOpt = usuarioEmpresaRepository
+                .findByUsuario_IdUsuario(usuario.getIdUsuario());
         if (usuarioEmpresaOpt.isPresent()) {
             UsuarioEmpresa ue = usuarioEmpresaOpt.get();
             ue.setRazonSocial(form.getRazonSocial() != null ? form.getRazonSocial().trim() : null);
@@ -346,9 +357,7 @@ public class AdminUsuarioController {
         }
 
         String url = "redirect:/admin/usuarios/gestion?page=" + page;
-        if (texto != null && !texto.isBlank()) {
-            url += "&texto=" + texto;
-        }
+        if (texto != null && !texto.isBlank()) url += "&texto=" + texto;
         return url;
     }
 
@@ -359,21 +368,37 @@ public class AdminUsuarioController {
                                   @RequestParam(required = false) List<String> rol,
                                   @RequestParam(required = false) String dateStart,
                                   @RequestParam(required = false) String dateEnd,
-                                  @RequestParam(required = false) List<String> estado) {
+                                  @RequestParam(required = false) List<String> estado,
+                                  Authentication authentication) {
 
         Usuario usuario = usuarioRepository.findById(form.getIdUsuario()).orElse(null);
         if (usuario == null) {
             return "redirect:/admin/usuarios/gestion?page=" + page;
         }
 
+        Usuario.EstadoCuenta estadoAnterior = usuario.getEstadoCuenta();
+
         usuario.setEstadoCuenta(Usuario.EstadoCuenta.BLOQUEADO);
         usuario.setActualizadoEn(LocalDateTime.now());
         usuarioRepository.save(usuario);
 
+        // ── NUEVO: guardar en historial ───────────────────────────────────────
+        Usuario adminQueActua = usuarioRepository
+                .findByCorreoWithRol(authentication.getName()).orElse(null);
+
+        HistorialRoles historial = new HistorialRoles();
+        historial.setUsuarioAfectado(usuario);
+        historial.setRolAnterior(usuario.getRol());
+        historial.setRolNuevo(usuario.getRol());
+        historial.setEstadoAnterior(estadoAnterior);
+        historial.setEstadoNuevo(Usuario.EstadoCuenta.BLOQUEADO);
+        historial.setAutorizadoPor(adminQueActua);
+        historial.setMotivo(form.getMotivo() != null ? form.getMotivo() : "Cuenta bloqueada por administrador");
+        historialRolesRepository.save(historial);
+        // ──────────────────────────────────────────────────────────────────────
+
         String url = "redirect:/admin/usuarios/gestion?page=" + page;
-        if (texto != null && !texto.isBlank()) {
-            url += "&texto=" + texto;
-        }
+        if (texto != null && !texto.isBlank()) url += "&texto=" + texto;
         return url;
     }
 
@@ -384,7 +409,8 @@ public class AdminUsuarioController {
                                      @RequestParam(required = false) List<String> rol,
                                      @RequestParam(required = false) String dateStart,
                                      @RequestParam(required = false) String dateEnd,
-                                     @RequestParam(required = false) List<String> estado) {
+                                     @RequestParam(required = false) List<String> estado,
+                                     Authentication authentication) {
 
         Usuario usuario = usuarioRepository.findById(form.getIdUsuario()).orElse(null);
         if (usuario == null) {
@@ -396,12 +422,31 @@ public class AdminUsuarioController {
         usuario.setActualizadoEn(LocalDateTime.now());
         usuarioRepository.save(usuario);
 
+        LocalDateTime desde = LocalDateTime.now().minusMinutes(15);
+        intentoLoginRepository.eliminarIntentosFallidosRecientes(
+                usuario.getCorreo(), desde);
+
+        // ── NUEVO: guardar en historial ───────────────────────────────────────
+        Usuario adminQueActua = usuarioRepository
+                .findByCorreoWithRol(authentication.getName()).orElse(null);
+
+        HistorialRoles historial = new HistorialRoles();
+        historial.setUsuarioAfectado(usuario);
+        historial.setRolAnterior(usuario.getRol());
+        historial.setRolNuevo(usuario.getRol());
+        historial.setEstadoAnterior(Usuario.EstadoCuenta.BLOQUEADO);
+        historial.setEstadoNuevo(Usuario.EstadoCuenta.ACTIVO);
+        historial.setAutorizadoPor(adminQueActua);
+        historial.setMotivo("Cuenta desbloqueada por administrador");
+        historialRolesRepository.save(historial);
+        // ──────────────────────────────────────────────────────────────────────
+
         String url = "redirect:/admin/usuarios/gestion?page=" + page;
-        if (texto != null && !texto.isBlank()) {
-            url += "&texto=" + texto;
-        }
+        if (texto != null && !texto.isBlank()) url += "&texto=" + texto;
         return url;
     }
+
+    // ── Helpers privados ──────────────────────────────────────────────────────
 
     private void cargarModalEditar(Long id, Model model) {
         Usuario usuario = usuarioRepository.findById(id).orElse(null);
@@ -443,24 +488,32 @@ public class AdminUsuarioController {
         model.addAttribute("modoBloqueo", bloquear ? "bloquear" : "desbloquear");
     }
 
-    private void cargarVistaGestionBase(String texto, List<String> rol, String dateStart, String dateEnd, List<String> estado, int page, Model model) {
+    // ── NUEVO: cargar datos para el modal historial ───────────────────────────
+    private void cargarModalHistorial(Long id, Model model) {
+        Usuario usuario = usuarioRepository.findById(id).orElse(null);
+        if (usuario == null) return;
+
+        List<HistorialRoles> historial =
+                historialRolesRepository.findByUsuarioAfectadoOrderByFechaCambioDesc(usuario);
+
+        model.addAttribute("usuarioHistorial", usuario);
+        model.addAttribute("historialRoles", historial);
+    }
+    // ──────────────────────────────────────────────────────────────────────────
+
+    private void cargarVistaGestionBase(String texto, List<String> rol, String dateStart, String dateEnd,
+                                        List<String> estado, int page, Model model) {
         Pageable pageable = PageRequest.of(page, 3);
         Page<Usuario> paginaUsuarios;
 
         boolean hasRoles = rol != null && !rol.isEmpty();
-        if (hasRoles) {
-            rol = rol.stream().map(String::toUpperCase).toList();
-        }
+        if (hasRoles) rol = rol.stream().map(String::toUpperCase).toList();
         boolean hasEstados = estado != null && !estado.isEmpty();
-        
+
         LocalDateTime fechaInicio = null;
         LocalDateTime fechaFin = null;
-        if (dateStart != null && !dateStart.isEmpty()) {
-            fechaInicio = java.time.LocalDate.parse(dateStart).atStartOfDay();
-        }
-        if (dateEnd != null && !dateEnd.isEmpty()) {
-            fechaFin = java.time.LocalDate.parse(dateEnd).atTime(23, 59, 59);
-        }
+        if (dateStart != null && !dateStart.isEmpty()) fechaInicio = java.time.LocalDate.parse(dateStart).atStartOfDay();
+        if (dateEnd != null && !dateEnd.isEmpty()) fechaFin = java.time.LocalDate.parse(dateEnd).atTime(23, 59, 59);
 
         if ((texto == null || texto.isBlank()) && !hasRoles && !hasEstados && fechaInicio == null && fechaFin == null) {
             paginaUsuarios = usuarioRepository.findAllGestionUsuarios(pageable);
@@ -472,32 +525,16 @@ public class AdminUsuarioController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
         for (Usuario u : paginaUsuarios.getContent()) {
-            String nombreCompleto = construirNombreCompleto(
-                    u.getNombres(),
-                    u.getApellidoPaterno(),
-                    u.getApellidoMaterno()
-            );
-
+            String nombreCompleto = construirNombreCompleto(u.getNombres(), u.getApellidoPaterno(), u.getApellidoMaterno());
             String empresa = (u.getUsuarioEmpresa() != null && u.getUsuarioEmpresa().getRazonSocial() != null)
-                    ? u.getUsuarioEmpresa().getRazonSocial()
-                    : "Sin empresa";
-
+                    ? u.getUsuarioEmpresa().getRazonSocial() : "Sin empresa";
             String rolUsuario = (u.getRol() != null) ? u.getRol().getNombre() : "Sin rol";
             String estadoUsuario = obtenerEstadoVisible(u);
             String fecha = (u.getFechaRegistro() != null) ? u.getFechaRegistro().format(formatter) : "-";
             String iniciales = obtenerIniciales(u.getNombres(), u.getApellidoPaterno());
 
-            lista.add(new UsuarioGestionDto(
-                    u.getIdUsuario(),
-                    nombreCompleto,
-                    u.getCorreo(),
-                    u.getDni(),
-                    empresa,
-                    rolUsuario,
-                    estadoUsuario,
-                    fecha,
-                    iniciales
-            ));
+            lista.add(new UsuarioGestionDto(u.getIdUsuario(), nombreCompleto, u.getCorreo(), u.getDni(),
+                    empresa, rolUsuario, estadoUsuario, fecha, iniciales));
         }
 
         model.addAttribute("usuarios", lista);
@@ -511,12 +548,7 @@ public class AdminUsuarioController {
         model.addAttribute("totalPages", paginaUsuarios.getTotalPages());
         model.addAttribute("hasPrevious", paginaUsuarios.hasPrevious());
         model.addAttribute("hasNext", paginaUsuarios.hasNext());
-
-        model.addAttribute(
-                "pageNumbers",
-                PaginationUtils.buildPageNumbers(page, paginaUsuarios.getTotalPages())
-        );
-
+        model.addAttribute("pageNumbers", PaginationUtils.buildPageNumbers(page, paginaUsuarios.getTotalPages()));
         model.addAttribute("totalUsuarios", usuarioRepository.countByEliminadoEnIsNull());
         model.addAttribute("usuariosActivos", usuarioRepository.countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta.ACTIVO));
         model.addAttribute("usuariosBloqueados", usuarioRepository.countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta.BLOQUEADO));
@@ -525,35 +557,14 @@ public class AdminUsuarioController {
 
     private Map<String, String> validarFormularioEdicion(UsuarioEditForm form) {
         Map<String, String> errores = new HashMap<>();
-
-        if (form.getNombres() == null || form.getNombres().isBlank()) {
-            errores.put("nombres", "Campo nombre obligatorio");
-        }
-
-        if (form.getApellidoPaterno() == null || form.getApellidoPaterno().isBlank()) {
-            errores.put("apellidoPaterno", "Campo apellido paterno obligatorio");
-        }
-
-        if (form.getDni() == null || form.getDni().isBlank()) {
-            errores.put("dni", "Campo DNI obligatorio");
-        } else if (!form.getDni().matches("\\d{8}")) {
-            errores.put("dni", "El DNI debe tener 8 dígitos");
-        }
-
-        if (form.getCorreo() == null || form.getCorreo().isBlank()) {
-            errores.put("correo", "Campo correo obligatorio");
-        } else if (!form.getCorreo().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-            errores.put("correo", "Correo no válido");
-        }
-
-        if (form.getTelefono() == null || form.getTelefono().isBlank()) {
-            errores.put("telefono", "Campo teléfono obligatorio");
-        }
-
-        if (form.getIdRol() == null) {
-            errores.put("idRol", "Debe seleccionar un rol");
-        }
-
+        if (form.getNombres() == null || form.getNombres().isBlank()) errores.put("nombres", "Campo nombre obligatorio");
+        if (form.getApellidoPaterno() == null || form.getApellidoPaterno().isBlank()) errores.put("apellidoPaterno", "Campo apellido paterno obligatorio");
+        if (form.getDni() == null || form.getDni().isBlank()) errores.put("dni", "Campo DNI obligatorio");
+        else if (!form.getDni().matches("\\d{8}")) errores.put("dni", "El DNI debe tener 8 dígitos");
+        if (form.getCorreo() == null || form.getCorreo().isBlank()) errores.put("correo", "Campo correo obligatorio");
+        else if (!form.getCorreo().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) errores.put("correo", "Correo no válido");
+        if (form.getTelefono() == null || form.getTelefono().isBlank()) errores.put("telefono", "Campo teléfono obligatorio");
+        if (form.getIdRol() == null) errores.put("idRol", "Debe seleccionar un rol");
         return errores;
     }
 
@@ -580,4 +591,3 @@ public class AdminUsuarioController {
         return "Sin estado";
     }
 }
-
