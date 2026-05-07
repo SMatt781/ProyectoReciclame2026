@@ -1253,13 +1253,13 @@
             // Mostrar nombre del archivo
             selectedFileNameNormativa.textContent = fileName + ' (' + fileSize + ' MB)';
 
-            // Cambiar UI
-            fileUploadDefaultNormativa.classList.add('hidden');
-            fileUploadConfirmNormativa.classList.remove('hidden');
+            // Cambiar UI - Usar display en lugar de clase hidden
+            fileUploadDefaultNormativa.style.display = 'none';
+            fileUploadConfirmNormativa.style.display = 'flex';
 
             // Cambiar color del borde a verde
-            fileUploadZoneNormativa.classList.remove('border-[#dbe4ef]', 'hover:border-[#059669]/40', 'hover:bg-[#f8fbff]');
-            fileUploadZoneNormativa.classList.add('border-[#10b981]', 'bg-[#f0fdf4]');
+            fileUploadZoneNormativa.style.borderColor = '#10b981';
+            fileUploadZoneNormativa.style.backgroundColor = '#f0fdf4';
         } else {
             // Si se cancela, volver a estado por defecto
             resetFileUploadNormativa();
@@ -1268,10 +1268,10 @@
 
     // Función para resetear el UI del archivo
     function resetFileUploadNormativa() {
-        fileUploadDefaultNormativa.classList.remove('hidden');
-        fileUploadConfirmNormativa.classList.add('hidden');
-        fileUploadZoneNormativa.classList.remove('border-[#10b981]', 'bg-[#f0fdf4]');
-        fileUploadZoneNormativa.classList.add('border-[#dbe4ef]', 'hover:border-[#059669]/40', 'hover:bg-[#f8fbff]');
+        fileUploadDefaultNormativa.style.display = 'flex';
+        fileUploadConfirmNormativa.style.display = 'none';
+        fileUploadZoneNormativa.style.borderColor = '#dbe4ef';
+        fileUploadZoneNormativa.style.backgroundColor = 'white';
     }
 
     // Permitir hacer clic en el área para seleccionar archivo
@@ -1282,16 +1282,21 @@
     // Drag and drop
     fileUploadZoneNormativa.addEventListener('dragover', function(e) {
         e.preventDefault();
-        fileUploadZoneNormativa.classList.add('bg-[#dbeafe]', 'border-blue-400');
+        fileUploadZoneNormativa.style.backgroundColor = '#dbeafe';
+        fileUploadZoneNormativa.style.borderColor = '#3b82f6';
     });
 
     fileUploadZoneNormativa.addEventListener('dragleave', function() {
-        fileUploadZoneNormativa.classList.remove('bg-[#dbeafe]', 'border-blue-400');
+        if (fileInputNormativa.files.length === 0) {
+            fileUploadZoneNormativa.style.backgroundColor = 'white';
+            fileUploadZoneNormativa.style.borderColor = '#dbe4ef';
+        }
     });
 
     fileUploadZoneNormativa.addEventListener('drop', function(e) {
         e.preventDefault();
-        fileUploadZoneNormativa.classList.remove('bg-[#dbeafe]', 'border-blue-400');
+        fileUploadZoneNormativa.style.backgroundColor = 'white';
+        fileUploadZoneNormativa.style.borderColor = '#dbe4ef';
 
         if (e.dataTransfer.files.length > 0) {
             fileInputNormativa.files = e.dataTransfer.files;
