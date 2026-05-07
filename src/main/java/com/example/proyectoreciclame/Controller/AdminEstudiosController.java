@@ -13,18 +13,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 @Controller
@@ -137,12 +129,12 @@ public class AdminEstudiosController {
                     throw new RuntimeException("Solo se permiten archivos PDF o PPTX");
                 }
 
-                // ✅ NUEVO: Subir a S3 en lugar de guardar localmente
+                // ✅ Subir a S3 y guardar la clave S3 real (no ruta local)
                 String clave = s3StorageService.uploadFile(archivo, "estudios");
 
                 estudio.setArchivoNombre(s3StorageService.getFileName(clave));
                 estudio.setArchivoTamanioKb(Integer.valueOf((int) (archivo.getSize() / 1024)));
-                estudio.setArchivoUrl("/uploads/estudios/" + s3StorageService.getFileName(clave));
+                estudio.setArchivoUrl(clave);
             }
             java.time.LocalDateTime ahora = java.time.LocalDateTime.now();
 
@@ -499,11 +491,11 @@ public class AdminEstudiosController {
             if (archivo != null && !archivo.isEmpty()) {
                 String nombreOriginal = archivo.getOriginalFilename();
 
-                // ✅ NUEVO: Subir a S3 en lugar de guardar localmente
+                // ✅ Subir a S3 y guardar la clave S3 real (no ruta local)
                 String clave = s3StorageService.uploadFile(archivo, "normativas");
 
                 n.setArchivoNombre(s3StorageService.getFileName(clave));
-                n.setArchivoUrl("/uploads/normativas/" + s3StorageService.getFileName(clave));
+                n.setArchivoUrl(clave);
             }
 
             if (enlace != null && !enlace.isBlank()) {
@@ -575,23 +567,33 @@ public class AdminEstudiosController {
         model.addAttribute("estudio", estudio);
         model.addAttribute("currentSection", "admin-estudios");
 
+        if (estudio.getArchivoUrl() != null && !estudio.getArchivoUrl().isBlank()) {
+            try {
+                String presignedUrl = s3StorageService.generatePresignedUrl(estudio.getArchivoUrl(), 3600);
+                model.addAttribute("archivoPresignedUrl", presignedUrl);
+            } catch (Exception e) {
+                model.addAttribute("archivoPresignedUrl", null);
+            }
+        }
+
         return "admin/visualizar_estudio_admin";
     }
 
     @GetMapping("/admin/estudios/{id}/descargar")
-    public ResponseEntity<Resource> descargarEstudio(@PathVariable Long id) throws IOException {
+    public ResponseEntity<Void> descargarEstudio(@PathVariable Long id) {
 
         Estudio estudio = estudioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Estudio no encontrado"));
 
-        Path path = Paths.get("uploads/estudios").resolve(estudio.getArchivoNombre());
-        Resource resource = new UrlResource(path.toUri());
+        if (estudio.getArchivoUrl() == null || estudio.getArchivoUrl().isBlank()) {
+            return ResponseEntity.notFound().build();
+        }
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + estudio.getArchivoNombre() + "\"")
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(resource);
+        String presignedUrl = s3StorageService.generatePresignedUrl(estudio.getArchivoUrl(), 60);
+
+        return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                .header(HttpHeaders.LOCATION, presignedUrl)
+                .build();
     }
     @Autowired
     private com.example.proyectoreciclame.Repository.NormativaRepository normativaRepository;

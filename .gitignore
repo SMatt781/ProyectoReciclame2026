@@ -32,3 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 node_modules/
+
+### Credenciales locales (nunca subir a git) ###
+src/main/resources/application-local.properties
