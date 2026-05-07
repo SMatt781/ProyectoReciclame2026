@@ -22,6 +22,12 @@ public class LoginAuditoriaService {
     private final IntentoLoginRepository intentoLoginRepository;
     private final RegistroSesionRepository registroSesionRepository;
 
+    // Máximo de intentos fallidos antes del bloqueo
+    private static final int MAX_INTENTOS = 5;
+
+    // Ventana de tiempo en minutos para contar los intentos
+    private static final int VENTANA_MINUTOS = 15;
+
     public LoginAuditoriaService(UsuarioRepository usuarioRepository,
                                  IntentoLoginRepository intentoLoginRepository,
                                  RegistroSesionRepository registroSesionRepository) {
@@ -60,10 +66,18 @@ public class LoginAuditoriaService {
         }
     }
 
+    /**
+     * Registra un intento fallido y devuelve cuántos intentos fallidos
+     * acumula ese correo en los últimos VENTANA_MINUTOS minutos.
+     * Si llega a MAX_INTENTOS, bloquea la cuenta automáticamente.
+     *
+     * @return número de intentos fallidos recientes (incluyendo el actual)
+     */
     @Transactional
-    public void registrarIntentoFallido(String correo, HttpServletRequest request) {
+    public long registrarIntentoFallido(String correo, HttpServletRequest request) {
         Usuario usuario = usuarioRepository.findByCorreoWithRol(correo).orElse(null);
 
+        // Guardar el intento fallido
         IntentoLogin intento = new IntentoLogin();
         intento.setUsuario(usuario);
         intento.setCorreo(correo);
@@ -71,6 +85,23 @@ public class LoginAuditoriaService {
         intento.setIp(obtenerIp(request));
         intento.setExitoso(false);
         intentoLoginRepository.save(intento);
+
+        // Contar cuántos intentos fallidos hubo en los últimos VENTANA_MINUTOS
+        LocalDateTime desde = LocalDateTime.now().minusMinutes(VENTANA_MINUTOS);
+        long fallidosRecientes = intentoLoginRepository
+                .countByCorreoAndExitosoFalseAndFechaAfter(correo, desde);
+
+        // Si llegó al máximo y la cuenta está activa → bloquear automáticamente
+        if (fallidosRecientes >= MAX_INTENTOS
+                && usuario != null
+                && usuario.getEstadoCuenta() == Usuario.EstadoCuenta.ACTIVO) {
+
+            usuario.setEstadoCuenta(Usuario.EstadoCuenta.BLOQUEADO);
+            usuario.setActualizadoEn(LocalDateTime.now());
+            usuarioRepository.save(usuario);
+        }
+
+        return fallidosRecientes;
     }
 
     @Transactional

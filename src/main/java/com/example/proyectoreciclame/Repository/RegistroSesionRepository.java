@@ -88,4 +88,12 @@ public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, 
     long countSesionesActivas();
 
     long countByFechaInicioAfter(LocalDateTime fecha);
+
+    // Usuarios distintos que tuvieron sesión en los últimos N días
+    @Query(value = "SELECT COUNT(DISTINCT id_usuario) FROM registro_sesiones WHERE fecha_inicio >= :desde", nativeQuery = true)
+    Long countUsuariosActivosDesde(@Param("desde") LocalDateTime desde);
+
+    // Sesiones agrupadas por día para el gráfico de barras
+    @Query(value = "SELECT DATE(fecha_inicio) AS dia, COUNT(*) AS total FROM registro_sesiones WHERE fecha_inicio >= :desde GROUP BY DATE(fecha_inicio) ORDER BY dia ASC", nativeQuery = true)
+    List<Object[]> contarSesionesPorDia(LocalDateTime desde);
 }

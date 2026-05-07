@@ -53,4 +53,11 @@ public class HistorialRoles {
     @CreatedDate
     @Column(name = "fecha_cambio", nullable = false, updatable = false)
     private LocalDateTime fechaCambio;
+
+    @PrePersist
+    public void prePersist() {
+        if (fechaCambio == null) {
+            fechaCambio = LocalDateTime.now();
+        }
+    }
 }

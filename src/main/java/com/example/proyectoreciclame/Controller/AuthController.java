@@ -70,9 +70,23 @@ public class AuthController {
 
     @GetMapping("/login")
     public String login(@RequestParam(required = false) String correo,
+                        @RequestParam(required = false) String error,
+                        @RequestParam(required = false) Long restantes,
                         Model model) {
+
         model.addAttribute("recaptchaSiteKey", recaptchaSiteKey);
         model.addAttribute("correoIngresado", correo);
+
+        // Tipo de error para la vista
+        if ("bloqueado".equals(error)) {
+            model.addAttribute("errorBloqueado", true);
+        } else if ("intentos".equals(error) && restantes != null) {
+            model.addAttribute("errorIntentos", true);
+            model.addAttribute("intentosRestantes", restantes);
+        } else if ("true".equals(error)) {
+            model.addAttribute("errorCredenciales", true);
+        }
+
         return "auth/login";
     }
 
