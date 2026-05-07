@@ -809,6 +809,7 @@
 
                 btn.addEventListener('click', () => {
                     currentPage = page;
+                    localStorage.setItem('estudiosCurrentPage', currentPage);
                     renderPagination();
                 });
 
@@ -834,6 +835,7 @@
                     iconGrid.classList.remove('hidden');
                 }
                 currentPage = 1;
+                localStorage.setItem('estudiosCurrentPage', currentPage);
                 renderPagination();
             });
         }
@@ -842,6 +844,8 @@
             prevPageBtn.addEventListener('click', () => {
                 if (currentPage > 1) {
                     currentPage--;
+                    localStorage.setItem('estudiosCurrentPage', currentPage);
+
                     renderPagination();
                 }
             });
@@ -853,6 +857,8 @@
                 const pageSize = isGridView ? 6 : 5;
                 if (currentPage < Math.ceil(totalItems / pageSize)) {
                     currentPage++;
+                    localStorage.setItem('estudiosCurrentPage', currentPage);
+
                     renderPagination();
                 }
             });
