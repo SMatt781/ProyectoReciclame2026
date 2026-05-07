@@ -898,8 +898,9 @@
                         <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Archivo</h2>
                     </div>
 
-                    <div class="relative border-2 border-dashed border-[#dbe4ef] rounded-2xl min-h-[280px] px-6 py-10 flex flex-col items-center justify-center bg-white hover:bg-[#f8fbff] hover:border-[#059669]/40 transition-all cursor-pointer group">
-                        <div class="flex flex-col items-center justify-center text-center max-w-xl mx-auto">
+                    <div id="fileUploadZone" class="relative border-2 border-dashed border-[#dbe4ef] rounded-2xl min-h-[280px] px-6 py-10 flex flex-col items-center justify-center bg-white hover:bg-[#f8fbff] hover:border-[#059669]/40 transition-all cursor-pointer group">
+                        <!-- Contenido por defecto (sin archivo) -->
+                        <div id="fileUploadDefault" class="flex flex-col items-center justify-center text-center max-w-xl mx-auto">
                             <div class="w-20 h-20 bg-[#edf7f2] rounded-3xl flex items-center justify-center text-[#10b981] mb-6 group-hover:scale-110 transition-transform">
                                 <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
@@ -908,9 +909,88 @@
                             <h3 class="text-2xl font-extrabold text-[#0f172a] leading-tight">Haz clic para subir o arrastra un archivo</h3>
                             <p class="mt-3 text-lg text-[#94a3b8]">Soportamos formatos PDF y PPTX con un límite de 20MB</p>
                         </div>
-                        <input name="archivo" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" type="file"/>
+
+                        <!-- Contenido cuando archivo está seleccionado -->
+                        <div id="fileUploadConfirm" class="hidden flex flex-col items-center justify-center text-center max-w-xl mx-auto w-full">
+                            <div class="w-20 h-20 bg-[#dcfce7] rounded-3xl flex items-center justify-center text-[#10b981] mb-6 animate-pulse">
+                                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-extrabold text-[#059669] leading-tight">Archivo seleccionado ✓</h3>
+                            <p id="selectedFileName" class="mt-3 text-lg text-[#0f172a] font-semibold break-words">documento.pdf</p>
+                            <p class="mt-2 text-sm text-[#94a3b8]">Haz clic aquí para cambiar el archivo</p>
+                        </div>
+
+                        <input id="archivoInput" name="archivo" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" type="file"/>
                     </div>
                 </section>
+
+                <script>
+                    // Manejar selección de archivo
+                    const fileInput = document.getElementById('archivoInput');
+                    const fileUploadZone = document.getElementById('fileUploadZone');
+                    const fileUploadDefault = document.getElementById('fileUploadDefault');
+                    const fileUploadConfirm = document.getElementById('fileUploadConfirm');
+                    const selectedFileName = document.getElementById('selectedFileName');
+
+                    // Cuando se selecciona un archivo
+                    fileInput.addEventListener('change', function(e) {
+                        if (this.files.length > 0) {
+                            const fileName = this.files[0].name;
+                            const fileSize = (this.files[0].size / 1024 / 1024).toFixed(2);
+
+                            // Mostrar nombre del archivo
+                            selectedFileName.textContent = fileName + ' (' + fileSize + ' MB)';
+
+                            // Cambiar UI
+                            fileUploadDefault.classList.add('hidden');
+                            fileUploadConfirm.classList.remove('hidden');
+
+                            // Cambiar color del borde a verde
+                            fileUploadZone.classList.remove('border-[#dbe4ef]', 'hover:border-[#059669]/40', 'hover:bg-[#f8fbff]');
+                            fileUploadZone.classList.add('border-[#10b981]', 'bg-[#f0fdf4]');
+                        } else {
+                            // Si se cancela, volver a estado por defecto
+                            resetFileUpload();
+                        }
+                    });
+
+                    // Función para resetear el UI del archivo
+                    function resetFileUpload() {
+                        fileUploadDefault.classList.remove('hidden');
+                        fileUploadConfirm.classList.add('hidden');
+                        fileUploadZone.classList.remove('border-[#10b981]', 'bg-[#f0fdf4]');
+                        fileUploadZone.classList.add('border-[#dbe4ef]', 'hover:border-[#059669]/40', 'hover:bg-[#f8fbff]');
+                    }
+
+                    // Permitir hacer clic en el área para cambiar archivo
+                    fileUploadZone.addEventListener('click', function() {
+                        fileInput.click();
+                    });
+
+                    // Drag and drop
+                    fileUploadZone.addEventListener('dragover', function(e) {
+                        e.preventDefault();
+                        fileUploadZone.classList.add('bg-[#dbeafe]', 'border-blue-400');
+                    });
+
+                    fileUploadZone.addEventListener('dragleave', function() {
+                        fileUploadZone.classList.remove('bg-[#dbeafe]', 'border-blue-400');
+                    });
+
+                    fileUploadZone.addEventListener('drop', function(e) {
+                        e.preventDefault();
+                        fileUploadZone.classList.remove('bg-[#dbeafe]', 'border-blue-400');
+
+                        if (e.dataTransfer.files.length > 0) {
+                            fileInput.files = e.dataTransfer.files;
+                            // Triggear evento change manualmente
+                            const event = new Event('change', { bubbles: true });
+                            fileInput.dispatchEvent(event);
+                        }
+                    });
+                </script>
             </div>
 
             <footer class="px-6 py-5 border-t border-gray-100 bg-white flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-0 z-30">

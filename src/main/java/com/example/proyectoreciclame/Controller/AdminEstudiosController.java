@@ -35,6 +35,9 @@ public class AdminEstudiosController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private com.example.proyectoreciclame.Service.S3StorageService s3StorageService;
+
     @GetMapping("/admin/estudios")
     public String estudiosAdmin(
             @RequestParam(required = false) String search,
@@ -119,7 +122,7 @@ public class AdminEstudiosController {
             estudio.setUsuarioCreador(usuario);
 
             // 🔹 archivo
-            // 🔹 archivo real PDF / PPTX
+            // 🔹 archivo real PDF / PPTX - Subir a AWS S3
             if (archivo != null && !archivo.isEmpty()) {
 
                 String nombreOriginal = archivo.getOriginalFilename();
@@ -129,21 +132,12 @@ public class AdminEstudiosController {
                     throw new RuntimeException("Solo se permiten archivos PDF o PPTX");
                 }
 
-                String nombreArchivo = System.currentTimeMillis() + "_" + nombreOriginal;
+                // ✅ NUEVO: Subir a S3 en lugar de guardar localmente
+                String clave = s3StorageService.uploadFile(archivo, "estudios");
 
-                String ruta = "src/main/resources/static/uploads/estudios/";
-
-                java.io.File carpeta = new java.io.File(ruta);
-                if (!carpeta.exists()) {
-                    carpeta.mkdirs();
-                }
-
-                java.io.File destino = new java.io.File(ruta + nombreArchivo);
-                archivo.transferTo(destino);
-
-                estudio.setArchivoNombre(nombreArchivo);
+                estudio.setArchivoNombre(s3StorageService.getFileName(clave));
                 estudio.setArchivoTamanioKb(Integer.valueOf((int) (archivo.getSize() / 1024)));
-                estudio.setArchivoUrl("/uploads/estudios/" + nombreArchivo);
+                estudio.setArchivoUrl("/uploads/estudios/" + s3StorageService.getFileName(clave));
             }
             java.time.LocalDateTime ahora = java.time.LocalDateTime.now();
 
@@ -483,18 +477,12 @@ public class AdminEstudiosController {
 
             if (archivo != null && !archivo.isEmpty()) {
                 String nombreOriginal = archivo.getOriginalFilename();
-                String nombreArchivo = System.currentTimeMillis() + "_" + nombreOriginal;
 
-                String ruta = "src/main/resources/static/uploads/normativas/";
+                // ✅ NUEVO: Subir a S3 en lugar de guardar localmente
+                String clave = s3StorageService.uploadFile(archivo, "normativas");
 
-                java.io.File carpeta = new java.io.File(ruta);
-                if (!carpeta.exists()) carpeta.mkdirs();
-
-                java.io.File destino = new java.io.File(ruta + nombreArchivo);
-                archivo.transferTo(destino);
-
-                n.setArchivoNombre(nombreArchivo);
-                n.setArchivoUrl("/uploads/normativas/" + nombreArchivo);
+                n.setArchivoNombre(s3StorageService.getFileName(clave));
+                n.setArchivoUrl("/uploads/normativas/" + s3StorageService.getFileName(clave));
             }
 
             if (enlace != null && !enlace.isBlank()) {
