@@ -55,13 +55,20 @@ public class SecurityConfig {
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
-                                "/webjars/**"
+                                "/webjars/**",
+                                "/acceso-denegado"
                         ).permitAll()
                         .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/socio/**").hasRole("SOCIO")
                         .requestMatchers("/visualizador/**").hasRole("VISUALIZADOR")
+                        .requestMatchers("/normativas", "/normativas/**").hasAnyRole("SOCIO", "VISUALIZADOR")
+                        .requestMatchers("/estudios", "/estudios/**").hasAnyRole("SOCIO", "VISUALIZADOR")
+                        .requestMatchers("/perfil/**").authenticated()
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(exception -> exception
+                        .accessDeniedPage("/acceso-denegado")
                 )
                 .addFilterBefore(
                         new RecaptchaLoginFilter(recaptchaService),
