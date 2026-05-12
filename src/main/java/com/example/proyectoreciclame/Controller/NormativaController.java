@@ -4,6 +4,10 @@ import com.example.proyectoreciclame.Dto.NormativaDTO;
 import com.example.proyectoreciclame.Dto.NormativaDetalleDTO;
 import com.example.proyectoreciclame.Entity.Normativa;
 import com.example.proyectoreciclame.Repository.NormativaRepository;
+import com.example.proyectoreciclame.Repository.UsuarioRepository;
+import com.example.proyectoreciclame.Service.CitaService;
+import com.example.proyectoreciclame.Service.HistorialLecturaService;
+import com.example.proyectoreciclame.Service.MiEspacioService;
 import com.example.proyectoreciclame.Service.NormativaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -23,9 +27,21 @@ public class NormativaController {
 
     @Autowired
     private NormativaRepository normativaRepository;
-    
+
     @Autowired
     private NormativaService normativaService;
+
+    @Autowired
+    private MiEspacioService miEspacioService;
+
+    @Autowired
+    private HistorialLecturaService historialLecturaService;
+
+    @Autowired
+    private CitaService citaService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @GetMapping
     public String listarNormativas(
@@ -232,24 +248,45 @@ public class NormativaController {
             return "redirect:/normativas";
         }
 
+        Normativa normativa = detalle.getNormativa();
         model.addAttribute("detalle", detalle);
-        model.addAttribute("normativa", detalle.getNormativa());
+        model.addAttribute("normativa", normativa);
         model.addAttribute("currentPage", "repoNormativo");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean esVisualizador = authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_VISUALIZADOR"));
+        boolean esSocio = authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_SOCIO"));
+
+        Long idUsuario = resolveIdUsuario(authentication);
 
         if (esVisualizador) {
-            if (detalle.getNormativa().getAcceso() == Normativa.AccesoNormativa.PAGO) {
-                return "socio/visualizadorNormativaPago";
-            } else {
-                return "visualizador/visualizadorNormativa";
+            if (idUsuario != null) {
+                historialLecturaService.registrarOActualizar(idUsuario, "NORMATIVA", id, normativa.getTitulo());
             }
-        } else if (detalle.getNormativa().getAcceso() == Normativa.AccesoNormativa.PAGO) {
+            model.addAttribute("citas", citaService.generarCitasNormativa(id));
+            if (normativa.getAcceso() == Normativa.AccesoNormativa.PAGO) {
+                return "socio/visualizadorNormativaPago";
+            }
+            return "visualizador/visualizadorNormativa";
+        } else if (esSocio && idUsuario != null) {
+            model.addAttribute("estaGuardado", miEspacioService.estaGuardado(idUsuario, "NORMATIVA", id));
+            if (normativa.getAcceso() == Normativa.AccesoNormativa.PAGO) {
+                return "socio/visualizadorNormativaPago";
+            }
+            return "socio/visualizadorNormativa";
+        } else if (normativa.getAcceso() == Normativa.AccesoNormativa.PAGO) {
             return "socio/visualizadorNormativaPago";
         } else {
             return "socio/visualizadorNormativa";
         }
+    }
+
+    private Long resolveIdUsuario(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getName())) return null;
+        return usuarioRepository.findByCorreoWithRol(authentication.getName())
+                .map(u -> u.getIdUsuario()).orElse(null);
     }
 }

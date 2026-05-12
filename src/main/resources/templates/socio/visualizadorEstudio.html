@@ -346,6 +346,32 @@
                             </div>
                         </div>
                     </section>
+
+                    <!-- Guardar en Mi Espacio -->
+                    <section th:if="${estaGuardado != null and estaGuardado}" class="flex items-center justify-between">
+                        <a th:href="@{/socio/mi-espacio}" title="Ver Mi Espacio" class="flex-1 flex items-center gap-2 text-[#006d37] hover:text-[#004d27] text-xs font-bold px-3 py-2 rounded-lg hover:bg-[#f0fdf4] transition-colors">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                            </svg>
+                            <span>Guardado</span>
+                        </a>
+                    </section>
+
+                    <section th:if="${estaGuardado == null or !estaGuardado}">
+                        <form th:action="@{/socio/mi-espacio/guardar}" method="post" class="inline w-full">
+                            <input type="hidden" name="tipoDocumento" value="ESTUDIO"/>
+                            <input type="hidden" name="idDocumento" th:value="${estudio.idEstudio}"/>
+                            <input type="hidden" name="nombreDocumento" th:value="${estudio.titulo}"/>
+                            <input type="hidden" name="redirectUrl" th:value="'/estudios/' + ${estudio.idEstudio}"/>
+                            <button type="submit" title="Guardar en Mi Espacio"
+                                    class="w-full flex items-center justify-center gap-2 bg-white border border-outline-variant/30 text-on-primary-fixed hover:bg-[#f0fdf4] hover:border-[#006d37] hover:text-[#006d37] px-3 py-2.5 rounded-lg font-semibold text-xs transition-all">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                                </svg>
+                                Guardar
+                            </button>
+                        </form>
+                    </section>
                 </div>
             </div>
         </main>

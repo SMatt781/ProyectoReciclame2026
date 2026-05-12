@@ -31,6 +31,9 @@ public class AdminEstudiosController {
     @Autowired
     private com.example.proyectoreciclame.Service.S3StorageService s3StorageService;
 
+    @Autowired
+    private AdminNotificacionController adminNotificacionController;
+
     @GetMapping("/admin/estudios")
     public String estudiosAdmin(
             @RequestParam(required = false) String search,
@@ -142,6 +145,23 @@ public class AdminEstudiosController {
             estudio.setFechaActualizacion(ahora);
 
             estudioRepository.save(estudio);
+
+            // Generar notificaciones si el estudio es publicado (VIGENTE)
+            if (estudio.getEstado() == Estudio.EstadoEstudio.VIGENTE) {
+                String enlaceEstudio = "/estudios/" + estudio.getIdEstudio();
+                adminNotificacionController.crearNotificacionSocio(
+                        "Nuevo Estudio Disponible",
+                        "Se ha publicado un nuevo estudio: " + estudio.getTitulo(),
+                        "ESTUDIO",
+                        enlaceEstudio
+                );
+                adminNotificacionController.crearNotificacionVisualizador(
+                        "Nuevo Estudio Disponible",
+                        "Se ha publicado un nuevo estudio: " + estudio.getTitulo(),
+                        "ESTUDIO",
+                        enlaceEstudio
+                );
+            }
 
             attr.addFlashAttribute("msg", "Estudio creado correctamente");
 
@@ -508,6 +528,29 @@ public class AdminEstudiosController {
 
             normativaRepository.save(n);
 
+            // Generar notificaciones si la normativa es VIGENTE
+            if (n.getEstado() == com.example.proyectoreciclame.Entity.Normativa.EstadoNormativa.VIGENTE) {
+                String enlaceNormativa = "/normativas/" + n.getIdNormativa();
+                adminNotificacionController.crearNotificacionAdmin(
+                        "Nueva Normativa Disponible",
+                        "Se ha publicado una nueva normativa: " + n.getTitulo(),
+                        "NORMATIVA",
+                        enlaceNormativa
+                );
+                adminNotificacionController.crearNotificacionSocio(
+                        "Nueva Normativa Disponible",
+                        "Se ha publicado una nueva normativa: " + n.getTitulo(),
+                        "NORMATIVA",
+                        enlaceNormativa
+                );
+                adminNotificacionController.crearNotificacionVisualizador(
+                        "Nueva Normativa Disponible",
+                        "Se ha publicado una nueva normativa: " + n.getTitulo(),
+                        "NORMATIVA",
+                        enlaceNormativa
+                );
+            }
+
             attr.addFlashAttribute("msg", "Normativa creada correctamente");
 
         } catch (Exception e) {
@@ -653,6 +696,8 @@ public class AdminEstudiosController {
         Normativa n = normativaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Normativa no encontrada"));
 
+        Normativa.EstadoNormativa estadoAnterior = n.getEstado();
+
         n.setTitulo(titulo);
         n.setOrganismoEmisor(organismoEmisor);
         n.setCodigo(codigo);
@@ -678,6 +723,30 @@ public class AdminEstudiosController {
         n.setFechaActualizacion(java.time.LocalDateTime.now());
 
         normativaRepository.save(n);
+
+        // Generar notificaciones si la normativa pasó a VIGENTE
+        if (estadoAnterior != Normativa.EstadoNormativa.VIGENTE &&
+            n.getEstado() == Normativa.EstadoNormativa.VIGENTE) {
+            String enlaceNormativa = "/normativas/" + n.getIdNormativa();
+            adminNotificacionController.crearNotificacionAdmin(
+                    "Normativa Actualizada y Publicada",
+                    "La normativa \"" + n.getTitulo() + "\" ha sido actualizada y publicada.",
+                    "NORMATIVA",
+                    enlaceNormativa
+            );
+            adminNotificacionController.crearNotificacionSocio(
+                    "Normativa Actualizada y Publicada",
+                    "La normativa \"" + n.getTitulo() + "\" ha sido actualizada y publicada.",
+                    "NORMATIVA",
+                    enlaceNormativa
+            );
+            adminNotificacionController.crearNotificacionVisualizador(
+                    "Normativa Actualizada y Publicada",
+                    "La normativa \"" + n.getTitulo() + "\" ha sido actualizada y publicada.",
+                    "NORMATIVA",
+                    enlaceNormativa
+            );
+        }
 
         attr.addFlashAttribute("msg", "Normativa actualizada correctamente");
 
@@ -724,6 +793,8 @@ public class AdminEstudiosController {
             Estudio estudio = estudioRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Estudio no encontrado"));
 
+            Estudio.EstadoEstudio estadoAnterior = estudio.getEstado();
+
             estudio.setTitulo(nombre);
             estudio.setDescripcion(descripcion);
             estudio.setAnio(anio);
@@ -740,6 +811,24 @@ public class AdminEstudiosController {
             estudio.setFechaActualizacion(java.time.LocalDateTime.now());
 
             estudioRepository.save(estudio);
+
+            // Generar notificaciones si el estudio pasó a VIGENTE
+            if (estadoAnterior != Estudio.EstadoEstudio.VIGENTE &&
+                estudio.getEstado() == Estudio.EstadoEstudio.VIGENTE) {
+                String enlaceEstudio = "/estudios/" + estudio.getIdEstudio();
+                adminNotificacionController.crearNotificacionSocio(
+                        "Estudio Actualizado y Publicado",
+                        "El estudio \"" + estudio.getTitulo() + "\" ha sido actualizado y publicado.",
+                        "ESTUDIO",
+                        enlaceEstudio
+                );
+                adminNotificacionController.crearNotificacionVisualizador(
+                        "Estudio Actualizado y Publicado",
+                        "El estudio \"" + estudio.getTitulo() + "\" ha sido actualizado y publicado.",
+                        "ESTUDIO",
+                        enlaceEstudio
+                );
+            }
 
             attr.addFlashAttribute("msg", "Estudio actualizado correctamente");
 
