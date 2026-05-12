@@ -1,18 +1,21 @@
 package com.example.proyectoreciclame.Controller;
 
 import com.example.proyectoreciclame.Dto.NovedadDTO;
+import com.example.proyectoreciclame.Entity.ContenidoGuardado;
+import com.example.proyectoreciclame.Entity.EspacioCarpeta;
 import com.example.proyectoreciclame.Entity.Estudio;
 import com.example.proyectoreciclame.Entity.Normativa;
 import com.example.proyectoreciclame.Entity.RegistroDescarga;
 import com.example.proyectoreciclame.Entity.Usuario;
 import com.example.proyectoreciclame.Repository.*;
+import com.example.proyectoreciclame.Service.MiEspacioService;
 import com.example.proyectoreciclame.util.DateUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.DecimalFormat;
 import java.time.Duration;
@@ -26,6 +29,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/socio")
@@ -38,6 +42,7 @@ public class SocioController {
     private final EstudioRepository estudioRepository;
     private final NormativaRepository normativaRepository;
     private final DateUtil dateUtil;
+    private final MiEspacioService miEspacioService;
 
     public SocioController(UsuarioRepository usuarioRepository,
                            RegistroDescargaRepository registroDescargaRepository,
@@ -45,7 +50,8 @@ public class SocioController {
                            NotificacionRepository notificacionRepository,
                            EstudioRepository estudioRepository,
                            NormativaRepository normativaRepository,
-                           DateUtil dateUtil) {
+                           DateUtil dateUtil,
+                           MiEspacioService miEspacioService) {
         this.usuarioRepository = usuarioRepository;
         this.registroDescargaRepository = registroDescargaRepository;
         this.registroSesionRepository = registroSesionRepository;
@@ -53,6 +59,7 @@ public class SocioController {
         this.estudioRepository = estudioRepository;
         this.normativaRepository = normativaRepository;
         this.dateUtil = dateUtil;
+        this.miEspacioService = miEspacioService;
     }
 
     @GetMapping()
@@ -292,5 +299,136 @@ public class SocioController {
             case "RE" -> "#E24B4A";
             default -> "#888780";
         };
+    }
+
+    // ── Mi Espacio ──────────────────────────────────────────────
+
+    @GetMapping("/mi-espacio")
+    public String miEspacio(@RequestParam(required = false) Long carpeta, Model model) {
+        Long idUsuario = getIdUsuarioActual();
+        if (idUsuario == null) return "redirect:/login";
+
+        List<EspacioCarpeta> carpetas = miEspacioService.listarCarpetas(idUsuario);
+        java.util.Map<Long, Long> conteosCarpeta = miEspacioService.conteosPorCarpeta(idUsuario);
+
+        List<ContenidoGuardado> guardados;
+        EspacioCarpeta carpetaActual = null;
+
+        if (carpeta != null) {
+            guardados = miEspacioService.listarPorCarpeta(idUsuario, carpeta);
+            carpetaActual = carpetas.stream()
+                    .filter(c -> c.getIdCarpeta().equals(carpeta))
+                    .findFirst().orElse(null);
+        } else {
+            guardados = miEspacioService.listarPorUsuario(idUsuario);
+        }
+
+        long totalGuardados = miEspacioService.contarPorUsuario(idUsuario);
+        long totalEstudios = miEspacioService.contarPorTipo(idUsuario, "ESTUDIO");
+        long totalNormativas = miEspacioService.contarPorTipo(idUsuario, "NORMATIVA");
+
+        model.addAttribute("guardados", guardados);
+        model.addAttribute("carpetas", carpetas);
+        model.addAttribute("conteosCarpeta", conteosCarpeta);
+        model.addAttribute("carpetaActual", carpetaActual);
+        model.addAttribute("carpetaFiltroId", carpeta);
+        model.addAttribute("totalGuardados", totalGuardados);
+        model.addAttribute("totalEstudios", totalEstudios);
+        model.addAttribute("totalNormativas", totalNormativas);
+        model.addAttribute("currentPage", "miEspacio");
+        return "socio/miEspacio";
+    }
+
+    @PostMapping("/mi-espacio/guardar")
+    public String guardarContenido(@RequestParam String tipoDocumento,
+                                   @RequestParam Long idDocumento,
+                                   @RequestParam String nombreDocumento,
+                                   @RequestParam String redirectUrl,
+                                   RedirectAttributes ra) {
+        Long idUsuario = getIdUsuarioActual();
+        if (idUsuario != null) {
+            miEspacioService.guardar(idUsuario, tipoDocumento, idDocumento, nombreDocumento);
+            ra.addFlashAttribute("guardadoExito", true);
+        }
+        return "redirect:" + redirectUrl;
+    }
+
+    @PostMapping("/mi-espacio/eliminar/{id}")
+    public String eliminarContenido(@PathVariable Long id, RedirectAttributes ra) {
+        Long idUsuario = getIdUsuarioActual();
+        if (idUsuario != null) {
+            miEspacioService.eliminar(id, idUsuario);
+            ra.addFlashAttribute("eliminadoExito", true);
+        }
+        return "redirect:/socio/mi-espacio";
+    }
+
+    @PostMapping("/mi-espacio/mover")
+    public String moverACarpeta(@RequestParam Long idGuardado,
+                                @RequestParam(required = false) Long idCarpeta,
+                                @RequestParam(required = false) Long carpetaFiltroId,
+                                RedirectAttributes ra) {
+        Long idUsuario = getIdUsuarioActual();
+        if (idUsuario != null) {
+            miEspacioService.moverACarpeta(idGuardado, idUsuario, idCarpeta);
+            ra.addFlashAttribute("movidoExito", true);
+        }
+        String redirect = carpetaFiltroId != null
+                ? "/socio/mi-espacio?carpeta=" + carpetaFiltroId
+                : "/socio/mi-espacio";
+        return "redirect:" + redirect;
+    }
+
+    // ── Carpetas ────────────────────────────────────────────────
+
+    @PostMapping("/mi-espacio/carpetas/crear")
+    public String crearCarpeta(@RequestParam String nombre,
+                               @RequestParam(defaultValue = "#006d37") String color,
+                               @RequestParam(required = false) String emoji,
+                               RedirectAttributes ra) {
+        Long idUsuario = getIdUsuarioActual();
+        if (idUsuario != null) {
+            boolean ok = miEspacioService.crearCarpeta(idUsuario, nombre, color, emoji);
+            if (ok) {
+                ra.addFlashAttribute("carpetaCreadaExito", true);
+            } else {
+                ra.addFlashAttribute("carpetaError", "Ya existe una carpeta con ese nombre.");
+            }
+        }
+        return "redirect:/socio/mi-espacio";
+    }
+
+    @PostMapping("/mi-espacio/carpetas/{id}/editar")
+    public String editarCarpeta(@PathVariable Long id,
+                                @RequestParam String nombre,
+                                @RequestParam(defaultValue = "#006d37") String color,
+                                @RequestParam(required = false) String emoji,
+                                RedirectAttributes ra) {
+        Long idUsuario = getIdUsuarioActual();
+        if (idUsuario != null) {
+            boolean ok = miEspacioService.editarCarpeta(idUsuario, id, nombre, color, emoji);
+            if (!ok) {
+                ra.addFlashAttribute("carpetaError", "Ya existe una carpeta con ese nombre.");
+            }
+        }
+        return "redirect:/socio/mi-espacio";
+    }
+
+    @PostMapping("/mi-espacio/carpetas/{id}/eliminar")
+    public String eliminarCarpeta(@PathVariable Long id, RedirectAttributes ra) {
+        Long idUsuario = getIdUsuarioActual();
+        if (idUsuario != null) {
+            miEspacioService.eliminarCarpeta(idUsuario, id);
+            ra.addFlashAttribute("carpetaEliminadaExito", true);
+        }
+        return "redirect:/socio/mi-espacio";
+    }
+
+    private Long getIdUsuarioActual() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) return null;
+        return usuarioRepository.findByCorreoWithRol(auth.getName())
+                .map(u -> u.getIdUsuario())
+                .orElse(null);
     }
 }

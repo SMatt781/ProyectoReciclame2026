@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Mis Lecturas - Reciclame</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7f9fb",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#cfe9d9",
+                        "tertiary-container": "#092016",
+                        "primary-container": "#021d30",
+                        "on-secondary-container": "#00743a",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#b1c9e2",
+                        "on-surface-variant": "#43474c",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "outline-variant": "#c3c7cd",
+                        "on-secondary-fixed": "#00210c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006d37",
+                        "surface-variant": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#354c40",
+                        "on-secondary": "#ffffff",
+                        "outline": "#73777d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-container": "#71897c",
+                        "tertiary-fixed-dim": "#b3ccbd",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#496177",
+                        "on-secondary-fixed-variant": "#005228",
+                        "on-primary-container": "#6f869e",
+                        "secondary-container": "#6bfe9c",
+                        "on-tertiary-fixed": "#092016",
+                        "secondary-fixed": "#6bfe9c",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#021d30",
+                        "on-primary-fixed-variant": "#31495e",
+                        "primary-fixed": "#cde5ff",
+                        "secondary-fixed-dim": "#4ae183",
+                        "primary-fixed-dim": "#b1c9e2"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+        .ambient-shadow { box-shadow: 0 4px 24px -4px rgba(0,27,46,0.06); }
+        .row-hover { transition: background 0.12s ease, transform 0.12s ease; }
+        .row-hover:hover { background: #f0fdf4; transform: translateX(3px); }
+        .pulse-dot { animation: pulse-dot 2s cubic-bezier(0.4,0,0.6,1) infinite; }
+        @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.4} }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+        <main class="flex-1 overflow-y-auto px-8 py-6 bg-[#f9f9ff]">
+
+            <!-- Header -->
+            <div class="mb-8">
+                <div class="flex items-center gap-3 mb-1">
+                    <div class="w-10 h-10 rounded-xl bg-[#021d30] flex items-center justify-center flex-shrink-0">
+                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">Mis Lecturas</h2>
+                        <p class="font-body text-on-surface-variant text-sm">Historial automático de los últimos 15 documentos consultados</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats strip -->
+            <div class="grid grid-cols-3 gap-4 mb-8">
+                <div class="bg-white rounded-xl px-5 py-4 ambient-shadow flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg bg-[#f0f9ff] flex items-center justify-center">
+                        <svg class="w-5 h-5 text-[#0284c7]" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">Documentos consultados</p>
+                        <p class="text-2xl font-extrabold text-on-primary-fixed font-headline" th:text="${lecturas.size()}">0</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl px-5 py-4 ambient-shadow flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg bg-[#eff6ff] flex items-center justify-center">
+                        <svg class="w-5 h-5 text-[#3b82f6]" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">Estudios</p>
+                        <p class="text-2xl font-extrabold text-on-primary-fixed font-headline" th:text="${totalEstudios}">0</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl px-5 py-4 ambient-shadow flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg bg-[#fefce8] flex items-center justify-center">
+                        <svg class="w-5 h-5 text-[#d97706]" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">Normativas</p>
+                        <p class="text-2xl font-extrabold text-on-primary-fixed font-headline" th:text="${totalNormativas}">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de lecturas -->
+            <div th:if="${lecturas != null and !lecturas.isEmpty()}" class="flex flex-col gap-3">
+                <!-- Cabecera -->
+                <div class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 border-b border-surface-variant text-xs font-extrabold text-on-surface-variant uppercase tracking-wider">
+                    <div class="col-span-1">#</div>
+                    <div class="col-span-1">Tipo</div>
+                    <div class="col-span-6">Documento</div>
+                    <div class="col-span-2 text-center">Vistas</div>
+                    <div class="col-span-2 text-right">Última lectura</div>
+                </div>
+
+                <!-- Filas -->
+                <div th:each="l, iter : ${lecturas}"
+                     class="bg-surface-container-lowest rounded-xl px-6 py-4 ambient-shadow grid grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30 cursor-pointer"
+                     th:onclick="${l.tipoDocumento == 'ESTUDIO'} ? 'window.location=\'/visualizador/estudios/' + ${l.idDocumento} + '\'' : 'window.location=\'/visualizador/normativas/' + ${l.idDocumento} + '\''">
+
+                    <!-- Número -->
+                    <div class="col-span-1">
+                        <span class="text-xs font-bold text-on-surface-variant" th:text="${iter.index + 1}">1</span>
+                    </div>
+
+                    <!-- Badge tipo -->
+                    <div class="col-span-1">
+                        <span th:if="${l.tipoDocumento == 'ESTUDIO'}"
+                              class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-[#eff6ff]" title="Estudio">
+                            <svg class="w-4 h-4 text-[#3b82f6]" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                            </svg>
+                        </span>
+                        <span th:if="${l.tipoDocumento == 'NORMATIVA'}"
+                              class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-[#fefce8]" title="Normativa">
+                            <svg class="w-4 h-4 text-[#d97706]" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <!-- Título -->
+                    <div class="col-span-6">
+                        <p class="font-headline font-semibold text-on-primary-fixed text-sm leading-snug line-clamp-2 group-hover:text-secondary transition-colors"
+                           th:text="${l.nombreDocumento}">Título del documento</p>
+                        <p class="text-[10px] text-on-surface-variant mt-0.5 font-medium"
+                           th:text="'Primera vez: ' + ${#temporals.format(l.primeraLectura, 'dd MMM yyyy')}">Primera vez: 01 Ene 2025</p>
+                    </div>
+
+                    <!-- Vistas -->
+                    <div class="col-span-2 flex justify-center">
+                        <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-low">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#006d37] pulse-dot"></span>
+                            <span class="text-xs font-bold text-on-surface-variant"
+                                  th:text="${l.vecesVisto} + 'x'">3x</span>
+                        </div>
+                    </div>
+
+                    <!-- Fecha última lectura -->
+                    <div class="col-span-2 text-right">
+                        <p class="text-xs font-semibold text-on-primary-fixed"
+                           th:text="${#temporals.format(l.ultimaLectura, 'dd MMM yyyy')}">01 Ene 2025</p>
+                        <p class="text-[10px] text-on-surface-variant"
+                           th:text="${#temporals.format(l.ultimaLectura, 'HH:mm')}">14:30</p>
+                    </div>
+                </div>
+
+                <p class="text-center text-xs text-on-surface-variant mt-1 font-medium">
+                    Mostrando los últimos <span class="font-bold" th:text="${lecturas.size()}">15</span> documentos consultados.
+                    El historial se actualiza automáticamente al abrir un documento.
+                </p>
+            </div>
+
+            <!-- Estado vacío -->
+            <div th:if="${lecturas == null or lecturas.isEmpty()}"
+                 class="flex flex-col items-center justify-center py-24 text-center">
+                <div class="w-20 h-20 rounded-2xl bg-[#f0f9ff] flex items-center justify-center mb-6">
+                    <svg class="w-10 h-10 text-[#0284c7]" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                    </svg>
+                </div>
+                <h3 class="font-headline font-bold text-xl text-on-primary-fixed mb-2">Aún no has consultado documentos</h3>
+                <p class="font-body text-on-surface-variant text-sm max-w-sm leading-relaxed">
+                    Tu historial de lecturas aparece aquí de forma automática cada vez que abres un estudio o normativa.
+                </p>
+                <div class="flex gap-3 mt-6">
+                    <a th:href="@{/visualizador/estudios}"
+                       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#021d30] text-white text-sm font-bold hover:bg-[#031f35] transition-colors">
+                        Explorar Estudios
+                    </a>
+                    <a th:href="@{/visualizador/normativas}"
+                       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#021d30] text-[#021d30] text-sm font-bold hover:bg-[#f0f9ff] transition-colors">
+                        Explorar Normativas
+                    </a>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</body>
+</html>

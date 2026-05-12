@@ -4,10 +4,14 @@ import com.example.proyectoreciclame.Dto.EstudioDTO;
 import com.example.proyectoreciclame.Dto.NormativaDTO;
 import com.example.proyectoreciclame.Dto.NormativaDetalleDTO;
 import com.example.proyectoreciclame.Entity.Estudio;
+import com.example.proyectoreciclame.Entity.HistorialLectura;
 import com.example.proyectoreciclame.Entity.Normativa;
 import com.example.proyectoreciclame.Repository.EstudioRepository;
 import com.example.proyectoreciclame.Repository.NormativaRepository;
 import com.example.proyectoreciclame.Repository.RegistroDescargaRepository;
+import com.example.proyectoreciclame.Repository.UsuarioRepository;
+import com.example.proyectoreciclame.Service.CitaService;
+import com.example.proyectoreciclame.Service.HistorialLecturaService;
 import com.example.proyectoreciclame.Service.NormativaService;
 import com.example.proyectoreciclame.util.PaginationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +44,15 @@ public class VisualizadorController {
 
     @Autowired
     private RegistroDescargaRepository registroDescargaRepository;
+
+    @Autowired
+    private HistorialLecturaService historialLecturaService;
+
+    @Autowired
+    private CitaService citaService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @GetMapping
     public String inicio(Model model) {
@@ -137,7 +152,13 @@ public class VisualizadorController {
             return "redirect:/visualizador/estudios";
         }
 
+        Long idUsuario = getIdUsuarioActual();
+        if (idUsuario != null) {
+            historialLecturaService.registrarOActualizar(idUsuario, "ESTUDIO", id, estudio.getTitulo());
+        }
+
         model.addAttribute("estudio", estudio);
+        model.addAttribute("citas", citaService.generarCitasEstudio(id));
         model.addAttribute("currentPage", "visualizadorEstudios");
 
         return "visualizador/visualizadorEstudio";
@@ -344,11 +365,42 @@ public class VisualizadorController {
             return "redirect:/visualizador/normativas";
         }
 
+        Normativa normativa = detalle.getNormativa();
+        Long idUsuario = getIdUsuarioActual();
+        if (idUsuario != null) {
+            historialLecturaService.registrarOActualizar(idUsuario, "NORMATIVA", id, normativa.getTitulo());
+        }
+
         model.addAttribute("detalle", detalle);
-        model.addAttribute("normativa", detalle.getNormativa());
+        model.addAttribute("normativa", normativa);
+        model.addAttribute("citas", citaService.generarCitasNormativa(id));
         model.addAttribute("currentPage", "visualizadorRepoNormativo");
 
         return "visualizador/visualizadorNormativa";
+    }
+
+    @GetMapping("/mis-lecturas")
+    public String misLecturas(Model model) {
+        Long idUsuario = getIdUsuarioActual();
+        if (idUsuario == null) return "redirect:/login";
+
+        List<HistorialLectura> lecturas = historialLecturaService.listarRecientes(idUsuario, 15);
+        long totalEstudios = lecturas.stream().filter(l -> "ESTUDIO".equals(l.getTipoDocumento())).count();
+        long totalNormativas = lecturas.stream().filter(l -> "NORMATIVA".equals(l.getTipoDocumento())).count();
+
+        model.addAttribute("lecturas", lecturas);
+        model.addAttribute("totalEstudios", totalEstudios);
+        model.addAttribute("totalNormativas", totalNormativas);
+        model.addAttribute("currentPage", "misLecturas");
+        return "visualizador/misLecturas";
+    }
+
+    private Long getIdUsuarioActual() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) return null;
+        return usuarioRepository.findByCorreoWithRol(auth.getName())
+                .map(u -> u.getIdUsuario())
+                .orElse(null);
     }
 
     private String resolveAnioMasActivo() {

@@ -4,6 +4,10 @@ import com.example.proyectoreciclame.Dto.EstudioDTO;
 import com.example.proyectoreciclame.Entity.Estudio;
 import com.example.proyectoreciclame.Repository.EstudioRepository;
 import com.example.proyectoreciclame.Repository.RegistroDescargaRepository;
+import com.example.proyectoreciclame.Repository.UsuarioRepository;
+import com.example.proyectoreciclame.Service.CitaService;
+import com.example.proyectoreciclame.Service.HistorialLecturaService;
+import com.example.proyectoreciclame.Service.MiEspacioService;
 import com.example.proyectoreciclame.util.PaginationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +32,18 @@ public class EstudioController {
 
     @Autowired
     private RegistroDescargaRepository registroDescargaRepository;
+
+    @Autowired
+    private MiEspacioService miEspacioService;
+
+    @Autowired
+    private HistorialLecturaService historialLecturaService;
+
+    @Autowired
+    private CitaService citaService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @GetMapping
     public String listar(
@@ -128,14 +144,35 @@ public class EstudioController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean esVisualizador = authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_VISUALIZADOR"));
+        boolean esSocio = authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_SOCIO"));
+
+        Long idUsuario = resolveIdUsuario(authentication);
 
         if (esVisualizador) {
+            if (idUsuario != null) {
+                historialLecturaService.registrarOActualizar(idUsuario, "ESTUDIO", id, estudio.getTitulo());
+            }
+            model.addAttribute("citas", citaService.generarCitasEstudio(id));
             return "visualizador/visualizadorEstudio";
+        } else if (esSocio && idUsuario != null) {
+            model.addAttribute("estaGuardado", miEspacioService.estaGuardado(idUsuario, "ESTUDIO", id));
+            if (estudio.getTipoAcceso() == Estudio.TipoAcceso.DESCARGA) {
+                return "socio/visualizadorEstudioDescargable";
+            }
+            return "socio/visualizadorEstudio";
         } else if (estudio.getTipoAcceso() == Estudio.TipoAcceso.DESCARGA) {
             return "socio/visualizadorEstudioDescargable";
         } else {
             return "socio/visualizadorEstudio";
         }
+    }
+
+    private Long resolveIdUsuario(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getName())) return null;
+        return usuarioRepository.findByCorreoWithRol(authentication.getName())
+                .map(u -> u.getIdUsuario()).orElse(null);
     }
 
     private String resolveAnioMasActivo() {
