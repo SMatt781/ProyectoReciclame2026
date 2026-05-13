@@ -759,6 +759,12 @@
                                    class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
                                     Editar
                                 </a>
+                                <!-- Después del botón Editar, antes del Eliminar -->
+                                <a th:href="@{/superadmin/administradores(page=${currentPage}, texto=${texto}, modal='historial', id=${admin.idUsuario})}"
+                                   class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-surface-container/50 hover:text-secondary transition-colors gap-1">
+                                    <span class="material-symbols-outlined text-[14px]">history</span>
+                                    Historial
+                                </a>
 
                                 <button type="button"
                                         th:attr="onclick='abrirConfirmarEliminarAdmin(' + ${admin.idUsuario} + ', \'' + ${admin.nombres} + ' ' + ${admin.apellidoPaterno} + '\')'"
@@ -996,6 +1002,109 @@
                     Sí, eliminar
                 </button>
             </form>
+        </div>
+    </div>
+</div>
+<div th:if="${modal == 'historial'}"
+     class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+    <div class="w-full max-w-xl bg-surface text-on-surface rounded-[1.5rem] shadow-xl overflow-hidden flex flex-col max-h-[85vh]">
+
+        <div class="flex items-start justify-between px-6 py-5 border-b border-outline-variant/30 flex-shrink-0">
+            <div>
+                <div class="flex items-center gap-3 mb-1">
+                    <div class="w-9 h-9 rounded-full bg-secondary-container/30 text-secondary flex items-center justify-center text-sm font-bold flex-shrink-0"
+                         th:text="${usuarioHistorial != null ? (#strings.substring(usuarioHistorial.nombres, 0, 1) + #strings.substring(usuarioHistorial.apellidoPaterno, 0, 1)) : '??'}">
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-on-primary-fixed leading-tight"
+                            th:text="${usuarioHistorial != null ? (usuarioHistorial.nombres + ' ' + usuarioHistorial.apellidoPaterno) : 'Administrador'}">
+                        </h3>
+                        <p class="text-xs text-on-surface-variant"
+                           th:text="${usuarioHistorial != null ? usuarioHistorial.correo : ''}">
+                        </p>
+                    </div>
+                </div>
+                <p class="text-sm text-on-surface-variant mt-1">Historial de acciones sobre este administrador</p>
+            </div>
+            <a th:href="@{/superadmin/administradores(page=${currentPage}, texto=${texto})}"
+               class="px-4 py-2 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors flex-shrink-0">
+                Cerrar
+            </a>
+        </div>
+
+        <div class="overflow-y-auto px-6 py-5 flex-1">
+
+            <div th:if="${historialRoles == null or #lists.isEmpty(historialRoles)}"
+                 class="py-10 flex flex-col items-center justify-center text-center">
+                <span class="material-symbols-outlined text-4xl text-outline-variant mb-3">history</span>
+                <p class="text-sm font-bold text-on-surface-variant">Sin historial registrado</p>
+                <p class="text-xs text-on-surface-variant/60 mt-1">Las acciones futuras sobre este administrador aparecerán aquí.</p>
+            </div>
+
+            <div th:if="${historialRoles != null and not #lists.isEmpty(historialRoles)}"
+                 class="relative">
+                <div class="absolute left-[17px] top-2 bottom-2 w-0.5 bg-outline-variant/30"></div>
+                <div class="flex flex-col gap-5">
+                    <div th:each="h : ${historialRoles}" class="flex gap-4 relative">
+
+                        <!-- Ícono -->
+                        <div class="flex-shrink-0 w-9 flex justify-center">
+                            <div th:if="${h.estadoNuevo != null and h.estadoNuevo.name() == 'ACTIVO' and h.estadoAnterior == null}"
+                                 class="w-9 h-9 rounded-full bg-secondary-container/30 border-2 border-secondary flex items-center justify-center z-10">
+                                <span class="material-symbols-outlined text-secondary text-[16px]">person_add</span>
+                            </div>
+                            <div th:if="${h.estadoNuevo != null and h.estadoNuevo.name() == 'BLOQUEADO'}"
+                                 class="w-9 h-9 rounded-full bg-error-container border-2 border-error flex items-center justify-center z-10">
+                                <span class="material-symbols-outlined text-error text-[16px]">block</span>
+                            </div>
+                            <div th:if="${h.estadoNuevo != null and h.estadoNuevo.name() == 'ACTIVO' and h.estadoAnterior != null and h.estadoAnterior.name() == 'BLOQUEADO'}"
+                                 class="w-9 h-9 rounded-full bg-blue-50 border-2 border-blue-400 flex items-center justify-center z-10">
+                                <span class="material-symbols-outlined text-blue-500 text-[16px]">lock_open</span>
+                            </div>
+                            <div th:if="${h.estadoNuevo == null and h.estadoAnterior != null}"
+                                 class="w-9 h-9 rounded-full bg-red-50 border-2 border-red-300 flex items-center justify-center z-10">
+                                <span class="material-symbols-outlined text-red-400 text-[16px]">person_remove</span>
+                            </div>
+                            <div th:if="${h.estadoNuevo != null and h.estadoAnterior != null and h.estadoNuevo.name() == h.estadoAnterior.name()}"
+                                 class="w-9 h-9 rounded-full bg-amber-50 border-2 border-amber-400 flex items-center justify-center z-10">
+                                <span class="material-symbols-outlined text-amber-500 text-[16px]">edit</span>
+                            </div>
+                        </div>
+
+                        <!-- Contenido -->
+                        <div class="flex-1 pb-1">
+                            <p class="text-sm font-bold text-on-primary-fixed leading-tight"
+                               th:text="${h.estadoNuevo != null and h.estadoNuevo.name() == 'ACTIVO' and h.estadoAnterior == null} ? 'Administrador creado'
+                                      : (${h.estadoNuevo != null and h.estadoNuevo.name() == 'BLOQUEADO'} ? 'Cuenta bloqueada'
+                                      : (${h.estadoNuevo != null and h.estadoNuevo.name() == 'ACTIVO' and h.estadoAnterior != null and h.estadoAnterior.name() == 'BLOQUEADO'} ? 'Cuenta desbloqueada'
+                                      : (${h.estadoNuevo == null and h.estadoAnterior != null} ? 'Administrador eliminado'
+                                      : 'Datos editados')))">
+                            </p>
+                            <p class="text-xs text-on-surface-variant mt-0.5"
+                               th:text="${h.fechaCambio != null ? #temporals.format(h.fechaCambio, 'dd MMM yyyy · HH:mm') : '-'}">
+                            </p>
+                            <div class="mt-2 rounded-lg bg-surface-container-low p-3 text-xs space-y-1.5">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-on-surface-variant font-medium w-16 flex-shrink-0">Estado</span>
+                                    <span th:if="${h.estadoAnterior == null}" class="text-on-surface-variant">—</span>
+                                    <span th:if="${h.estadoAnterior != null}"
+                                          class="font-bold text-on-primary-fixed"
+                                          th:text="${h.estadoAnterior.name()}"></span>
+                                    <span class="material-symbols-outlined text-[12px] text-outline">arrow_forward</span>
+                                    <span th:if="${h.estadoNuevo == null}" class="text-red-500 font-bold">ELIMINADO</span>
+                                    <span th:if="${h.estadoNuevo != null}"
+                                          th:class="${h.estadoNuevo.name() == 'ACTIVO'} ? 'font-bold text-secondary' : 'font-bold text-error'"
+                                          th:text="${h.estadoNuevo.name()}"></span>
+                                </div>
+                                <div th:if="${h.motivo != null and !#strings.isEmpty(h.motivo)}" class="flex items-start gap-2">
+                                    <span class="text-on-surface-variant font-medium w-16 flex-shrink-0 pt-0.5">Motivo</span>
+                                    <span class="text-on-surface-variant italic" th:text="${h.motivo}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

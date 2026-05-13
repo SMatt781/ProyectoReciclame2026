@@ -31,7 +31,7 @@ public class SuperadminController {
     // ── Constantes ────────────────────────────────────────────────────────────
     private static final List<Integer> ROL_ADMIN_IDS = List.of(2);
     private static final int PAGE_SIZE = 3;
-
+    private final HistorialRolesRepository historialRolesRepository;
     // ── Dependencias ─────────────────────────────────────────────────────────
     final UsuarioRepository usuarioRepository;
     final DominioAutorizadoRepository dominioAutorizadoRepository;
@@ -60,8 +60,10 @@ public class SuperadminController {
                                 IntentoLoginRepository intentoLoginRepository,
                                 RecuperacionPasswordRepository recuperacionPasswordRepository,
                                 SolicitudRegistroRepository solicitudRegistroRepository,
+                                HistorialRolesRepository historialRolesRepository,
                                 CorreoService correoService,
                                 org.springframework.core.env.Environment env) {
+        this.historialRolesRepository = historialRolesRepository;
         this.usuarioRepository = usuarioRepository;
         this.dominioAutorizadoRepository = dominioAutorizadoRepository;
         this.passwordEncoder = passwordEncoder;
@@ -110,7 +112,9 @@ public class SuperadminController {
             Model model,
             @RequestParam(value = "texto", required = false) String texto,
             @RequestParam(value = "estado", required = false) String estado,
-            @RequestParam(value = "page", defaultValue = "0") int page
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "modal", required = false) String modal,  // ← NUEVO
+            @RequestParam(value = "id", required = false) Long id
     ) {
         PageRequest pageable = PageRequest.of(
                 page, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "idUsuario"));
@@ -161,6 +165,17 @@ public class SuperadminController {
                 politicaContrasenaRepository.findById(1).orElse(null));
         model.addAttribute("ultimoAdmin",
                 usuarioRepository.findUltimoAdminCreado(ROL_ADMIN_IDS).orElse(null));
+
+        // Al final, antes del return:
+        if ("historial".equals(modal) && id != null) {
+            Usuario admin = usuarioRepository.findById(id).orElse(null);
+            if (admin != null) {
+                model.addAttribute("usuarioHistorial", admin);
+                model.addAttribute("historialRoles",
+                        historialRolesRepository.findByUsuarioAfectadoOrderByFechaCambioDesc(admin));
+            }
+        }
+        model.addAttribute("modal", modal);
         return "superadmin/administradores";
     }
 
@@ -171,7 +186,8 @@ public class SuperadminController {
             @ModelAttribute Usuario usuario,
             @RequestParam String usuarioCorreo,
             @RequestParam String dominioCorreo,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            org.springframework.security.core.Authentication authentication
     ) {
         // Construir correo completo — dominioCorreo ya tiene el @
         String correoCompleto = usuarioCorreo.trim() + dominioCorreo.trim();
@@ -232,9 +248,18 @@ public class SuperadminController {
         usuario.setEstadoCuenta(Usuario.EstadoCuenta.ACTIVO);
         usuario.setEstadoAprobacion("APROBADO");
 
-        // 6. Guardar
-        usuarioRepository.save(usuario);
-
+        Usuario superadmin = usuarioRepository
+                .findByCorreoWithRol(authentication.getName()).orElse(null);
+        if (superadmin != null) {
+            HistorialRoles h = new HistorialRoles();
+            h.setUsuarioAfectado(usuario);
+            h.setRolNuevo(usuario.getRol());
+            h.setEstadoNuevo(Usuario.EstadoCuenta.ACTIVO);
+            h.setMotivo("Administrador creado por Superadmin");
+            h.setFechaCambio(LocalDateTime.now());
+            h.setAutorizadoPor(superadmin);
+            historialRolesRepository.save(h);
+        }
         // Enviar correo con credenciales al nuevo administrador
         try {
             correoService.enviarCredencialesAdministrador(
@@ -323,7 +348,8 @@ public class SuperadminController {
             @RequestParam String dominioCorreo,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "texto", required = false) String texto,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            org.springframework.security.core.Authentication authentication
     ) {
         // Construir correo completo
         String correo = usuarioCorreo.trim() + dominioCorreo.trim();
@@ -361,6 +387,7 @@ public class SuperadminController {
 
         usuarioRepository.save(admin);
 
+
         redirectAttributes.addFlashAttribute("success", "Administrador actualizado correctamente.");
 
         crearNotificacionSuperadmin(
@@ -370,6 +397,20 @@ public class SuperadminController {
                 "/superadmin/administradores"
         );
 
+        Usuario superadmin = usuarioRepository
+                .findByCorreoWithRol(authentication.getName()).orElse(null);
+        if (superadmin != null) {
+            HistorialRoles h = new HistorialRoles();
+            h.setUsuarioAfectado(admin);
+            h.setRolAnterior(admin.getRol());
+            h.setRolNuevo(admin.getRol());
+            h.setEstadoAnterior(admin.getEstadoCuenta());
+            h.setEstadoNuevo(admin.getEstadoCuenta());
+            h.setMotivo("Datos editados por Superadmin");
+            h.setFechaCambio(LocalDateTime.now());
+            h.setAutorizadoPor(superadmin);
+            historialRolesRepository.save(h);
+        }
         return "redirect:/superadmin/administradores?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
     }
@@ -381,7 +422,8 @@ public class SuperadminController {
             @RequestParam Long idUsuario,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "texto", required = false) String texto,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            org.springframework.security.core.Authentication authentication
     ) {
         Usuario admin = usuarioRepository.findById(idUsuario).orElse(null);
         if (admin == null) {
@@ -402,6 +444,21 @@ public class SuperadminController {
         admin.setActualizadoEn(LocalDateTime.now());
         usuarioRepository.save(admin);
 
+        Usuario superadmin = usuarioRepository
+                .findByCorreoWithRol(authentication.getName()).orElse(null);
+        if (superadmin != null) {
+            HistorialRoles h = new HistorialRoles();
+            h.setUsuarioAfectado(admin);
+            h.setRolAnterior(admin.getRol());
+            h.setRolNuevo(admin.getRol());
+            h.setEstadoAnterior(estaBloqueado ? Usuario.EstadoCuenta.BLOQUEADO : Usuario.EstadoCuenta.ACTIVO);
+            h.setEstadoNuevo(estaBloqueado ? Usuario.EstadoCuenta.ACTIVO : Usuario.EstadoCuenta.BLOQUEADO);
+            h.setMotivo(estaBloqueado ? "Cuenta desbloqueada por Superadmin" : "Cuenta bloqueada por Superadmin");
+            h.setFechaCambio(LocalDateTime.now());
+            h.setAutorizadoPor(superadmin);
+            historialRolesRepository.save(h);
+        }
+
         crearNotificacionSuperadmin(
                 estaBloqueado ? "Administrador desbloqueado" : "Administrador bloqueado",
                 (estaBloqueado ? "Se desbloqueó" : "Se bloqueó") + " la cuenta de " + admin.getNombres() + " " + admin.getApellidoPaterno(),
@@ -420,7 +477,8 @@ public class SuperadminController {
             @RequestParam Long idUsuario,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "texto", required = false) String texto,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            org.springframework.security.core.Authentication authentication
     ) {
         Usuario admin = usuarioRepository.findById(idUsuario).orElse(null);
         if (admin == null) {
@@ -432,6 +490,19 @@ public class SuperadminController {
         admin.setEliminadoEn(LocalDateTime.now());
         admin.setActualizadoEn(LocalDateTime.now());
         usuarioRepository.save(admin);
+
+        Usuario superadmin = usuarioRepository
+                .findByCorreoWithRol(authentication.getName()).orElse(null);
+        if (superadmin != null) {
+            HistorialRoles h = new HistorialRoles();
+            h.setUsuarioAfectado(admin);
+            h.setRolAnterior(admin.getRol());
+            h.setEstadoAnterior(admin.getEstadoCuenta());
+            h.setMotivo("Administrador eliminado por Superadmin");
+            h.setFechaCambio(LocalDateTime.now());
+            h.setAutorizadoPor(superadmin);
+            historialRolesRepository.save(h);
+        }
 
         redirectAttributes.addFlashAttribute("success",
                 "Administrador eliminado correctamente.");
