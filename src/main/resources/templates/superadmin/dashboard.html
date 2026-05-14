@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <title>Recíclame - Dashboard Superadmin</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary": "#ffffff", "secondary-fixed": "#c3ecd7",
+                        "surface-container-high": "#dce9ff", "surface-container-lowest": "#ffffff",
+                        "surface-container": "#e5eeff", "on-primary-fixed-variant": "#3f465c",
+                        "on-background": "#0b1c30", "inverse-surface": "#213145",
+                        "on-tertiary-container": "#3980f4", "on-secondary-container": "#476c5b",
+                        "inverse-on-surface": "#eaf1ff", "on-error": "#ffffff",
+                        "surface-bright": "#f8f9ff", "on-tertiary": "#ffffff",
+                        "surface-tint": "#565e74", "background": "#f8f9ff",
+                        "surface-dim": "#cbdbf5", "on-tertiary-fixed-variant": "#004395",
+                        "tertiary-container": "#001a42", "on-error-container": "#93000a",
+                        "on-surface-variant": "#45464d", "primary-container": "#131b2e",
+                        "on-secondary-fixed": "#002115", "error": "#ba1a1a",
+                        "outline-variant": "#c6c6cd", "secondary-fixed-dim": "#a8cfbc",
+                        "on-primary-container": "#7c839b", "tertiary-fixed-dim": "#adc6ff",
+                        "primary": "#000000", "secondary": "#416656",
+                        "surface-container-highest": "#d3e4fe", "on-tertiary-fixed": "#001a42",
+                        "surface-variant": "#d3e4fe", "surface-container-low": "#eff4ff",
+                        "primary-fixed-dim": "#bec6e0", "on-primary-fixed": "#131b2e",
+                        "on-secondary-fixed-variant": "#294e3f", "error-container": "#ffdad6",
+                        "primary-fixed": "#dae2fd", "outline": "#76777d",
+                        "on-surface": "#0b1c30", "inverse-primary": "#bec6e0",
+                        "secondary-container": "#c3ecd7", "on-primary": "#ffffff",
+                        "tertiary-fixed": "#d8e2ff", "surface": "#f8f9ff", "tertiary": "#000000"
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                    fontFamily: { "sans": ["Plus Jakarta Sans", "sans-serif"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+    <div th:replace="~{fragments/responsive}"></div>
+
+</head>
+
+<body class="bg-surface text-on-surface h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+
+<div th:replace="~{fragments/sidebar_superadmin :: sidebar}"></div>
+
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+
+        <!-- Encabezado -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+            <div>
+                <h2 class="font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">Dashboard</h2>
+                <p class="text-on-surface-variant text-sm mt-0.5">Resumen del estado del sistema Recíclame</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <!-- DESPUÉS -->
+                <a th:href="@{/superadmin/administradores(openModal=true)}"
+                   class="flex items-center gap-2 bg-secondary text-white font-bold px-5 py-2.5 rounded-xl ...">
+                    <span class="material-symbols-outlined text-[18px]">person_add</span>
+                    Añadir Administrador
+                </a>
+                <a th:href="@{/superadmin/confSeguridad}"
+                   class="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 font-bold px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-all text-sm shadow-sm">
+                    <span class="material-symbols-outlined text-[18px]">security</span>
+                    Actualizar Políticas
+                </a>
+            </div>
+        </div>
+
+        <!-- ── Fila 1: 4 cards métricas ───────────────────────────────────── -->
+        <div class="grid grid-cols-2 xl:grid-cols-4 gap-3">
+
+            <div class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-400 to-slate-200"></div>
+                <div class="flex justify-between items-start mb-3">
+                    <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[18px]">badge</span>
+                    </div>
+                    <span class="text-[9px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md">Total</span>
+                </div>
+                <p class="text-xs font-bold text-slate-500 mb-0.5">Administradores</p>
+                <p class="text-2xl font-extrabold text-on-primary-fixed" th:text="${totalAdmins}">—</p>
+            </div>
+
+            <div class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
+                <div class="flex justify-between items-start mb-3">
+                    <div class="w-8 h-8 rounded-lg bg-secondary-container/30 text-secondary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[18px]">how_to_reg</span>
+                    </div>
+                    <span class="text-[9px] font-bold uppercase tracking-wider bg-secondary-container/30 text-secondary px-2 py-0.5 rounded-md">Activos</span>
+                </div>
+                <p class="text-xs font-bold text-slate-500 mb-0.5">Admins Activos</p>
+                <p class="text-2xl font-extrabold text-secondary" th:text="${activeAdmins}">—</p>
+            </div>
+
+            <div class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-blue-200"></div>
+                <div class="flex justify-between items-start mb-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[18px]">domain</span>
+                    </div>
+                    <span class="text-[9px] font-bold uppercase tracking-wider bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md">Dominios</span>
+                </div>
+                <p class="text-xs font-bold text-slate-500 mb-0.5">Dominios Activos</p>
+                <p class="text-2xl font-extrabold text-blue-600" th:text="${totalDominios}">—</p>
+            </div>
+
+            <div class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-emerald-300"></div>
+                <div class="flex justify-between items-start mb-3">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[18px]">policy</span>
+                    </div>
+                    <span class="text-[9px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-md">Política</span>
+                </div>
+                <p class="text-xs font-bold text-slate-500 mb-1.5">Contraseña mínima</p>
+
+                <!-- Longitud mínima -->
+                <p class="text-2xl font-extrabold text-emerald-600"
+                   th:text="${politica != null} ? ${politica.longitudMinima} + ' caracteres' : '—'">— car.</p>
+
+                <!-- Chips de requisitos activos -->
+                <div class="flex flex-wrap gap-1 mt-1.5">
+        <span th:if="${politica?.requiereMayuscula}"
+              class="text-[9px] font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded-md">ABC</span>
+                    <span th:if="${politica?.requiereNumero}"
+                          class="text-[9px] font-bold bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-md">123</span>
+                    <span th:if="${politica?.requiereSimbolo}"
+                          class="text-[9px] font-bold bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded-md">@#!</span>
+                    <span th:if="${politica?.mandatoMfa}"
+                          class="text-[9px] font-bold bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded-md">MFA</span>
+                    <span th:if="${politica == null}"
+                          class="text-[9px] font-bold bg-red-50 text-red-500 px-1.5 py-0.5 rounded-md">Sin config.</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── Fila 2: Todo el contenido en una sola fila de 4 columnas ────── -->
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-3 pb-4">
+
+            <!-- Admins recientes — 1 col -->
+            <div class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+                <div class="flex justify-between items-center px-4 py-3 border-b border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[18px] text-secondary">admin_panel_settings</span>
+                        Admins Recientes
+                    </h3>
+                    <a th:href="@{/superadmin/administradores}" class="text-[11px] font-bold text-secondary hover:underline">Ver →</a>
+                </div>
+                <div class="divide-y divide-slate-50 flex-1">
+                    <div th:each="admin : ${ultimosAdmins}"
+                         class="flex items-center gap-2 px-4 py-2.5 hover:bg-slate-50 transition-colors">
+                        <div class="w-7 h-7 rounded-full bg-secondary-container/40 text-secondary flex items-center justify-center text-xs font-bold flex-shrink-0"
+                             th:text="${admin.nombres != null ? admin.nombres.substring(0,1).toUpperCase() : 'A'}">A</div>
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold text-slate-800 truncate"
+                               th:text="${admin.nombres + ' ' + admin.apellidoPaterno}">Nombre</p>
+                            <p class="text-[10px] text-slate-400 truncate" th:text="${admin.correo}">correo</p>
+                        </div>
+                    </div>
+                    <div th:if="${ultimosAdmins == null or ultimosAdmins.content.isEmpty()}"
+                         class="px-4 py-6 text-center">
+                        <p class="text-xs text-slate-400">Sin datos</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Políticas activas — 1 col -->
+            <div class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
+                <div class="px-4 py-3 border-b border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[18px] text-[#059669]">security</span>
+                        Políticas Activas
+                    </h3>
+                </div>
+                <div class="px-4 py-3 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-slate-600">Mayúsculas</span>
+                        <span th:text="${politica?.requiereMayuscula ? 'ON' : 'OFF'}"
+                              th:class="${politica?.requiereMayuscula} ? 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600' : 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500'">
+                        OFF
+                    </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-slate-600">Números</span>
+                        <span th:text="${politica?.requiereNumero ? 'ON' : 'OFF'}"
+                              th:class="${politica?.requiereNumero} ? 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600' : 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500'">
+                        OFF
+                    </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-slate-600">Símbolo</span>
+                        <span th:text="${politica?.requiereSimbolo ? 'ON' : 'OFF'}"
+                              th:class="${politica?.requiereSimbolo} ? 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600' : 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500'">
+                        OFF
+                    </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-slate-600">MFA</span>
+                        <span th:text="${politica?.mandatoMfa ? 'ON' : 'OFF'}"
+                              th:class="${politica?.mandatoMfa} ? 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600' : 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500'">
+                        OFF
+                    </span>
+                    </div>
+                    <div class="flex items-center justify-between pt-1.5 border-t border-slate-100">
+                        <span class="text-xs text-slate-600">Long. mínima</span>
+                        <span class="text-xs font-extrabold text-slate-800"
+                              th:text="${(politica?.longitudMinima ?: 8) + ' chars'}">8 chars</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-slate-600">Expiración</span>
+                        <span class="text-xs font-extrabold text-slate-800"
+                              th:text="${politica?.expiracionDias != null ? politica.expiracionDias + ' días' : 'Nunca'}">90 días</span>
+                    </div>
+                </div>
+                <div class="px-4 pb-3">
+                    <a th:href="@{/superadmin/confSeguridad}"
+                       class="block w-full text-center py-2 text-xs font-bold text-[#059669] border border-[#059669]/30 rounded-xl hover:bg-[#059669]/10 transition">
+                        Editar políticas
+                    </a>
+                </div>
+            </div>
+
+            <!-- Actividad reciente — 1 col -->
+            <div class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
+                <div class="px-4 py-3 border-b border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[18px] text-slate-500">history</span>
+                        Actividad Reciente
+                    </h3>
+                </div>
+                <div class="divide-y divide-slate-50">
+                    <div class="flex items-start gap-2.5 px-4 py-2.5">
+                        <div class="mt-0.5 w-6 h-6 rounded-full bg-secondary-container/40 text-secondary flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-[12px]">person_add</span>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-700 font-medium">Admin creado</p>
+                            <p class="text-[10px] text-slate-400">Pendiente de logs</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2.5 px-4 py-2.5">
+                        <div class="mt-0.5 w-6 h-6 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-[12px]">domain_add</span>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-700 font-medium">Dominio añadido</p>
+                            <p class="text-[10px] text-slate-400">Pendiente de logs</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2.5 px-4 py-2.5">
+                        <div class="mt-0.5 w-6 h-6 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-[12px]">policy</span>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-700 font-medium">Políticas actualizadas</p>
+                            <p class="text-[10px] text-slate-400">Pendiente de logs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accesos directos — 1 col -->
+            <div class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
+                <div class="px-4 py-3 border-b border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[18px] text-slate-500">bolt</span>
+                        Accesos Directos
+                    </h3>
+                </div>
+                <div class="p-3 space-y-1">
+                    <a th:href="@{/superadmin/administradores}"
+                       class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-secondary-container/20 transition-colors group">
+                        <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-secondary">admin_panel_settings</span>
+                        <span class="text-xs font-semibold text-slate-700 group-hover:text-secondary">Gestionar Administradores</span>
+                    </a>
+                    <a th:href="@{/superadmin/confSeguridad}"
+                       class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-secondary-container/20 transition-colors group">
+                        <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-secondary">security</span>
+                        <span class="text-xs font-semibold text-slate-700 group-hover:text-secondary">Configuración de Seguridad</span>
+                    </a>
+                    <a th:href="@{/superadmin/estadoSistema}"
+                       class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-secondary-container/20 transition-colors group">
+                        <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-secondary">monitor_heart</span>
+                        <span class="text-xs font-semibold text-slate-700 group-hover:text-secondary">Estado del monitor</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── Chatbot IA (referencial) ──────────────────────────────────────── -->
+        <div class="bg-primary-container rounded-[24px] p-6 overflow-hidden relative mb-4">
+            <div class="relative z-10">
+                <div class="flex justify-between items-center mb-5">
+                    <div>
+                        <h2 class="text-xl font-black tracking-tight text-white mb-0.5">Estado del Chatbot IA</h2>
+                        <p class="text-slate-400 font-medium text-xs">Motor de procesamiento de lenguaje natural v2.4</p>
+                    </div>
+                    <div class="flex items-center gap-2.5 bg-white/10 px-3 py-1.5 rounded-full border border-white/10">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400">Sistema Activo</span>
+                        <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Consultas totales</p>
+                        <p class="text-3xl font-black text-white">15,842</p>
+                        <div class="mt-2 flex items-center gap-1.5 text-emerald-400 text-[10px] font-bold">
+                            <span class="material-symbols-outlined text-sm">trending_up</span>
+                            +18.4% esta semana
+                        </div>
+                    </div>
+                    <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Tasa de Resolución</p>
+                        <p class="text-3xl font-black text-white">94.2%</p>
+                        <div class="mt-2 flex items-center gap-1.5 text-emerald-400 text-[10px] font-bold">
+                            <span class="material-symbols-outlined text-sm">verified</span>
+                            Precisión optimizada
+                        </div>
+                    </div>
+                    <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Resp. Media</p>
+                        <p class="text-3xl font-black text-white">1.2s</p>
+                        <div class="mt-2 flex items-center gap-1.5 text-slate-400 text-[10px] font-bold">
+                            <span class="material-symbols-outlined text-sm">bolt</span>
+                            Bajo carga estable
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none">
+                <svg class="w-full h-full" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M47.5,-62.4C60.1,-52.1,68,-36.5,73.4,-20.1C78.8,-3.7,81.7,13.5,75.9,28.2C70.1,42.8,55.5,54.9,39.9,64.3C24.3,73.7,7.7,80.5,-9.4,78.8C-26.6,77,-44.3,66.8,-57,52.9C-69.6,39.1,-77.3,21.6,-78.9,3.8C-80.4,-14,-75.8,-32.1,-65.4,-46.8C-55,-61.5,-38.7,-72.8,-22.8,-76.3C-6.9,-79.8,8.6,-75.6,24.8,-71.4C41,-67.2,57.9,-63,47.5,-62.4Z" fill="#ffffff" transform="translate(100 100)"/>
+                </svg>
+            </div>
+        </div>
+
+    </main>
+</div>
+</body>
+</html>

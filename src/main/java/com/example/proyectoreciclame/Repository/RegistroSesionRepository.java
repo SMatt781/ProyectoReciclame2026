@@ -1,0 +1,99 @@
+package com.example.proyectoreciclame.Repository;
+
+import com.example.proyectoreciclame.Entity.RegistroSesion;
+import com.example.proyectoreciclame.Entity.Usuario;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, Long> {
+
+    @EntityGraph(attributePaths = {"usuario", "usuario.rol"})
+    @Query(value = """
+            SELECT rs
+            FROM RegistroSesion rs
+            JOIN rs.usuario u
+            JOIN u.rol r
+            WHERE u.eliminadoEn IS NULL
+              AND (:texto IS NULL OR
+                   LOWER(u.nombres) LIKE LOWER(CONCAT('%', :texto, '%')) OR
+                   LOWER(u.apellidoPaterno) LIKE LOWER(CONCAT('%', :texto, '%')) OR
+                   LOWER(COALESCE(u.apellidoMaterno, '')) LIKE LOWER(CONCAT('%', :texto, '%')) OR
+                   LOWER(u.correo) LIKE LOWER(CONCAT('%', :texto, '%')))
+              AND (:fechaInicio IS NULL OR rs.fechaInicio >= :fechaInicio)
+              AND (:fechaFin IS NULL OR rs.fechaInicio <= :fechaFin)
+              AND (:rol IS NULL OR UPPER(r.nombre) = UPPER(:rol))
+            ORDER BY rs.fechaInicio DESC
+            """,
+            countQuery = """
+            SELECT COUNT(rs)
+            FROM RegistroSesion rs
+            JOIN rs.usuario u
+            JOIN u.rol r
+            WHERE u.eliminadoEn IS NULL
+              AND (:texto IS NULL OR
+                   LOWER(u.nombres) LIKE LOWER(CONCAT('%', :texto, '%')) OR
+                   LOWER(u.apellidoPaterno) LIKE LOWER(CONCAT('%', :texto, '%')) OR
+                   LOWER(COALESCE(u.apellidoMaterno, '')) LIKE LOWER(CONCAT('%', :texto, '%')) OR
+                   LOWER(u.correo) LIKE LOWER(CONCAT('%', :texto, '%')))
+              AND (:fechaInicio IS NULL OR rs.fechaInicio >= :fechaInicio)
+              AND (:fechaFin IS NULL OR rs.fechaInicio <= :fechaFin)
+              AND (:rol IS NULL OR UPPER(r.nombre) = UPPER(:rol))
+            """)
+    Page<RegistroSesion> buscarFiltrado(@Param("texto") String texto,
+                                        @Param("fechaInicio") LocalDateTime fechaInicio,
+                                        @Param("fechaFin") LocalDateTime fechaFin,
+                                        @Param("rol") String rol,
+                                        Pageable pageable);
+
+    Optional<RegistroSesion> findTopByUsuarioAndEstadoOrderByFechaInicioDesc(Usuario usuario, String estado);
+
+    @Query("SELECT COUNT(rs) FROM RegistroSesion rs WHERE rs.usuario.idUsuario = :idUsuario AND rs.fechaInicio >= :fechaInicio AND rs.fechaInicio <= :fechaFin")
+    long countByUsuarioIdUsuarioAndFechaInicioBetween(@Param("idUsuario") Long idUsuario,
+                                                      @Param("fechaInicio") LocalDateTime fechaInicio,
+                                                      @Param("fechaFin") LocalDateTime fechaFin);
+
+    @Query("SELECT COUNT(DISTINCT FUNCTION('date', rs.fechaInicio)) FROM RegistroSesion rs WHERE rs.usuario.idUsuario = :idUsuario AND rs.fechaInicio >= :fechaInicio AND rs.fechaInicio <= :fechaFin")
+    long countActiveDaysByUsuarioIdUsuarioBetween(@Param("idUsuario") Long idUsuario,
+                                                  @Param("fechaInicio") LocalDateTime fechaInicio,
+                                                  @Param("fechaFin") LocalDateTime fechaFin);
+    List<RegistroSesion> findByUsuarioAndEstado(Usuario usuario, String estado);
+
+    // 1. Promedio de duración (en minutos)
+    @Query("SELECT AVG(rs.duracionMinutos) FROM RegistroSesion rs WHERE rs.duracionMinutos IS NOT NULL")
+    Double getPromedioDuracion();
+
+    // 2. Fecha de la última sesión
+    @Query("SELECT MAX(rs.fechaInicio) FROM RegistroSesion rs")
+    LocalDateTime getUltimaSesion();
+
+    // 3. Total de usuarios activos (con sesión 'VIGENTE')
+    @Query("SELECT COUNT(DISTINCT rs.usuario.idUsuario) FROM RegistroSesion rs WHERE rs.estado = 'VIGENTE'")
+    long countUsuariosActivos();
+
+    // 4. Nombre del usuario más frecuente
+    @Query(value = "SELECT CONCAT(u.nombres, ' ', u.apellido_paterno) " +
+            "FROM registro_sesiones rs " +
+            "JOIN usuarios u ON rs.id_usuario = u.id_usuario " +
+            "GROUP BY rs.id_usuario " +
+            "ORDER BY COUNT(rs.id_sesion) DESC LIMIT 1", nativeQuery = true)
+    String getUsuarioMasFrecuente();
+
+    @Query("SELECT COUNT(r) FROM RegistroSesion r WHERE r.estado = 'ACTIVA'")
+    long countSesionesActivas();
+
+    long countByFechaInicioAfter(LocalDateTime fecha);
+
+    // Usuarios distintos que tuvieron sesión en los últimos N días
+    @Query(value = "SELECT COUNT(DISTINCT id_usuario) FROM registro_sesiones WHERE fecha_inicio >= :desde", nativeQuery = true)
+    Long countUsuariosActivosDesde(@Param("desde") LocalDateTime desde);
+
+    // Sesiones agrupadas por día para el gráfico de barras
+    @Query(value = "SELECT DATE(fecha_inicio) AS dia, COUNT(*) AS total FROM registro_sesiones WHERE fecha_inicio >= :desde GROUP BY DATE(fecha_inicio) ORDER BY dia ASC", nativeQuery = true)
+    List<Object[]> contarSesionesPorDia(LocalDateTime desde);
+}

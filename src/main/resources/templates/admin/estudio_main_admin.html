@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Estudios del Sector - Reciclame</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7f9fb",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#cfe9d9",
+                        "tertiary-container": "#092016",
+                        "primary-container": "#021d30",
+                        "on-secondary-container": "#00743a",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#b1c9e2",
+                        "on-surface-variant": "#43474c",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "outline-variant": "#c3c7cd",
+                        "on-secondary-fixed": "#00210c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006d37",
+                        "surface-variant": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#354c40",
+                        "on-secondary": "#ffffff",
+                        "outline": "#73777d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-container": "#71897c",
+                        "tertiary-fixed-dim": "#b3ccbd",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#496177",
+                        "on-secondary-fixed-variant": "#005228",
+                        "on-primary-container": "#6f869e",
+                        "secondary-container": "#6bfe9c",
+                        "on-tertiary-fixed": "#092016",
+                        "secondary-fixed": "#6bfe9c",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#021d30",
+                        "on-primary-fixed-variant": "#31495e",
+                        "primary-fixed": "#cde5ff",
+                        "secondary-fixed-dim": "#4ae183",
+                        "primary-fixed-dim": "#b1c9e2"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+
+        /* SVG Icon utility */
+        .icon-sm {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .icon-md {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .icon-lg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .icon-xl {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+    </style>
+    <div th:replace="~{fragments/responsive}"></div>
+
+</head>
+
+<body
+        class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- SideNavBar -->
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<!-- Main Content Canvas -->
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+
+    <!-- TopAppBar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+
+
+    <!-- Main Scrollable Content -->
+    <main class="flex-1 overflow-y-auto px-8 py-3">
+        <div class="w-full">
+            <!-- Page Header -->
+            <div class="mb-5">
+                <div>
+                    <h2
+                            class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                        Estudios del Sector</h2>
+                    <p class="font-body text-on-surface-variant text-base mt-2">
+                        Explora nuestra colección curada de investigaciones, análisis y reportes sobre economía
+                        circular y gestión de residuos.
+                    </p>
+                </div>
+                <!-- <div class="flex gap-3">
+                    <button
+                        class="px-4 py-2 bg-surface-container rounded-lg font-label text-sm font-semibold text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-2">
+                        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2z M11 3L5.5 8.5l1.42 1.41L11 5.83V15h2V5.83l4.08 4.08L18.5 8.5 12 3z" />
+                        </svg>
+                        Exportar
+                    </button>
+                </div> -->
+            </div>
+
+            <!-- Search Bar and Filter Button -->
+            <!-- <div class="mb-8 flex flex-col sm:flex-row gap-4 w-full">
+                <div class="flex-1 focus-within:ring-2 focus-within:ring-[#2ECC71]/30 rounded-xl transition-shadow">
+                    <div
+                        class="relative flex items-center w-full h-12 rounded-xl bg-surface-container-lowest border border-outline-variant/30 overflow-hidden group ambient-shadow">
+                        <div
+                            class="grid place-items-center h-full w-14 text-outline group-focus-within:text-secondary transition-colors">
+                            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                            </svg>
+                        </div>
+                        <input
+                            class="peer h-full w-full outline-none text-base text-on-surface bg-transparent pr-4 font-body placeholder-outline-variant"
+                            id="search" placeholder="Buscar en el repositorio..." type="text" />
+                    </div>
+                </div>
+                <div class="flex gap-2 shrink-0">
+                    <button id="openFiltersModal"
+                        class="h-12 px-6 flex items-center justify-center gap-2 bg-white text-slate-700 font-bold rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors">
+                        <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
+                        Filtros Avanzados
+                    </button>
+                    <button id="toggleViewBtn"
+                        class="h-12 w-12 flex items-center justify-center bg-white text-slate-700 rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors"
+                        title="Cambiar vista">
+                        <svg id="icon-list" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                        </svg>
+                    </button>
+                </div>
+            </div> -->
+
+            <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
+                <!-- Search Bar -->
+                <form action="/admin/estudios"  method="GET" class="flex flex-col sm:flex-row gap-4 mb-6 w-full flex-wrap">
+                    <div class="flex-1 relative">
+                        <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" name="search" th:value="${search}" placeholder="Buscar en el repositorio..."
+                               class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
+                    </div>
+                    <a href="/admin/estudios"
+                       class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
+                       title="Limpiar filtros">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <span class="text-sm font-medium">Limpiar</span>
+                    </a>
+                    <button type="button" id="openFiltersModal"
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                        <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
+                        <span class="text-sm font-medium">Filtros avanzados</span>
+                    </button>
+                    <button type="button" id="toggleViewBtn"
+                            class="h-12 w-12 flex items-center justify-center bg-white text-slate-700 rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors"
+                            title="Cambiar vista">
+                        <svg id="icon-list" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                        </svg>
+                    </button>
+                    <button type="button"
+                            onclick="window.location.href='/admin/estudios/exportar'"
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                        <div th:replace="~{fragments/icons.html :: icon-exportar-excel}"></div>
+                        Exportar
+                    </button>
+
+                </form>
+
+
+
+
+                <!-- Mensaje No hay documentos -->
+                <div th:if="${#lists.isEmpty(estudios)}" class="text-center py-10">
+                    <p class="text-lg font-bold text-on-surface-variant">No hay documentos disponibles</p>
+                </div>
+
+                <!-- Cards Grid -->
+                <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                     th:if="${not #lists.isEmpty(estudios)}">
+                    <!-- Card 1: Dynamic -->
+                    <article th:each="estudio, stat : ${estudios}"
+                             class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden"
+                             th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'bg-opacity-80' : ''}">
+                        <div th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'bg-gradient-to-r from-secondary to-secondary-container' : (estudio.estado.name() == 'BORRADOR' ? 'bg-gradient-to-r from-outline to-surface-variant' : 'bg-gradient-to-r from-error to-error-container')}"
+                             class="absolute top-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        </div>
+                        <div class="flex justify-between items-start mb-5"
+                             th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'opacity-70' : ''}">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm"
+                                 th:classappend="${estudio.formato.name() == 'PDF' ? 'bg-error-container text-on-error-container' :
+                                                    (estudio.formato.name() == 'PPTX' ? 'bg-orange-100 text-orange-600' :
+                                                    (estudio.formato.name() == 'XLSX' ? 'bg-emerald-100 text-emerald-700' :
+                                                    'bg-surface-container-high text-outline'))}">
+                                <th:block th:switch="${estudio.formato.name()}">
+                                    <th:block th:case="'PDF'">
+                                        <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
+                                    </th:block>
+                                    <th:block th:case="'PPTX'">
+                                        <div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div>
+                                    </th:block>
+                                    <th:block th:case="'XLSX'">
+                                        <div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div>
+                                    </th:block>
+                                    <th:block th:case="*">
+                                        <div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div>
+                                    </th:block>
+                                </th:block>
+                            </div>
+                            <div
+                                    class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
+                                <span th:text="${estudio.anio}">2024</span>
+                                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                                <span th:text="${estudio.formato.name()}">PDF</span>
+                            </div>
+                        </div>
+                        <div class="flex-1" th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'opacity-70' : ''}">
+                            <h4 th:text="${estudio.titulo}"
+                                th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}"
+                                class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
+                                Análisis de Ciclo de Vida de Envases PET en Perú</h4>
+                            <p th:text="${estudio.descripcion}"
+                               class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
+                                Estudio exhaustivo...</p>
+                        </div>
+                        <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
+
+                            <!-- Estado -->
+                            <div class="flex items-center gap-1.5"
+                                 th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'text-secondary' : (estudio.estado.name() == 'BORRADOR' ? 'text-outline' : 'text-error')}">
+        <span th:text="${estudio.estado.name()}"
+              class="font-label text-xs font-bold uppercase tracking-wide"></span>
+                            </div>
+
+                            
+
+                            <div class="flex gap-2">
+
+                                <!-- Editar -->
+                                <button type="button"
+                                        th:data-id="${estudio.idEstudio}"
+                                        th:data-nombre="${estudio.titulo}"
+                                        th:data-descripcion="${estudio.descripcion}"
+                                        th:data-anio="${estudio.anio}"
+                                        th:data-formato="${estudio.formato.name()}"
+                                        th:data-estado="${estudio.estado.name()}"
+                                        onclick="abrirModalEditarEstudio(this)"
+                                        class="px-2.5 py-1 text-sm font-semibold rounded-lg text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition">
+                                    Editar
+                                </button>
+
+                                <!-- Eliminar -->
+                                <a th:href="@{/admin/estudios/eliminar/{id}(id=${estudio.idEstudio})}"
+                                   class="px-2.5 py-1 text-sm font-semibold rounded-lg text-on-surface-variant hover:bg-error-container hover:text-error transition">
+                                    Eliminar
+                                </a>
+
+                                <!-- Ver -->
+                                <a th:href="@{/admin/estudios/{id}(id=${estudio.idEstudio})}"
+                                   class="px-2.5 py-1 text-sm font-semibold rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-secondary transition">
+                                    Ver
+                                </a>
+
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- List View (Hidden by Default) -->
+                <!-- List View (Hidden by Default) -->
+                <div id="listView" class="hidden flex-col gap-4" th:if="${not #lists.isEmpty(estudios)}">
+                    <!-- Header -->
+                    <div
+                            class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                        <div class="col-span-6 lg:col-span-5">Nombre</div>
+                        <div class="col-span-2 text-center">Estado</div>
+                        <div class="col-span-1 text-center">Formato</div>
+                        <div class="col-span-1 text-center">Año</div>
+                        <div class="col-span-2 lg:col-span-3 text-center">ACCIONES</div>
+                    </div>
+
+                    <div th:each="estudio, stat : ${estudios}"
+                         class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                        <div class="col-span-6 lg:col-span-5 flex items-center gap-4 w-full">
+                            <h4 th:text="${estudio.titulo}"
+                                class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors line-clamp-2"
+                                th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}">
+                                Análisis de Ciclo de Vida de Envases PET en Perú</h4>
+                        </div>
+                        <div class="col-span-2 flex justify-center w-full md:w-auto">
+                            <div class="flex items-center gap-1.5"
+                                 th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'text-secondary' : (estudio.estado.name() == 'BORRADOR' ? 'text-outline' : 'text-error')}">
+                                <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path th:if="${estudio.estado.name() == 'VIGENTE'}"
+                                          d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                    <path th:if="${estudio.estado.name() == 'BORRADOR'}"
+                                          d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                    <path th:if="${estudio.estado.name() == 'DEROGADO'}"
+                                          d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                </svg>
+                                <span th:text="${estudio.estado.name()}"
+                                      class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
+                            </div>
+                        </div>
+                        <div class="col-span-1 flex justify-center w-full md:w-auto">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm shrink-0"
+                                     th:classappend="${estudio.formato.name() == 'PDF' ? 'bg-error-container text-on-error-container' :
+                                                        (estudio.formato.name() == 'PPTX' ? 'bg-orange-100 text-orange-600' :
+                                                        (estudio.formato.name() == 'XLSX' ? 'bg-emerald-100 text-emerald-700' :
+                                                        'bg-surface-container-high text-outline'))}">
+                                    <th:block th:switch="${estudio.formato.name()}">
+                                        <th:block th:case="'PDF'">
+                                            <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
+                                        </th:block>
+                                        <th:block th:case="'PPTX'">
+                                            <div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div>
+                                        </th:block>
+                                        <th:block th:case="'XLSX'">
+                                            <div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div>
+                                        </th:block>
+                                        <th:block th:case="*">
+                                            <div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div>
+                                        </th:block>
+                                    </th:block>
+                                </div>
+                                <span th:text="${estudio.formato.name()}"
+                                      class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">PDF</span>
+                            </div>
+                        </div>
+                        <div class="col-span-1 flex justify-center w-full md:w-auto">
+                                <span th:text="${estudio.anio}"
+                                      class="text-sm font-body text-on-surface-variant font-medium">2024</span>
+                        </div>
+                        <div class="col-span-2 lg:col-span-3 flex justify-center items-center gap-2 whitespace-nowrap">
+
+                            <!-- Editar -->
+                            <button type="button"
+                                    th:data-id="${estudio.idEstudio}"
+                                    th:data-nombre="${estudio.titulo}"
+                                    th:data-descripcion="${estudio.descripcion}"
+                                    th:data-anio="${estudio.anio}"
+                                    th:data-formato="${estudio.formato.name()}"
+                                    th:data-estado="${estudio.estado.name()}"
+                                    onclick="abrirModalEditarEstudio(this)"
+                                    class="flex items-center gap-1.5 px-3 py-1.5
+               bg-transparent text-[#666]
+               rounded-lg text-xs font-bold
+               hover:bg-green-100 hover:text-green-700
+               border border-transparent hover:border-green-200
+               transition-colors">
+                                Editar
+                            </button>
+
+                            <!-- Eliminar -->
+                            <a th:href="@{/admin/estudios/eliminar/{id}(id=${estudio.idEstudio})}"
+                               class="flex items-center gap-1.5 px-3 py-1.5
+              bg-transparent text-[#666]
+              rounded-lg text-xs font-bold
+              hover:bg-red-100 hover:text-red-700
+              border border-transparent hover:border-red-200
+              transition-colors">
+                                Eliminar
+                            </a>
+
+                            <!-- Ver -->
+                            <a th:href="@{/admin/estudios/{id}(id=${estudio.idEstudio})}"
+                               class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link">
+                                Ver Estudio
+                                <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                     fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
+                                </svg>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controles de Paginación -->
+                <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8 hidden"
+                     th:if="${not #lists.isEmpty(estudios)}">
+                    <button id="prevPageBtn"
+                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <div id="pageNumbers" class="flex gap-2"></div>
+                    <button id="nextPageBtn"
+                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+
+
+
+            </div>
+
+
+        </div>
+    </main>
+</div>
+<!-- Filtros Avanzados Modal -->
+<div id="filtersModal"
+     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 transition-opacity opacity-0 pointer-events-none duration-300">
+    <div
+            class="bg-surface text-on-surface w-full max-w-2xl rounded-[1.5rem] p-6 sm:p-8 flex flex-col relative scale-95 transition-transform duration-300 shadow-xl max-h-full overflow-y-auto">
+        <!-- Close button -->
+        <button id="closeFiltersModal"
+                class="absolute top-6 right-6 p-2 rounded-full hover:bg-surface-container text-on-surface-variant transition-colors">
+            <svg class="icon-md" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+            </svg>
+        </button>
+
+        <h2 class="text-2xl font-headline font-bold text-on-primary-fixed mb-6">Filtros Avanzados</h2>
+
+        <form id="filtersForm" action="/admin/estudios" method="GET" class="space-y-6">
+            <!-- Fecha -->
+            <section>
+                <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Fecha</h3>
+                <div class="space-y-4">
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="dateType" value="year"
+                                   class="text-secondary focus:ring-secondary form-radio" checked>
+                            <span class="text-sm font-semibold">Año</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="dateType" value="range"
+                                   class="text-secondary focus:ring-secondary form-radio">
+                            <span class="text-sm font-semibold">Rango de fechas</span>
+                        </label>
+                    </div>
+
+                    <!-- Año Select -->
+                    <div id="yearContainer">
+                        <select id="yearSelect" name="yearSelect"
+                                class="w-full sm:w-1/2 appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
+                            <option value="">Seleccione un año</option>
+                            <!-- JS will populate 1990 - Current Year -->
+                        </select>
+                    </div>
+
+                    <!-- Rango Input -->
+                    <div id="rangeContainer" class="hidden flex flex-col sm:flex-row gap-4">
+                        <div class="flex-1">
+                            <label
+                                    class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
+                                Inicio</label>
+                            <input type="date" id="dateStart" name="dateStart"
+                                   class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
+                        </div>
+                        <div class="flex-1">
+                            <label
+                                    class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
+                                Fin</label>
+                            <input type="date" id="dateEnd" name="dateEnd"
+                                   class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
+                        </div>
+                    </div>
+                    <p id="dateError" class="text-error text-xs font-semibold hidden">La Fecha Incial no puede ser
+                        mayor que la Fecha Final.</p>
+                </div>
+            </section>
+
+            <hr class="border-outline-variant/30">
+
+            <!-- Formato -->
+            <section>
+                <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Formato</h3>
+                <div class="flex flex-wrap gap-6">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="format" value="PDF"
+                               th:checked="${formatosSeleccionados != null and formatosSeleccionados.contains('PDF')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body">PDF</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="format" value="PPTX"
+                               th:checked="${formatosSeleccionados != null and formatosSeleccionados.contains('PPTX')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body">PPTX</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="format" value="DOC"
+                               th:checked="${formatosSeleccionados != null and formatosSeleccionados.contains('DOC')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body">DOCX</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="format" value="XLSX"
+                               th:checked="${formatosSeleccionados != null and formatosSeleccionados.contains('XLSX')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body">.XLSX</span>
+                    </label>
+                </div>
+            </section>
+
+            <hr class="border-outline-variant/30">
+
+            <!-- Estado -->
+            <section>
+                <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Estado</h3>
+                <div class="flex flex-wrap gap-6">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="estado" value="VIGENTE"
+                               th:checked="${estadosSeleccionados != null and estadosSeleccionados.contains('VIGENTE')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body uppercase tracking-wide">Vigente</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="estado" value="DEROGADO"
+                               th:checked="${estadosSeleccionados != null and estadosSeleccionados.contains('DEROGADO')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body uppercase tracking-wide">Derogado</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="estado" value="BORRADOR"
+                               th:checked="${estadosSeleccionados != null and estadosSeleccionados.contains('BORRADOR')}"
+                               class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                        <span class="text-sm font-body uppercase tracking-wide">Borrador</span>
+                    </label>
+                </div>
+            </section>
+
+            <div class="pt-6 mt-4 flex justify-end gap-3 border-t border-outline-variant/30">
+                <button type="submit"
+                        class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary font-bold text-sm hover:bg-[#00210c] transition-colors shadow-sm cursor-pointer">
+                    Aplicar Filtros
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Script de Lógica para el Modal -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const openFiltersBtn = document.getElementById('openFiltersModal');
+        const closeFiltersBtn = document.getElementById('closeFiltersModal');
+        const filtersModal = document.getElementById('filtersModal');
+        const modalContent = filtersModal.querySelector('div');
+
+        // Populating years
+        const yearSelect = document.getElementById('yearSelect');
+        const currentYear = new Date().getFullYear();
+        for (let y = currentYear; y >= 1990; y--) {
+            const opt = document.createElement('option');
+            opt.value = y;
+            opt.textContent = y;
+            yearSelect.appendChild(opt);
+        }
+
+        const openModal = () => {
+            filtersModal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+        };
+
+        const closeModal = () => {
+            filtersModal.classList.add('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+        };
+
+        openFiltersBtn.addEventListener('click', openModal);
+        closeFiltersBtn.addEventListener('click', closeModal);
+        filtersModal.addEventListener('click', (e) => {
+            if (e.target === filtersModal) closeModal();
+        });
+
+        // Toggle Logic
+        const dateTypeRadios = document.querySelectorAll('input[name="dateType"]');
+        const yearContainer = document.getElementById('yearContainer');
+        const rangeContainer = document.getElementById('rangeContainer');
+        const dateError = document.getElementById('dateError');
+
+        dateTypeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'year') {
+                    yearContainer.classList.remove('hidden');
+                    rangeContainer.classList.add('hidden');
+                    dateError.classList.add('hidden');
+                } else {
+                    yearContainer.classList.add('hidden');
+                    rangeContainer.classList.remove('hidden');
+                }
+            });
+        });
+
+        // Validation
+        const dateStart = document.getElementById('dateStart');
+        const dateEnd = document.getElementById('dateEnd');
+        const filtersForm = document.getElementById('filtersForm');
+
+        filtersForm.addEventListener('submit', (e) => {
+            const checkedDateType = document.querySelector('input[name="dateType"]:checked');
+            const isRange = checkedDateType && checkedDateType.value === 'range';
+
+            if (isRange) {
+                yearSelect.name = '';
+                if (!dateStart.value && !dateEnd.value) {
+                    checkedDateType.name = '';
+                }
+            } else {
+                dateStart.name = '';
+                dateEnd.name = '';
+                if (!yearSelect.value) {
+                    if (checkedDateType) checkedDateType.name = '';
+                    yearSelect.name = '';
+                }
+            }
+
+            if (isRange && dateStart.value && dateEnd.value) {
+                if (new Date(dateStart.value) > new Date(dateEnd.value)) {
+                    e.preventDefault(); // Bloqueamos el envío porque hay error
+                    dateError.classList.remove('hidden');
+                    return;
+                } else {
+                    dateError.classList.add('hidden');
+                }
+            }
+        });
+
+
+        // Toggle View & Pagination Logic
+        const toggleViewBtn = document.getElementById('toggleViewBtn');
+        const gridView = document.getElementById('gridView');
+        const listView = document.getElementById('listView');
+        const iconList = document.getElementById('icon-list');
+        const iconGrid = document.getElementById('icon-grid');
+
+        const gridItems = document.querySelectorAll('.grid-item');
+        const listItems = document.querySelectorAll('.list-item');
+        const paginationContainer = document.getElementById('paginationContainer');
+        const pageNumbersContainer = document.getElementById('pageNumbers');
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        const nextPageBtn = document.getElementById('nextPageBtn');
+
+        let isGridView = localStorage.getItem('estudiosViewMode') !== 'list';
+        let currentPage = 1;
+
+        function buildVisiblePages(currentPage, totalPages) {
+            const pages = [];
+
+            if (totalPages <= 7) {
+                for (let i = 1; i <= totalPages; i++) {
+                    pages.push(i);
+                }
+                return pages;
+            }
+
+            pages.push(1);
+
+            let start = Math.max(2, currentPage - 1);
+            let end = Math.min(totalPages - 1, currentPage + 1);
+
+            if (start > 2) {
+                pages.push('...');
+            }
+
+            for (let i = start; i <= end; i++) {
+                pages.push(i);
+            }
+
+            if (end < totalPages - 1) {
+                pages.push('...');
+            }
+
+            pages.push(totalPages);
+
+            return pages;
+        }
+
+        function renderPagination() {
+            if (!paginationContainer) return;
+
+            const totalItems = isGridView ? gridItems.length : listItems.length;
+            const pageSize = isGridView ? 6 : 5;
+            const totalPages = Math.ceil(totalItems / pageSize) || 1;
+
+            if (currentPage > totalPages) currentPage = 1;
+
+            if (totalPages <= 1) {
+                paginationContainer.classList.add('hidden');
+                paginationContainer.classList.remove('flex');
+            } else {
+                paginationContainer.classList.remove('hidden');
+                paginationContainer.classList.add('flex');
+            }
+
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = startIndex + pageSize;
+
+            if (isGridView) {
+                gridItems.forEach((item, index) => {
+                    if (index >= startIndex && index < endIndex) {
+                        item.classList.remove('hidden');
+                        item.classList.add('flex');
+                    } else {
+                        item.classList.add('hidden');
+                        item.classList.remove('flex');
+                    }
+                });
+            } else {
+                listItems.forEach((item, index) => {
+                    if (index >= startIndex && index < endIndex) {
+                        item.classList.remove('hidden');
+                        item.classList.add('flex', 'md:grid');
+                    } else {
+                        item.classList.add('hidden');
+                        item.classList.remove('flex', 'md:grid');
+                    }
+                });
+            }
+
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages;
+
+            pageNumbersContainer.innerHTML = '';
+
+            const visiblePages = buildVisiblePages(currentPage, totalPages);
+
+            visiblePages.forEach(page => {
+                if (page === '...') {
+                    const span = document.createElement('span');
+                    span.textContent = '...';
+                    span.className = 'w-10 h-10 flex items-center justify-center text-sm font-bold text-on-surface-variant';
+                    pageNumbersContainer.appendChild(span);
+                    return;
+                }
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = page;
+                btn.className = `w-10 h-10 rounded-lg text-sm font-bold transition-colors ${page === currentPage ? 'bg-secondary text-on-secondary' : 'text-on-surface-variant hover:bg-surface-container'}`;
+
+                btn.addEventListener('click', () => {
+                    currentPage = page;
+                    localStorage.setItem('estudiosCurrentPage', currentPage);
+                    renderPagination();
+                });
+
+                pageNumbersContainer.appendChild(btn);
+            });
+        }
+
+        if (toggleViewBtn) {
+            toggleViewBtn.addEventListener('click', () => {
+                isGridView = !isGridView;
+                localStorage.setItem('estudiosViewMode', isGridView ? 'grid' : 'list');
+                if (isGridView) {
+                    gridView.classList.remove('hidden');
+                    listView.classList.add('hidden');
+                    listView.classList.remove('flex');
+                    iconList.classList.remove('hidden');
+                    iconGrid.classList.add('hidden');
+                } else {
+                    gridView.classList.add('hidden');
+                    listView.classList.remove('hidden');
+                    listView.classList.add('flex');
+                    iconList.classList.add('hidden');
+                    iconGrid.classList.remove('hidden');
+                }
+                currentPage = 1;
+                localStorage.setItem('estudiosCurrentPage', currentPage);
+                renderPagination();
+            });
+        }
+
+        if (prevPageBtn) {
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    localStorage.setItem('estudiosCurrentPage', currentPage);
+
+                    renderPagination();
+                }
+            });
+        }
+
+        if (nextPageBtn) {
+            nextPageBtn.addEventListener('click', () => {
+                const totalItems = isGridView ? gridItems.length : listItems.length;
+                const pageSize = isGridView ? 6 : 5;
+                if (currentPage < Math.ceil(totalItems / pageSize)) {
+                    currentPage++;
+                    localStorage.setItem('estudiosCurrentPage', currentPage);
+
+                    renderPagination();
+                }
+            });
+        }
+        if (!isGridView) {
+            gridView.classList.add('hidden');
+            listView.classList.remove('hidden');
+            listView.classList.add('flex');
+            iconList.classList.add('hidden');
+            iconGrid.classList.remove('hidden');
+        } else {
+            gridView.classList.remove('hidden');
+            listView.classList.add('hidden');
+            listView.classList.remove('flex');
+            iconList.classList.remove('hidden');
+            iconGrid.classList.add('hidden');
+        }
+        // Inicializar paginación
+        renderPagination();
+    });
+</script>
+
+<script>
+    function abrirModalEditarEstudio(btn) {
+
+        const id = btn.dataset.id;
+
+        document.getElementById("formEstudio").action =
+            "/admin/estudios/" + id + "/actualizar";
+
+        document.getElementById("estudioNombre").value = btn.dataset.nombre || "";
+        document.getElementById("estudioDescripcion").value = btn.dataset.descripcion || "";
+        document.getElementById("estudioAnio").value = btn.dataset.anio || "";
+        document.getElementById("estudioEstado").value = btn.dataset.estado || "BORRADOR";
+
+        const formato = btn.dataset.formato || "PDF";
+
+        if (formato === "PDF") {
+            document.getElementById("estudioFormato").value = "Reporte Técnico (PDF)";
+        } else {
+            document.getElementById("estudioFormato").value = "Planilla de Datos (XLSX)";
+        }
+
+        document.getElementById("modalNuevoEstudio").classList.remove("hidden");
+    }
+</script>
+
+<!-- Modal para Nuevo/Editar Estudio -->
+<div id="modalNuevoEstudio" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-[800px] bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden relative">
+
+        <header class="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-white sticky top-0 z-30">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-lg bg-[#e0e7ff] flex items-center justify-center text-[#064e3b]">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24">
+                        <path d="M7 18H17M7 14H17M7 10H11M13 3H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V9L13 3Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold text-[#0f172a] tracking-tight">Nuevo Estudio</h1>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">PANEL DE ADMINISTRACIÓN</p>
+                </div>
+            </div>
+
+            <button type="button"
+                    onclick="document.getElementById('modalNuevoEstudio').classList.add('hidden')"
+                    class="text-gray-400 hover:bg-gray-100 p-2 rounded-full transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+            </button>
+        </header>
+
+        <form id="formEstudio" th:action="@{/admin/estudio_new}" method="post" enctype="multipart/form-data" class="flex flex-col max-h-[90vh] overflow-hidden">
+            <div class="overflow-y-auto px-6 py-8 flex flex-col gap-10">
+
+                <section class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-1 h-5 bg-[#059669] rounded-full"></div>
+                        <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Información Básica</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Nombre del Estudio</label>
+                            <input id="estudioNombre" name="nombre" class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300" placeholder="Ej. Análisis de Ciclo de Vida Textil" type="text"/>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Objetivo / Descripción</label>
+                            <textarea id="estudioDescripcion" name="descripcion" class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all resize-none placeholder:text-gray-300" placeholder="Define el propósito y alcance de este nuevo estudio..." rows="3"></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Año</label>
+                                <select id="estudioAnio" name="anio" class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                    <option>2024</option>
+                                    <option>2023</option>
+                                    <option>2022</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Formato</label>
+                                <select id="estudioFormato" name="formato" class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                    <option>Reporte Técnico (PDF)</option>
+                                    <option>Planilla de Datos (XLSX)</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Estado</label>
+                                <select id="estudioEstado" name="estado" class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                    <option value="BORRADOR">Borrador</option>
+                                    <option value="PUBLICADO">Publicado</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="space-y-4 pt-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-1 h-5 bg-[#059669] rounded-full"></div>
+                        <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Archivo</h2>
+                    </div>
+
+                    <!-- Input real oculto — activado solo por el label -->
+                    <input id="archivoInput" name="archivo" type="file" accept=".pdf,.pptx" style="display:none;">
+
+                    <!-- Zona de drop -->
+                    <div id="dropZone"
+                         class="border-2 border-dashed border-gray-200 rounded-2xl transition-all duration-200"
+                         style="background:#f9fafb;">
+
+                        <!-- Estado: sin archivo -->
+                        <div id="dropDefault" class="flex flex-col items-center justify-center py-12 px-6 text-center">
+                            <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+                                 style="background:#d1fae5;">
+                                <svg class="w-7 h-7" style="color:#059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                </svg>
+                            </div>
+                            <p class="text-base font-bold text-gray-700 mb-1">Arrastra tu archivo aquí</p>
+                            <p class="text-sm text-gray-400 mb-5">PDF o PPTX · máximo 50 MB</p>
+                            <label for="archivoInput"
+                                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold text-white cursor-pointer transition-colors"
+                                   style="background:#059669;"
+                                   onmouseover="this.style.background='#047857'" onmouseout="this.style.background='#059669'">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                </svg>
+                                Seleccionar archivo
+                            </label>
+                        </div>
+
+                        <!-- Estado: archivo seleccionado -->
+                        <div id="dropSelected" style="display:none;"
+                             class="flex flex-col items-center justify-center py-12 px-6 text-center">
+                            <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+                                 style="background:#d1fae5;">
+                                <svg class="w-7 h-7" style="color:#059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </div>
+                            <p class="text-base font-bold mb-1" style="color:#059669;">Archivo listo para subir</p>
+                            <p id="dropFileName" class="text-sm font-semibold text-gray-700 mb-1 break-all">documento.pdf</p>
+                            <p id="dropFileSize" class="text-xs text-gray-400 mb-5">0 MB</p>
+                            <label for="archivoInput"
+                                   class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-gray-600 cursor-pointer transition-colors border border-gray-200"
+                                   style="background:#f3f4f6;"
+                                   onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                                Cambiar archivo
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <script>
+                    (function () {
+                        const fileInput   = document.getElementById('archivoInput');
+                        const dropZone    = document.getElementById('dropZone');
+                        const dropDefault = document.getElementById('dropDefault');
+                        const dropSelected= document.getElementById('dropSelected');
+                        const dropFileName= document.getElementById('dropFileName');
+                        const dropFileSize= document.getElementById('dropFileSize');
+
+                        function showSelected(file) {
+                            dropFileName.textContent = file.name;
+                            dropFileSize.textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+                            dropDefault.style.display  = 'none';
+                            dropSelected.style.display = 'flex';
+                            dropZone.style.borderColor = '#059669';
+                            dropZone.style.background  = '#f0fdf4';
+                        }
+
+                        function showDefault() {
+                            dropDefault.style.display  = 'flex';
+                            dropSelected.style.display = 'none';
+                            dropZone.style.borderColor = '#e5e7eb';
+                            dropZone.style.background  = '#f9fafb';
+                        }
+
+                        fileInput.addEventListener('change', function () {
+                            if (this.files && this.files.length > 0) {
+                                showSelected(this.files[0]);
+                            } else {
+                                showDefault();
+                            }
+                        });
+
+                        dropZone.addEventListener('dragover', function (e) {
+                            e.preventDefault();
+                            dropZone.style.borderColor = '#3b82f6';
+                            dropZone.style.background  = '#eff6ff';
+                        });
+
+                        dropZone.addEventListener('dragleave', function () {
+                            if (!fileInput.files || fileInput.files.length === 0) {
+                                showDefault();
+                            } else {
+                                dropZone.style.borderColor = '#059669';
+                                dropZone.style.background  = '#f0fdf4';
+                            }
+                        });
+
+                        dropZone.addEventListener('drop', function (e) {
+                            e.preventDefault();
+                            const dt = e.dataTransfer;
+                            if (dt && dt.files && dt.files.length > 0) {
+                                fileInput.files = dt.files;
+                                showSelected(dt.files[0]);
+                            }
+                        });
+                    })();
+                </script>
+            </div>
+
+            <footer class="px-6 py-5 border-t border-gray-100 bg-white flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-0 z-30">
+                <button type="button"
+                        onclick="document.getElementById('modalNuevoEstudio').classList.add('hidden')"
+                        class="w-full sm:w-auto px-8 py-3 text-[11px] font-black text-gray-400 uppercase tracking-widest hover:text-gray-600 transition-colors">
+                    Cancelar
+                </button>
+
+                <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+                    <span class="hidden sm:block text-[9px] font-bold text-gray-400 uppercase tracking-widest text-right leading-tight">
+                        Todos los campos<br/>son obligatorios
+                    </span>
+
+                    <button type="submit"
+                            class="w-full sm:w-auto px-10 py-4 bg-[#059669] text-white text-[11px] font-black uppercase tracking-[0.15em] rounded-xl shadow-lg shadow-[#059669]/20 hover:bg-[#047857] active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Guardar Estudio
+                    </button>
+                </div>
+            </footer>
+        </form>
+    </div>
+</div>
+
+</body>
+
+
+</html>
