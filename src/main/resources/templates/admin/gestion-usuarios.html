@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recíclame - Gestión de Usuarios</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7f9fb",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#cfe9d9",
+                        "tertiary-container": "#092016",
+                        "primary-container": "#021d30",
+                        "on-secondary-container": "#00743a",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#b1c9e2",
+                        "on-surface-variant": "#43474c",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container-high": "#e6e8ea",
+                        "outline-variant": "#c3c7cd",
+                        "on-secondary-fixed": "#00210c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006d37",
+                        "surface-variant": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed-variant": "#354c40",
+                        "on-secondary": "#ffffff",
+                        "outline": "#73777d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-tertiary-container": "#71897c",
+                        "tertiary-fixed-dim": "#b3ccbd",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#496177",
+                        "on-secondary-fixed-variant": "#005228",
+                        "on-primary-container": "#6f869e",
+                        "secondary-container": "#6bfe9c",
+                        "on-tertiary-fixed": "#092016",
+                        "secondary-fixed": "#6bfe9c",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "primary": "#000000",
+                        "on-primary-fixed": "#021d30",
+                        "on-primary-fixed-variant": "#31495e",
+                        "primary-fixed": "#cde5ff",
+                        "secondary-fixed-dim": "#4ae183",
+                        "primary-fixed-dim": "#b1c9e2"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+
+        .icon-sm {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .icon-md {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .icon-lg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .icon-xl {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+    </style>
+    <div th:replace="~{fragments/responsive}"></div>
+
+</head>
+
+<body
+    class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+        <main class="flex-1 overflow-y-auto px-6 py-2">
+            <div class="w-full h-full">
+                <div class="mb-3">
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
+                        <div>
+                            <h2
+                                class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                                Gestión de Usuarios
+                            </h2>
+                            <p class="font-body text-on-surface-variant text-sm mt-1 max-w-3xl">
+                                Administra accesos, roles y el ciclo de vida de los integrantes de la red de economía
+                                circular.
+                            </p>
+                        </div>
+
+                        <section
+                            class="bg-primary-container text-on-primary rounded-xl px-4 py-3 ambient-shadow min-w-[300px] max-w-[390px]">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex items-start gap-3">
+                                    <div
+                                        class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                                        !
+                                    </div>
+                                    <div>
+                                        <h3 class="font-headline text-sm font-bold">Solicitudes Pendientes</h3>
+                                        <p class="text-[11px] text-on-primary-container mt-1 leading-relaxed">
+                                            Hay <span th:text="${usuariosPendientes}"
+                                                class="font-bold text-white"></span> nuevos usuarios esperando
+                                            validación para ingresar a la plataforma.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <a th:href="@{/admin/usuarios/solicitudes}"
+                                    class="shrink-0 px-3 py-2 rounded-lg bg-secondary text-on-secondary text-[11px] font-bold hover:bg-[#005a3d] transition-colors">
+                                    Revisar
+                                </a>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+                <div class="bg-transparent border border-outline-variant/30 rounded-xl p-4 mb-4 flex flex-col">
+                    <!-- KPIs -->
+                    <section class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
+                        <article
+                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                            <div
+                                class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-outline to-surface-variant">
+                            </div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div
+                                    class="w-9 h-9 rounded-lg bg-surface-container text-on-surface-variant flex items-center justify-center shadow-sm">
+                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                        <path
+                                            d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.98 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+                                    </svg>
+                                </div>
+                                <div
+                                    class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                    Total
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                                    Total Usuarios
+                                </h4>
+                                <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalUsuarios}">
+                                </div>
+                            </div>
+                        </article>
+
+                        <article
+                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                            <div
+                                class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container">
+                            </div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div
+                                    class="w-9 h-9 rounded-lg bg-secondary-container/30 text-secondary flex items-center justify-center shadow-sm">
+                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                    </svg>
+                                </div>
+                                <div
+                                    class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                    Activo
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                                    Usuarios Activos
+                                </h4>
+                                <div class="text-3xl font-extrabold text-secondary" th:text="${usuariosActivos}"></div>
+                            </div>
+                        </article>
+
+                        <article
+                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                            <div
+                                class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container">
+                            </div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div
+                                    class="w-9 h-9 rounded-lg bg-error-container text-error flex items-center justify-center shadow-sm">
+                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                        <path
+                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z" />
+                                    </svg>
+                                </div>
+                                <div
+                                    class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                    Bloqueado
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                                    Usuarios Bloqueados
+                                </h4>
+                                <div class="text-3xl font-extrabold text-error" th:text="${usuariosBloqueados}"></div>
+                            </div>
+                        </article>
+
+                        <article
+                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-amber-200">
+                            </div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div
+                                    class="w-9 h-9 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center shadow-sm">
+                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                    </svg>
+                                </div>
+                                <div
+                                    class="bg-surface-container text-on-surface-variant font-label text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                    Nuevo
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                                    Pendientes
+                                </h4>
+                                <div class="text-3xl font-extrabold text-amber-600" th:text="${usuariosPendientes}">
+                                </div>
+                            </div>
+                        </article>
+                    </section>
+
+                    <!-- Barra superior tabla -->
+                    <form th:action="@{/admin/usuarios/gestion}" method="get" class="flex gap-4 mb-6 w-full">
+                        <div class="flex-1 relative">
+                            <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <input type="text" name="texto" th:value="${texto}"
+                                placeholder="Buscar usuario por nombre, DNI o empresa..."
+                                class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
+                        </div>
+                        <a th:href="@{/admin/usuarios/gestion}"
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
+                            title="Limpiar filtros">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            <span class="text-sm font-medium">Limpiar</span>
+                        </a>
+                        <button type="button" id="openFiltersModal"
+                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+
+                            <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
+                            <span class="text-sm font-medium">Filtros avanzados</span>
+                        </button>
+                        <a th:href="@{/admin/usuarios/gestion/exportar(texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}"
+                           class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition no-underline"
+                           title="Exportar usuarios a Excel">
+                            <div th:replace="~{fragments/icons.html :: icon-exportar-excel}"></div>
+                            <span class="text-sm font-medium">Exportar</span>
+                        </a>
+                    </form>
+
+                    <!-- Tabla + paginación -->
+                    <div class="flex flex-col">
+                        <div class="overflow-x-auto w-full pb-4" th:if="${not #lists.isEmpty(usuarios)}">
+                            <div class="flex flex-col gap-4 min-w-[1100px] w-full">
+
+                                <!-- Cabecera -->
+                                <div class="hidden md:grid grid-cols-[240px_140px_160px_90px_110px_120px_1fr] gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                                    <div>Nombre</div>
+                                    <div>Identificación</div>
+                                    <div>Empresa</div>
+                                    <div>Rol</div>
+                                    <div>Estado</div>
+                                    <div>Registro</div>
+                                    <div class="text-right">Acciones</div>
+                                </div>
+
+                                <!-- Filas -->
+                                <div th:each="u : ${usuarios}"
+                                    class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[240px_140px_160px_90px_110px_120px_1fr] gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+
+                                    <!-- Nombre -->
+                                    <div class="flex items-center gap-3 w-full">
+                                        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary-container/30 text-sm font-bold text-secondary"
+                                            th:text="${u.iniciales}"></div>
+                                        <div>
+                                            <p class="text-sm font-bold leading-tight text-on-primary-fixed group-hover:text-secondary transition-colors"
+                                                th:text="${u.nombreCompleto}"></p>
+                                            <p class="text-[11px] leading-tight text-on-surface-variant"
+                                                th:text="${u.correo}"></p>
+                                        </div>
+                                    </div>
+
+                                    <!-- DNI -->
+                                    <div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant"
+                                        th:text="${u.dni}"></div>
+
+                                    <!-- Empresa -->
+                                    <div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant italic whitespace-normal"
+                                        th:text="${u.empresa}"></div>
+
+                                    <!-- Rol -->
+                                    <div class="flex justify-start w-full md:w-auto">
+                                        <span class="rounded-full bg-secondary-container/20 px-3 py-1 text-[10px] font-extrabold uppercase text-secondary"
+                                            th:text="${u.rol}"></span>
+                                    </div>
+
+                                    <!-- Estado -->
+                                    <div class="flex justify-start w-full md:w-auto">
+                                        <div class="flex items-center gap-2" th:if="${u.estado == 'Activo'}">
+                                            <div class="h-2 w-2 rounded-full bg-secondary"></div>
+                                            <span class="text-sm font-bold text-secondary" th:text="${u.estado}"></span>
+                                        </div>
+                                        <div class="flex items-center gap-2" th:if="${u.estado == 'Bloqueado'}">
+                                            <div class="h-2 w-2 rounded-full bg-error"></div>
+                                            <span class="text-sm font-bold text-error" th:text="${u.estado}"></span>
+                                        </div>
+                                        <div class="flex items-center gap-2" th:if="${u.estado == 'Pendiente'}">
+                                            <div class="h-2 w-2 rounded-full bg-amber-500"></div>
+                                            <span class="text-sm font-bold text-amber-600" th:text="${u.estado}"></span>
+                                        </div>
+                                        <div class="flex items-center gap-2" th:if="${u.estado == 'Rechazado'}">
+                                            <div class="h-2 w-2 rounded-full bg-outline"></div>
+                                            <span class="text-sm font-bold text-outline" th:text="${u.estado}"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Fecha registro -->
+                                    <div class="flex justify-start w-full md:w-auto text-sm font-body text-on-surface-variant"
+                                        th:text="${u.fechaRegistro}"></div>
+
+                                    <!-- Acciones -->
+                                    <div class="flex justify-end gap-1.5 flex-wrap w-full md:w-auto">
+                                        <a th:if="${u.estado != 'Bloqueado'}"
+                                            th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='edit', id=${u.idUsuario})}"
+                                            class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
+                                            Editar
+                                        </a>
+                                        <a th:if="${u.estado == 'Activo'}"
+                                            th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='block', id=${u.idUsuario})}"
+                                            class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-error-container hover:text-error transition-colors">
+                                            Bloquear
+                                        </a>
+                                        <a th:if="${u.estado == 'Bloqueado'}"
+                                            th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='unblock', id=${u.idUsuario})}"
+                                            class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
+                                            Desbloquear
+                                        </a>
+                                        <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='historial', id=${u.idUsuario})}"
+                                           class="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-surface-container hover:text-on-primary-fixed transition-colors">
+                                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+                                            </svg>
+                                            Historial
+                                        </a>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Estado vacío -->
+                        <div th:if="${#lists.isEmpty(usuarios)}"
+                            class="py-12 flex flex-col items-center justify-center text-center bg-surface-container-lowest rounded-xl border border-outline-variant/30 border-dashed">
+                            <svg class="w-16 h-16 text-outline-variant mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <h3 class="text-lg font-bold text-on-surface mb-2">No hay usuarios para mostrar</h3>
+                        </div>
+
+                        <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-4">
+
+                            <!-- Botón anterior -->
+                            <a th:if="${hasPrevious}"
+                                th:href="@{/admin/usuarios/gestion(page=${currentPage - 1}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}"
+                                class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </a>
+
+                            <span th:if="${!hasPrevious}"
+                                class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </span>
+
+                            <!-- Números -->
+                            <div id="pageNumbers" class="flex gap-2">
+
+                                <span th:each="p : ${pageNumbers}">
+
+                                    <!-- Puntos suspensivos -->
+                                    <span th:if="${p == '...'}"
+                                          class="w-10 h-10 flex items-center justify-center text-sm font-bold text-on-surface-variant">
+                                        ...
+                                    </span>
+
+                                    <!-- Número de página -->
+                                    <a th:if="${p != '...'}"
+                                       th:href="@{/admin/usuarios/gestion(page=${p}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}"
+                                       th:text="${p + 1}"
+                                       th:class="${p == currentPage} ?
+                                       'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
+                                       :
+                                       'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container transition'">
+                                    </a>
+
+                                </span>
+
+                            </div>
+
+                            <!-- Botón siguiente -->
+                            <a th:if="${hasNext}"
+                                th:href="@{/admin/usuarios/gestion(page=${currentPage + 1}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}"
+                                class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7" />
+                                </svg>
+                            </a>
+
+                            <span th:if="${!hasNext}"
+                                class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7" />
+                                </svg>
+                            </span>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL EDITAR -->
+    <div th:if="${modal == 'edit'}"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+        <div class="w-full max-w-3xl bg-surface text-on-surface rounded-[1.5rem] ambient-shadow overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-5 border-b border-outline-variant/30">
+                <div>
+                    <h3 class="text-2xl font-headline font-bold text-on-primary-fixed">Editar usuario</h3>
+                    <p class="text-sm text-on-surface-variant mt-1">Actualiza la información principal del usuario.</p>
+                </div>
+
+                <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}"
+                    class="px-4 py-2 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+                    Cerrar
+                </a>
+            </div>
+
+            <form th:action="@{/admin/usuarios/editar(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}" th:object="${editForm}"
+                method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4 px-6 py-6">
+
+                <input type="hidden" th:field="*{idUsuario}">
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Nombres</label>
+                    <input type="text" th:field="*{nombres}"
+                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                    <p th:if="${fieldErrors != null and fieldErrors.nombres != null}" th:text="${fieldErrors.nombres}"
+                        class="mt-1 text-xs font-medium text-error"></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Apellido
+                        paterno</label>
+                    <input type="text" th:field="*{apellidoPaterno}"
+                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                    <p th:if="${fieldErrors != null and fieldErrors.apellidoPaterno != null}"
+                        th:text="${fieldErrors.apellidoPaterno}" class="mt-1 text-xs font-medium text-error"></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Apellido
+                        materno</label>
+                    <input type="text" th:field="*{apellidoMaterno}"
+                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">DNI</label>
+                    <input type="text" th:field="*{dni}"
+                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                    <p th:if="${fieldErrors != null and fieldErrors.dni != null}" th:text="${fieldErrors.dni}"
+                        class="mt-1 text-xs font-medium text-error"></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Correo</label>
+                    <input type="email" th:field="*{correo}"
+                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                    <p th:if="${fieldErrors != null and fieldErrors.correo != null}" th:text="${fieldErrors.correo}"
+                        class="mt-1 text-xs font-medium text-error"></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Teléfono</label>
+                    <input type="text" th:field="*{telefono}"
+                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                    <p th:if="${fieldErrors != null and fieldErrors.telefono != null}" th:text="${fieldErrors.telefono}"
+                        class="mt-1 text-xs font-medium text-error"></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Rol</label>
+                    <select th:field="*{idRol}"
+                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                        <option value="">Seleccione un rol</option>
+                        <option th:each="rol : ${roles}" th:value="${rol.idRol}" th:text="${rol.nombre}"></option>
+                    </select>
+                    <p th:if="${fieldErrors != null and fieldErrors.idRol != null}" th:text="${fieldErrors.idRol}"
+                        class="mt-1 text-xs font-medium text-error"></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Empresa</label>
+                    <input type="text" th:field="*{razonSocial}"
+                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Cargo</label>
+                    <input type="text" th:field="*{cargo}"
+                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                </div>
+
+                <div th:if="${mostrarSelectorPendiente}">
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Estado de
+                        evaluación</label>
+                    <select th:field="*{estadoAprobacion}"
+                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                        <option value="PENDIENTE">Pendiente</option>
+                    </select>
+                    <p class="mt-2 text-xs text-on-surface-variant">
+                        Este usuario fue rechazado. Aquí solo puede volver a estado pendiente.
+                    </p>
+                </div>
+
+                <div class="md:col-span-2 flex justify-end gap-3 pt-2">
+                    <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}"
+                        class="px-6 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+                        Cancelar
+                    </a>
+                    <button type="submit"
+                        class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary text-sm font-bold hover:bg-[#00210c] transition-colors shadow-sm">
+                        Guardar cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL HISTORIAL DE ROLES -->
+    <div th:if="${modal == 'historial'}"
+         class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+        <div class="w-full max-w-xl bg-surface text-on-surface rounded-[1.5rem] ambient-shadow overflow-hidden flex flex-col max-h-[85vh]">
+
+            <!-- Cabecera del modal -->
+            <div class="flex items-start justify-between px-6 py-5 border-b border-outline-variant/30 flex-shrink-0">
+                <div>
+                    <!-- Avatar + nombre del usuario -->
+                    <div class="flex items-center gap-3 mb-1">
+                        <div class="w-9 h-9 rounded-full bg-secondary-container/30 text-secondary flex items-center justify-center text-sm font-bold flex-shrink-0"
+                             th:text="${usuarioHistorial != null ? (#strings.substring(usuarioHistorial.nombres, 0, 1) + #strings.substring(usuarioHistorial.apellidoPaterno, 0, 1)) : '??'}">
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-headline font-bold text-on-primary-fixed leading-tight"
+                                th:text="${usuarioHistorial != null ? (usuarioHistorial.nombres + ' ' + usuarioHistorial.apellidoPaterno) : 'Usuario'}">
+                            </h3>
+                            <p class="text-xs text-on-surface-variant"
+                               th:text="${usuarioHistorial != null ? usuarioHistorial.correo : ''}">
+                            </p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-on-surface-variant mt-1">Historial de cambios de estado y rol</p>
+                </div>
+                <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}"
+                   class="px-4 py-2 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors flex-shrink-0">
+                    Cerrar
+                </a>
+            </div>
+
+            <!-- Cuerpo: línea de tiempo scrolleable -->
+            <div class="overflow-y-auto px-6 py-5 flex-1">
+
+                <!-- Sin historial -->
+                <div th:if="${#lists.isEmpty(historialRoles)}"
+                     class="py-10 flex flex-col items-center justify-center text-center">
+                    <div class="w-14 h-14 rounded-full bg-surface-container flex items-center justify-center mb-3">
+                        <svg class="w-7 h-7 text-outline-variant" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+                        </svg>
+                    </div>
+                    <p class="text-sm font-bold text-on-surface-variant">Sin historial registrado</p>
+                    <p class="text-xs text-on-surface-variant/60 mt-1">
+                        Los cambios futuros de estado y rol aparecerán aquí.
+                    </p>
+                </div>
+
+                <!-- Línea de tiempo -->
+                <div th:if="${not #lists.isEmpty(historialRoles)}"
+                     class="relative">
+
+                    <!-- Línea vertical -->
+                    <div class="absolute left-[17px] top-2 bottom-2 w-0.5 bg-outline-variant/30"></div>
+
+                    <div class="flex flex-col gap-5">
+                        <div th:each="h : ${historialRoles}"
+                             class="flex gap-4 relative">
+
+                            <!-- Ícono del punto en la línea -->
+                            <div class="flex-shrink-0 w-9 flex justify-center">
+
+                                <!-- Aprobado -->
+                                <div th:if="${h.estadoNuevo != null and h.estadoNuevo.name() == 'ACTIVO' and h.rolAnterior == null}"
+                                     class="w-9 h-9 rounded-full bg-secondary-container/30 border-2 border-secondary flex items-center justify-center z-10">
+                                    <svg class="w-4 h-4 text-secondary" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                    </svg>
+                                </div>
+
+                                <!-- Bloqueado -->
+                                <div th:if="${h.estadoNuevo != null and h.estadoNuevo.name() == 'BLOQUEADO'}"
+                                     class="w-9 h-9 rounded-full bg-error-container border-2 border-error flex items-center justify-center z-10">
+                                    <svg class="w-4 h-4 text-error" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                                    </svg>
+                                </div>
+
+                                <!-- Desbloqueado (estaba bloqueado, pasa a activo) -->
+                                <div th:if="${h.estadoNuevo != null and h.estadoNuevo.name() == 'ACTIVO' and h.estadoAnterior != null and h.estadoAnterior.name() == 'BLOQUEADO'}"
+                                     class="w-9 h-9 rounded-full bg-blue-50 border-2 border-blue-400 flex items-center justify-center z-10">
+                                    <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h2c0-1.66 1.34-3 3-3s3 1.34 3 3v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/>
+                                    </svg>
+                                </div>
+
+                                <!-- Ícono cambio de rol -->
+                                <div th:if="${h.rolAnterior != null and h.rolNuevo != null and h.rolAnterior.idRol != h.rolNuevo.idRol}"
+                                     class="w-9 h-9 rounded-full bg-amber-50 border-2 border-amber-400 flex items-center justify-center z-10">
+                                    <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+                                    </svg>
+                                </div>
+
+                                <!-- Rechazado / sin estado nuevo -->
+                                <div th:if="${h.estadoNuevo == null}"
+                                     class="w-9 h-9 rounded-full bg-surface-container border-2 border-outline-variant flex items-center justify-center z-10">
+                                    <svg class="w-4 h-4 text-on-surface-variant" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Contenido del evento -->
+                            <div class="flex-1 pb-1">
+
+                                <!-- Título del evento -->
+                                <p class="text-sm font-bold text-on-primary-fixed leading-tight"
+                                   th:text="${h.estadoNuevo != null and h.estadoNuevo.name() == 'ACTIVO' and h.rolAnterior == null ? 'Solicitud aprobada'
+            : h.estadoNuevo != null and h.estadoNuevo.name() == 'BLOQUEADO' ? 'Cuenta bloqueada'
+            : h.estadoNuevo != null and h.estadoNuevo.name() == 'ACTIVO' and h.estadoAnterior != null and h.estadoAnterior.name() == 'BLOQUEADO' ? 'Cuenta desbloqueada'
+            : h.rolAnterior != null and h.rolNuevo != null and h.rolAnterior.idRol != h.rolNuevo.idRol ? 'Cambio de rol'
+            : h.estadoNuevo != null ? 'Cambio de estado'
+            : 'Solicitud rechazada'}">
+                                </p>
+
+                                <!-- Fecha -->
+                                <p class="text-xs text-on-surface-variant mt-0.5"
+                                   th:text="${h.fechaCambio != null ? #temporals.format(h.fechaCambio, 'dd MMM yyyy · HH:mm') : '-'}">
+                                </p>
+
+                                <!-- Detalle del cambio -->
+                                <div class="mt-2 rounded-lg bg-surface-container-low p-3 text-xs space-y-1.5">
+
+                                    <!-- Cambio de rol -->
+                                    <div th:if="${h.rolNuevo != null}" class="flex items-center gap-2">
+                                        <span class="text-on-surface-variant font-medium w-16 flex-shrink-0">Rol</span>
+                                        <span th:if="${h.rolAnterior == null}"
+                                              class="text-on-surface-variant">Sin rol</span>
+                                        <span th:if="${h.rolAnterior != null}"
+                                              class="font-bold text-on-primary-fixed"
+                                              th:text="${h.rolAnterior.nombre}"></span>
+                                        <svg th:if="${h.rolNuevo != null}" class="w-3 h-3 text-outline flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+                                        </svg>
+                                        <span class="font-bold text-secondary"
+                                              th:text="${h.rolNuevo.nombre}"></span>
+                                    </div>
+
+                                    <!-- Cambio de estado -->
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-on-surface-variant font-medium w-16 flex-shrink-0">Estado</span>
+                                        <span th:if="${h.estadoAnterior == null}" class="text-on-surface-variant">—</span>
+                                        <span th:if="${h.estadoAnterior != null}"
+                                              class="font-bold text-on-primary-fixed"
+                                              th:text="${h.estadoAnterior.name()}"></span>
+                                        <svg class="w-3 h-3 text-outline flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+                                        </svg>
+                                        <span th:if="${h.estadoNuevo == null}" class="text-on-surface-variant">RECHAZADO</span>
+                                        <span th:if="${h.estadoNuevo != null}"
+                                              th:class="${h.estadoNuevo.name() == 'ACTIVO'} ? 'font-bold text-secondary' : 'font-bold text-error'"
+                                              th:text="${h.estadoNuevo.name()}"></span>
+                                    </div>
+
+                                    <!-- Aprobado por -->
+                                    <div th:if="${h.autorizadoPor != null}" class="flex items-center gap-2">
+                                        <span class="text-on-surface-variant font-medium w-16 flex-shrink-0">Por</span>
+                                        <span class="font-bold text-on-primary-fixed"
+                                              th:text="${h.autorizadoPor.nombres + ' ' + h.autorizadoPor.apellidoPaterno}"></span>
+                                    </div>
+
+                                    <!-- Motivo -->
+                                    <div th:if="${h.motivo != null and !#strings.isEmpty(h.motivo)}" class="flex items-start gap-2">
+                                        <span class="text-on-surface-variant font-medium w-16 flex-shrink-0 pt-0.5">Motivo</span>
+                                        <span class="text-on-surface-variant italic" th:text="${h.motivo}"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODAL BLOQUEAR / DESBLOQUEAR -->
+    <div th:if="${modal == 'block' or modal == 'unblock'}"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+        <div class="w-full max-w-xl bg-surface text-on-surface rounded-[1.5rem] ambient-shadow overflow-hidden">
+            <div class="border-b border-outline-variant/30 px-6 py-5">
+                <h3 class="text-2xl font-headline font-bold text-on-primary-fixed"
+                    th:text="${modoBloqueo == 'bloquear' ? 'Bloquear usuario' : 'Desbloquear usuario'}"></h3>
+                <p class="text-sm text-on-surface-variant mt-1"
+                    th:text="${modoBloqueo == 'bloquear' ? 'Confirma la acción antes de bloquear el acceso.' : 'Confirma la acción para restaurar el acceso del usuario.'}">
+                </p>
+            </div>
+
+            <form th:if="${modoBloqueo == 'bloquear'}"
+                th:action="@{/admin/usuarios/bloquear(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}" th:object="${blockForm}"
+                method="post" class="px-6 py-6">
+
+                <input type="hidden" th:field="*{idUsuario}" />
+
+                <div class="mb-5 rounded-xl bg-error-container/50 p-4">
+                    <p class="text-sm text-on-surface-variant">Usuario</p>
+                    <p class="text-lg font-extrabold text-on-primary-fixed" th:text="${usuarioBloqueoNombre}"></p>
+                    <p class="text-sm text-on-surface-variant" th:text="${usuarioBloqueoCorreo}"></p>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Motivo del
+                        bloqueo</label>
+                    <textarea th:field="*{motivo}" rows="4"
+                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-error/20"
+                        placeholder="Escribe el motivo del bloqueo..."></textarea>
+                </div>
+
+                <div class="flex justify-end gap-3">
+                    <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}"
+                        class="px-6 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+                        Cancelar
+                    </a>
+
+                    <button type="submit"
+                        class="px-6 py-2.5 rounded-lg bg-error text-on-error text-sm font-bold hover:bg-[#991b1b] transition-colors shadow-sm">
+                        Confirmar bloqueo
+                    </button>
+                </div>
+            </form>
+
+            <form th:if="${modoBloqueo == 'desbloquear'}"
+                th:action="@{/admin/usuarios/desbloquear(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}" th:object="${blockForm}"
+                method="post" class="px-6 py-6">
+
+                <input type="hidden" th:field="*{idUsuario}" />
+
+                <div class="mb-5 rounded-xl bg-secondary-container/20 p-4">
+                    <p class="text-sm text-on-surface-variant">Usuario</p>
+                    <p class="text-lg font-extrabold text-on-primary-fixed" th:text="${usuarioBloqueoNombre}"></p>
+                    <p class="text-sm text-on-surface-variant" th:text="${usuarioBloqueoCorreo}"></p>
+                </div>
+
+                <div class="flex justify-end gap-3">
+                    <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}"
+                        class="px-6 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+                        Cancelar
+                    </a>
+
+                    <button type="submit"
+                        class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary text-sm font-bold hover:bg-[#005a3d] transition-colors shadow-sm">
+                        Confirmar desbloqueo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Filtros Avanzados Modal -->
+    <div id="filtersModal"
+        class="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 p-4 transition-opacity opacity-0 pointer-events-none duration-300">
+        <div
+            class="bg-surface text-on-surface w-full max-w-2xl rounded-[1.5rem] p-6 sm:p-8 flex flex-col relative scale-95 transition-transform duration-300 shadow-xl max-h-full overflow-y-auto">
+            <!-- Close button -->
+            <button id="closeFiltersModal" type="button"
+                class="absolute top-6 right-6 p-2 rounded-full hover:bg-surface-container text-on-surface-variant transition-colors">
+                <svg class="icon-md" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                </svg>
+            </button>
+
+            <h2 class="text-2xl font-headline font-bold text-on-primary-fixed mb-6">Filtros Avanzados</h2>
+
+            <form id="filtersForm" action="/admin/usuarios/gestion" method="GET" class="space-y-6">
+                <!-- Rango de Fechas -->
+                <section>
+                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Fecha de Registro</h3>
+                    <div class="space-y-4">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <div class="flex-1">
+                                <label
+                                    class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
+                                    Inicio</label>
+                                <input type="date" id="dateStart" name="dateStart" th:value="${dateStart}"
+                                    class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
+                            </div>
+                            <div class="flex-1">
+                                <label
+                                    class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
+                                    Fin</label>
+                                <input type="date" id="dateEnd" name="dateEnd" th:value="${dateEnd}"
+                                    class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
+                            </div>
+                        </div>
+                        <p id="dateError" class="text-error text-xs font-semibold hidden">La Fecha Inicial no puede ser
+                            mayor que la Fecha Final.</p>
+                    </div>
+                </section>
+
+                <hr class="border-outline-variant/30">
+
+                <!-- Rol -->
+                <section>
+                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Rol</h3>
+                    <div class="flex flex-wrap gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="rol" value="SOCIO" th:checked="${selectedRoles != null and #lists.contains(selectedRoles, 'SOCIO')}"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body">Socio</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="rol" value="VISUALIZADOR" th:checked="${selectedRoles != null and #lists.contains(selectedRoles, 'VISUALIZADOR')}"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body">Visualizador</span>
+                        </label>
+                    </div>
+                </section>
+
+                <hr class="border-outline-variant/30">
+
+                <!-- Estado -->
+                <section>
+                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Estado</h3>
+                    <div class="flex flex-wrap gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="estado" value="Activo" th:checked="${selectedEstados != null and #lists.contains(selectedEstados, 'Activo')}"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Activo</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="estado" value="Bloqueado" th:checked="${selectedEstados != null and #lists.contains(selectedEstados, 'Bloqueado')}"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Bloqueado</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="estado" value="Pendiente" th:checked="${selectedEstados != null and #lists.contains(selectedEstados, 'Pendiente')}"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Pendiente</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="estado" value="Rechazado" th:checked="${selectedEstados != null and #lists.contains(selectedEstados, 'Rechazado')}"
+                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
+                            <span class="text-sm font-body uppercase tracking-wide">Rechazado</span>
+                        </label>
+                    </div>
+                </section>
+
+                <div class="pt-6 mt-4 flex justify-end gap-3 border-t border-outline-variant/30">
+                    <button type="submit"
+                        class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary font-bold text-sm hover:bg-[#00210c] transition-colors shadow-sm cursor-pointer">
+                        Aplicar Filtros
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script de Lógica para el Modal -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const openFiltersBtn = document.getElementById('openFiltersModal');
+            const closeFiltersBtn = document.getElementById('closeFiltersModal');
+            const filtersModal = document.getElementById('filtersModal');
+            const modalContent = filtersModal.querySelector('div');
+
+            const openModal = () => {
+                filtersModal.classList.remove('opacity-0', 'pointer-events-none');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            };
+
+            const closeModal = () => {
+                filtersModal.classList.add('opacity-0', 'pointer-events-none');
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-95');
+            };
+
+            openFiltersBtn.addEventListener('click', openModal);
+            closeFiltersBtn.addEventListener('click', closeModal);
+            filtersModal.addEventListener('click', (e) => {
+                if (e.target === filtersModal) closeModal();
+            });
+
+            // Validation
+            const dateStart = document.getElementById('dateStart');
+            const dateEnd = document.getElementById('dateEnd');
+            const filtersForm = document.getElementById('filtersForm');
+            const dateError = document.getElementById('dateError');
+
+            filtersForm.addEventListener('submit', (e) => {
+                if (dateStart.value && dateEnd.value) {
+                    if (new Date(dateStart.value) > new Date(dateEnd.value)) {
+                        e.preventDefault(); // Bloqueamos el envío porque hay error
+                        dateError.classList.remove('hidden');
+                        return;
+                    } else {
+                        dateError.classList.add('hidden');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
