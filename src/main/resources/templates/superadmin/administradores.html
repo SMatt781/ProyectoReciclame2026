@@ -702,7 +702,7 @@
 
             <div class="flex flex-col">
                 <div class="overflow-x-auto w-full pb-4">
-                    <div class="flex flex-col gap-4 min-w-[900px] w-full">
+                    <div class="flex flex-col gap-4 min-w-full md:min-w-[900px] w-full">
                         <!-- Cabecera -->
                         <div class="hidden md:grid grid-cols-[1.4fr_1.5fr_0.8fr_1.1fr_1fr] gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
                             <div >Nombre Completo</div>
@@ -715,7 +715,7 @@
                         <!-- Filas -->
                         <div th:each="admin : ${administradores.content}"
                              th:classappend="${admin.estadoCuenta == T(com.example.proyectoreciclame.Entity.Usuario.EstadoCuenta).BLOQUEADO} ? 'bg-red-50/80 border-red-100' : 'bg-surface-container-lowest border-transparent'"
-                             class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[1.4fr_1.5fr_0.8fr_1.1fr_1fr] gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                             class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[1.4fr_1.5fr_0.8fr_1.1fr_1fr] gap-4 items-start md:items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
 
                             <!-- Nombre -->
                             <div class="flex items-center gap-3 w-full">
@@ -750,12 +750,12 @@
                             </div>
 
                             <!-- Última conexión -->
-                            <div class="flex justify-center w-full md:w-auto text-sm font-body text-on-surface-variant"                                 th:text="${ultimoAccesoTexto[admin.idUsuario]}">
+                            <div class="flex justify-start md:justify-center w-full md:w-auto text-sm font-body text-on-surface-variant"                                 th:text="${ultimoAccesoTexto[admin.idUsuario]}">
                                 Sin registro
                             </div>
 
                             <!-- Acciones -->
-                            <div class="flex justify-center gap-1.5 flex-wrap w-full md:w-auto">
+                            <div class="flex justify-start md:justify-center gap-1.5 flex-wrap w-full md:w-auto">
 
                                 <a th:href="@{/superadmin/administradores/editar/{id}(id=${admin.idUsuario}, page=${currentPage}, texto=${texto})}"
                                    class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
