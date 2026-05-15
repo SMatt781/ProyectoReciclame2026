@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<aside id="sidebar" th:fragment="sidebar" class="md:flex flex-col h-full w-64 p-5 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50 fixed md:static left-0 top-0 h-screen md:h-auto -translate-x-full md:translate-x-0 transition-transform duration-300">
+<th:block th:fragment="sidebar">
+<aside id="sidebar" class="md:flex flex-col h-full w-64 p-5 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50 fixed md:static left-0 top-0 h-screen md:h-auto -translate-x-full md:translate-x-0 transition-transform duration-300">
     <div class="flex items-center gap-3 mb-10 pl-2">
         <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
             <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -180,6 +181,7 @@
             </button>
         </form>
     </div>
+</aside>
 
     <div id="modalNuevoEstudio" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="w-full max-w-[800px] bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden relative">
@@ -189,7 +191,6 @@
                     <div class="w-10 h-10 rounded-lg bg-[#e0e7ff] flex items-center justify-center text-[#064e3b]">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24">
                             <path d="M7 18H17M7 14H17M7 10H11M13 3H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V9L13 3Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                        </svg>
                     </div>
                     <div>
                         <h1 class="text-lg font-extrabold text-[#0f172a] tracking-tight text-left">Nuevo Estudio</h1>
@@ -650,7 +651,6 @@
         </div>
     </div>
 
-</aside>
 <script>
     function validarNormativaForm() {
         const titulo = document.getElementById('normativaTitulo').value.trim();
@@ -681,5 +681,6 @@
         return true;
     }
 </script>
+</th:block>
 </body>
 </html>

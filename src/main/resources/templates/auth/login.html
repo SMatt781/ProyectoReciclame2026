@@ -78,7 +78,7 @@
                 <div class="flex items-center gap-2 mb-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary shrink-0" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill-opacity="0.3"/>
-                        <path d="M17.5 11C17.5 8.5 15.5 6.5 13 6.5C10.5 6.5 8.5 8.5 11C8.5 13.5 10.5 15.5 13 15.5C15.5 15.5 17.5 13.5 17.5 11ZM13 14C11.34 14 10 12.66 10 11C10 9.34 11.34 8 13 8C14.66 8 16 9.34 16 11C16 12.66 14.66 14 13 14Z"/>
+                        <path d="M17.5 11C17.5 8.5 15.5 6.5 13 6.5C10.5 6.5 8.5 8.5 11 8.5C8.5 13.5 10.5 15.5 13 15.5C15.5 15.5 17.5 13.5 17.5 11ZM13 14C11.34 14 10 12.66 10 11C10 9.34 11.34 8 13 8C14.66 8 16 9.34 16 11C16 12.66 14.66 14 13 14Z"/>
                     </svg>
                     <span class="text-xl font-extrabold text-[#0f172a] tracking-tighter">RECÍCLAME</span>
                 </div>
@@ -157,7 +157,6 @@
 
             <div class="mt-10">
                 <form th:action="@{/login}" class="space-y-6" method="post">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1" for="correo">

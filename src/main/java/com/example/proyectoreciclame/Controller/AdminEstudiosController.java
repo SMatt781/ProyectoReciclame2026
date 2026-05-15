@@ -644,17 +644,22 @@ public class AdminEstudiosController {
     @Autowired
     private com.example.proyectoreciclame.Repository.CategoriaRepository categoriaRepository;
 
+    @Autowired
+    private com.example.proyectoreciclame.Service.NormativaService normativaService;
+
     @GetMapping("/admin/normativas/{id}")
     public String verNormativa(@PathVariable Long id, Model model) {
-        Normativa normativa = normativaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Normativa no encontrada"));
+        com.example.proyectoreciclame.Dto.NormativaDetalleDTO detalle = normativaService.obtenerDetalleConContexto(id);
+        if (detalle == null || detalle.getNormativa() == null) {
+            return "redirect:/admin/normativas";
+        }
 
-        model.addAttribute("normativa", normativa);
+        model.addAttribute("detalle", detalle);
+        model.addAttribute("normativa", detalle.getNormativa());
         model.addAttribute("currentPage", "repoNormativo");
         model.addAttribute("currentSection", "admin-normativas");
 
         return "admin/ver_normativa_admin";
-
     }
     @PostMapping("/admin/normativas/{id}/eliminar")
     public String eliminarNormativa(@PathVariable Long id,
