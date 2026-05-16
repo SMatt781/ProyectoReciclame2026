@@ -189,9 +189,29 @@
 
                 <!-- Gráfico de barras: ingresos por día -->
                 <div class="bg-surface-container-lowest rounded-[1.25rem] p-5 ambient-shadow ghost-border">
-                    <h3 class="font-headline font-bold text-base text-on-primary-fixed mb-4">
-                        Ingresos por día — últimos 7 días
-                    </h3>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-headline font-bold text-base text-on-primary-fixed">
+                            Ingresos por día
+                        </h3>
+                        <!-- Selector de rango -->
+                        <div class="flex gap-2">
+                            <button onclick="cambiarRangoGrafico(7)"
+                                    id="btn-7d"
+                                    class="px-3 py-1.5 text-xs font-bold rounded-lg bg-secondary text-on-secondary hover:bg-[#005a2f] transition">
+                                7 días
+                            </button>
+                            <button onclick="cambiarRangoGrafico(14)"
+                                    id="btn-14d"
+                                    class="px-3 py-1.5 text-xs font-bold rounded-lg bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition">
+                                14 días
+                            </button>
+                            <button onclick="cambiarRangoGrafico(30)"
+                                    id="btn-30d"
+                                    class="px-3 py-1.5 text-xs font-bold rounded-lg bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition">
+                                30 días
+                            </button>
+                        </div>
+                    </div>
                     <div style="position: relative; height: 180px; width: 100%;">
                         <canvas id="graficoIngresos" style="display: block;"></canvas>
                     </div>
@@ -364,6 +384,43 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
 
+    let graficoIngresosInstance = null;
+    let rangoActual = 7;
+
+    // Función para cambiar rango dinámicamente
+    async function cambiarRangoGrafico(dias) {
+        rangoActual = dias;
+
+        // Actualizar estilos de botones
+        ['7d', '14d', '30d'].forEach(btn => {
+            const elemento = document.getElementById(`btn-${btn}`);
+            const dias_btn = parseInt(btn);
+            if (dias === dias_btn) {
+                elemento.className = 'px-3 py-1.5 text-xs font-bold rounded-lg bg-secondary text-on-secondary hover:bg-[#005a2f] transition';
+            } else {
+                elemento.className = 'px-3 py-1.5 text-xs font-bold rounded-lg bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition';
+            }
+        });
+
+        // Hacer petición al servidor
+        try {
+            const response = await fetch(`/admin/reportes/datos-ingresos?dias=${dias}`);
+            const data = await response.json();
+
+            // Actualizar gráfico
+            if (graficoIngresosInstance) {
+                graficoIngresosInstance.data.labels = data.diasLabels;
+                graficoIngresosInstance.data.datasets[0].data = data.diasValores;
+                graficoIngresosInstance.data.datasets[0].backgroundColor = data.diasValores.map((_, i) =>
+                    i === data.diasValores.length - 1 ? '#4ae183' : '#006d37'
+                );
+                graficoIngresosInstance.update();
+            }
+        } catch (error) {
+            console.error('Error al cambiar rango:', error);
+        }
+    }
+
     // ── Datos del servidor ──────────────────────────────────────────────────
     const diasLabels    = [[${diasLabels}]];
     const diasValores   = [[${diasValores}]];
@@ -372,7 +429,7 @@
 
     // ── Gráfico de barras: ingresos por día ─────────────────────────────────
     const ctxBarras = document.getElementById('graficoIngresos').getContext('2d');
-    new Chart(ctxBarras, {
+    graficoIngresosInstance = new Chart(ctxBarras, {
         type: 'bar',
         data: {
             labels: diasLabels,
