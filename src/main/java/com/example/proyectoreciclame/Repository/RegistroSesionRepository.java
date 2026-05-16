@@ -96,4 +96,6 @@ public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, 
     // Sesiones agrupadas por día para el gráfico de barras
     @Query(value = "SELECT DATE(fecha_inicio) AS dia, COUNT(*) AS total FROM registro_sesiones WHERE fecha_inicio >= :desde GROUP BY DATE(fecha_inicio) ORDER BY dia ASC", nativeQuery = true)
     List<Object[]> contarSesionesPorDia(LocalDateTime desde);
+
+    List<RegistroSesion> findTop2ByUsuarioIdUsuarioOrderByFechaInicioDesc(Long idUsuario);
 }

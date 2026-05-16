@@ -644,17 +644,22 @@ public class AdminEstudiosController {
     @Autowired
     private com.example.proyectoreciclame.Repository.CategoriaRepository categoriaRepository;
 
+    @Autowired
+    private com.example.proyectoreciclame.Service.NormativaService normativaService;
+
     @GetMapping("/admin/normativas/{id}")
     public String verNormativa(@PathVariable Long id, Model model) {
-        Normativa normativa = normativaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Normativa no encontrada"));
+        com.example.proyectoreciclame.Dto.NormativaDetalleDTO detalle = normativaService.obtenerDetalleConContexto(id);
+        if (detalle == null || detalle.getNormativa() == null) {
+            return "redirect:/admin/normativas";
+        }
 
-        model.addAttribute("normativa", normativa);
+        model.addAttribute("detalle", detalle);
+        model.addAttribute("normativa", detalle.getNormativa());
         model.addAttribute("currentPage", "repoNormativo");
         model.addAttribute("currentSection", "admin-normativas");
 
         return "admin/ver_normativa_admin";
-
     }
     @PostMapping("/admin/normativas/{id}/eliminar")
     public String eliminarNormativa(@PathVariable Long id,
@@ -724,29 +729,15 @@ public class AdminEstudiosController {
 
         normativaRepository.save(n);
 
-        // Generar notificaciones si la normativa pasó a VIGENTE
-        if (estadoAnterior != Normativa.EstadoNormativa.VIGENTE &&
-            n.getEstado() == Normativa.EstadoNormativa.VIGENTE) {
-            String enlaceNormativa = "/normativas/" + n.getIdNormativa();
-            adminNotificacionController.crearNotificacionAdmin(
-                    "Normativa Actualizada y Publicada",
-                    "La normativa \"" + n.getTitulo() + "\" ha sido actualizada y publicada.",
-                    "NORMATIVA",
-                    enlaceNormativa
-            );
-            adminNotificacionController.crearNotificacionSocio(
-                    "Normativa Actualizada y Publicada",
-                    "La normativa \"" + n.getTitulo() + "\" ha sido actualizada y publicada.",
-                    "NORMATIVA",
-                    enlaceNormativa
-            );
-            adminNotificacionController.crearNotificacionVisualizador(
-                    "Normativa Actualizada y Publicada",
-                    "La normativa \"" + n.getTitulo() + "\" ha sido actualizada y publicada.",
-                    "NORMATIVA",
-                    enlaceNormativa
-            );
-        }
+        String estadoActual = n.getEstado() != null ? n.getEstado().name() : "-";
+        String accion = estadoAnterior != n.getEstado()
+                ? "Cambio de estado a " + estadoActual
+                : "Actualizacion de contenido";
+        String enlaceNormativa = "/normativas/" + n.getIdNormativa();
+        String tituloNotif = "Normativa actualizada";
+        String mensajeNotif = "La normativa \"" + n.getTitulo() + "\" fue actualizada. " + accion + ".";
+        adminNotificacionController.crearNotificacionSocio(tituloNotif, mensajeNotif, "NORMATIVA", enlaceNormativa);
+        adminNotificacionController.crearNotificacionVisualizador(tituloNotif, mensajeNotif, "NORMATIVA", enlaceNormativa);
 
         attr.addFlashAttribute("msg", "Normativa actualizada correctamente");
 
@@ -762,6 +753,12 @@ public class AdminEstudiosController {
         estudio.setFechaActualizacion(java.time.LocalDateTime.now());
 
         estudioRepository.save(estudio);
+
+        String enlaceEstudio = "/estudios/" + estudio.getIdEstudio();
+        String tituloNotif = "Estudio actualizado";
+        String mensajeNotif = "El estudio \"" + estudio.getTitulo() + "\" cambio de estado a DEROGADO.";
+        adminNotificacionController.crearNotificacionSocio(tituloNotif, mensajeNotif, "ESTUDIO", enlaceEstudio);
+        adminNotificacionController.crearNotificacionVisualizador(tituloNotif, mensajeNotif, "ESTUDIO", enlaceEstudio);
 
         attr.addFlashAttribute("msg", "Estudio eliminado correctamente");
         return "redirect:/admin/estudios";
@@ -812,23 +809,15 @@ public class AdminEstudiosController {
 
             estudioRepository.save(estudio);
 
-            // Generar notificaciones si el estudio pasó a VIGENTE
-            if (estadoAnterior != Estudio.EstadoEstudio.VIGENTE &&
-                estudio.getEstado() == Estudio.EstadoEstudio.VIGENTE) {
-                String enlaceEstudio = "/estudios/" + estudio.getIdEstudio();
-                adminNotificacionController.crearNotificacionSocio(
-                        "Estudio Actualizado y Publicado",
-                        "El estudio \"" + estudio.getTitulo() + "\" ha sido actualizado y publicado.",
-                        "ESTUDIO",
-                        enlaceEstudio
-                );
-                adminNotificacionController.crearNotificacionVisualizador(
-                        "Estudio Actualizado y Publicado",
-                        "El estudio \"" + estudio.getTitulo() + "\" ha sido actualizado y publicado.",
-                        "ESTUDIO",
-                        enlaceEstudio
-                );
-            }
+            String estadoActual = estudio.getEstado() != null ? estudio.getEstado().name() : "-";
+            String accion = estadoAnterior != estudio.getEstado()
+                    ? "Cambio de estado a " + estadoActual
+                    : "Actualizacion de contenido";
+            String enlaceEstudio = "/estudios/" + estudio.getIdEstudio();
+            String tituloNotif = "Estudio actualizado";
+            String mensajeNotif = "El estudio \"" + estudio.getTitulo() + "\" fue actualizado. " + accion + ".";
+            adminNotificacionController.crearNotificacionSocio(tituloNotif, mensajeNotif, "ESTUDIO", enlaceEstudio);
+            adminNotificacionController.crearNotificacionVisualizador(tituloNotif, mensajeNotif, "ESTUDIO", enlaceEstudio);
 
             attr.addFlashAttribute("msg", "Estudio actualizado correctamente");
 
