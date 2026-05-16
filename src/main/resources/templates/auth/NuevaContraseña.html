@@ -93,11 +93,16 @@
                 <div class="relative flex items-center rounded-full group">
                     <input
                             class="w-full px-6 py-3 bg-surface-container-low border-transparent focus:border-primary focus:ring-0 rounded-full text-xs text-on-surface placeholder:text-on-surface-variant/40 transition-all"
-                            id="password"
+                            id="passwordRecuperar"
                             th:field="*{password}"
                             placeholder="••••••••"
                             required
                             type="password"
+                            data-min-length="8"
+                            data-require-upper="true"
+                            data-require-number="true"
+                            data-require-symbol="true"
+                            oninput="evaluarPassword(this.value, 'Recuperar')"
                     />
                 </div>
                 <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="mt-2 text-xs font-medium text-red-600"></p>
@@ -120,20 +125,36 @@
                 <p th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="mt-2 text-xs font-medium text-red-600"></p>
             </div>
 
-            <div class="bg-surface-container-low/50 rounded-2xl p-4 border border-outline-variant/10">
-                <p class="text-[9px] font-bold text-on-tertiary-fixed tracking-wide mb-3 uppercase">Requisitos de seguridad</p>
-                <ul class="space-y-2">
-                    <li class="flex items-center gap-2.5 text-[11px] text-on-surface-variant">
-                        <svg class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        <span>Mínimo 8 caracteres</span>
+            <!-- Barra de Fuerza de Contraseña -->
+            <div class="space-y-3 bg-surface-container-low/50 rounded-2xl p-4 border border-outline-variant/10">
+                <p class="text-[9px] font-bold text-on-tertiary-fixed tracking-wide uppercase">Fuerza de contraseña</p>
+
+                <!-- Barras de progreso -->
+                <div class="flex gap-1">
+                    <div id="barRecuperar1" class="h-1 flex-1 rounded-full bg-slate-200"></div>
+                    <div id="barRecuperar2" class="h-1 flex-1 rounded-full bg-slate-200"></div>
+                    <div id="barRecuperar3" class="h-1 flex-1 rounded-full bg-slate-200"></div>
+                    <div id="barRecuperar4" class="h-1 flex-1 rounded-full bg-slate-200"></div>
+                </div>
+
+                <!-- Mensaje dinámico -->
+                <p id="passwordMsgRecuperar" class="text-[11px] font-bold text-slate-400">
+                    Ingresa una contraseña.
+                </p>
+
+                <!-- Requisitos de seguridad -->
+                <ul class="text-[10px] text-on-surface-variant space-y-0.5">
+                    <li id="ruleRecuperarLength" class="text-on-surface-variant">
+                        • Mínimo 8 caracteres
                     </li>
-                    <li class="flex items-center gap-2.5 text-[11px] text-on-surface-variant">
-                        <svg class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        <span>Al menos un número</span>
+                    <li id="ruleRecuperarUpper" class="text-on-surface-variant">
+                        • Al menos una mayúscula
                     </li>
-                    <li class="flex items-center gap-2.5 text-[11px] text-on-surface-variant/40">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>
-                        <span>Un carácter especial</span>
+                    <li id="ruleRecuperarNumber" class="text-on-surface-variant">
+                        • Al menos un número
+                    </li>
+                    <li id="ruleRecuperarSymbol" class="text-on-surface-variant">
+                        • Al menos un símbolo
                     </li>
                 </ul>
             </div>
@@ -160,5 +181,106 @@
         </p>
     </div>
 </footer>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordRecuperar = document.getElementById("passwordRecuperar");
+        if (passwordRecuperar && passwordRecuperar.value) {
+            evaluarPassword(passwordRecuperar.value, "Recuperar");
+        }
+    });
+
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        input.type = input.type === "password" ? "text" : "password";
+    }
+
+    function evaluarPassword(password, prefix) {
+        const input = document.getElementById(`password${prefix}`);
+
+        const minLength = parseInt(input.dataset.minLength || "8");
+        const requireUpper = input.dataset.requireUpper === "true";
+        const requireNumber = input.dataset.requireNumber === "true";
+        const requireSymbol = input.dataset.requireSymbol === "true";
+
+        const rules = {
+            length: password.length >= minLength,
+            upper: /[A-ZÁÉÍÓÚÑ]/.test(password),
+            number: /\d/.test(password),
+            symbol: /[^A-Za-zÁÉÍÓÚáéíóúÑñ0-9]/.test(password)
+        };
+
+        const score = [
+            rules.length,
+            requireUpper ? rules.upper : true,
+            requireNumber ? rules.number : true,
+            requireSymbol ? rules.symbol : true
+        ].filter(Boolean).length;
+
+        pintarBarras(prefix, score);
+        pintarMensaje(prefix, password, score);
+
+        setRuleColor(`rule${prefix}Length`, rules.length);
+        setRuleColor(`rule${prefix}Upper`, !requireUpper || rules.upper);
+        setRuleColor(`rule${prefix}Number`, !requireNumber || rules.number);
+        setRuleColor(`rule${prefix}Symbol`, !requireSymbol || rules.symbol);
+    }
+
+    function pintarBarras(prefix, score) {
+        const bars = [
+            document.getElementById(`bar${prefix}1`),
+            document.getElementById(`bar${prefix}2`),
+            document.getElementById(`bar${prefix}3`),
+            document.getElementById(`bar${prefix}4`)
+        ];
+
+        bars.forEach((bar, index) => {
+            bar.className = "h-1 flex-1 rounded-full bg-slate-200";
+
+            if (index < score) {
+                if (score <= 1) {
+                    bar.className = "h-1 flex-1 rounded-full bg-red-500";
+                } else if (score === 2) {
+                    bar.className = "h-1 flex-1 rounded-full bg-amber-500";
+                } else if (score === 3) {
+                    bar.className = "h-1 flex-1 rounded-full bg-blue-500";
+                } else {
+                    bar.className = "h-1 flex-1 rounded-full bg-primary-container";
+                }
+            }
+        });
+    }
+
+    function pintarMensaje(prefix, password, score) {
+        const msg = document.getElementById(`passwordMsg${prefix}`);
+
+        if (!password) {
+            msg.textContent = "Ingresa una contraseña.";
+            msg.className = "text-[11px] font-bold text-slate-400";
+        } else if (score <= 1) {
+            msg.textContent = "Contraseña débil.";
+            msg.className = "text-[11px] font-bold text-red-600";
+        } else if (score === 2) {
+            msg.textContent = "Contraseña media.";
+            msg.className = "text-[11px] font-bold text-amber-600";
+        } else if (score === 3) {
+            msg.textContent = "Contraseña buena.";
+            msg.className = "text-[11px] font-bold text-blue-600";
+        } else {
+            msg.textContent = "Contraseña segura.";
+            msg.className = "text-[11px] font-bold text-primary";
+        }
+    }
+
+    function setRuleColor(id, ok) {
+        const item = document.getElementById(id);
+        if (!item) return;
+
+        item.className = ok
+            ? "text-[10px] text-primary font-bold"
+            : "text-[10px] text-on-surface-variant";
+    }
+</script>
 </body>
 </html>
