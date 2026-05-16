@@ -149,7 +149,7 @@
                         <div class="flex items-start justify-between gap-3">
                             <div class="flex items-start gap-3">
                                 <div
-                                        class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                                        class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-white font-bold text-sm ">
                                     !
                                 </div>
                                 <div>
@@ -163,7 +163,7 @@
                             </div>
 
                             <a th:href="@{/admin/usuarios/solicitudes}"
-                               class="shrink-0 px-3 py-2 rounded-lg bg-secondary text-on-secondary text-[11px] font-bold hover:bg-[#005a3d] transition-colors">
+                               class=" px-3 py-2 rounded-lg bg-secondary text-on-secondary text-[11px] font-bold hover:bg-[#005a3d] transition-colors">
                                 Revisar
                             </a>
                         </div>
@@ -279,7 +279,7 @@
                 </section>
 
                 <!-- Barra superior tabla -->
-                <form th:action="@{/admin/usuarios/gestion}" method="get" class="flex gap-4 mb-6 w-full">
+                <form th:action="@{/admin/usuarios/gestion}" method="get" class="flex flex-col lg:flex-row gap-4 mb-6 w-full">
                     <div class="flex-1 relative">
                         <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
                              viewBox="0 0 24 24">
@@ -316,10 +316,11 @@
                 <!-- Tabla + paginación -->
                 <div class="flex flex-col">
                     <div class="w-full pb-4" th:if="${not #lists.isEmpty(usuarios)}">
-                        <div class="flex flex-col gap-4 w-full overflow-x-auto">
+
+                        <div class="w-full flex flex-col gap-4">
 
                             <!-- Cabecera -->
-                            <div class="hidden md:grid grid-cols-[240px_140px_150px_100px_120px_120px_240px] gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                            <div class="hidden lg:grid lg:grid-cols-[minmax(180px,2fr)_minmax(80px,0.8fr)_minmax(120px,1fr)_minmax(90px,0.8fr)_minmax(90px,0.8fr)_minmax(90px,0.8fr)_minmax(160px,1.3fr)] gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider items-center">
                                 <div>Nombre</div>
                                 <div>DNI</div>
                                 <div>Empresa</div>
@@ -331,11 +332,11 @@
 
                             <!-- Filas -->
                             <div th:each="u : ${usuarios}"
-                                 class="w-full bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[240px_140px_150px_100px_120px_120px_240px] gap-4 md:items-center md:justify-items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                                 class="bg-surface-container-lowest rounded-xl p-4 lg:px-6 lg:py-4 ambient-shadow flex flex-col lg:grid lg:grid-cols-[minmax(180px,2fr)_minmax(80px,0.8fr)_minmax(120px,1fr)_minmax(90px,0.8fr)_minmax(90px,0.8fr)_minmax(90px,0.8fr)_minmax(160px,1.3fr)] gap-4 lg:items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
 
                                 <!-- Nombre -->
                                 <div class="flex items-center gap-3 w-full">
-                                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary-container/30 text-sm font-bold text-secondary"
+                                    <div class="flex h-9 w-9  items-center justify-center rounded-full bg-secondary-container/30 text-sm font-bold text-secondary"
                                          th:text="${u.iniciales}"></div>
                                     <div>
                                         <p class="text-sm font-bold leading-tight text-on-primary-fixed group-hover:text-secondary transition-colors"
@@ -346,21 +347,21 @@
                                 </div>
 
                                 <!-- DNI -->
-                                <div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant"
+                                <div class="flex justify-start min-w-0 text-xs font-body text-on-surface-variant"
                                      th:text="${u.dni}"></div>
 
                                 <!-- Empresa -->
-                                <div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant italic whitespace-normal"
+                                <div class="flex justify-start min-w-0 text-xs font-body text-on-surface-variant italic whitespace-normal"
                                      th:text="${u.empresa}"></div>
 
                                 <!-- Rol -->
-                                <div class="flex justify-center w-full md:w-auto">
+                                <div class="flex lg:justify-center justify-start min-w-0 text-sm font-body text-on-surface-variant min-w-0">
                                         <span class="rounded-full bg-secondary-container/20 px-3 py-1 text-[10px] font-extrabold uppercase text-secondary"
                                               th:text="${u.rol}"></span>
                                 </div>
 
                                 <!-- Estado -->
-                                <div class="flex justify-center w-full md:w-auto">
+                                <div class="flex items-start lg:items-center min-w-0 text-xs font-body text-on-surface-variant min-w-0">
                                     <div class="flex items-center gap-2" th:if="${u.estado == 'Activo'}">
                                         <div class="h-2 w-2 rounded-full bg-secondary"></div>
                                         <span class="text-sm font-bold text-secondary" th:text="${u.estado}"></span>
@@ -380,22 +381,22 @@
                                 </div>
 
                                 <!-- Fecha registro -->
-                                <div class="flex justify-center w-full md:w-auto text-sm font-body text-on-surface-variant"
+                                <div class="flex lg:justify-center justify-start min-w-0 text-xs font-body text-on-surface-variant min-w-0"
                                      th:text="${u.fechaRegistro}"></div>
 
                                 <!-- Acciones -->
-                                <div class="flex flex-col md:flex-row justify-center gap-2 md:gap-3 w-full md:w-auto">
+                                <div class="flex flex-wrap items-start justify-start lg:justify-end gap-x-3 gap-y-2 w-full max-w-full min-w-0">
 
                                     <!-- EDITAR - Siempre presente -->
                                     <a th:if="${u.estado != 'Bloqueado' && u.estado != 'Pendiente' && u.estado != 'Rechazado'}"
                                        th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='edit', id=${u.idUsuario})}"
-                                       class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors w-full md:w-auto"
+                                       class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors "
                                        title="Editar usuario">
                                         Editar
                                     </a>
                                     <button th:if="${u.estado == 'Bloqueado' || u.estado == 'Pendiente' || u.estado == 'Rechazado'}"
                                             disabled
-                                            class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant opacity-40 cursor-not-allowed w-full md:w-auto"
+                                            class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant opacity-40 cursor-not-allowed "
                                             th:title="${u.estado == 'Pendiente' ? 'Pendiente de aprobación' : (u.estado == 'Rechazado' ? 'Usuario rechazado' : 'Usuario bloqueado')}">
                                         Editar
                                     </button>
@@ -403,26 +404,26 @@
                                     <!-- BLOQUEAR / DESBLOQUEAR - Siempre presente -->
                                     <a th:if="${u.estado == 'Activo'}"
                                        th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='block', id=${u.idUsuario})}"
-                                       class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-error-container hover:text-error transition-colors w-full md:w-auto"
+                                       class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-error-container hover:text-error transition-colors "
                                        title="Bloquear usuario">
                                         Bloquear
                                     </a>
                                     <a th:if="${u.estado == 'Bloqueado'}"
                                        th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='unblock', id=${u.idUsuario})}"
-                                       class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors w-full md:w-auto"
+                                       class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors "
                                        title="Desbloquear usuario">
                                         Desbloquear
                                     </a>
                                     <button th:if="${u.estado == 'Pendiente' || u.estado == 'Rechazado'}"
                                             disabled
-                                            class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant opacity-40 cursor-not-allowed w-full md:w-auto"
+                                            class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant opacity-40 cursor-not-allowed "
                                             th:title="${u.estado == 'Pendiente' ? 'No se puede bloquear mientras esté pendiente' : 'No se puede bloquear un usuario rechazado'}">
                                         Bloquear
                                     </button>
 
                                     <!-- HISTORIAL - Siempre habilitado -->
                                     <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='historial', id=${u.idUsuario})}"
-                                       class="inline-flex items-center justify-center gap-1 rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-surface-container hover:text-on-primary-fixed transition-colors w-full md:w-auto"
+                                       class="inline-flex items-center justify-center gap-1 rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-surface-container hover:text-on-primary-fixed transition-colors "
                                        title="Ver historial de cambios">
                                         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
