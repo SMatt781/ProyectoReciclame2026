@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <html class="light" lang="es">
+
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -77,283 +78,606 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
-        .ambient-shadow { box-shadow: 0 4px 24px -4px rgba(0,27,46,0.06); }
-        .ghost-border { box-shadow: inset 0 0 0 1px rgba(195,199,205,0.15); }
-        .icon-sm { width:1.25rem; height:1.25rem; }
-        .icon-md { width:1.5rem;  height:1.5rem;  }
-        .icon-lg { width:2rem;    height:2rem;    }
-        .icon-xl { width:2.5rem;  height:2.5rem;  }
 
-        .folder-item { transition: all 0.15s ease; }
-        .folder-item:hover { transform: translateX(2px); }
-        .folder-item.active { background: rgba(0,109,55,0.08); }
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
 
-        .doc-card { transition: box-shadow 0.2s ease, transform 0.2s ease; }
-        .doc-card:hover { box-shadow: 0 8px 24px -4px rgba(0,27,46,0.12); transform: translateY(-1px); }
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
 
-        .color-swatch { transition: transform 0.15s, box-shadow 0.15s; }
-        .color-swatch:hover { transform: scale(1.15); }
-        .color-swatch.selected { box-shadow: 0 0 0 3px white, 0 0 0 5px currentColor; }
+        .icon-sm {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .icon-md {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .icon-lg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .icon-xl {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+
+        .folder-item {
+            transition: all 0.15s ease;
+        }
+
+        .folder-item:hover {
+            transform: translateX(2px);
+        }
+
+        .folder-item.active {
+            background: rgba(0, 109, 55, 0.08);
+        }
+
+        .doc-card {
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .doc-card:hover {
+            box-shadow: 0 8px 24px -4px rgba(0, 27, 46, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .list-item {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+        }
+
+        .toast-msg {
+            transition: opacity 0.5s ease, margin 0.5s ease, padding 0.5s ease, max-height 0.5s ease;
+            overflow: hidden;
+            max-height: 100px;
+        }
+
+        .toast-msg.toast-hiding {
+            opacity: 0;
+            max-height: 0;
+            margin-bottom: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .color-swatch {
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.15);
+        }
+
+        .color-swatch.selected {
+            box-shadow: 0 0 0 3px white, 0 0 0 5px currentColor;
+        }
     </style>
     <div th:replace="~{fragments/responsive}"></div>
 
 </head>
-<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+
+<body
+    class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
 
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
     <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
         <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-        <main class="flex-1 overflow-y-auto px-6 md:px-10 py-6 bg-[#f9f9ff]">
-
-            <!-- Toast notifications -->
-            <div th:if="${carpetaCreadaExito}" class="mb-4 flex items-center gap-3 bg-[#f0fdf4] border border-[#86efac] text-[#166534] px-4 py-3 rounded-xl text-sm font-semibold shadow-sm">
-                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                Carpeta creada correctamente.
-            </div>
-            <div th:if="${carpetaEliminadaExito}" class="mb-4 flex items-center gap-3 bg-[#fff7ed] border border-[#fed7aa] text-[#9a3412] px-4 py-3 rounded-xl text-sm font-semibold shadow-sm">
-                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-                Carpeta eliminada. Los documentos quedaron sin clasificar.
-            </div>
-            <div th:if="${carpetaError}" class="mb-4 flex items-center gap-3 bg-[#fef2f2] border border-[#fecaca] text-[#991b1b] px-4 py-3 rounded-xl text-sm font-semibold shadow-sm">
-                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-                <span th:text="${carpetaError}">Error</span>
-            </div>
-            <div th:if="${guardadoExito}" class="mb-4 flex items-center gap-3 bg-[#f0fdf4] border border-[#86efac] text-[#166534] px-4 py-3 rounded-xl text-sm font-semibold shadow-sm">
-                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
-                Guardado en Mi Espacio.
-            </div>
-            <div th:if="${eliminadoExito}" class="mb-4 flex items-center gap-3 bg-[#fef2f2] border border-[#fecaca] text-[#991b1b] px-4 py-3 rounded-xl text-sm font-semibold shadow-sm">
-                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-                Documento eliminado de Mi Espacio.
-            </div>
-            <div th:if="${movidoExito}" class="mb-4 flex items-center gap-3 bg-[#f0fdf4] border border-[#86efac] text-[#166534] px-4 py-3 rounded-xl text-sm font-semibold shadow-sm">
-                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>
-                Documento movido correctamente.
-            </div>
-
-            <!-- Page Header -->
-            <header class="mb-6 flex items-center justify-between flex-wrap gap-3">
-                <div>
-                    <div class="flex items-center gap-2 font-label text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-2">
-                        <a th:href="@{/socio}" class="hover:underline">INICIO</a>
-                        <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-                        <span>MI ESPACIO</span>
-                        <span th:if="${carpetaActual != null}" class="flex items-center gap-1">
-                            <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-                            <span th:text="${carpetaActual.emoji != null ? carpetaActual.emoji + ' ' : ''}"></span>
-                            <span th:text="${carpetaActual.nombre}"></span>
-                        </span>
-                    </div>
-                    <h1 class="font-headline text-2xl font-bold text-on-primary-fixed tracking-tight flex items-center gap-2">
-                        <svg class="w-7 h-7 text-[#006d37]" fill="currentColor" viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
-                        Mi Espacio
-                    </h1>
+        <main class="flex-1 overflow-y-auto px-4 sm:px-6 py-2">
+            <div class="w-full">
+                <!-- Toast notifications -->
+                <div th:if="${carpetaCreadaExito}"
+                    class="toast-msg mb-4 flex items-center gap-3 bg-[#f0fdf4] border border-[#86efac] text-[#166534] px-4 py-3 rounded-xl text-sm font-semibold shadow-sm">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                    </svg>
+                    Carpeta creada correctamente.
                 </div>
-                <!-- KPIs rápidos -->
-                <div class="flex items-center gap-3">
-                    <div class="bg-white rounded-xl px-4 py-2.5 shadow-sm border border-outline-variant/20 text-center min-w-[72px]">
-                        <p class="font-headline font-bold text-lg text-on-primary-fixed" th:text="${totalGuardados}">0</p>
-                        <p class="font-label text-[10px] text-on-surface-variant uppercase tracking-wider">Total</p>
-                    </div>
-                    <div class="bg-white rounded-xl px-4 py-2.5 shadow-sm border border-outline-variant/20 text-center min-w-[72px]">
-                        <p class="font-headline font-bold text-lg text-[#1565c0]" th:text="${totalEstudios}">0</p>
-                        <p class="font-label text-[10px] text-on-surface-variant uppercase tracking-wider">Estudios</p>
-                    </div>
-                    <div class="bg-white rounded-xl px-4 py-2.5 shadow-sm border border-outline-variant/20 text-center min-w-[72px]">
-                        <p class="font-headline font-bold text-lg text-[#b45309]" th:text="${totalNormativas}">0</p>
-                        <p class="font-label text-[10px] text-on-surface-variant uppercase tracking-wider">Normativas</p>
+                <div th:if="${carpetaEliminadaExito}"
+                    class="toast-msg mb-4 flex items-center gap-3 bg-[#fff7ed] border border-[#fed7aa] text-[#9a3412] px-4 py-3 rounded-xl text-sm font-semibold shadow-sm">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                    </svg>
+                    Carpeta eliminada. Los documentos quedaron sin clasificar.
+                </div>
+                <div th:if="${carpetaError}"
+                    class="toast-msg mb-4 flex items-center gap-3 bg-[#fef2f2] border border-[#fecaca] text-[#991b1b] px-4 py-3 rounded-xl text-sm font-semibold shadow-sm">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                    </svg>
+                    <span th:text="${carpetaError}">Error</span>
+                </div>
+                <div th:if="${guardadoExito}"
+                    class="toast-msg mb-4 flex items-center gap-3 bg-[#f0fdf4] border border-[#86efac] text-[#166534] px-4 py-3 rounded-xl text-sm font-semibold shadow-sm">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
+                    </svg>
+                    Guardado en Mi Espacio.
+                </div>
+                <div th:if="${eliminadoExito}"
+                    class="toast-msg mb-4 flex items-center gap-3 bg-[#fef2f2] border border-[#fecaca] text-[#991b1b] px-4 py-3 rounded-xl text-sm font-semibold shadow-sm">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                    </svg>
+                    Documento eliminado de Mi Espacio.
+                </div>
+                <div th:if="${movidoExito}"
+                    class="toast-msg mb-4 flex items-center gap-3 bg-[#f0fdf4] border border-[#86efac] text-[#166534] px-4 py-3 rounded-xl text-sm font-semibold shadow-sm">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M20 6h-8l-2-2H4c-1.11 0-2 .89-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z" />
+                    </svg>
+                    Documento movido correctamente.
+                </div>
+
+                <!-- Page Header -->
+                <div class="mb-5">
+                    <div>
+
+                        <h2
+                            class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight flex items-center gap-2">
+
+                            Mi Espacio
+                        </h2>
+                        <p class="font-body text-on-surface-variant text-sm mt-1 max-w-3xl">
+                            Organiza y accede rápidamente a tus estudios y normativas guardadas.
+                        </p>
                     </div>
                 </div>
-            </header>
 
-            <!-- Layout principal: carpetas izquierda + contenido derecha -->
-            <div class="flex gap-6 min-h-0 flex-col lg:flex-row">
+                <!-- KPIs (Indicadores) -->
+                <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <article
+                        class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div
+                            class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container">
+                        </div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div
+                                class="bg-emerald-50 text-secondary rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
+                                </svg>
+                            </div>
+                            <span
+                                class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">Total</span>
+                        </div>
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">Total
+                            guardados</h4>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalGuardados}">0</div>
+                    </article>
 
-                <!-- ─── Panel de Carpetas ─────────────────────────────────── -->
-                <aside class="w-full lg:w-56 flex-shrink-0 flex flex-col gap-2 lg:border-r lg:border-outline-variant/20 lg:pr-6 order-2 lg:order-1">
-                    <!-- Todos -->
-                    <a th:href="@{/socio/mi-espacio}"
-                       th:classappend="${carpetaFiltroId == null ? 'active bg-[#f0fdf4] border-[#006d37] text-[#006d37]' : 'bg-white text-on-primary-fixed hover:bg-surface-container/50'}"
-                       class="folder-item flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-transparent text-sm font-semibold transition-all">
-                        <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
-                        <span class="flex-1">Todos</span>
-                        <span class="text-xs bg-surface-container text-on-surface-variant rounded-full px-2 py-0.5 font-bold" th:text="${totalGuardados}">0</span>
-                    </a>
+                    <article
+                        class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200"></div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div
+                                class="bg-blue-100 text-blue-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                                </svg>
+                            </div>
+                            <span
+                                class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">Estudios</span>
+                        </div>
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">Estudios
+                        </h4>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalEstudios}">0</div>
+                    </article>
 
-                    <!-- Divisor -->
-                    <div th:if="${!#lists.isEmpty(carpetas)}" class="px-3 pt-1">
-                        <p class="font-label text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Mis Carpetas</p>
-                    </div>
+                    <article
+                        class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200">
+                        </div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div
+                                class="bg-orange-100 text-orange-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
+                                </svg>
+                            </div>
+                            <span
+                                class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">Normativas</span>
+                        </div>
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">Normativas
+                        </h4>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalNormativas}">0</div>
+                    </article>
+                </section>
 
-                    <!-- Lista de carpetas -->
-                    <div th:each="c : ${carpetas}" class="group relative">
-                        <a th:href="@{/socio/mi-espacio(carpeta=${c.idCarpeta})}"
-                           th:classappend="${carpetaFiltroId != null and carpetaFiltroId == c.idCarpeta ? 'active border-opacity-40' : 'bg-white hover:bg-surface-container/50 border-transparent'}"
-                           class="folder-item flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-sm font-semibold transition-all w-full">
-                            <!-- Punto de color -->
-                            <span class="w-3 h-3 rounded-full flex-shrink-0 border border-white shadow-sm"
-                                  th:style="'background-color:' + ${c.color}"></span>
-                            <!-- Emoji + nombre -->
-                            <span class="flex-1 truncate text-on-primary-fixed">
-                                <span th:if="${c.emoji != null}" th:text="${c.emoji + ' '}"></span>
-                                <span th:text="${c.nombre}">Carpeta</span>
-                            </span>
-                            <!-- Conteo -->
-                            <span class="text-xs text-on-surface-variant font-bold"
-                                  th:text="${conteosCarpeta[c.idCarpeta] != null ? conteosCarpeta[c.idCarpeta] : 0}">0</span>
+                <!-- Layout principal: carpetas izquierda + contenido derecha -->
+                <div class="flex gap-6 min-h-0 flex-col lg:flex-row">
+
+                    <!-- ─── Panel de Carpetas ─────────────────────────────────── -->
+                    <aside
+                        class="w-full lg:w-56 flex-shrink-0 flex flex-col gap-2 lg:border-r lg:border-outline-variant/20 lg:pr-6 order-2 lg:order-1">
+                        <!-- Todos -->
+                        <a th:href="@{/socio/mi-espacio}"
+                            th:classappend="${carpetaFiltroId == null ? 'active bg-[#f0fdf4] border-[#006d37] text-[#006d37]' : 'bg-white text-on-primary-fixed hover:bg-surface-container/50'}"
+                            class="folder-item flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-transparent text-sm font-semibold transition-all">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+                            </svg>
+                            <span class="flex-1">Todos</span>
+                            <span
+                                class="text-xs bg-surface-container text-on-surface-variant rounded-full px-2 py-0.5 font-bold"
+                                th:text="${totalGuardados}">0</span>
                         </a>
-                        <!-- Acciones hover: editar / eliminar -->
-                        <div class="absolute right-1 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-0.5 bg-white rounded-lg shadow-sm border border-outline-variant/20 px-1 py-0.5">
-                            <button onclick="abrirEditarCarpeta(this)"
-                                    th:data-id="${c.idCarpeta}"
-                                    th:data-nombre="${c.nombre}"
-                                    th:data-color="${c.color}"
-                                    th:data-emoji="${c.emoji}"
-                                    class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-primary-fixed transition-colors" title="Editar">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                            </button>
-                            <button onclick="confirmarEliminarCarpeta(this)"
-                                    th:data-id="${c.idCarpeta}"
-                                    th:data-nombre="${c.nombre}"
-                                    class="p-1 rounded hover:bg-[#fef2f2] text-on-surface-variant hover:text-[#991b1b] transition-colors" title="Eliminar">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                            </button>
-                        </div>
-                    </div>
 
-                    <!-- Botón nueva carpeta -->
-                    <button onclick="document.getElementById('modalCrearCarpeta').classList.remove('hidden')"
+                        <!-- Divisor -->
+                        <div th:if="${!#lists.isEmpty(carpetas)}" class="px-3 pt-1">
+                            <p
+                                class="font-label text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+                                Mis Carpetas</p>
+                        </div>
+
+                        <!-- Lista de carpetas -->
+                        <div th:each="c : ${carpetas}" class="group relative">
+                            <a th:href="@{/socio/mi-espacio(carpeta=${c.idCarpeta})}"
+                                th:classappend="${carpetaFiltroId != null and carpetaFiltroId == c.idCarpeta ? 'active border-opacity-40' : 'bg-white hover:bg-surface-container/50 border-transparent'}"
+                                class="folder-item flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-sm font-semibold transition-all w-full">
+                                <!-- Punto de color -->
+                                <span class="w-3 h-3 rounded-full flex-shrink-0 border border-white shadow-sm"
+                                    th:style="'background-color:' + ${c.color}"></span>
+                                <!-- Emoji + nombre -->
+                                <span class="flex-1 truncate text-on-primary-fixed">
+                                    <span th:if="${c.emoji != null}" th:text="${c.emoji + ' '}"></span>
+                                    <span th:text="${c.nombre}">Carpeta</span>
+                                </span>
+                                <!-- Conteo -->
+                                <span class="text-xs text-on-surface-variant font-bold"
+                                    th:text="${conteosCarpeta[c.idCarpeta] != null ? conteosCarpeta[c.idCarpeta] : 0}">0</span>
+                            </a>
+                            <!-- Acciones hover: editar / eliminar -->
+                            <div
+                                class="absolute right-1 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-0.5 bg-white rounded-lg shadow-sm border border-outline-variant/20 px-1 py-0.5">
+                                <button onclick="abrirEditarCarpeta(this)" th:data-id="${c.idCarpeta}"
+                                    th:data-nombre="${c.nombre}" th:data-color="${c.color}" th:data-emoji="${c.emoji}"
+                                    class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-primary-fixed transition-colors"
+                                    title="Editar">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                </button>
+                                <button onclick="confirmarEliminarCarpeta(this)" th:data-id="${c.idCarpeta}"
+                                    th:data-nombre="${c.nombre}"
+                                    class="p-1 rounded hover:bg-[#fef2f2] text-on-surface-variant hover:text-[#991b1b] transition-colors"
+                                    title="Eliminar">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Botón nueva carpeta -->
+                        <button onclick="document.getElementById('modalCrearCarpeta').classList.remove('hidden')"
                             class="mt-1 flex items-center gap-2 px-3 py-2.5 rounded-xl border border-dashed border-outline-variant/50 text-on-surface-variant hover:border-[#006d37] hover:text-[#006d37] hover:bg-[#f0fdf4] text-sm font-semibold transition-all">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                        Nueva carpeta
-                    </button>
-                </aside>
-
-                <!-- ─── Contenido principal ──────────────────────────────── -->
-                <div class="flex-1 min-w-0 order-1 lg:order-2">
-                    <!-- Filtro tipo dentro de la sección -->
-                    <div class="flex items-center gap-2 mb-4 flex-wrap">
-                        <button onclick="filtrarTipo('todos')" id="btn-todos"
-                                class="tipo-btn px-4 py-1.5 rounded-full text-xs font-bold border border-[#006d37] bg-[#006d37] text-white transition-all">
-                            Todos
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                            Nueva carpeta
                         </button>
-                        <button onclick="filtrarTipo('ESTUDIO')" id="btn-ESTUDIO"
-                                class="tipo-btn px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant/30 text-on-surface-variant hover:border-[#1565c0] hover:text-[#1565c0] transition-all">
-                            Estudios
-                        </button>
-                        <button onclick="filtrarTipo('NORMATIVA')" id="btn-NORMATIVA"
-                                class="tipo-btn px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant/30 text-on-surface-variant hover:border-[#b45309] hover:text-[#b45309] transition-all">
-                            Normativas
-                        </button>
-                        <!-- Título carpeta activa -->
-                        <div th:if="${carpetaActual != null}" class="ml-auto flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full" th:style="'background-color:' + ${carpetaActual.color}"></span>
-                            <span class="font-semibold text-sm text-on-primary-fixed">
-                                <span th:if="${carpetaActual.emoji != null}" th:text="${carpetaActual.emoji + ' '}"></span>
-                                <span th:text="${carpetaActual.nombre}"></span>
-                            </span>
-                        </div>
-                    </div>
+                    </aside>
 
-                    <!-- Grid de documentos -->
-                    <div th:if="${!#lists.isEmpty(guardados)}"
-                         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="docs-grid">
-                        <div th:each="g : ${guardados}"
-                             th:data-tipo="${g.tipoDocumento}"
-                             class="doc-card group bg-white rounded-xl border border-outline-variant/20 shadow-sm overflow-hidden flex flex-col">
+                    <!-- ─── Contenido principal ──────────────────────────────── -->
+                    <div class="flex-1 min-w-0 order-1 lg:order-2">
+                        <!-- Opciones de Búsqueda, Vista y Filtro -->
+                        <div
+                            class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6 flex flex-col gap-4">
+                            <div class="flex flex-col sm:flex-row gap-4 w-full flex-wrap">
+                                <div class="flex-1 relative">
+                                    <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                    <input type="text" id="searchInput" placeholder="Buscar documento en Mi Espacio..."
+                                        class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
+                                </div>
+                                <button type="button" id="clearSearchBtn"
+                                    class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
+                                    title="Limpiar búsqueda">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span class="text-sm font-medium">Limpiar</span>
+                                </button>
+                                <button type="button" id="toggleViewBtn"
+                                    class="h-12 w-12 flex items-center justify-center bg-white text-slate-700 rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors"
+                                    title="Cambiar vista">
+                                    <svg id="icon-list" class="w-5 h-5" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 6h16M4 12h16M4 18h16" />
+                                    </svg>
+                                    <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                    </svg>
+                                </button>
+                            </div>
 
-                            <!-- Color top bar usando color de carpeta si existe -->
-                            <div class="h-1 w-full"
-                                 th:style="${g.carpeta != null ? 'background-color:' + g.carpeta.color : ('ESTUDIO' == g.tipoDocumento ? 'background-color:#1565c0' : 'background-color:#b45309')}"></div>
-
-                            <div class="p-4 flex flex-col flex-1 gap-3">
-                                <!-- Badge tipo -->
-                                <div class="flex items-center justify-between">
-                                    <span th:if="${'ESTUDIO' == g.tipoDocumento}"
-                                          class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-[#e3f0ff] text-[#1565c0]">
-                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                                        Estudio
-                                    </span>
-                                    <span th:if="${'NORMATIVA' == g.tipoDocumento}"
-                                          class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-[#fef3c7] text-[#92400e]">
-                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>
-                                        Normativa
-                                    </span>
-                                    <!-- Chip de carpeta -->
-                                    <span th:if="${g.carpeta != null}"
-                                          class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border"
-                                          th:style="'background-color:' + ${g.carpeta.color} + '18; color:' + ${g.carpeta.color} + '; border-color:' + ${g.carpeta.color} + '40'">
-                                        <span th:if="${g.carpeta.emoji != null}" th:text="${g.carpeta.emoji}"></span>
-                                        <span th:text="${g.carpeta.nombre}"></span>
+                            <!-- Filtro tipo dentro de la sección -->
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <button onclick="filtrarTipo('todos')" id="btn-todos"
+                                    class="tipo-btn px-4 py-1.5 rounded-full text-xs font-bold border transition-all border-[#006d37] bg-[#006d37] text-white hover:bg-[#005228] hover:border-[#005228] hover:text-white">
+                                    Todos
+                                </button>
+                                <button onclick="filtrarTipo('ESTUDIO')" id="btn-ESTUDIO"
+                                    class="tipo-btn px-4 py-1.5 rounded-full text-xs font-bold border transition-all border-outline-variant/30 text-on-surface-variant hover:bg-[#1565c0] hover:text-white hover:border-[#1565c0]">
+                                    Estudios
+                                </button>
+                                <button onclick="filtrarTipo('NORMATIVA')" id="btn-NORMATIVA"
+                                    class="tipo-btn px-4 py-1.5 rounded-full text-xs font-bold border transition-all border-outline-variant/30 text-on-surface-variant hover:bg-[#b45309] hover:text-white hover:border-[#b45309]">
+                                    Normativas
+                                </button>
+                                <!-- Título carpeta activa -->
+                                <div th:if="${carpetaActual != null}" class="ml-auto flex items-center gap-2">
+                                    <span class="w-3 h-3 rounded-full"
+                                        th:style="'background-color:' + ${carpetaActual.color}"></span>
+                                    <span class="font-semibold text-sm text-on-primary-fixed">
+                                        <span th:if="${carpetaActual.emoji != null}"
+                                            th:text="${carpetaActual.emoji + ' '}"></span>
+                                        <span th:text="${carpetaActual.nombre}"></span>
                                     </span>
                                 </div>
+                            </div>
+                        </div>
 
-                                <!-- Título -->
-                                <p th:text="${g.nombreDocumento}"
-                                   class="font-headline font-semibold text-on-primary-fixed text-sm leading-snug line-clamp-3 flex-1">
-                                    Título del documento
-                                </p>
+                        <!-- Grid de documentos -->
+                        <div th:if="${!#lists.isEmpty(guardados)}"
+                            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="gridView">
+                            <div th:each="g : ${guardados}" th:data-tipo="${g.tipoDocumento}"
+                                th:data-title="${g.nombreDocumento}"
+                                class="doc-card grid-item group bg-white rounded-xl border border-outline-variant/20 shadow-sm overflow-hidden flex flex-col">
 
-                                <!-- Fecha -->
-                                <p class="font-body text-[11px] text-on-surface-variant">
-                                    Guardado
-                                    <span th:text="${#temporals.format(g.fechaGuardado, 'dd MMM yyyy')}">01 Jan 2025</span>
-                                </p>
+                                <!-- Color top bar usando color de carpeta si existe -->
+                                <div class="h-1 w-full"
+                                    th:style="${g.carpeta != null ? 'background-color:' + g.carpeta.color : ('ESTUDIO' == g.tipoDocumento ? 'background-color:#1565c0' : 'background-color:#b45309')}">
+                                </div>
 
-                                <!-- Acciones -->
-                                <div class="flex items-center gap-2 pt-1 border-t border-surface-variant/40">
-                                    <!-- Ver -->
-                                    <a th:if="${'ESTUDIO' == g.tipoDocumento}" th:href="@{/estudios/{id}(id=${g.idDocumento})}"
-                                       class="flex-1 flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[#006d37] hover:bg-[#005228] px-3 py-2 rounded-lg transition-colors">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                        Ver
-                                    </a>
-                                    <a th:if="${'NORMATIVA' == g.tipoDocumento}" th:href="@{/normativas/{id}(id=${g.idDocumento})}"
-                                       class="flex-1 flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[#006d37] hover:bg-[#005228] px-3 py-2 rounded-lg transition-colors">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                        Ver
-                                    </a>
-                                    <!-- Mover -->
-                                    <button onclick="abrirMoverDoc(this)"
-                                            th:data-id="${g.idGuardado}"
+                                <div class="p-4 flex flex-col flex-1 gap-3">
+                                    <!-- Badge tipo -->
+                                    <div class="flex items-center justify-between">
+                                        <span th:if="${'ESTUDIO' == g.tipoDocumento}"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-[#e3f0ff] text-[#1565c0]">
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                                            </svg>
+                                            Estudio
+                                        </span>
+                                        <span th:if="${'NORMATIVA' == g.tipoDocumento}"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-[#fef3c7] text-[#92400e]">
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
+                                            </svg>
+                                            Normativa
+                                        </span>
+                                        <!-- Chip de carpeta -->
+                                        <span th:if="${g.carpeta != null}"
+                                            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border"
+                                            th:style="'background-color:' + ${g.carpeta.color} + '18; color:' + ${g.carpeta.color} + '; border-color:' + ${g.carpeta.color} + '40'">
+                                            <span th:if="${g.carpeta.emoji != null}"
+                                                th:text="${g.carpeta.emoji}"></span>
+                                            <span th:text="${g.carpeta.nombre}"></span>
+                                        </span>
+                                    </div>
+
+                                    <!-- Título -->
+                                    <p th:text="${g.nombreDocumento}"
+                                        class="font-headline font-semibold text-on-primary-fixed text-sm leading-snug line-clamp-3 flex-1">
+                                        Título del documento
+                                    </p>
+
+                                    <!-- Fecha -->
+                                    <p class="font-body text-[11px] text-on-surface-variant">
+                                        Guardado
+                                        <span th:text="${#temporals.format(g.fechaGuardado, 'dd MMM yyyy')}">01 Jan
+                                            2025</span>
+                                    </p>
+
+                                    <!-- Acciones -->
+                                    <div class="flex items-center gap-2 pt-1 border-t border-surface-variant/40">
+                                        <!-- Ver -->
+                                        <a th:if="${'ESTUDIO' == g.tipoDocumento}"
+                                            th:href="@{/estudios/{id}(id=${g.idDocumento})}"
+                                            class="flex-1 flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[#006d37] hover:bg-[#005228] px-3 py-2 rounded-lg transition-colors">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                            Ver
+                                        </a>
+                                        <a th:if="${'NORMATIVA' == g.tipoDocumento}"
+                                            th:href="@{/normativas/{id}(id=${g.idDocumento})}"
+                                            class="flex-1 flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[#006d37] hover:bg-[#005228] px-3 py-2 rounded-lg transition-colors">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                            Ver
+                                        </a>
+                                        <!-- Mover -->
+                                        <button type="button" onclick="abrirMoverDoc(this)" th:data-id="${g.idGuardado}"
                                             th:data-nombre="${g.nombreDocumento}"
                                             th:data-carpeta="${g.carpeta != null ? g.carpeta.idCarpeta : ''}"
-                                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:text-[#006d37] hover:border-[#006d37] hover:bg-[#f0fdf4] transition-all" title="Mover a carpeta">
-                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>
+                                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:text-[#006d37] hover:border-[#006d37] hover:bg-[#f0fdf4] transition-all"
+                                            title="Mover a carpeta">
+                                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M20 6h-8l-2-2H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z" />
+                                            </svg>
+                                        </button>
+                                        <!-- Eliminar -->
+                                        <button type="button" onclick="abrirEliminarDoc(this)"
+                                            th:data-id="${g.idGuardado}" th:data-nombre="${g.nombreDocumento}"
+                                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:text-[#991b1b] hover:border-[#fecaca] hover:bg-[#fef2f2] transition-all"
+                                            title="Eliminar">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- List View (Hidden by Default) -->
+                        <div id="listView" class="hidden flex flex-col gap-3 w-full" th:if="${not #lists.isEmpty(guardados)}">
+                            <div th:each="g : ${guardados}" th:data-tipo="${g.tipoDocumento}"
+                                th:data-title="${g.nombreDocumento}"
+                                class="doc-card list-item w-full bg-white rounded-xl px-4 py-3 md:px-5 ambient-shadow justify-between gap-3 group hover:bg-surface-container/50 transition-colors border border-outline-variant/20 hover:border-outline-variant/40 overflow-hidden relative">
+
+                                <div class="absolute top-0 left-0 h-full w-1"
+                                    th:style="${g.carpeta != null ? 'background-color:' + g.carpeta.color : ('ESTUDIO' == g.tipoDocumento ? 'background-color:#1565c0' : 'background-color:#b45309')}">
+                                </div>
+
+                                <!-- Izquierda: badges arriba + título + fecha -->
+                                <div class="flex-1 min-w-0 pl-2 flex flex-col gap-1">
+                                    <!-- Badges fila superior -->
+                                    <div class="flex items-center gap-1.5">
+                                        <span th:if="${'ESTUDIO' == g.tipoDocumento}"
+                                            class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#e3f0ff] text-[#1565c0]">
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                                            </svg>
+                                            Estudio
+                                        </span>
+                                        <span th:if="${'NORMATIVA' == g.tipoDocumento}"
+                                            class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#fef3c7] text-[#92400e]">
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
+                                            </svg>
+                                            Normativa
+                                        </span>
+                                        <span th:if="${g.carpeta != null}"
+                                            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border"
+                                            th:style="'background-color:' + ${g.carpeta.color} + '18; color:' + ${g.carpeta.color} + '; border-color:' + ${g.carpeta.color} + '40'">
+                                            <span th:if="${g.carpeta.emoji != null}" th:text="${g.carpeta.emoji}"></span>
+                                            <span th:text="${g.carpeta.nombre}"></span>
+                                        </span>
+                                    </div>
+                                    <!-- Título -->
+                                    <p th:text="${g.nombreDocumento}"
+                                        class="font-headline font-semibold text-on-primary-fixed text-sm leading-snug truncate">
+                                        Título del documento
+                                    </p>
+                                    <!-- Fecha -->
+                                    <p class="font-body text-[11px] text-on-surface-variant">
+                                        Guardado
+                                        <span th:text="${#temporals.format(g.fechaGuardado, 'dd MMM yyyy')}">01 Jan 2025</span>
+                                    </p>
+                                </div>
+
+                                <!-- Derecha: solo botones de acción -->
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <a th:if="${'ESTUDIO' == g.tipoDocumento}"
+                                        th:href="@{/estudios/{id}(id=${g.idDocumento})}"
+                                        class="flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[#006d37] hover:bg-[#005228] px-3 py-2 rounded-lg transition-colors">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        Ver
+                                    </a>
+                                    <a th:if="${'NORMATIVA' == g.tipoDocumento}"
+                                        th:href="@{/normativas/{id}(id=${g.idDocumento})}"
+                                        class="flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[#006d37] hover:bg-[#005228] px-3 py-2 rounded-lg transition-colors">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        Ver
+                                    </a>
+                                    <button type="button" onclick="abrirMoverDoc(this)" th:data-id="${g.idGuardado}"
+                                        th:data-nombre="${g.nombreDocumento}"
+                                        th:data-carpeta="${g.carpeta != null ? g.carpeta.idCarpeta : ''}"
+                                        class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:text-[#006d37] hover:border-[#006d37] hover:bg-[#f0fdf4] transition-all"
+                                        title="Mover a carpeta">
+                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M20 6h-8l-2-2H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z" />
+                                        </svg>
                                     </button>
-                                    <!-- Eliminar -->
                                     <button type="button" onclick="abrirEliminarDoc(this)"
-                                            th:data-id="${g.idGuardado}"
-                                            th:data-nombre="${g.nombreDocumento}"
-                                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:text-[#991b1b] hover:border-[#fecaca] hover:bg-[#fef2f2] transition-all" title="Eliminar">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        th:data-id="${g.idGuardado}" th:data-nombre="${g.nombreDocumento}"
+                                        class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:text-[#991b1b] hover:border-[#fecaca] hover:bg-[#fef2f2] transition-all"
+                                        title="Eliminar">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
                                     </button>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Estado vacío -->
-                    <div th:if="${#lists.isEmpty(guardados)}" class="flex flex-col items-center justify-center py-20 text-center">
-                        <div class="w-16 h-16 bg-surface-container rounded-2xl flex items-center justify-center mb-4">
-                            <svg class="w-8 h-8 text-on-surface-variant" fill="currentColor" viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+                        <!-- Minimalist Pagination -->
+                        <div class="w-full mt-8 flex justify-center">
+                            <div id="paginationContainer" class="flex items-center gap-2 hidden">
+                                <button id="prevPageBtn"
+                                    class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container hover:text-on-surface transition-colors disabled:opacity-50"
+                                    aria-label="Anterior">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </button>
+
+                            <div id="pageNumbers" class="flex items-center gap-1">
+                                <!-- Botones de página inyectados por JS -->
+                            </div>
+
+                            <button id="nextPageBtn"
+                                class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container hover:text-on-surface transition-colors disabled:opacity-50"
+                                aria-label="Siguiente">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
+                            </div>
                         </div>
-                        <h3 class="font-headline font-bold text-on-primary-fixed text-lg mb-2">
-                            <span th:if="${carpetaActual != null}">Esta carpeta está vacía</span>
-                            <span th:if="${carpetaActual == null}">Mi Espacio está vacío</span>
-                        </h3>
-                        <p class="font-body text-sm text-on-surface-variant max-w-sm">
-                            Guarda estudios y normativas desde su vista de detalle para acceder rápidamente.
-                        </p>
-                        <div class="flex gap-3 mt-6">
-                            <a th:href="@{/estudios}" class="flex items-center gap-2 bg-[#006d37] text-white px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-[#005228] transition-colors">
-                                Explorar Estudios
-                            </a>
-                            <a th:href="@{/normativas}" class="flex items-center gap-2 bg-white border border-outline-variant/30 text-on-primary-fixed px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-surface-container transition-colors">
-                                Explorar Normativas
-                            </a>
+
+                        <!-- Mensaje No hay documentos -->
+                        <div id="noResultsMsg" class="hidden text-center py-10">
+                            <p class="text-lg font-bold text-on-surface-variant">No se encontraron documentos.</p>
                         </div>
                     </div>
                 </div>
@@ -364,64 +688,174 @@
     <!-- ═══════════════════════════════════════════════════════════════════
          MODAL: Crear Carpeta
     ═══════════════════════════════════════════════════════════════════ -->
-    <div id="modalCrearCarpeta" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-         onclick="if(event.target===this)this.classList.add('hidden')">
+    <div id="modalCrearCarpeta"
+        class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+        onclick="if(event.target===this)this.classList.add('hidden')">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
             <div class="flex items-center justify-between px-6 py-5 border-b border-surface-variant/50">
                 <div class="flex items-center gap-3">
                     <div class="w-9 h-9 bg-[#f0fdf4] rounded-xl flex items-center justify-center">
-                        <svg class="w-5 h-5 text-[#006d37]" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                        <svg class="w-5 h-5 text-[#006d37]" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+                        </svg>
                     </div>
                     <h2 class="font-headline font-bold text-on-primary-fixed">Nueva Carpeta</h2>
                 </div>
-                <button onclick="document.getElementById('modalCrearCarpeta').classList.add('hidden')" class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <button onclick="document.getElementById('modalCrearCarpeta').classList.add('hidden')"
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
             </div>
             <form th:action="@{/socio/mi-espacio/carpetas/crear}" method="post" class="px-6 py-5 space-y-5">
                 <!-- Nombre -->
                 <div>
-                    <label class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Nombre de la carpeta</label>
+                    <label
+                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Nombre
+                        de la carpeta</label>
                     <input type="text" name="nombre" required maxlength="100" placeholder="ej. Leyes importantes"
-                           class="w-full border border-outline-variant/40 rounded-xl px-4 py-2.5 text-sm font-body focus:outline-none focus:border-[#006d37] focus:ring-1 focus:ring-[#006d37] transition-colors"/>
+                        class="w-full border border-outline-variant/40 rounded-xl px-4 py-2.5 text-sm font-body focus:outline-none focus:border-[#006d37] focus:ring-1 focus:ring-[#006d37] transition-colors" />
                 </div>
                 <!-- Emoji opcional -->
                 <div>
-                    <label class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Emoji (opcional)</label>
+                    <label
+                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Emoji
+                        (opcional)</label>
                     <input type="text" name="emoji" maxlength="4" placeholder="📁"
-                           class="w-32 border border-outline-variant/40 rounded-xl px-4 py-2.5 text-sm font-body focus:outline-none focus:border-[#006d37] focus:ring-1 focus:ring-[#006d37] transition-colors text-center text-lg"/>
+                        class="w-32 border border-outline-variant/40 rounded-xl px-4 py-2.5 text-sm font-body focus:outline-none focus:border-[#006d37] focus:ring-1 focus:ring-[#006d37] transition-colors text-center text-lg" />
                 </div>
                 <!-- Selector de color -->
                 <div>
-                    <label class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2 block">Color</label>
-                    <input type="hidden" name="color" id="crear-color-input" value="#006d37"/>
+                    <label
+                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2 block">Color</label>
+                    <input type="hidden" name="color" id="crear-color-input" value="#006d37" />
                     <div class="flex flex-wrap gap-2">
                         <button type="button" onclick="selColor(this,'#006d37','crear')" data-color="#006d37"
-                                class="color-swatch selected w-7 h-7 rounded-full border-2 border-white shadow" style="background:#006d37" title="Verde"></button>
+                            class="color-swatch selected w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#006d37" title="Verde"></button>
                         <button type="button" onclick="selColor(this,'#1565c0','crear')" data-color="#1565c0"
-                                class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow" style="background:#1565c0" title="Azul"></button>
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#1565c0" title="Azul"></button>
                         <button type="button" onclick="selColor(this,'#6d28d9','crear')" data-color="#6d28d9"
-                                class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow" style="background:#6d28d9" title="Morado"></button>
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#6d28d9" title="Morado"></button>
                         <button type="button" onclick="selColor(this,'#be185d','crear')" data-color="#be185d"
-                                class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow" style="background:#be185d" title="Rosa"></button>
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#be185d" title="Rosa"></button>
                         <button type="button" onclick="selColor(this,'#c2410c','crear')" data-color="#c2410c"
-                                class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow" style="background:#c2410c" title="Naranja"></button>
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#c2410c" title="Naranja"></button>
                         <button type="button" onclick="selColor(this,'#b45309','crear')" data-color="#b45309"
-                                class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow" style="background:#b45309" title="Ámbar"></button>
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#b45309" title="Ámbar"></button>
                         <button type="button" onclick="selColor(this,'#0284c7','crear')" data-color="#0284c7"
-                                class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow" style="background:#0284c7" title="Celeste"></button>
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#0284c7" title="Celeste"></button>
                         <button type="button" onclick="selColor(this,'#374151','crear')" data-color="#374151"
-                                class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow" style="background:#374151" title="Gris"></button>
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#374151" title="Gris"></button>
                     </div>
                 </div>
                 <!-- Acciones -->
                 <div class="flex gap-3 pt-2">
                     <button type="button" onclick="document.getElementById('modalCrearCarpeta').classList.add('hidden')"
-                            class="flex-1 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant text-sm font-semibold hover:bg-surface-container transition-colors">
+                        class="flex-1 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant text-sm font-semibold hover:bg-surface-container transition-colors">
                         Cancelar
                     </button>
                     <button type="submit"
-                            class="flex-1 px-4 py-2.5 rounded-xl bg-[#006d37] text-white text-sm font-bold hover:bg-[#005228] transition-colors">
+                        class="flex-1 px-4 py-2.5 rounded-xl bg-[#006d37] text-white text-sm font-bold hover:bg-[#005228] transition-colors">
+                        Crear carpeta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         MODAL: Crear Carpeta
+    ═══════════════════════════════════════════════════════════════════ -->
+    <div id="modalCrearCarpeta"
+        class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+        onclick="if(event.target===this)this.classList.add('hidden')">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-5 border-b border-surface-variant/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-[#f0fdf4] rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5 text-[#006d37]" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+                        </svg>
+                    </div>
+                    <h2 class="font-headline font-bold text-on-primary-fixed">Nueva Carpeta</h2>
+                </div>
+                <button onclick="document.getElementById('modalCrearCarpeta').classList.add('hidden')"
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form th:action="@{/socio/mi-espacio/carpetas/crear}" method="post" class="px-6 py-5 space-y-5">
+                <!-- Nombre -->
+                <div>
+                    <label
+                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Nombre
+                        de la carpeta</label>
+                    <input type="text" name="nombre" required maxlength="100" placeholder="ej. Leyes importantes"
+                        class="w-full border border-outline-variant/40 rounded-xl px-4 py-2.5 text-sm font-body focus:outline-none focus:border-[#006d37] focus:ring-1 focus:ring-[#006d37] transition-colors" />
+                </div>
+                <!-- Emoji opcional -->
+                <div>
+                    <label
+                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Emoji
+                        (opcional)</label>
+                    <input type="text" name="emoji" maxlength="4" placeholder="📁"
+                        class="w-32 border border-outline-variant/40 rounded-xl px-4 py-2.5 text-sm font-body focus:outline-none focus:border-[#006d37] focus:ring-1 focus:ring-[#006d37] transition-colors text-center text-lg" />
+                </div>
+                <!-- Selector de color -->
+                <div>
+                    <label
+                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2 block">Color</label>
+                    <input type="hidden" name="color" id="crear-color-input" value="#006d37" />
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="selColor(this,'#006d37','crear')" data-color="#006d37"
+                            class="color-swatch selected w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#006d37" title="Verde"></button>
+                        <button type="button" onclick="selColor(this,'#1565c0','crear')" data-color="#1565c0"
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#1565c0" title="Azul"></button>
+                        <button type="button" onclick="selColor(this,'#6d28d9','crear')" data-color="#6d28d9"
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#6d28d9" title="Morado"></button>
+                        <button type="button" onclick="selColor(this,'#be185d','crear')" data-color="#be185d"
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#be185d" title="Rosa"></button>
+                        <button type="button" onclick="selColor(this,'#c2410c','crear')" data-color="#c2410c"
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#c2410c" title="Naranja"></button>
+                        <button type="button" onclick="selColor(this,'#b45309','crear')" data-color="#b45309"
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#b45309" title="Ámbar"></button>
+                        <button type="button" onclick="selColor(this,'#0284c7','crear')" data-color="#0284c7"
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#0284c7" title="Celeste"></button>
+                        <button type="button" onclick="selColor(this,'#374151','crear')" data-color="#374151"
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#374151" title="Gris"></button>
+                    </div>
+                </div>
+                <!-- Acciones -->
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="document.getElementById('modalCrearCarpeta').classList.add('hidden')"
+                        class="flex-1 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant text-sm font-semibold hover:bg-surface-container transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-2.5 rounded-xl bg-[#006d37] text-white text-sm font-bold hover:bg-[#005228] transition-colors">
                         Crear carpeta
                     </button>
                 </div>
@@ -432,60 +866,81 @@
     <!-- ═══════════════════════════════════════════════════════════════════
          MODAL: Editar Carpeta
     ═══════════════════════════════════════════════════════════════════ -->
-    <div id="modalEditarCarpeta" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-         onclick="if(event.target===this)this.classList.add('hidden')">
+    <div id="modalEditarCarpeta"
+        class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+        onclick="if(event.target===this)this.classList.add('hidden')">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
             <div class="flex items-center justify-between px-6 py-5 border-b border-surface-variant/50">
                 <div class="flex items-center gap-3">
                     <div class="w-9 h-9 bg-[#f0fdf4] rounded-xl flex items-center justify-center">
-                        <svg class="w-5 h-5 text-[#006d37]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        <svg class="w-5 h-5 text-[#006d37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
                     </div>
                     <h2 class="font-headline font-bold text-on-primary-fixed">Editar Carpeta</h2>
                 </div>
-                <button onclick="document.getElementById('modalEditarCarpeta').classList.add('hidden')" class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <button onclick="document.getElementById('modalEditarCarpeta').classList.add('hidden')"
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
             </div>
             <form id="formEditarCarpeta" method="post" class="px-6 py-5 space-y-5">
                 <div>
-                    <label class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Nombre</label>
+                    <label
+                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Nombre</label>
                     <input type="text" name="nombre" id="editar-nombre" required maxlength="100"
-                           class="w-full border border-outline-variant/40 rounded-xl px-4 py-2.5 text-sm font-body focus:outline-none focus:border-[#006d37] focus:ring-1 focus:ring-[#006d37] transition-colors"/>
+                        class="w-full border border-outline-variant/40 rounded-xl px-4 py-2.5 text-sm font-body focus:outline-none focus:border-[#006d37] focus:ring-1 focus:ring-[#006d37] transition-colors" />
                 </div>
                 <div>
-                    <label class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Emoji (opcional)</label>
+                    <label
+                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Emoji
+                        (opcional)</label>
                     <input type="text" name="emoji" id="editar-emoji" maxlength="4"
-                           class="w-32 border border-outline-variant/40 rounded-xl px-4 py-2.5 text-sm font-body focus:outline-none focus:border-[#006d37] focus:ring-1 focus:ring-[#006d37] transition-colors text-center text-lg"/>
+                        class="w-32 border border-outline-variant/40 rounded-xl px-4 py-2.5 text-sm font-body focus:outline-none focus:border-[#006d37] focus:ring-1 focus:ring-[#006d37] transition-colors text-center text-lg" />
                 </div>
                 <div>
-                    <label class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2 block">Color</label>
-                    <input type="hidden" name="color" id="editar-color-input" value="#006d37"/>
+                    <label
+                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2 block">Color</label>
+                    <input type="hidden" name="color" id="editar-color-input" value="#006d37" />
                     <div class="flex flex-wrap gap-2" id="editar-swatches">
                         <button type="button" onclick="selColor(this,'#006d37','editar')" data-color="#006d37"
-                                class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow" style="background:#006d37"></button>
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#006d37"></button>
                         <button type="button" onclick="selColor(this,'#1565c0','editar')" data-color="#1565c0"
-                                class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow" style="background:#1565c0"></button>
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#1565c0"></button>
                         <button type="button" onclick="selColor(this,'#6d28d9','editar')" data-color="#6d28d9"
-                                class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow" style="background:#6d28d9"></button>
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#6d28d9"></button>
                         <button type="button" onclick="selColor(this,'#be185d','editar')" data-color="#be185d"
-                                class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow" style="background:#be185d"></button>
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#be185d"></button>
                         <button type="button" onclick="selColor(this,'#c2410c','editar')" data-color="#c2410c"
-                                class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow" style="background:#c2410c"></button>
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#c2410c"></button>
                         <button type="button" onclick="selColor(this,'#b45309','editar')" data-color="#b45309"
-                                class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow" style="background:#b45309"></button>
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#b45309"></button>
                         <button type="button" onclick="selColor(this,'#0284c7','editar')" data-color="#0284c7"
-                                class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow" style="background:#0284c7"></button>
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#0284c7"></button>
                         <button type="button" onclick="selColor(this,'#374151','editar')" data-color="#374151"
-                                class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow" style="background:#374151"></button>
+                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
+                            style="background:#374151"></button>
                     </div>
                 </div>
                 <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="document.getElementById('modalEditarCarpeta').classList.add('hidden')"
-                            class="flex-1 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant text-sm font-semibold hover:bg-surface-container transition-colors">
+                    <button type="button"
+                        onclick="document.getElementById('modalEditarCarpeta').classList.add('hidden')"
+                        class="flex-1 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant text-sm font-semibold hover:bg-surface-container transition-colors">
                         Cancelar
                     </button>
                     <button type="submit"
-                            class="flex-1 px-4 py-2.5 rounded-xl bg-[#006d37] text-white text-sm font-bold hover:bg-[#005228] transition-colors">
+                        class="flex-1 px-4 py-2.5 rounded-xl bg-[#006d37] text-white text-sm font-bold hover:bg-[#005228] transition-colors">
                         Guardar cambios
                     </button>
                 </div>
@@ -496,37 +951,52 @@
     <!-- ═══════════════════════════════════════════════════════════════════
          MODAL: Mover a Carpeta
     ═══════════════════════════════════════════════════════════════════ -->
-    <div id="modalMoverDoc" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-         onclick="if(event.target===this)this.classList.add('hidden')">
+    <div id="modalMoverDoc"
+        class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+        onclick="if(event.target===this)this.classList.add('hidden')">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
             <div class="flex items-center justify-between px-6 py-5 border-b border-surface-variant/50">
                 <div class="flex items-center gap-3">
                     <div class="w-9 h-9 bg-[#f0fdf4] rounded-xl flex items-center justify-center">
-                        <svg class="w-5 h-5 text-[#006d37]" fill="currentColor" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>
+                        <svg class="w-5 h-5 text-[#006d37]" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M20 6h-8l-2-2H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z" />
+                        </svg>
                     </div>
                     <div>
                         <h2 class="font-headline font-bold text-on-primary-fixed text-sm">Mover a carpeta</h2>
-                        <p id="mover-doc-nombre" class="font-body text-xs text-on-surface-variant truncate max-w-[200px]"></p>
+                        <p id="mover-doc-nombre"
+                            class="font-body text-xs text-on-surface-variant truncate max-w-[200px]"></p>
                     </div>
                 </div>
-                <button onclick="document.getElementById('modalMoverDoc').classList.add('hidden')" class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <button onclick="document.getElementById('modalMoverDoc').classList.add('hidden')"
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
             </div>
             <form id="formMoverDoc" th:action="@{/socio/mi-espacio/mover}" method="post" class="p-4 space-y-2">
-                <input type="hidden" name="idGuardado" id="mover-id-guardado"/>
-                <input type="hidden" name="carpetaFiltroId" th:value="${carpetaFiltroId}"/>
+                <input type="hidden" name="idGuardado" id="mover-id-guardado" />
+                <input type="hidden" name="carpetaFiltroId" th:value="${carpetaFiltroId}" />
                 <!-- Opción: Sin clasificar -->
-                <label class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-surface-container/50 transition-colors">
-                    <input type="radio" name="idCarpeta" value="" class="accent-[#006d37]"/>
-                    <svg class="w-4 h-4 text-on-surface-variant" fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                <label
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-surface-container/50 transition-colors">
+                    <input type="radio" name="idCarpeta" value="" class="accent-[#006d37]" />
+                    <svg class="w-4 h-4 text-on-surface-variant" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+                    </svg>
                     <span class="font-body text-sm text-on-surface-variant font-semibold">Sin clasificar</span>
                 </label>
                 <!-- Carpetas del usuario -->
                 <div th:each="c : ${carpetas}">
-                    <label class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-surface-container/50 transition-colors">
-                        <input type="radio" name="idCarpeta" th:value="${c.idCarpeta}" class="accent-[#006d37]"/>
-                        <span class="w-4 h-4 rounded-full flex-shrink-0" th:style="'background-color:' + ${c.color}"></span>
+                    <label
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-surface-container/50 transition-colors">
+                        <input type="radio" name="idCarpeta" th:value="${c.idCarpeta}" class="accent-[#006d37]" />
+                        <span class="w-4 h-4 rounded-full flex-shrink-0"
+                            th:style="'background-color:' + ${c.color}"></span>
                         <span class="font-body text-sm text-on-primary-fixed font-semibold">
                             <span th:if="${c.emoji != null}" th:text="${c.emoji + ' '}"></span>
                             <span th:text="${c.nombre}"></span>
@@ -535,16 +1005,17 @@
                 </div>
                 <div th:if="${#lists.isEmpty(carpetas)}" class="text-center py-4">
                     <p class="font-body text-sm text-on-surface-variant">No tienes carpetas aún.</p>
-                    <button type="button" onclick="document.getElementById('modalMoverDoc').classList.add('hidden'); document.getElementById('modalCrearCarpeta').classList.remove('hidden');"
-                            class="mt-2 text-xs font-bold text-[#006d37] hover:underline">Crear una carpeta</button>
+                    <button type="button"
+                        onclick="document.getElementById('modalMoverDoc').classList.add('hidden'); document.getElementById('modalCrearCarpeta').classList.remove('hidden');"
+                        class="mt-2 text-xs font-bold text-[#006d37] hover:underline">Crear una carpeta</button>
                 </div>
                 <div class="flex gap-3 pt-3 border-t border-surface-variant/40">
                     <button type="button" onclick="document.getElementById('modalMoverDoc').classList.add('hidden')"
-                            class="flex-1 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant text-sm font-semibold hover:bg-surface-container transition-colors">
+                        class="flex-1 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant text-sm font-semibold hover:bg-surface-container transition-colors">
                         Cancelar
                     </button>
                     <button type="submit"
-                            class="flex-1 px-4 py-2.5 rounded-xl bg-[#006d37] text-white text-sm font-bold hover:bg-[#005228] transition-colors">
+                        class="flex-1 px-4 py-2.5 rounded-xl bg-[#006d37] text-white text-sm font-bold hover:bg-[#005228] transition-colors">
                         Mover
                     </button>
                 </div>
@@ -553,32 +1024,38 @@
     </div>
 
     <!-- Forms ocultos para eliminar (disparados por modales) -->
-    <form id="formEliminarCarpeta" th:action="@{/socio/mi-espacio/carpetas/0/eliminar}" method="post" class="hidden"></form>
+    <form id="formEliminarCarpeta" th:action="@{/socio/mi-espacio/carpetas/0/eliminar}" method="post" class="hidden">
+    </form>
     <form id="formEliminarDoc" th:action="@{/socio/mi-espacio/eliminar/0}" method="post" class="hidden"></form>
 
     <!-- ═══════════════════════════════════════════════════════════════════
          MODAL: Confirmar Eliminar Carpeta
     ═══════════════════════════════════════════════════════════════════ -->
-    <div id="modalEliminarCarpeta" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
-         onclick="if(event.target===this)this.classList.add('hidden')">
+    <div id="modalEliminarCarpeta"
+        class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
+        onclick="if(event.target===this)this.classList.add('hidden')">
         <div class="bg-white rounded-[1.5rem] ambient-shadow w-full max-w-sm overflow-hidden">
             <div class="px-6 pt-6 pb-0">
                 <div class="w-12 h-12 bg-[#fef2f2] rounded-2xl flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-[#991b1b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    <svg class="w-6 h-6 text-[#991b1b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
                 </div>
                 <h2 class="font-headline font-bold text-on-primary-fixed text-lg mb-1">Eliminar carpeta</h2>
-                <p class="font-body text-sm text-on-surface-variant mb-4">Los documentos dentro quedarán sin clasificar. Esta acción no se puede deshacer.</p>
+                <p class="font-body text-sm text-on-surface-variant mb-4">Los documentos dentro quedarán sin clasificar.
+                    Esta acción no se puede deshacer.</p>
             </div>
             <div class="mx-6 mb-6 bg-[#fef2f2] rounded-xl px-4 py-3 border border-[#fecaca]">
                 <p class="font-body text-sm font-semibold text-[#991b1b] line-clamp-2" id="eliminarCarpetaNombre"></p>
             </div>
             <div class="flex gap-3 px-6 pb-6">
                 <button type="button" onclick="document.getElementById('modalEliminarCarpeta').classList.add('hidden')"
-                        class="flex-1 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant text-sm font-semibold hover:bg-surface-container transition-colors">
+                    class="flex-1 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant text-sm font-semibold hover:bg-surface-container transition-colors">
                     Cancelar
                 </button>
                 <button type="button" onclick="document.getElementById('formEliminarCarpeta').submit()"
-                        class="flex-1 px-4 py-2.5 rounded-xl bg-[#991b1b] text-white text-sm font-bold hover:bg-[#7f1d1d] transition-colors">
+                    class="flex-1 px-4 py-2.5 rounded-xl bg-[#991b1b] text-white text-sm font-bold hover:bg-[#7f1d1d] transition-colors">
                     Sí, eliminar
                 </button>
             </div>
@@ -588,71 +1065,61 @@
     <!-- ═══════════════════════════════════════════════════════════════════
          MODAL: Confirmar Eliminar Documento
     ═══════════════════════════════════════════════════════════════════ -->
-    <div id="modalEliminarDoc" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
-         onclick="if(event.target===this)this.classList.add('hidden')">
+    <div id="modalEliminarDoc"
+        class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
+        onclick="if(event.target===this)this.classList.add('hidden')">
         <div class="bg-white rounded-[1.5rem] ambient-shadow w-full max-w-sm overflow-hidden">
             <div class="px-6 pt-6 pb-0">
                 <div class="w-12 h-12 bg-[#fef2f2] rounded-2xl flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-[#991b1b]" fill="currentColor" viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+                    <svg class="w-6 h-6 text-[#991b1b]" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
+                    </svg>
                 </div>
                 <h2 class="font-headline font-bold text-on-primary-fixed text-lg mb-1">Quitar de Mi Espacio</h2>
-                <p class="font-body text-sm text-on-surface-variant mb-4">¿Seguro que quieres quitar este documento de tu espacio?</p>
+                <p class="font-body text-sm text-on-surface-variant mb-4">¿Seguro que quieres quitar este documento de
+                    tu espacio?</p>
             </div>
             <div class="mx-6 mb-6 bg-[#fef2f2] rounded-xl px-4 py-3 border border-[#fecaca]">
                 <p class="font-body text-sm font-semibold text-[#991b1b] line-clamp-2" id="eliminarDocNombre"></p>
             </div>
             <div class="flex gap-3 px-6 pb-6">
                 <button type="button" onclick="document.getElementById('modalEliminarDoc').classList.add('hidden')"
-                        class="flex-1 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant text-sm font-semibold hover:bg-surface-container transition-colors">
+                    class="flex-1 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant text-sm font-semibold hover:bg-surface-container transition-colors">
                     Cancelar
                 </button>
                 <button type="button" onclick="document.getElementById('formEliminarDoc').submit()"
-                        class="flex-1 px-4 py-2.5 rounded-xl bg-[#991b1b] text-white text-sm font-bold hover:bg-[#7f1d1d] transition-colors">
+                    class="flex-1 px-4 py-2.5 rounded-xl bg-[#991b1b] text-white text-sm font-bold hover:bg-[#7f1d1d] transition-colors">
                     Sí, quitar
                 </button>
             </div>
         </div>
     </div>
-
+    
     <script>
-        // ── Filtro tipo de documento ─────────────────────────────────────
-        function filtrarTipo(tipo) {
-            var cards = document.querySelectorAll('#docs-grid > div[data-tipo]');
-            cards.forEach(function(card) {
-                card.style.display = (tipo === 'todos' || card.dataset.tipo === tipo) ? '' : 'none';
-            });
-            var btns = document.querySelectorAll('.tipo-btn');
-            btns.forEach(function(btn) { btn.className = btn.className.replace(/bg-\[#006d37\]\s*text-white\s*border-\[#006d37\]/, '').replace(/bg-\[#1565c0\]\s*text-white\s*border-\[#1565c0\]/, '').replace(/bg-\[#b45309\]\s*text-white\s*border-\[#b45309\]/, ''); });
-            var activeBtn = document.getElementById('btn-' + tipo);
-            if (activeBtn) {
-                activeBtn.classList.add('bg-[#006d37]', 'text-white', 'border-[#006d37]');
-            }
-        }
-
         // ── Selector de color ────────────────────────────────────────────
         function selColor(btn, color, ctx) {
             document.getElementById(ctx + '-color-input').value = color;
             var swatches = btn.closest('.flex').querySelectorAll('.color-swatch');
-            swatches.forEach(function(s) { s.classList.remove('selected'); s.style.boxShadow = ''; });
+            swatches.forEach(function (s) { s.classList.remove('selected'); s.style.boxShadow = ''; });
             btn.classList.add('selected');
             btn.style.boxShadow = '0 0 0 3px white, 0 0 0 5px ' + color;
         }
 
         // ── Editar carpeta ───────────────────────────────────────────────
         function abrirEditarCarpeta(btn) {
-            var id     = btn.dataset.id;
+            var id = btn.dataset.id;
             var nombre = btn.dataset.nombre;
-            var color  = btn.dataset.color || '#006d37';
-            var emoji  = btn.dataset.emoji || '';
+            var color = btn.dataset.color || '#006d37';
+            var emoji = btn.dataset.emoji || '';
 
             document.getElementById('formEditarCarpeta').action = '/socio/mi-espacio/carpetas/' + id + '/editar';
             document.getElementById('editar-nombre').value = nombre;
-            document.getElementById('editar-emoji').value  = emoji;
+            document.getElementById('editar-emoji').value = emoji;
             document.getElementById('editar-color-input').value = color;
 
             // Marcar swatch activo
             var swatches = document.querySelectorAll('#editar-swatches .color-swatch');
-            swatches.forEach(function(s) {
+            swatches.forEach(function (s) {
                 s.classList.remove('selected');
                 s.style.boxShadow = '';
                 if (s.dataset.color === color) {
@@ -683,20 +1150,272 @@
             document.getElementById('mover-doc-nombre').textContent = btn.dataset.nombre;
             var carpetaActual = btn.dataset.carpeta;
             var radios = document.querySelectorAll('#formMoverDoc input[type=radio]');
-            radios.forEach(function(r) {
+            radios.forEach(function (r) {
                 r.checked = (r.value === carpetaActual);
             });
             document.getElementById('modalMoverDoc').classList.remove('hidden');
         }
 
+        let currentFiltroTipo = 'TODOS';
+        let currentSearchQuery = '';
+        let currentPage = 1;
+        const pageSize = 6;
+
+        function updateView() {
+            var searchStr = currentSearchQuery.toLowerCase();
+            var gridItems = Array.from(document.querySelectorAll('.grid-item'));
+            var listItems = Array.from(document.querySelectorAll('.list-item'));
+            
+            var visibleCount = 0;
+            
+            // Primero, filtramos y obtenemos los elementos que deberían verse
+            var filteredIndices = [];
+            
+            gridItems.forEach(function (gItem, index) {
+                var lItem = listItems[index];
+
+                var t = gItem.dataset.tipo || '';
+                var n = (gItem.dataset.title || '').toLowerCase();
+
+                var matchTipo = (currentFiltroTipo === 'TODOS') || (t === currentFiltroTipo);
+                var matchSearch = (searchStr === '') || (n.includes(searchStr));
+
+                if (matchTipo && matchSearch) {
+                    filteredIndices.push(index);
+                } else {
+                    gItem.style.display = 'none';
+                    if(lItem) lItem.style.setProperty('display', 'none', 'important');
+                }
+            });
+
+            // Calculamos paginación
+            var totalItems = filteredIndices.length;
+            var totalPages = Math.ceil(totalItems / pageSize) || 1;
+
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            var startIndex = (currentPage - 1) * pageSize;
+            var endIndex = startIndex + pageSize;
+
+            // Aplicamos paginación solo a los filtrados
+            filteredIndices.forEach(function(originalIndex, filteredIndex) {
+                var gItem = gridItems[originalIndex];
+                var lItem = listItems[originalIndex];
+
+                if (filteredIndex >= startIndex && filteredIndex < endIndex) {
+                    gItem.style.display = '';
+                    if(lItem) lItem.style.removeProperty('display');
+                    visibleCount++;
+                } else {
+                    gItem.style.display = 'none';
+                    if(lItem) lItem.style.setProperty('display', 'none', 'important');
+                }
+            });
+
+            var noResultsMsg = document.getElementById('noResultsMsg');
+            if (noResultsMsg) {
+                if (visibleCount === 0 && totalItems === 0) {
+                    noResultsMsg.classList.remove('hidden');
+                } else {
+                    noResultsMsg.classList.add('hidden');
+                }
+            }
+            
+            renderPagination(totalItems, totalPages);
+        }
+
+        function renderPagination(totalItems, totalPages) {
+            const paginationContainer = document.getElementById('paginationContainer');
+            const pageNumbersContainer = document.getElementById('pageNumbers');
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+
+            if (!paginationContainer) return;
+
+            paginationContainer.classList.remove('hidden');
+            paginationContainer.classList.add('flex');
+
+            if (prevPageBtn) prevPageBtn.disabled = currentPage === 1;
+            if (nextPageBtn) nextPageBtn.disabled = currentPage === totalPages;
+
+            if (pageNumbersContainer) {
+                pageNumbersContainer.innerHTML = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    const btn = document.createElement('button');
+                    btn.textContent = i;
+                    btn.className = `w-10 h-10 rounded-full flex items-center justify-center transition-colors font-label text-sm font-semibold ${i === currentPage ? 'bg-[#006d37] text-white shadow-md' : 'text-on-surface-variant hover:bg-surface-container'}`;
+                    btn.addEventListener('click', () => {
+                        currentPage = i;
+                        updateView();
+                    });
+                    pageNumbersContainer.appendChild(btn);
+                }
+            }
+        }
+
+        // ── Auto-dismiss toasts ──────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.toast-msg').forEach(function(toast) {
+                setTimeout(function() {
+                    toast.classList.add('toast-hiding');
+                    setTimeout(function() {
+                        toast.style.display = 'none';
+                    }, 500);
+                }, 7000);
+            });
+        });
+
+        // Listener para los botones de página prev/next
+        document.addEventListener('DOMContentLoaded', () => {
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+            if (prevPageBtn) {
+                prevPageBtn.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        updateView();
+                    }
+                });
+            }
+            if (nextPageBtn) {
+                nextPageBtn.addEventListener('click', () => {
+                    currentPage++; // el tope se controla en updateView
+                    updateView();
+                });
+            }
+            
+            // Inicializar la vista por primera vez
+            updateView();
+        });
+
+        // ── Filtro por Tipo ──────────────────────────────────────────────
+        function filtrarTipo(tipo) {
+            currentFiltroTipo = tipo;
+            currentPage = 1; // reset a la pagina 1
+            
+            var btnTodos = document.getElementById('btn-todos');
+            var btnEstudios = document.getElementById('btn-ESTUDIO');
+            var btnNormativas = document.getElementById('btn-NORMATIVA');
+
+            // Reset classes
+            btnTodos.classList.remove('bg-[#006d37]', 'text-white', 'shadow-md');
+            btnTodos.classList.add('bg-white', 'text-on-surface-variant', 'border-outline-variant/30');
+
+            btnEstudios.classList.remove('bg-[#1565c0]', 'text-white', 'shadow-md');
+            btnEstudios.classList.add('bg-white', 'text-on-surface-variant', 'border-outline-variant/30');
+
+            btnNormativas.classList.remove('bg-[#c2410c]', 'text-white', 'shadow-md');
+            btnNormativas.classList.add('bg-white', 'text-on-surface-variant', 'border-outline-variant/30');
+
+            // Apply specific active class
+            if (tipo === 'TODOS') {
+                btnTodos.classList.remove('bg-white', 'text-on-surface-variant', 'border-outline-variant/30');
+                btnTodos.classList.add('bg-[#006d37]', 'text-white', 'shadow-md');
+            } else if (tipo === 'ESTUDIO') {
+                btnEstudios.classList.remove('bg-white', 'text-on-surface-variant', 'border-outline-variant/30');
+                btnEstudios.classList.add('bg-[#1565c0]', 'text-white', 'shadow-md');
+            } else if (tipo === 'NORMATIVA') {
+                btnNormativas.classList.remove('bg-white', 'text-on-surface-variant', 'border-outline-variant/30');
+                btnNormativas.classList.add('bg-[#c2410c]', 'text-white', 'shadow-md');
+            }
+
+            updateView();
+        }
+
+        // ── Búsqueda ─────────────────────────────────────────────────────
+        document.getElementById('searchInput').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                currentSearchQuery = e.target.value;
+                currentPage = 1;
+                updateView();
+            }
+        });
+
+        document.getElementById('clearSearchBtn').addEventListener('click', function () {
+            document.getElementById('searchInput').value = '';
+            currentSearchQuery = '';
+            currentPage = 1;
+            updateView();
+        });
+
+        // ── Cambiar vista Cuadrícula/Lista ───────────────────────────────
+        function toggleView() {
+            var gridView = document.getElementById('gridView');
+            var listView = document.getElementById('listView');
+            var iconGrid = document.getElementById('icon-grid');
+            var iconList = document.getElementById('icon-list');
+
+            if (gridView.classList.contains('hidden')) {
+                // Cambiar a cuadrícula
+                gridView.classList.remove('hidden');
+                listView.classList.add('hidden');
+                iconGrid.classList.remove('hidden');
+                iconList.classList.add('hidden');
+            } else {
+                // Cambiar a lista
+                gridView.classList.add('hidden');
+                listView.classList.remove('hidden');
+                iconGrid.classList.add('hidden');
+                iconList.classList.remove('hidden');
+            }
+        }
+
         // ── Cerrar modales con Escape ────────────────────────────────────
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
-                ['modalCrearCarpeta','modalEditarCarpeta','modalMoverDoc','modalEliminarCarpeta','modalEliminarDoc'].forEach(function(id) {
+                ['modalCrearCarpeta', 'modalEditarCarpeta', 'modalMoverDoc', 'modalEliminarCarpeta', 'modalEliminarDoc'].forEach(function (id) {
                     document.getElementById(id).classList.add('hidden');
                 });
             }
         });
+
+        // Función para filtrar documentos por tipo
+        function filtrarTipo(tipo) {
+            const botonesTipo = document.querySelectorAll('.tipo-btn');
+            botonesTipo.forEach(btn => {
+                btn.classList.remove('bg-[#006d37]', 'text-white', 'border-[#006d37]', 'bg-[#1565c0]', 'border-[#1565c0]', 'bg-[#b45309]', 'border-[#b45309]');
+                btn.classList.add('border-outline-variant/30', 'text-on-surface-variant');
+            });
+
+            const activeBtn = document.getElementById(`btn-${tipo}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('border-outline-variant/30', 'text-on-surface-variant');
+                if (tipo === 'todos') {
+                    activeBtn.classList.add('bg-[#006d37]', 'text-white', 'border-[#006d37]');
+                } else if (tipo === 'ESTUDIO') {
+                    activeBtn.classList.add('bg-[#1565c0]', 'text-white', 'border-[#1565c0]');
+                } else if (tipo === 'NORMATIVA') {
+                    activeBtn.classList.add('bg-[#b45309]', 'text-white', 'border-[#b45309]');
+                }
+            }
+
+            // Aplicar filtro a ambos contenedores (Grid y List)
+            document.querySelectorAll('.grid-item, .list-item').forEach(item => {
+                // Si es 'todos' o coincide el data-tipo
+                if (tipo === 'todos' || item.dataset.tipo === tipo) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Función para cambiar entre vista de cuadrícula y lista
+        document.getElementById('toggleViewBtn').addEventListener('click', function () {
+            const gridView = document.getElementById('gridView');
+            const listView = document.getElementById('listView');
+            gridView.classList.toggle('hidden');
+            listView.classList.toggle('hidden');
+
+            // Actualizar íconos de vista
+            document.getElementById('icon-list').classList.toggle('hidden');
+            document.getElementById('icon-grid').classList.toggle('hidden');
+        });
+
+        // Inicializar filtros y búsqueda
+        filtrarTipo('todos');
     </script>
 </body>
+
 </html>

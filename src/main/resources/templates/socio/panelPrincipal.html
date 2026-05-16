@@ -127,21 +127,20 @@
         <div th:replace="~{fragments/navbar :: navbar}"></div>
 
         <!-- Scrollable Canvas -->
-        <div class="flex-1 overflow-y-auto px-8 py-3">
+        <div class="flex-1 overflow-y-auto px-6 py-2">
             <!-- Page Header -->
-            <div class="mb-5">
-                <h2
-                    class="font-headline font-extrabold text-[2.75rem] text-on-primary-fixed leading-tight tracking-tight">
+            <div class="mb-3">
+                <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
                     Panel Principal
                 </h2>
-                <p class="font-body text-on-surface-variant text-base mt-2">
+                <p class="font-body text-on-surface-variant text-sm mt-1 max-w-3xl">
                     Bienvenida de vuelta. Aquí está el resumen de tu repositorio hoy.
                 </p>
             </div>
 
             <!-- CHANGE 1: KPI Section - Full Width -->
             <!-- KPI Section -->
-            <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 mb-8">
+            <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 mb-4">
                 <!-- KPI 1: Mis descargas -->
                 <article
                     class="bg-surface-container-lowest rounded-[1.5rem] p-5 ambient-shadow ghost-border relative overflow-hidden">
@@ -162,15 +161,13 @@
                             th:text="${totalDescargas ?: 0}">0</div>
                         <div class="flex items-center justify-between text-sm">
                             <p class="text-on-surface-variant font-medium">Total histórico</p>
-                            <p class="font-semibold"
-                                th:text="${diferenciaDescargasEtiqueta}"
+                            <p class="font-semibold" th:text="${diferenciaDescargasEtiqueta}"
                                 th:classappend="${diferenciaDescargas > 0 ? 'text-[#4caf50]' : (diferenciaDescargas < 0 ? 'text-[#ff9800]' : 'text-on-surface-variant')}">
                                 +0 vs mes ant.
                             </p>
                         </div>
                         <div class="border-t border-surface-variant mt-4 pt-4">
-                            <p
-                                class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                            <p class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">
                                 Distribución por tipo
                             </p>
                             <div class="mt-2 flex flex-wrap items-center gap-2 text-sm font-medium text-[#1a1a1a]">
@@ -195,8 +192,7 @@
                 <!-- KPI 2: Este mes -->
                 <article
                     class="bg-surface-container-lowest rounded-[1.5rem] p-5 ambient-shadow ghost-border relative overflow-hidden">
-                    <div
-                        class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200">
                     </div>
                     <div class="flex items-center justify-between mb-2">
                         <h4 class="font-headline text-base font-bold text-on-primary-fixed leading-tight">
@@ -216,8 +212,7 @@
                             </p>
                             <p class="font-semibold"
                                 th:classappend="${diferenciaDescargas > 0 ? 'text-[#4caf50]' : (diferenciaDescargas < 0 ? 'text-[#ff9800]' : 'text-on-surface-variant')}">
-                                <span
-                                    th:text="${diferenciaDescargasTexto}">+0 vs mes anterior</span>
+                                <span th:text="${diferenciaDescargasTexto}">+0 vs mes anterior</span>
                             </p>
                         </div>
                         <div class="border-t border-surface-variant mt-4 pt-4">
@@ -241,8 +236,7 @@
                 <!-- KPI 4: Última visita -->
                 <article
                     class="bg-surface-container-lowest rounded-[1.5rem] p-5 ambient-shadow ghost-border relative overflow-hidden">
-                    <div
-                        class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-purple-200">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-purple-200">
                     </div>
                     <div class="flex items-center justify-between mb-2">
                         <h4 class="font-headline text-base font-bold text-on-primary-fixed leading-tight">
@@ -257,12 +251,13 @@
                         <div class="text-2xl font-extrabold text-on-primary-fixed mb-4"
                             th:text="${ultimaVisita ?: 'Nunca'}">Hace 2 días</div>
                         <div class="flex items-center justify-between text-sm">
-                            <p class="text-on-surface-variant font-medium"
-                                th:text="${ultimaVisitaExacta}">14 may, 3:42 PM</p>
+                            <p class="text-on-surface-variant font-medium" th:text="${ultimaVisitaExacta}">14 may, 3:42
+                                PM</p>
                             <p class="font-semibold text-[#4caf50]" th:if="${enLineaAhora}"> En línea ahora</p>
                             <p class="font-semibold text-on-surface-variant"
                                 th:if="${!enLineaAhora and tieneUltimoAcceso}">Acceso registrado</p>
-                            <p class="font-semibold text-on-surface-variant" th:if="${!tieneUltimoAcceso}">Sin datos disponibles</p>
+                            <p class="font-semibold text-on-surface-variant" th:if="${!tieneUltimoAcceso}">Sin datos
+                                disponibles</p>
                         </div>
                         <div class="border-t border-surface-variant mt-4 pt-4">
                             <p class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">
@@ -348,7 +343,9 @@
                                 class="flex items-center gap-4 p-2 -mx-2 rounded-lg hover:bg-surface-container transition-colors">
                                 <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
                                     th:classappend="${#strings.equalsIgnoreCase(descarga.tipoDocumento, 'ESTUDIO')} ? 'bg-blue-100' : 'bg-green-100'">
-                                    <div th:replace="${#strings.equalsIgnoreCase(descarga.tipoDocumento, 'ESTUDIO')} ? ~{fragments/icons.html :: icon-estudios-inicio} : ~{fragments/icons.html :: icon-normativas-inicio}"></div>
+                                    <div
+                                        th:replace="${#strings.equalsIgnoreCase(descarga.tipoDocumento, 'ESTUDIO')} ? ~{fragments/icons.html :: icon-estudios-inicio} : ~{fragments/icons.html :: icon-normativas-inicio}">
+                                    </div>
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="font-body text-sm font-medium text-on-primary-fixed truncate"
@@ -423,5 +420,3 @@
 </body>
 
 </html>
-
-

@@ -311,6 +311,7 @@
                                         th:data-anio="${estudio.anio}"
                                         th:data-formato="${estudio.formato.name()}"
                                         th:data-estado="${estudio.estado.name()}"
+                                        th:data-tipoacceso="${estudio.tipoAcceso.name()}"
                                         onclick="abrirModalEditarEstudio(this)"
                                         class="px-2.5 py-1 text-sm font-semibold rounded-lg text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition">
                                     Editar
@@ -409,6 +410,7 @@
                                     th:data-anio="${estudio.anio}"
                                     th:data-formato="${estudio.formato.name()}"
                                     th:data-estado="${estudio.estado.name()}"
+                                    th:data-tipoacceso="${estudio.tipoAcceso.name()}"
                                     onclick="abrirModalEditarEstudio(this)"
                                     class="flex items-center gap-1.5 px-3 py-1.5
                bg-transparent text-[#666]
@@ -895,6 +897,7 @@
         document.getElementById("estudioDescripcion").value = btn.dataset.descripcion || "";
         document.getElementById("estudioAnio").value = btn.dataset.anio || "";
         document.getElementById("estudioEstado").value = btn.dataset.estado || "BORRADOR";
+        document.getElementById("estudioTipoAcceso").value = btn.dataset.tipoacceso || "DESCARGA";
 
         const formato = btn.dataset.formato || "PDF";
 
@@ -977,6 +980,14 @@
                                 <select id="estudioEstado" name="estado" class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
                                     <option value="BORRADOR">Borrador</option>
                                     <option value="PUBLICADO">Publicado</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Tipo de Acceso</label>
+                                <select id="estudioTipoAcceso" name="tipoAcceso" class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                    <option value="DESCARGA">Descargable</option>
+                                    <option value="LECTURA">Solo Lectura</option>
                                 </select>
                             </div>
                         </div>

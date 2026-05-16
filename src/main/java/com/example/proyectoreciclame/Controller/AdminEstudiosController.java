@@ -85,6 +85,7 @@ public class AdminEstudiosController {
             @RequestParam("anio") Integer anio,
             @RequestParam("formato") String formato,
             @RequestParam(value = "estado", required = false) String estado,
+            @RequestParam(value = "tipoAcceso", required = false) String tipoAcceso,
             @RequestParam(value = "archivo", required = false) org.springframework.web.multipart.MultipartFile archivo,
             org.springframework.web.servlet.mvc.support.RedirectAttributes attr
 
@@ -110,7 +111,9 @@ public class AdminEstudiosController {
             estudio.setEstado(Estudio.EstadoEstudio.valueOf(
                     estado != null && !estado.isBlank() ? estado : "BORRADOR"
             ));
-            estudio.setTipoAcceso(com.example.proyectoreciclame.Entity.Estudio.TipoAcceso.DESCARGA);
+            estudio.setTipoAcceso(com.example.proyectoreciclame.Entity.Estudio.TipoAcceso.valueOf(
+                    tipoAcceso != null && !tipoAcceso.isBlank() ? tipoAcceso : "DESCARGA"
+            ));
             estudio.setFechaPublicacion(java.time.LocalDate.now());
             estudio.setIndiceRelevancia(Integer.valueOf(1));
 
@@ -783,6 +786,7 @@ public class AdminEstudiosController {
             @RequestParam("anio") Integer anio,
             @RequestParam("formato") String formato,
             @RequestParam(value = "estado", required = false) String estado,
+            @RequestParam(value = "tipoAcceso", required = false) String tipoAcceso,
             @RequestParam(value = "archivo", required = false) org.springframework.web.multipart.MultipartFile archivo,
             RedirectAttributes attr
     ) {
@@ -803,6 +807,10 @@ public class AdminEstudiosController {
             }
             if (estado != null && !estado.isBlank()) {
                 estudio.setEstado(Estudio.EstadoEstudio.valueOf(estado));
+            }
+
+            if (tipoAcceso != null && !tipoAcceso.isBlank()) {
+                estudio.setTipoAcceso(Estudio.TipoAcceso.valueOf(tipoAcceso));
             }
 
             estudio.setFechaActualizacion(java.time.LocalDateTime.now());

@@ -123,18 +123,20 @@
         <div th:replace="~{fragments/navbar :: navbar}"></div>
 
         <!-- Main Scrollable Content -->
-        <main class="flex-1 overflow-y-auto px-6 md:px-10 py-6 bg-[#f9f9ff]">
+        <main class="flex-1 overflow-y-auto px-4 sm:px-6 py-2 bg-[#f9f9ff]">
             <div class="w-full">
                 <!-- Page Header -->
                 <header class="mb-6">
                     <div
                         class="flex items-center font-label text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-4 flex-wrap gap-2">
                         <a th:href="@{/socio}" class="cursor-pointer hover:underline">INICIO</a>
-                        <svg class="icon-md text-outline-variant shrink-0" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <svg class="icon-md text-outline-variant shrink-0" width="24" height="24" fill="currentColor"
+                            viewBox="0 0 24 24">
                             <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                         </svg>
                         <a th:href="@{/estudios}" class="cursor-pointer hover:underline">ESTUDIOS</a>
-                        <svg class="icon-md text-outline-variant shrink-0" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <svg class="icon-md text-outline-variant shrink-0" width="24" height="24" fill="currentColor"
+                            viewBox="0 0 24 24">
                             <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                         </svg>
                         <span class="text-on-primary-fixed" th:text="${estudio.titulo}">ANÁLISIS DE LA CADENA DE VALOR
@@ -167,7 +169,8 @@
                     <div
                         class="h-16 bg-surface-container-lowest flex items-center justify-between px-6 z-10 sticky top-0 border-b border-surface-container/50 flex-wrap">
                         <div class="flex items-center gap-3">
-                            <svg class="icon-md text-on-surface-variant shrink-0" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                            <svg class="icon-md text-on-surface-variant shrink-0" width="24" height="24"
+                                fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
                             </svg>
                             <h3 class="font-headline font-semibold text-on-primary-fixed text-sm">Vista Previa</h3>
@@ -179,28 +182,38 @@
                     </div>
 
                     <!-- Viewer Canvas -->
-                    <div id="viewerContainer" class="flex-1 bg-surface-container relative overflow-hidden transition-all duration-300">
+                    <div id="viewerContainer"
+                        class="flex-1 bg-surface-container relative overflow-hidden transition-all duration-300">
                         <div class="absolute inset-0 bg-white/50 z-10 pointer-events-none"></div>
                         <div class="relative w-full h-full" style="z-index: 20;">
                             <!-- PDF Iframe -->
-                            <iframe id="pdfViewer"
-                                    th:if="${estudio.archivoUrl != null}"
-                                    class="w-full h-full border-0 flex-1"
-                                    oncontextmenu="return false;"></iframe>
-                                    
-                            <div th:if="${estudio.archivoUrl == null}" class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
-                                <svg class="icon-xl opacity-50 mb-4 shrink-0" width="40" height="40" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                            <iframe id="pdfViewer" th:if="${estudio.archivoUrl != null}"
+                                class="w-full h-full border-0 flex-1" oncontextmenu="return false;"></iframe>
+
+                            <div th:if="${estudio.archivoUrl == null}"
+                                class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
+                                <svg class="icon-xl opacity-50 mb-4 shrink-0" width="40" height="40" fill="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
                                 </svg>
                                 <span>No hay documento disponible</span>
                             </div>
 
                             <!-- Watermark Overlay -->
-                            <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]" style="z-index: 50;">
-                                <div class="transform -rotate-45 text-4xl sm:text-5xl font-bold text-gray-800 whitespace-nowrap p-10 flex flex-col gap-24 text-center">
-                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
-                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
-                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
+                            <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]"
+                                style="z-index: 50;">
+                                <div
+                                    class="transform -rotate-45 text-4xl sm:text-5xl font-bold text-gray-800 whitespace-nowrap p-10 flex flex-col gap-24 text-center">
+                                    <span
+                                        th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
+                                        - CONFIDENCIAL</span>
+                                    <span
+                                        th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
+                                        - CONFIDENCIAL</span>
+                                    <span
+                                        th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
+                                        - CONFIDENCIAL</span>
                                 </div>
                             </div>
                         </div>
@@ -212,11 +225,11 @@
                     <!-- Key Details + Meta Grid -->
                     <section class="space-y-6 bg-white rounded-xl p-5 shadow-sm">
                         <div>
-                            <h4 class="font-label text-xs font-bold text-on-surface-variant 
+                            <h4 class="font-label text-xs font-bold text-on-surface-variant
                                 uppercase tracking-wider mb-2">
                                 NOMBRE DEL ESTUDIO</h4>
-                            <p th:text="${estudio.titulo}" class="font-headline font-semibold text-on-primary-fixed text-[1.125rem] 
-                            leading-snug">
+                            <p th:text="${estudio.titulo}" class="font-headline font-semibold text-on-primary-fixed text-[1.125rem]
+                                leading-snug">
                                 Análisis de la Cadena de Valor del Plástico 2024
                             </p>
                         </div>
@@ -265,15 +278,36 @@
                                 <p th:text="${estudio.fechaPublicacion != null ? #temporals.format(estudio.fechaPublicacion, 'dd ''de'' MMMM, yyyy') : 'No especificada'}"
                                     class="font-body text-sm font-medium text-on-primary-fixed">14 de Octubre, 2024</p>
                             </div>
-                            <!-- INSERTED BUTTON BELOW THE BLOCK AS DIRECTED -->
-                            <div class="col-span-2 pt-2">
+                            <!-- Save and Download Buttons Row -->
+                            <div class="col-span-2 pt-2 flex gap-3">
+                                <form th:if="${estaGuardado == null or !estaGuardado}" th:action="@{/socio/mi-espacio/guardar}" method="post" class="flex-1">
+                                    <input type="hidden" name="tipoDocumento" value="ESTUDIO" />
+                                    <input type="hidden" name="idDocumento" th:value="${estudio.idEstudio}" />
+                                    <input type="hidden" name="nombreDocumento" th:value="${estudio.titulo}" />
+                                    <input type="hidden" name="redirectUrl" th:value="'/estudios/' + ${estudio.idEstudio}" />
+                                    <button type="submit" title="Guardar en Mi Espacio"
+                                        class="w-full bg-[#006d37] hover:bg-[#00522a] text-white font-bold text-sm py-3 px-4 rounded-[14px] flex items-center justify-center gap-2 transition-colors shadow-sm">
+                                        <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M17 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-8H5V5h10v6z" />
+                                        </svg>
+                                        Guardar
+                                    </button>
+                                </form>
+                                <a th:if="${estaGuardado != null and estaGuardado}" th:href="@{/socio/mi-espacio}"
+                                    class="flex-1 bg-[#e8f5e9] border border-[#006d37] text-[#006d37] font-bold text-sm py-3 px-4 rounded-[14px] flex items-center justify-center gap-2 transition-colors">
+                                    <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                                    </svg>
+                                    Guardado
+                                </a>
                                 <button id="downloadBtn"
-                                    class="w-full bg-[#041533] hover:bg-[#00743a] text-white font-bold text-lg py-3.5 px-4 rounded-[14px] flex items-center justify-center gap-3 transition-colors shadow-sm">
-                                    <svg class="w-6 h-6 shrink-0" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    class="flex-1 bg-[#041533] hover:bg-[#00743a] text-white font-bold text-sm py-3 px-4 rounded-[14px] flex items-center justify-center gap-3 transition-colors shadow-sm">
+                                    <svg class="w-5 h-5 shrink-0" width="24" height="24" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                             d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                                     </svg>
-                                    Descargar Documento
+                                    Descargar
                                 </button>
                             </div>
                         </div>
@@ -295,38 +329,13 @@
                         </div>
                     </section>
 
-                    <!-- Guardar en Mi Espacio -->
-                    <section th:if="${estaGuardado != null and estaGuardado}" class="flex items-center justify-between">
-                        <a th:href="@{/socio/mi-espacio}" title="Ver Mi Espacio" class="flex-1 flex items-center gap-2 text-[#006d37] hover:text-[#004d27] text-xs font-bold px-3 py-2 rounded-lg hover:bg-[#f0fdf4] transition-colors">
-                            <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
-                            </svg>
-                            <span>Guardado</span>
-                        </a>
-                    </section>
-
-                    <section th:if="${estaGuardado == null or !estaGuardado}">
-                        <form th:action="@{/socio/mi-espacio/guardar}" method="post" class="inline w-full">
-                            <input type="hidden" name="tipoDocumento" value="ESTUDIO"/>
-                            <input type="hidden" name="idDocumento" th:value="${estudio.idEstudio}"/>
-                            <input type="hidden" name="nombreDocumento" th:value="${estudio.titulo}"/>
-                            <input type="hidden" name="redirectUrl" th:value="'/estudios/' + ${estudio.idEstudio}"/>
-                            <button type="submit" title="Guardar en Mi Espacio"
-                                    class="w-full flex items-center justify-center gap-2 bg-white border border-outline-variant/30 text-on-primary-fixed hover:bg-[#f0fdf4] hover:border-[#006d37] hover:text-[#006d37] px-3 py-2.5 rounded-lg font-semibold text-xs transition-all">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
-                                </svg>
-                                Guardar
-                            </button>
-                        </form>
-                    </section>
                 </div>
             </div>
         </main>
     </div>
     <script>
         // Load pre-signed URL and setup document viewer
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', async function () {
             const estudiotId = window.location.pathname.split('/').pop();
             const pdfViewer = document.getElementById('pdfViewer');
             const downloadBtn = document.getElementById('downloadBtn');
@@ -349,7 +358,7 @@
 
                 // Setup download button
                 if (downloadBtn) {
-                    downloadBtn.addEventListener('click', function(e) {
+                    downloadBtn.addEventListener('click', function (e) {
                         e.preventDefault();
                         // Create a link element and trigger download
                         const link = document.createElement('a');
@@ -371,7 +380,7 @@
             document.addEventListener('contextmenu', event => event.preventDefault());
 
             // Block common screen capture/print shortcuts
-            document.addEventListener('keydown', function(e) {
+            document.addEventListener('keydown', function (e) {
                 // Ctrl+P, Ctrl+S, Ctrl+C, PrintScreen
                 if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'c' || e.key === 'C')) ||
                     e.key === 'PrintScreen' || e.key === 'F12') {
@@ -381,21 +390,21 @@
             });
 
             // Clear clipboard if PrintScreen is pressed
-            window.addEventListener('keyup', function(e) {
+            window.addEventListener('keyup', function (e) {
                 if (e.key == 'PrintScreen') {
                     navigator.clipboard.writeText('');
                 }
             });
 
             // Blur content when window loses focus (prevent snipping tool)
-            window.addEventListener('blur', function() {
-                if(viewerContainer) {
+            window.addEventListener('blur', function () {
+                if (viewerContainer) {
                     viewerContainer.style.filter = 'blur(10px)';
                 }
             });
 
-            window.addEventListener('focus', function() {
-                if(viewerContainer) {
+            window.addEventListener('focus', function () {
+                if (viewerContainer) {
                     viewerContainer.style.filter = 'none';
                 }
             });

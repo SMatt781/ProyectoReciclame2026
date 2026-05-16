@@ -126,7 +126,7 @@
         <div th:replace="~{fragments/navbar :: navbar}"></div>
 
         <!-- Main Scrollable Content -->
-        <main class="flex-1 overflow-y-auto px-8 py-3">
+        <main class="flex-1 overflow-y-auto px-4 sm:px-6 py-2">
             <div class="w-full">
                 <!-- Page Header -->
                 <div class="mb-5">
@@ -143,7 +143,8 @@
                 </div>
 
                 <!-- STATS SECTION -->
-                <div class="flex flex-col xl:flex-row gap-8 mb-12 bg-white rounded-xl p-6 w-full shadow-sm border border-outline-variant/30">
+                <div
+                    class="flex flex-col xl:flex-row gap-8 mb-12 bg-white rounded-xl p-6 w-full shadow-sm border border-outline-variant/30">
 
                     <!-- LEFT: Donut Chart & Legend -->
                     <div class="flex-1 flex flex-col min-w-0 xl:min-w-[400px]">
@@ -181,7 +182,8 @@
                                     </div>
                                     <div class="flex items-baseline gap-3 pl-6">
                                         <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countEc}">57</span>
-                                        <span class="text-xs text-[#999]" th:text="${#numbers.formatDecimal(pctEc, 0, 0)} + '%'">40%</span>
+                                        <span class="text-xs text-[#999]"
+                                            th:text="${#numbers.formatDecimal(pctEc, 0, 0)} + '%'">40%</span>
                                     </div>
                                 </div>
 
@@ -193,7 +195,8 @@
                                     </div>
                                     <div class="flex items-baseline gap-3 pl-6">
                                         <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countGr}">35</span>
-                                        <span class="text-xs text-[#999]" th:text="${#numbers.formatDecimal(pctGr, 0, 0)} + '%'">25%</span>
+                                        <span class="text-xs text-[#999]"
+                                            th:text="${#numbers.formatDecimal(pctGr, 0, 0)} + '%'">25%</span>
                                     </div>
                                 </div>
 
@@ -205,7 +208,8 @@
                                     </div>
                                     <div class="flex items-baseline gap-3 pl-6">
                                         <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countEe}">21</span>
-                                        <span class="text-xs text-[#999]" th:text="${#numbers.formatDecimal(pctEe, 0, 0)} + '%'">15%</span>
+                                        <span class="text-xs text-[#999]"
+                                            th:text="${#numbers.formatDecimal(pctEe, 0, 0)} + '%'">15%</span>
                                     </div>
                                 </div>
 
@@ -217,7 +221,8 @@
                                     </div>
                                     <div class="flex items-baseline gap-3 pl-6">
                                         <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countRep}">17</span>
-                                        <span class="text-xs text-[#999]" th:text="${#numbers.formatDecimal(pctRep, 0, 0)} + '%'">12%</span>
+                                        <span class="text-xs text-[#999]"
+                                            th:text="${#numbers.formatDecimal(pctRep, 0, 0)} + '%'">12%</span>
                                     </div>
                                 </div>
 
@@ -229,7 +234,8 @@
                                     </div>
                                     <div class="flex items-baseline gap-3 pl-6">
                                         <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countOtro}">0</span>
-                                        <span class="text-xs text-[#999]" th:text="${#numbers.formatDecimal(pctOtro, 0, 0)} + '%'">0%</span>
+                                        <span class="text-xs text-[#999]"
+                                            th:text="${#numbers.formatDecimal(pctOtro, 0, 0)} + '%'">0%</span>
                                     </div>
                                 </div>
                             </div>
@@ -249,76 +255,105 @@
                                 <!-- Row: Nacional -->
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                                     <div class="w-32 text-sm font-bold text-[#666] shrink-0">NACIONAL</div>
-                                    <div class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
+                                    <div
+                                        class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
                                         <div th:if="${nacVigente != null and nacVigente > 0}"
-                                             th:style="'width: ' + (${nacVigente} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
-                                             class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Vigente">
+                                            th:style="'width: ' + (${nacVigente} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
+                                            class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all"
+                                            title="Vigente">
                                             <span th:text="${nacVigente}"></span>
                                         </div>
                                         <div th:if="${nacPublicada != null and nacPublicada > 0}"
-                                             th:style="'width: ' + (${nacPublicada} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
-                                             class="bg-[#EF9F27] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Publicada">
+                                            th:style="'width: ' + (${nacPublicada} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
+                                            class="bg-[#EF9F27] h-full flex items-center justify-center text-white text-xs font-bold transition-all"
+                                            title="Publicada">
                                             <span th:text="${nacPublicada}"></span>
                                         </div>
                                         <div th:if="${nacConsulta != null and nacConsulta > 0}"
-                                             th:style="'width: ' + (${nacConsulta} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
-                                             class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Consulta Pública">
+                                            th:style="'width: ' + (${nacConsulta} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
+                                            class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all"
+                                            title="Consulta Pública">
                                             <span th:text="${nacConsulta}"></span>
                                         </div>
                                         <div th:if="${nacBorrador != null and nacBorrador > 0}"
-                                             th:style="'width: ' + (${nacBorrador} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
-                                             class="bg-[#888780] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Borrador en Proceso">
+                                            th:style="'width: ' + (${nacBorrador} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
+                                            class="bg-[#888780] h-full flex items-center justify-center text-white text-xs font-bold transition-all"
+                                            title="Borrador en Proceso">
                                             <span th:text="${nacBorrador}"></span>
                                         </div>
                                         <div th:if="${nacDerogada != null and nacDerogada > 0}"
-                                             th:style="'width: ' + (${nacDerogada} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
-                                             class="bg-[#E24B4A] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Derogada">
+                                            th:style="'width: ' + (${nacDerogada} * 100.0 / ${nacTotal != null and nacTotal > 0 ? nacTotal : 1}) + '%'"
+                                            class="bg-[#E24B4A] h-full flex items-center justify-center text-white text-xs font-bold transition-all"
+                                            title="Derogada">
                                             <span th:text="${nacDerogada}"></span>
                                         </div>
                                     </div>
-                                    <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0" th:text="${nacTotal ?: 0}">0</div>
+                                    <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0"
+                                        th:text="${nacTotal ?: 0}">0</div>
                                 </div>
 
                                 <!-- Row: Internacional -->
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                                     <div class="w-32 text-sm font-bold text-[#666] shrink-0">INTERNACIONAL</div>
-                                    <div class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
+                                    <div
+                                        class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
                                         <div th:if="${intVigente != null and intVigente > 0}"
-                                             th:style="'width: ' + (${intVigente} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
-                                             class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Vigente">
+                                            th:style="'width: ' + (${intVigente} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
+                                            class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all"
+                                            title="Vigente">
                                             <span th:text="${intVigente}"></span>
                                         </div>
                                         <div th:if="${intPublicada != null and intPublicada > 0}"
-                                             th:style="'width: ' + (${intPublicada} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
-                                             class="bg-[#EF9F27] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Publicada">
+                                            th:style="'width: ' + (${intPublicada} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
+                                            class="bg-[#EF9F27] h-full flex items-center justify-center text-white text-xs font-bold transition-all"
+                                            title="Publicada">
                                             <span th:text="${intPublicada}"></span>
                                         </div>
                                         <div th:if="${intConsulta != null and intConsulta > 0}"
-                                             th:style="'width: ' + (${intConsulta} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
-                                             class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Consulta Pública">
+                                            th:style="'width: ' + (${intConsulta} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
+                                            class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all"
+                                            title="Consulta Pública">
                                             <span th:text="${intConsulta}"></span>
                                         </div>
                                         <div th:if="${intBorrador != null and intBorrador > 0}"
-                                             th:style="'width: ' + (${intBorrador} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
-                                             class="bg-[#888780] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Borrador en Proceso">
+                                            th:style="'width: ' + (${intBorrador} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
+                                            class="bg-[#888780] h-full flex items-center justify-center text-white text-xs font-bold transition-all"
+                                            title="Borrador en Proceso">
                                             <span th:text="${intBorrador}"></span>
                                         </div>
                                         <div th:if="${intDerogada != null and intDerogada > 0}"
-                                             th:style="'width: ' + (${intDerogada} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
-                                             class="bg-[#E24B4A] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Derogada">
+                                            th:style="'width: ' + (${intDerogada} * 100.0 / ${intTotal != null and intTotal > 0 ? intTotal : 1}) + '%'"
+                                            class="bg-[#E24B4A] h-full flex items-center justify-center text-white text-xs font-bold transition-all"
+                                            title="Derogada">
                                             <span th:text="${intDerogada}"></span>
                                         </div>
                                     </div>
-                                    <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0" th:text="${intTotal ?: 0}">0</div>
+                                    <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0"
+                                        th:text="${intTotal ?: 0}">0</div>
                                 </div>
 
                                 <!-- Legend for Chart 1 -->
                                 <div class="flex flex-wrap gap-4 mt-3">
-                                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#1D9E75]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Vigente</span></div>
-                                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#EF9F27]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Publicada</span></div>
-                                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#378ADD]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Consulta</span></div>
-                                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#888780]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Borrador</span></div>
-                                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#E24B4A]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Derogada</span></div>
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-3 h-3 rounded-full bg-[#1D9E75]"></div><span
+                                            class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Vigente</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-3 h-3 rounded-full bg-[#EF9F27]"></div><span
+                                            class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Publicada</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-3 h-3 rounded-full bg-[#378ADD]"></div><span
+                                            class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Consulta</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-3 h-3 rounded-full bg-[#888780]"></div><span
+                                            class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Borrador</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-3 h-3 rounded-full bg-[#E24B4A]"></div><span
+                                            class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Derogada</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -330,43 +365,57 @@
                                 <!-- Row: Gratis -->
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                                     <div class="w-32 text-sm font-bold text-[#666] shrink-0">GRATUITO</div>
-                                    <div class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
+                                    <div
+                                        class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
                                         <div th:if="${gratisNac != null and gratisNac > 0}"
-                                             th:style="'width: ' + (${gratisNac} * 100.0 / ${gratisTotal != null and gratisTotal > 0 ? gratisTotal : 1}) + '%'"
-                                             class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Nacional">
+                                            th:style="'width: ' + (${gratisNac} * 100.0 / ${gratisTotal != null and gratisTotal > 0 ? gratisTotal : 1}) + '%'"
+                                            class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all"
+                                            title="Nacional">
                                             <span th:text="${gratisNac}"></span>
                                         </div>
                                         <div th:if="${gratisInt != null and gratisInt > 0}"
-                                             th:style="'width: ' + (${gratisInt} * 100.0 / ${gratisTotal != null and gratisTotal > 0 ? gratisTotal : 1}) + '%'"
-                                             class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Internacional">
+                                            th:style="'width: ' + (${gratisInt} * 100.0 / ${gratisTotal != null and gratisTotal > 0 ? gratisTotal : 1}) + '%'"
+                                            class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all"
+                                            title="Internacional">
                                             <span th:text="${gratisInt}"></span>
                                         </div>
                                     </div>
-                                    <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0" th:text="${gratisTotal ?: 0}">0</div>
+                                    <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0"
+                                        th:text="${gratisTotal ?: 0}">0</div>
                                 </div>
 
                                 <!-- Row: Pago -->
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                                     <div class="w-32 text-sm font-bold text-[#666] shrink-0">DE PAGO</div>
-                                    <div class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
+                                    <div
+                                        class="flex-1 h-8 bg-surface-variant rounded-lg overflow-hidden flex shadow-inner">
                                         <div th:if="${pagoNac != null and pagoNac > 0}"
-                                             th:style="'width: ' + (${pagoNac} * 100.0 / ${pagoTotal != null and pagoTotal > 0 ? pagoTotal : 1}) + '%'"
-                                             class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Nacional">
+                                            th:style="'width: ' + (${pagoNac} * 100.0 / ${pagoTotal != null and pagoTotal > 0 ? pagoTotal : 1}) + '%'"
+                                            class="bg-[#1D9E75] h-full flex items-center justify-center text-white text-xs font-bold transition-all"
+                                            title="Nacional">
                                             <span th:text="${pagoNac}"></span>
                                         </div>
                                         <div th:if="${pagoInt != null and pagoInt > 0}"
-                                             th:style="'width: ' + (${pagoInt} * 100.0 / ${pagoTotal != null and pagoTotal > 0 ? pagoTotal : 1}) + '%'"
-                                             class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all" title="Internacional">
+                                            th:style="'width: ' + (${pagoInt} * 100.0 / ${pagoTotal != null and pagoTotal > 0 ? pagoTotal : 1}) + '%'"
+                                            class="bg-[#378ADD] h-full flex items-center justify-center text-white text-xs font-bold transition-all"
+                                            title="Internacional">
                                             <span th:text="${pagoInt}"></span>
                                         </div>
                                     </div>
-                                    <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0" th:text="${pagoTotal ?: 0}">0</div>
+                                    <div class="w-10 text-right text-sm font-bold text-[#1a1a1a] shrink-0"
+                                        th:text="${pagoTotal ?: 0}">0</div>
                                 </div>
 
                                 <!-- Legend for Chart 2 -->
                                 <div class="flex flex-wrap gap-4 mt-3">
-                                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#1D9E75]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Nacional</span></div>
-                                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-[#378ADD]"></div><span class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Internacional</span></div>
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-3 h-3 rounded-full bg-[#1D9E75]"></div><span
+                                            class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Nacional</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-3 h-3 rounded-full bg-[#378ADD]"></div><span
+                                            class="text-[10px] font-semibold text-[#666] uppercase tracking-wider">Internacional</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -377,7 +426,8 @@
                 <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
                     <!-- Search Bar -->
                     <!-- Search Bar -->
-                    <form action="/normativas"  method="GET" class="flex flex-col sm:flex-row gap-4 mb-6 w-full flex-wrap">
+                    <form action="/normativas" method="GET"
+                        class="flex flex-col sm:flex-row gap-4 mb-6 w-full flex-wrap">
                         <div class="flex-1 relative">
                             <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -424,56 +474,74 @@
                             <!-- Row Dynamic -->
                             <div th:each="normativa : ${normativas}"
                                 class="list-item bg-surface-container-lowest rounded-xl ambient-shadow flex flex-col overflow-hidden border border-transparent hover:border-outline-variant/30 transition-colors group">
-                                
+
                                 <!-- MAIN ROW -->
-                                <div class="p-4 md:px-6 md:py-4 flex flex-col md:grid md:grid-cols-[40px_minmax(200px,1fr)_120px_140px_120px_100px_60px_60px] gap-3 md:gap-4 items-start md:items-center cursor-pointer main-row" onclick="toggleRow(this)">
-                                    
+                                <div class="p-4 md:px-6 md:py-4 flex flex-col md:grid md:grid-cols-[40px_minmax(200px,1fr)_120px_140px_120px_100px_60px_60px] gap-3 md:gap-4 items-start md:items-center cursor-pointer main-row"
+                                    onclick="toggleRow(this)">
+
                                     <!-- Mobile Header & Toggle -->
                                     <div class="flex items-center justify-between w-full md:hidden mb-2">
                                         <div class="flex items-center gap-2">
-                                            <span class="w-2 h-2 rounded-full shrink-0" th:classappend="${normativa.estado == 'VIGENTE' ? 'bg-[#006c46]' : (normativa.estado == 'DEROGADA' ? 'bg-[#E24B4A]' : (normativa.estado == 'PUBLICADA' ? 'bg-[#ffc107]' : (normativa.estado == 'CONSULTA PUBLICA' ? 'bg-[#2196f3]' : 'bg-[#888780]')))}"></span>
-                                            <span th:text="${normativa.estado}" class="text-xs font-bold text-on-surface uppercase tracking-wider">Vigente</span>
+                                            <span class="w-2 h-2 rounded-full shrink-0"
+                                                th:classappend="${normativa.estado == 'VIGENTE' ? 'bg-[#006c46]' : (normativa.estado == 'DEROGADA' ? 'bg-[#E24B4A]' : (normativa.estado == 'PUBLICADA' ? 'bg-[#ffc107]' : (normativa.estado == 'CONSULTA PUBLICA' ? 'bg-[#2196f3]' : 'bg-[#888780]')))}"></span>
+                                            <span th:text="${normativa.estado}"
+                                                class="text-xs font-bold text-on-surface uppercase tracking-wider">Vigente</span>
                                         </div>
-                                        <svg class="w-5 h-5 text-on-surface-variant transition-transform duration-300 transform expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        <svg class="w-5 h-5 text-on-surface-variant transition-transform duration-300 transform expand-icon"
+                                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 9l-7 7-7-7" />
                                         </svg>
                                     </div>
 
                                     <!-- 1. Expand Toggle (Desktop) -->
                                     <div class="hidden md:flex justify-center w-full">
-                                        <svg class="w-5 h-5 text-on-surface-variant transition-transform duration-300 transform expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        <svg class="w-5 h-5 text-on-surface-variant transition-transform duration-300 transform expand-icon"
+                                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 9l-7 7-7-7" />
                                         </svg>
                                     </div>
 
                                     <!-- 2. Nombre & Organismo -->
                                     <div class="flex flex-col w-full text-left pr-4">
-                                        <h4 th:text="${normativa.titulo}" class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors">Ley de Plásticos</h4>
-                                        <p th:text="${normativa.organismo}" class="text-xs text-on-surface-variant mt-1">Ministerio del Medio Ambiente</p>
+                                        <h4 th:text="${normativa.titulo}"
+                                            class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors">
+                                            Ley de Plásticos</h4>
+                                        <p th:text="${normativa.organismo}"
+                                            class="text-xs text-on-surface-variant mt-1">Ministerio del Medio Ambiente
+                                        </p>
                                     </div>
 
                                     <!-- 3. Código -->
                                     <div class="flex w-full md:w-auto">
-                                        <span class="md:hidden text-xs font-bold text-on-surface-variant w-24">Código:</span>
-                                        <div th:text="${normativa.codigo}" class="text-xs font-body text-on-surface-variant font-medium">LEY - 21368</div>
+                                        <span
+                                            class="md:hidden text-xs font-bold text-on-surface-variant w-24">Código:</span>
+                                        <div th:text="${normativa.codigo}"
+                                            class="text-xs font-body text-on-surface-variant font-medium">LEY - 21368
+                                        </div>
                                     </div>
 
                                     <!-- 4. Tema -->
                                     <div class="flex w-full md:w-auto items-center">
-                                        <span class="md:hidden text-xs font-bold text-on-surface-variant w-24">Tema:</span>
-                                        <div class="flex flex-wrap gap-1" th:with="catSize=${#lists.isEmpty(normativa.categorias) ? 0 : #lists.size(normativa.categorias)}">
-                                            <span th:if="${catSize == 0}" class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center bg-[#888780] text-white">Sin categoría</span>
+                                        <span
+                                            class="md:hidden text-xs font-bold text-on-surface-variant w-24">Tema:</span>
+                                        <div class="flex flex-wrap gap-1"
+                                            th:with="catSize=${#lists.isEmpty(normativa.categorias) ? 0 : #lists.size(normativa.categorias)}">
+                                            <span th:if="${catSize == 0}"
+                                                class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center bg-[#888780] text-white">Sin
+                                                categoría</span>
                                             <th:block th:each="cat, iter : ${normativa.categorias}">
                                                 <span th:if="${iter.index < 2}"
-                                                      th:with="isEc=${#strings.equalsIgnoreCase(cat, 'Economía circular')}, isGr=${#strings.equalsIgnoreCase(cat, 'Gestión de residuos')}, isEe=${#strings.equalsIgnoreCase(cat, 'Envases y Embalajes')}, isRep=${#strings.equalsIgnoreCase(cat, 'Ley REP') or #strings.equalsIgnoreCase(cat, 'Responsabilidad Extendida')}"
-                                                      th:text="${isEc ? 'EC' : (isGr ? 'GR' : (isEe ? 'EE' : (isRep ? 'REP' : 'OTRO')))}"
-                                                      class="inline-block px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center text-white"
-                                                      th:classappend="${isEc ? 'bg-[#006C46]' : (isGr ? 'bg-[#3B82F6]' : (isEe ? 'bg-[#F49E0B]' : (isRep ? 'bg-[#BA1A1A]' : 'bg-[#888780]')))}">
+                                                    th:with="isEc=${#strings.equalsIgnoreCase(cat, 'Economía circular')}, isGr=${#strings.equalsIgnoreCase(cat, 'Gestión de residuos')}, isEe=${#strings.equalsIgnoreCase(cat, 'Envases y Embalajes')}, isRep=${#strings.equalsIgnoreCase(cat, 'Ley REP') or #strings.equalsIgnoreCase(cat, 'Responsabilidad Extendida')}"
+                                                    th:text="${isEc ? 'EC' : (isGr ? 'GR' : (isEe ? 'EE' : (isRep ? 'REP' : 'OTRO')))}"
+                                                    class="inline-block px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center text-white"
+                                                    th:classappend="${isEc ? 'bg-[#006C46]' : (isGr ? 'bg-[#3B82F6]' : (isEe ? 'bg-[#F49E0B]' : (isRep ? 'bg-[#BA1A1A]' : 'bg-[#888780]')))}">
                                                 </span>
                                             </th:block>
                                             <span th:if="${catSize > 2}"
-                                                  class="inline-block px-2 py-1 rounded-full text-[10px] font-bold bg-surface-variant text-on-surface"
-                                                  th:text="'+' + (${catSize} - 2)">
+                                                class="inline-block px-2 py-1 rounded-full text-[10px] font-bold bg-surface-variant text-on-surface"
+                                                th:text="'+' + (${catSize} - 2)">
                                             </span>
                                         </div>
                                     </div>
@@ -481,19 +549,24 @@
                                     <!-- 5. Estado (Desktop only as it's in mobile header) -->
                                     <div class="hidden md:flex justify-start w-full md:w-auto">
                                         <span class="inline-flex items-center gap-1.5">
-                                            <span class="w-2 h-2 rounded-full shrink-0" th:classappend="${normativa.estado == 'VIGENTE' ? 'bg-[#006c46]' : (normativa.estado == 'DEROGADA' ? 'bg-[#E24B4A]' : (normativa.estado == 'PUBLICADA' ? 'bg-[#ffc107]' : (normativa.estado == 'CONSULTA PUBLICA' ? 'bg-[#2196f3]' : 'bg-[#888780]')))}"></span>
-                                            <span th:text="${normativa.estado}" class="text-on-surface text-xs font-bold whitespace-normal">Vigente</span>
+                                            <span class="w-2 h-2 rounded-full shrink-0"
+                                                th:classappend="${normativa.estado == 'VIGENTE' ? 'bg-[#006c46]' : (normativa.estado == 'DEROGADA' ? 'bg-[#E24B4A]' : (normativa.estado == 'PUBLICADA' ? 'bg-[#ffc107]' : (normativa.estado == 'CONSULTA PUBLICA' ? 'bg-[#2196f3]' : 'bg-[#888780]')))}"></span>
+                                            <span th:text="${normativa.estado}"
+                                                class="text-on-surface text-xs font-bold whitespace-normal">Vigente</span>
                                         </span>
                                     </div>
 
                                     <!-- 6. Acceso -->
                                     <div class="flex w-full md:w-auto items-center">
-                                        <span class="md:hidden text-xs font-bold text-on-surface-variant w-24">Acceso:</span>
-                                        <span th:if="${normativa.acceso == 'GRATIS'}" class="inline-flex items-center gap-1 text-gratuito text-xs font-bold uppercase tracking-wider">
+                                        <span
+                                            class="md:hidden text-xs font-bold text-on-surface-variant w-24">Acceso:</span>
+                                        <span th:if="${normativa.acceso == 'GRATIS'}"
+                                            class="inline-flex items-center gap-1 text-gratuito text-xs font-bold uppercase tracking-wider">
                                             <div th:replace="~{fragments/icons.html :: icon-acceso-gratuito}"></div>
                                             GRATUITO
                                         </span>
-                                        <span th:if="${normativa.acceso == 'PAGO'}" class="inline-flex items-center gap-1 text-de-pago text-xs font-bold uppercase tracking-wider">
+                                        <span th:if="${normativa.acceso == 'PAGO'}"
+                                            class="inline-flex items-center gap-1 text-de-pago text-xs font-bold uppercase tracking-wider">
                                             <div th:replace="~{fragments/icons.html :: icon-acceso-pago}"></div>
                                             DE PAGO
                                         </span>
@@ -501,76 +574,113 @@
 
                                     <!-- 7. Año -->
                                     <div class="flex w-full md:w-auto items-center">
-                                        <span class="md:hidden text-xs font-bold text-on-surface-variant w-24">Año:</span>
-                                        <div th:text="${normativa.anio}" class="text-sm font-body text-on-surface-variant font-medium">2021</div>
+                                        <span
+                                            class="md:hidden text-xs font-bold text-on-surface-variant w-24">Año:</span>
+                                        <div th:text="${normativa.anio}"
+                                            class="text-sm font-body text-on-surface-variant font-medium">2021</div>
                                     </div>
 
                                     <!-- 8. Ver Normativa Icon (Desktop only) -->
                                     <div class="hidden md:flex justify-center w-full md:w-auto">
-                                        <button type="button" class="p-2 rounded-full text-outline hover:bg-surface-container hover:text-primary-container transition-colors" title="Expandir para ver detalles">
+                                        <button type="button"
+                                            class="p-2 rounded-full text-outline hover:bg-surface-container hover:text-primary-container transition-colors"
+                                            title="Expandir para ver detalles">
                                             <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                             </svg>
                                         </button>
                                     </div>
                                 </div>
 
                                 <!-- EXPANDED DETAILS -->
-                                <div class="expanded-content hidden bg-surface-container-lowest border-t border-outline-variant/30 px-4 md:px-6 py-4 cursor-default" onclick="event.stopPropagation()">
+                                <div class="expanded-content hidden bg-surface-container-lowest border-t border-outline-variant/30 px-4 md:px-6 py-4 cursor-default"
+                                    onclick="event.stopPropagation()">
                                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-4 gap-x-4">
-                                        
+
                                         <!-- Tipo -->
                                         <div>
-                                            <h5 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Tipo de Norma</h5>
-                                            <p th:text="${normativa.tipo}" class="text-sm font-body text-on-surface font-medium">Ley Nacional</p>
+                                            <h5
+                                                class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">
+                                                Tipo de Norma</h5>
+                                            <p th:text="${normativa.tipo}"
+                                                class="text-sm font-body text-on-surface font-medium">Ley Nacional</p>
                                         </div>
 
                                         <!-- Obligatoriedad -->
                                         <div>
-                                            <h5 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Obligatoriedad</h5>
-                                            <span th:if="${normativa.obligatoriedad == 'Legal Vinculante'}" class="inline-block px-3 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-tertiary-fixed text-on-tertiary-fixed border border-tertiary-fixed-dim">
+                                            <h5
+                                                class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">
+                                                Obligatoriedad</h5>
+                                            <span th:if="${normativa.obligatoriedad == 'Legal Vinculante'}"
+                                                class="inline-block px-3 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-tertiary-fixed text-on-tertiary-fixed border border-tertiary-fixed-dim">
                                                 Legal Vinculante
                                             </span>
-                                            <span th:if="${normativa.obligatoriedad == 'No vinculante'}" class="inline-block px-3 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-surface-container-high text-on-surface-variant border border-outline-variant/30">
+                                            <span th:if="${normativa.obligatoriedad == 'No vinculante'}"
+                                                class="inline-block px-3 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-surface-container-high text-on-surface-variant border border-outline-variant/30">
                                                 No vinculante
                                             </span>
-                                            <span th:if="${normativa.obligatoriedad != 'Legal Vinculante' and normativa.obligatoriedad != 'No vinculante'}" th:text="${normativa.obligatoriedad}" class="inline-block px-3 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-surface-container text-on-surface-variant border border-outline-variant/30">
+                                            <span
+                                                th:if="${normativa.obligatoriedad != 'Legal Vinculante' and normativa.obligatoriedad != 'No vinculante'}"
+                                                th:text="${normativa.obligatoriedad}"
+                                                class="inline-block px-3 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider text-center bg-surface-container text-on-surface-variant border border-outline-variant/30">
                                             </span>
                                         </div>
 
                                         <!-- Alcance -->
                                         <div>
-                                            <h5 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Alcance</h5>
-                                            <span th:text="${normativa.alcance}" class="inline-block px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-center border border-outline-variant/30" th:classappend="${#strings.equalsIgnoreCase(normativa.alcance, 'NACIONAL')} ? 'bg-secondary-container/30 text-secondary' : 'bg-primary-fixed/40 text-on-primary-fixed'">
+                                            <h5
+                                                class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">
+                                                Alcance</h5>
+                                            <span th:text="${normativa.alcance}"
+                                                class="inline-block px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-center border border-outline-variant/30"
+                                                th:classappend="${#strings.equalsIgnoreCase(normativa.alcance, 'NACIONAL')} ? 'bg-secondary-container/30 text-secondary' : 'bg-primary-fixed/40 text-on-primary-fixed'">
                                                 NACIONAL
                                             </span>
                                         </div>
 
                                         <!-- Organismo -->
                                         <div>
-                                            <h5 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Organismo Emisor</h5>
-                                            <p th:text="${normativa.organismo}" class="text-sm font-body text-on-surface font-medium">Ministerio del Medio Ambiente</p>
+                                            <h5
+                                                class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">
+                                                Organismo Emisor</h5>
+                                            <p th:text="${normativa.organismo}"
+                                                class="text-sm font-body text-on-surface font-medium">Ministerio del
+                                                Medio Ambiente</p>
                                         </div>
 
                                         <!-- Temas Completos -->
                                         <div class="col-span-1 md:col-span-2 lg:col-span-4">
-                                            <h5 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1.5">Temas Asignados</h5>
+                                            <h5
+                                                class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1.5">
+                                                Temas Asignados</h5>
                                             <div class="flex flex-wrap gap-2">
                                                 <th:block th:each="cat : ${normativa.categorias}">
-                                                    <span th:with="isEc=${#strings.equalsIgnoreCase(cat, 'Economía circular')}, isGr=${#strings.equalsIgnoreCase(cat, 'Gestión de residuos')}, isEe=${#strings.equalsIgnoreCase(cat, 'Envases y Embalajes')}, isRep=${#strings.equalsIgnoreCase(cat, 'Ley REP') or #strings.equalsIgnoreCase(cat, 'Responsabilidad Extendida')}"
-                                                          th:text="${isEc ? 'EC - Economía Circular' : (isGr ? 'GR - Gestión de Residuos' : (isEe ? 'EE - Envases y Embalajes' : (isRep ? 'REP - Ley REP' : cat)))}"
-                                                          class="inline-block px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-left text-white shadow-sm"
-                                                          th:classappend="${isEc ? 'bg-[#006C46]' : (isGr ? 'bg-[#3B82F6]' : (isEe ? 'bg-[#F49E0B]' : (isRep ? 'bg-[#BA1A1A]' : 'bg-[#888780]')))}">
+                                                    <span
+                                                        th:with="isEc=${#strings.equalsIgnoreCase(cat, 'Economía circular')}, isGr=${#strings.equalsIgnoreCase(cat, 'Gestión de residuos')}, isEe=${#strings.equalsIgnoreCase(cat, 'Envases y Embalajes')}, isRep=${#strings.equalsIgnoreCase(cat, 'Ley REP') or #strings.equalsIgnoreCase(cat, 'Responsabilidad Extendida')}"
+                                                        th:text="${isEc ? 'EC - Economía Circular' : (isGr ? 'GR - Gestión de Residuos' : (isEe ? 'EE - Envases y Embalajes' : (isRep ? 'REP - Ley REP' : cat)))}"
+                                                        class="inline-block px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-left text-white shadow-sm"
+                                                        th:classappend="${isEc ? 'bg-[#006C46]' : (isGr ? 'bg-[#3B82F6]' : (isEe ? 'bg-[#F49E0B]' : (isRep ? 'bg-[#BA1A1A]' : 'bg-[#888780]')))}">
                                                     </span>
                                                 </th:block>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Acciones -->
-                                        <div class="col-span-1 md:col-span-2 lg:col-span-4 mt-1 flex flex-wrap gap-3 pt-3 border-t border-outline-variant/30">
-                                            <a th:href="@{/normativas/{id}(id=${normativa.id})}" class="flex items-center gap-1.5 px-4 py-1.5 bg-secondary text-white rounded-lg text-xs font-bold hover:bg-[#00210c] transition-colors shadow-sm">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                        <div
+                                            class="col-span-1 md:col-span-2 lg:col-span-4 mt-1 flex flex-wrap gap-3 pt-3 border-t border-outline-variant/30">
+                                            <a th:href="@{/normativas/{id}(id=${normativa.id})}"
+                                                class="flex items-center gap-1.5 px-4 py-1.5 bg-secondary text-white rounded-lg text-xs font-bold hover:bg-[#00210c] transition-colors shadow-sm">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
                                                 Ver Normativa
                                             </a>
                                         </div>
@@ -666,21 +776,20 @@
                         </div>
 
                         <!-- Rango Input -->
-                        <div id="rangeContainer" class="flex flex-col sm:flex-row gap-4" th:classappend="${dateStart == null and dateEnd == null} ? 'hidden'">
+                        <div id="rangeContainer" class="flex flex-col sm:flex-row gap-4"
+                            th:classappend="${dateStart == null and dateEnd == null} ? 'hidden'">
                             <div class="flex-1">
                                 <label
                                     class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
                                     Inicio</label>
-                                <input type="date" id="dateStart" name="dateStart"
-                                    th:value="${dateStart}"
+                                <input type="date" id="dateStart" name="dateStart" th:value="${dateStart}"
                                     class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
                             </div>
                             <div class="flex-1">
                                 <label
                                     class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
                                     Fin</label>
-                                <input type="date" id="dateEnd" name="dateEnd"
-                                    th:value="${dateEnd}"
+                                <input type="date" id="dateEnd" name="dateEnd" th:value="${dateEnd}"
                                     class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
                             </div>
                         </div>
@@ -850,7 +959,7 @@
             // Toggle current row
             content.classList.toggle('hidden');
             icons.forEach(icon => icon.classList.toggle('rotate-180'));
-            
+
             if (!content.classList.contains('hidden')) {
                 parent.classList.remove('border-transparent');
                 parent.classList.add('border-outline-variant/30', 'bg-surface-container/30');
@@ -1039,4 +1148,3 @@
 </body>
 
 </html>
-

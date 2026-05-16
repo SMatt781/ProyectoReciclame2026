@@ -92,13 +92,13 @@ public class EstudioController {
             estudiosFiltrados = estudioRepository.findAllEstudioDTO();
         }
 
-        int pageSize = 6;
-
-        Page<EstudioDTO> paginaEstudios = paginarLista(estudiosFiltrados, page, pageSize);
-
-        model.addAttribute("estudios", paginaEstudios.getContent());
+        // Send all filtered studies to the frontend for client-side pagination
+        model.addAttribute("estudios", estudiosFiltrados);
         model.addAttribute("currentPage", "estudios");
 
+        // We can keep these attributes in case other views rely on them, 
+        // but client-side JS will handle the actual pagination display
+        Page<EstudioDTO> paginaEstudios = paginarLista(estudiosFiltrados, page, 6);
         model.addAttribute("page", page);
         model.addAttribute("totalPages", paginaEstudios.getTotalPages());
         model.addAttribute("hasPrevious", paginaEstudios.hasPrevious());
