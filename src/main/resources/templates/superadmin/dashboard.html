@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html class="light" lang="es">
-<head>
+
+<html class="light" lang="es"><head>
     <meta charset="utf-8"/>
     <title>Recíclame - Dashboard Superadmin</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -38,7 +38,7 @@
                         "tertiary-fixed": "#d8e2ff", "surface": "#f8f9ff", "tertiary": "#000000"
                     },
                     borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
-                    fontFamily: { "sans": ["Plus Jakarta Sans", "sans-serif"] }
+                    fontFamily: { "sans": ["Plus Jakarta Sans", "sans-serif"], "headline": ["Plus Jakarta Sans", "system-ui", "sans-serif"], "body": ["Inter", "system-ui", "sans-serif"] }
                 }
             }
         }
@@ -63,18 +63,18 @@
         <!-- Encabezado -->
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
             <div>
-                <h2 class="font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">Dashboard</h2>
-                <p class="text-on-surface-variant text-sm mt-0.5">Resumen del estado del sistema Recíclame</p>
+                <h2 class="font-headline font-extrabold text-[2rem] text-black leading-tight tracking-tight">Dashboard</h2>
+                <p class="font-body text-on-surface-variant text-sm mt-1 max-w-3xl">Resumen del estado del sistema Recíclame</p>
             </div>
             <div class="flex items-center gap-3">
                 <!-- DESPUÉS -->
                 <a th:href="@{/superadmin/administradores(openModal=true)}"
-                   class="flex items-center gap-2 bg-secondary text-white font-bold px-5 py-2.5 rounded-xl ...">
+                   class="flex items-center gap-2 bg-secondary text-white font-bold px-5 py-2.5 rounded-lg text-sm">
                     <span class="material-symbols-outlined text-[18px]">person_add</span>
                     Añadir Administrador
                 </a>
                 <a th:href="@{/superadmin/confSeguridad}"
-                   class="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 font-bold px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-all text-sm shadow-sm">
+                   class="flex items-center gap-2 bg-white border border-slate-200 text-black font-bold px-5 py-2.5 rounded-lg hover:bg-slate-50 transition-all text-sm shadow-sm">
                     <span class="material-symbols-outlined text-[18px]">security</span>
                     Actualizar Políticas
                 </a>
@@ -92,8 +92,8 @@
                     </div>
                     <span class="text-[9px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md">Total</span>
                 </div>
-                <p class="text-xs font-bold text-slate-500 mb-0.5">Administradores</p>
-                <p class="text-2xl font-extrabold text-on-primary-fixed" th:text="${totalAdmins}">—</p>
+                <p class="text-sm font-bold text-black mb-0.5">Administradores</p>
+                <p class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalAdmins}">—</p>
             </div>
 
             <div class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
@@ -104,8 +104,8 @@
                     </div>
                     <span class="text-[9px] font-bold uppercase tracking-wider bg-secondary-container/30 text-secondary px-2 py-0.5 rounded-md">Activos</span>
                 </div>
-                <p class="text-xs font-bold text-slate-500 mb-0.5">Admins Activos</p>
-                <p class="text-2xl font-extrabold text-secondary" th:text="${activeAdmins}">—</p>
+                <p class="text-sm font-bold text-black mb-0.5">Admins Activos</p>
+                <p class="text-3xl font-extrabold text-secondary" th:text="${activeAdmins}">—</p>
             </div>
 
             <div class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
@@ -116,8 +116,8 @@
                     </div>
                     <span class="text-[9px] font-bold uppercase tracking-wider bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md">Dominios</span>
                 </div>
-                <p class="text-xs font-bold text-slate-500 mb-0.5">Dominios Activos</p>
-                <p class="text-2xl font-extrabold text-blue-600" th:text="${totalDominios}">—</p>
+                <p class="text-sm font-bold text-black mb-0.5">Dominios Activos</p>
+                <p class="text-3xl font-extrabold text-blue-600" th:text="${totalDominios}">—</p>
             </div>
 
             <div class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
@@ -128,10 +128,10 @@
                     </div>
                     <span class="text-[9px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-md">Política</span>
                 </div>
-                <p class="text-xs font-bold text-slate-500 mb-1.5">Contraseña mínima</p>
+                <p class="text-sm font-bold text-black mb-1.5">Contraseña mínima</p>
 
                 <!-- Longitud mínima -->
-                <p class="text-2xl font-extrabold text-emerald-600"
+                <p class="text-3xl font-extrabold text-emerald-600"
                    th:text="${politica != null} ? ${politica.longitudMinima} + ' caracteres' : '—'">— car.</p>
 
                 <!-- Chips de requisitos activos -->
@@ -157,7 +157,7 @@
             <!-- Admins recientes — 1 col -->
             <div class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
                 <div class="flex justify-between items-center px-4 py-3 border-b border-slate-100">
-                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                    <h3 class="font-black text-black text-lg flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-[18px] text-secondary">admin_panel_settings</span>
                         Admins Recientes
                     </h3>
@@ -184,47 +184,47 @@
             <!-- Políticas activas — 1 col -->
             <div class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
                 <div class="px-4 py-3 border-b border-slate-100">
-                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                    <h3 class="font-black text-black text-lg flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-[18px] text-[#059669]">security</span>
                         Políticas Activas
                     </h3>
                 </div>
                 <div class="px-4 py-3 space-y-2.5">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs text-slate-600">Mayúsculas</span>
+                        <span class="text-xs text-black">Mayúsculas</span>
                         <span th:text="${politica?.requiereMayuscula ? 'ON' : 'OFF'}"
                               th:class="${politica?.requiereMayuscula} ? 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600' : 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500'">
                         OFF
                     </span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-xs text-slate-600">Números</span>
+                        <span class="text-xs text-black">Números</span>
                         <span th:text="${politica?.requiereNumero ? 'ON' : 'OFF'}"
                               th:class="${politica?.requiereNumero} ? 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600' : 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500'">
                         OFF
                     </span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-xs text-slate-600">Símbolo</span>
+                        <span class="text-xs text-black">Símbolo</span>
                         <span th:text="${politica?.requiereSimbolo ? 'ON' : 'OFF'}"
                               th:class="${politica?.requiereSimbolo} ? 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600' : 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500'">
                         OFF
                     </span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-xs text-slate-600">MFA</span>
+                        <span class="text-xs text-black">MFA</span>
                         <span th:text="${politica?.mandatoMfa ? 'ON' : 'OFF'}"
                               th:class="${politica?.mandatoMfa} ? 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600' : 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500'">
                         OFF
                     </span>
                     </div>
                     <div class="flex items-center justify-between pt-1.5 border-t border-slate-100">
-                        <span class="text-xs text-slate-600">Long. mínima</span>
+                        <span class="text-xs text-black">Long. mínima</span>
                         <span class="text-xs font-extrabold text-slate-800"
                               th:text="${(politica?.longitudMinima ?: 8) + ' chars'}">8 chars</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-xs text-slate-600">Expiración</span>
+                        <span class="text-xs text-black">Expiración</span>
                         <span class="text-xs font-extrabold text-slate-800"
                               th:text="${politica?.expiracionDias != null ? politica.expiracionDias + ' días' : 'Nunca'}">90 días</span>
                     </div>
@@ -240,7 +240,7 @@
             <!-- Actividad reciente — 1 col -->
             <div class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
                 <div class="px-4 py-3 border-b border-slate-100">
-                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                    <h3 class="font-black text-black text-lg flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-[18px] text-slate-500">history</span>
                         Actividad Reciente
                     </h3>
@@ -251,7 +251,7 @@
                             <span class="material-symbols-outlined text-[12px]">person_add</span>
                         </div>
                         <div>
-                            <p class="text-xs text-slate-700 font-medium">Admin creado</p>
+                            <p class="text-xs text-black font-medium">Admin creado</p>
                             <p class="text-[10px] text-slate-400">Pendiente de logs</p>
                         </div>
                     </div>
@@ -260,7 +260,7 @@
                             <span class="material-symbols-outlined text-[12px]">domain_add</span>
                         </div>
                         <div>
-                            <p class="text-xs text-slate-700 font-medium">Dominio añadido</p>
+                            <p class="text-xs text-black font-medium">Dominio añadido</p>
                             <p class="text-[10px] text-slate-400">Pendiente de logs</p>
                         </div>
                     </div>
@@ -269,7 +269,7 @@
                             <span class="material-symbols-outlined text-[12px]">policy</span>
                         </div>
                         <div>
-                            <p class="text-xs text-slate-700 font-medium">Políticas actualizadas</p>
+                            <p class="text-xs text-black font-medium">Políticas actualizadas</p>
                             <p class="text-[10px] text-slate-400">Pendiente de logs</p>
                         </div>
                     </div>
@@ -279,7 +279,7 @@
             <!-- Accesos directos — 1 col -->
             <div class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
                 <div class="px-4 py-3 border-b border-slate-100">
-                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                    <h3 class="font-black text-black text-lg flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-[18px] text-slate-500">bolt</span>
                         Accesos Directos
                     </h3>
@@ -288,17 +288,17 @@
                     <a th:href="@{/superadmin/administradores}"
                        class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-secondary-container/20 transition-colors group">
                         <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-secondary">admin_panel_settings</span>
-                        <span class="text-xs font-semibold text-slate-700 group-hover:text-secondary">Gestionar Administradores</span>
+                        <span class="text-xs font-semibold text-black group-hover:text-secondary">Gestionar Administradores</span>
                     </a>
                     <a th:href="@{/superadmin/confSeguridad}"
                        class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-secondary-container/20 transition-colors group">
                         <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-secondary">security</span>
-                        <span class="text-xs font-semibold text-slate-700 group-hover:text-secondary">Configuración de Seguridad</span>
+                        <span class="text-xs font-semibold text-black group-hover:text-secondary">Configuración de Seguridad</span>
                     </a>
                     <a th:href="@{/superadmin/estadoSistema}"
                        class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-secondary-container/20 transition-colors group">
                         <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-secondary">monitor_heart</span>
-                        <span class="text-xs font-semibold text-slate-700 group-hover:text-secondary">Estado del monitor</span>
+                        <span class="text-xs font-semibold text-black group-hover:text-secondary">Estado del monitor</span>
                     </a>
                 </div>
             </div>
@@ -354,5 +354,4 @@
 
     </main>
 </div>
-</body>
-</html>
+</body></html>
