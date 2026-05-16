@@ -123,7 +123,7 @@
         <!-- TopAppBar -->
         <div th:replace="~{fragments/navbar :: navbar}"></div>
         <!-- Main Content canvas modified to force h-full mapping without scroll -->
-        <main class="flex-1 flex flex-col overflow-hidden px-6 md:px-10 py-6 bg-[#f9f9ff]">
+        <main class="flex-1 flex flex-col overflow-hidden px-4 sm:px-6 py-2 bg-[#f9f9ff]">
             <div class="w-full flex-shrink-0">
                 <!-- Page Header -->
                 <header class="mb-6">
@@ -198,25 +198,40 @@
                             <div class="flex flex-col">
                                 <h4
                                     class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                        </path>
+                                    </svg>
                                     ESTADÍSTICAS
                                 </h4>
                                 <div class="flex flex-wrap gap-4 flex-1">
-                                    <div class="text-center bg-secondary-container/30 px-4 py-3 rounded-lg flex-1 flex flex-col justify-center">
-                                        <p class="text-2xl font-bold text-secondary" th:text="${detalle.totalDescargas}">125</p>
-                                        <p class="text-[10px] font-semibold text-on-secondary-container uppercase tracking-wider mt-1">Descargas</p>
+                                    <div
+                                        class="text-center bg-secondary-container/30 px-4 py-3 rounded-lg flex-1 flex flex-col justify-center">
+                                        <p class="text-2xl font-bold text-secondary"
+                                            th:text="${detalle.totalDescargas}">125</p>
+                                        <p
+                                            class="text-[10px] font-semibold text-on-secondary-container uppercase tracking-wider mt-1">
+                                            Descargas</p>
                                     </div>
-                                    <div class="text-center bg-surface-container px-4 py-3 rounded-lg flex-1 flex flex-col justify-center">
-                                        <p class="text-lg font-bold text-on-surface" th:text="${#temporals.format(normativa.fechaActualizacion, 'dd MMM yyyy')}">24 May 2024</p>
-                                        <p class="text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider mt-1">Actualización</p>
+                                    <div
+                                        class="text-center bg-surface-container px-4 py-3 rounded-lg flex-1 flex flex-col justify-center">
+                                        <p class="text-lg font-bold text-on-surface"
+                                            th:text="${#temporals.format(normativa.fechaActualizacion, 'dd MMM yyyy')}">
+                                            24 May 2024</p>
+                                        <p
+                                            class="text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider mt-1">
+                                            Actualización</p>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Bloque: Documento Protegido -->
                             <div class="flex flex-col justify-center bg-[#041533] rounded-xl p-5 text-center shadow-sm">
-                                <h3 class="text-[15px] font-bold text-white mb-2 uppercase tracking-wider">DOCUMENTO PROTEGIDO</h3>
-                                <p class="text-[12px] text-[#b0b0b0] mb-4">No hay vista previa disponible para este documento.</p>
+                                <h3 class="text-[15px] font-bold text-white mb-2 uppercase tracking-wider">DOCUMENTO
+                                    PROTEGIDO</h3>
+                                <p class="text-[12px] text-[#b0b0b0] mb-4">No hay vista previa disponible para este
+                                    documento.</p>
                                 <a th:href="${normativa.enlaceExterno}" target="_blank"
                                     class="inline-flex items-center justify-center gap-2 bg-white text-[#041533] px-4 py-2 rounded-lg font-bold text-xs hover:bg-[#f0f0f0] transition w-max mx-auto">
                                     Acceder al enlace de compra
@@ -261,69 +276,94 @@
 
                     <!-- Opción 1A: Normativas Relacionadas -->
                     <section class="bg-white rounded-lg border border-outline-variant/20 p-4 shadow-sm flex-shrink-0">
-                        <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                        <h3
+                            class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                                </path>
+                            </svg>
                             Normativas Relacionadas
                         </h3>
                         <div class="flex flex-col gap-3">
-                            <div th:each="rel : ${detalle.normativasRelacionadas}" class="pb-3 border-b border-surface-variant/50 last:border-b-0 last:pb-0">
-                                <a th:href="@{/normativas/{id}(id=${rel.id})}" class="block hover:bg-surface-container/50 -m-2 p-2 rounded-md">
-                                    <h4 class="text-sm font-bold text-on-primary-fixed leading-snug" th:text="${rel.titulo}">Título de la normativa relacionada</h4>
+                            <div th:each="rel : ${detalle.normativasRelacionadas}"
+                                class="pb-3 border-b border-surface-variant/50 last:border-b-0 last:pb-0">
+                                <a th:href="@{/normativas/{id}(id=${rel.id})}"
+                                    class="block hover:bg-surface-container/50 -m-2 p-2 rounded-md">
+                                    <h4 class="text-sm font-bold text-on-primary-fixed leading-snug"
+                                        th:text="${rel.titulo}">Título de la normativa relacionada</h4>
                                     <div class="flex items-center gap-2 mt-1.5">
-                                        <span class="px-2 py-0.5 bg-surface-container text-on-surface-variant rounded text-xs font-semibold" th:text="${rel.codigo}">COD-123</span>
+                                        <span
+                                            class="px-2 py-0.5 bg-surface-container text-on-surface-variant rounded text-xs font-semibold"
+                                            th:text="${rel.codigo}">COD-123</span>
                                         <span th:text="${rel.acceso}"
-                                              th:classappend="${#strings.equalsIgnoreCase(rel.acceso, 'PAGO') ? 'text-de-pago bg-de-pago/10' : 'text-gratuito bg-gratuito/10'}"
-                                              class="px-2 py-0.5 rounded text-xs font-bold uppercase">GRATIS</span>
+                                            th:classappend="${#strings.equalsIgnoreCase(rel.acceso, 'PAGO') ? 'text-de-pago bg-de-pago/10' : 'text-gratuito bg-gratuito/10'}"
+                                            class="px-2 py-0.5 rounded text-xs font-bold uppercase">GRATIS</span>
                                     </div>
                                 </a>
                             </div>
-                            <p th:if="${#lists.isEmpty(detalle.normativasRelacionadas)}" class="text-sm text-on-surface-variant">No hay normativas del mismo emisor.</p>
+                            <p th:if="${#lists.isEmpty(detalle.normativasRelacionadas)}"
+                                class="text-sm text-on-surface-variant">No hay normativas del mismo emisor.</p>
                         </div>
                     </section>
 
                     <!-- Opción 1C: Historial -->
                     <section class="bg-white rounded-lg border border-outline-variant/20 p-4 shadow-sm flex-shrink-0">
-                        <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <h3
+                            class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
                             Historial
                         </h3>
                         <ul class="space-y-2 text-sm text-on-surface-variant">
                             <li class="flex items-center gap-2">
                                 <span class="font-semibold w-28">Publicada:</span>
-                                <span th:text="${#temporals.format(normativa.fechaCreacion, 'dd MMM yyyy')}">01 Jun 2016</span>
+                                <span th:text="${#temporals.format(normativa.fechaCreacion, 'dd MMM yyyy')}">01 Jun
+                                    2016</span>
                             </li>
                             <li class="flex items-center gap-2">
                                 <span class="font-semibold w-28">Actualizada:</span>
-                                <span th:text="${#temporals.format(normativa.fechaActualizacion, 'dd MMM yyyy')}">24 May 2024</span>
+                                <span th:text="${#temporals.format(normativa.fechaActualizacion, 'dd MMM yyyy')}">24 May
+                                    2024</span>
                             </li>
                             <li class="flex items-center gap-2">
                                 <span class="font-semibold w-28">Estado:</span>
                                 <span th:text="${normativa.estado.name().replace('_', ' ')}"
-                                      th:classappend="${normativa.estado.name() == 'VIGENTE' ? 'text-gratuito' : 'text-de-pago'}"
-                                      class="font-bold">VIGENTE</span>
+                                    th:classappend="${normativa.estado.name() == 'VIGENTE' ? 'text-gratuito' : 'text-de-pago'}"
+                                    class="font-bold">VIGENTE</span>
                             </li>
                         </ul>
                     </section>
 
                     <!-- Opción 4: Normativas Similares -->
                     <section class="bg-white rounded-lg border border-outline-variant/20 p-4 shadow-sm flex-shrink-0">
-                        <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                        <h3
+                            class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                                </path>
+                            </svg>
                             También te podría interesar
                         </h3>
                         <div class="flex flex-col gap-2">
-                            <div th:each="sim : ${detalle.normativasSimilares}" class="bg-[#f9f9fb] p-2 rounded-md border border-transparent hover:border-outline-variant/30">
+                            <div th:each="sim : ${detalle.normativasSimilares}"
+                                class="bg-[#f9f9fb] p-2 rounded-md border border-transparent hover:border-outline-variant/30">
                                 <a th:href="@{/normativas/{id}(id=${sim.id})}" class="block">
-                                    <h4 class="text-sm font-bold text-on-primary-fixed leading-snug" th:text="${sim.titulo}">Título de la normativa similar</h4>
+                                    <h4 class="text-sm font-bold text-on-primary-fixed leading-snug"
+                                        th:text="${sim.titulo}">Título de la normativa similar</h4>
                                     <div class="flex items-center justify-between mt-1.5">
                                         <span class="text-xs text-on-surface-variant">★★★★☆</span>
                                         <span th:text="${sim.acceso}"
-                                              th:classappend="${#strings.equalsIgnoreCase(sim.acceso, 'PAGO') ? 'text-de-pago bg-de-pago/10' : 'text-gratuito bg-gratuito/10'}"
-                                              class="px-2 py-0.5 rounded text-xs font-bold uppercase">GRATIS</span>
+                                            th:classappend="${#strings.equalsIgnoreCase(sim.acceso, 'PAGO') ? 'text-de-pago bg-de-pago/10' : 'text-gratuito bg-gratuito/10'}"
+                                            class="px-2 py-0.5 rounded text-xs font-bold uppercase">GRATIS</span>
                                     </div>
                                 </a>
                             </div>
-                            <p th:if="${#lists.isEmpty(detalle.normativasSimilares)}" class="text-sm text-on-surface-variant">No hay normativas similares.</p>
+                            <p th:if="${#lists.isEmpty(detalle.normativasSimilares)}"
+                                class="text-sm text-on-surface-variant">No hay normativas similares.</p>
                         </div>
                     </section>
 
@@ -333,38 +373,38 @@
     </div>
     <script>
         // Security logic for document viewer
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const viewerContainer = document.getElementById('viewerContainer');
-            
+
             // Block context menu (right click)
             document.addEventListener('contextmenu', event => event.preventDefault());
 
             // Block common screen capture/print shortcuts
-            document.addEventListener('keydown', function(e) {
+            document.addEventListener('keydown', function (e) {
                 // Ctrl+P, Ctrl+S, Ctrl+C, PrintScreen
-                if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'c' || e.key === 'C')) || 
+                if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'c' || e.key === 'C')) ||
                     e.key === 'PrintScreen' || e.key === 'F12') {
                     e.preventDefault();
                     return false;
                 }
             });
-            
+
             // Clear clipboard if PrintScreen is pressed
-            window.addEventListener('keyup', function(e) {
+            window.addEventListener('keyup', function (e) {
                 if (e.key == 'PrintScreen') {
                     navigator.clipboard.writeText('');
                 }
             });
 
             // Blur content when window loses focus (prevent snipping tool)
-            window.addEventListener('blur', function() {
-                if(viewerContainer) {
+            window.addEventListener('blur', function () {
+                if (viewerContainer) {
                     viewerContainer.style.filter = 'blur(10px)';
                 }
             });
 
-            window.addEventListener('focus', function() {
-                if(viewerContainer) {
+            window.addEventListener('focus', function () {
+                if (viewerContainer) {
                     viewerContainer.style.filter = 'none';
                 }
             });

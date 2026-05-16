@@ -227,7 +227,7 @@
                                 <textarea id="estudioDescripcion" name="descripcion" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all resize-none placeholder:text-gray-300" placeholder="Define el propósito y alcance de este nuevo estudio..." rows="3"></textarea>
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                                 <div class="space-y-2">
                                     <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Año</label>
                                     <select id="estudioAnio" name="anio" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
@@ -256,6 +256,14 @@
                                         <option value="BORRADOR">Borrador</option>
                                         <option value="DEROGADO">Derogado</option>
 
+                                    </select>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Tipo de Acceso</label>
+                                    <select id="estudioTipoAcceso" name="tipoAcceso"
+                                            class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                        <option value="DESCARGA">Descargable</option>
+                                        <option value="LECTURA">Solo Lectura</option>
                                     </select>
                                 </div>
                             </div>
@@ -420,7 +428,7 @@
                 form.action = '/admin/estudio_new';
             }
             // Limpiar campos individuales por si acaso
-            var campos = ['estudioNombre', 'estudioDescripcion', 'estudioAnio', 'estudioFormato', 'estudioEstado'];
+            var campos = ['estudioNombre', 'estudioDescripcion', 'estudioAnio', 'estudioFormato', 'estudioEstado', 'estudioTipoAcceso'];
             campos.forEach(function(id) {
                 var el = document.getElementById(id);
                 if (el) el.value = el.options ? el.options[0].value : '';
