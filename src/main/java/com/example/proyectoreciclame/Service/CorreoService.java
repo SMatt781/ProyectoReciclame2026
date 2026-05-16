@@ -1,9 +1,17 @@
 package com.example.proyectoreciclame.Service;
 
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @Service
 public class CorreoService {
@@ -18,65 +26,95 @@ public class CorreoService {
     }
 
     public void enviarCodigoRecuperacion(String destino, String codigo) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(destino);
-        message.setSubject("Recíclame - Código de recuperación");
-        message.setText(
-                "Hola.\n\n" +
-                        "Tu código de recuperación de contraseña es: " + codigo + "\n\n" +
-                        "Este código vence en 10 minutos.\n" +
-                        "Si no solicitaste este cambio, ignora este mensaje."
-        );
-        mailSender.send(message);
+        try {
+            String htmlContent = cargarTemplate("templates/emails/codigo-recuperacion.html");
+            htmlContent = htmlContent.replace("[[CODIGO]]", codigo);
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.toString());
+            helper.setTo(destino);
+            helper.setSubject("Recíclame - Código de recuperación");
+            helper.setText(htmlContent, true);
+
+            // Embeber logo
+            ClassPathResource logo = new ClassPathResource("static/images/logo-reciclame.png");
+            helper.addInline("logo", logo);
+
+            mailSender.send(message);
+        } catch (MessagingException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void enviarConfirmacionRegistro(String destino, String nombres, String rolSolicitado) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(destino);
-        message.setSubject("Recíclame - Registro recibido");
-        message.setText(
-                "Hola " + obtenerNombreSeguro(nombres) + ".\n\n" +
-                        "Hemos recibido tu solicitud de registro en Recíclame como " + rolSolicitado + ".\n\n" +
-                        "Tu cuenta se encuentra pendiente de revisión por un administrador. " +
-                        "Te enviaremos un correo cuando tu solicitud sea aprobada o denegada.\n\n" +
-                        "Gracias por registrarte.\n\n" +
-                        "Equipo Recíclame"
-        );
-        mailSender.send(message);
+        try {
+            String htmlContent = cargarTemplate("templates/emails/confirmacion-registro.html");
+            htmlContent = htmlContent.replace("[[NOMBRE]]", obtenerNombreSeguro(nombres));
+            htmlContent = htmlContent.replace("[[ROL]]", rolSolicitado != null ? rolSolicitado : "usuario");
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.toString());
+            helper.setTo(destino);
+            helper.setSubject("Recíclame - Registro recibido");
+            helper.setText(htmlContent, true);
+
+            // Embeber logo
+            ClassPathResource logo = new ClassPathResource("static/images/logo-reciclame.png");
+            helper.addInline("logo", logo);
+
+            mailSender.send(message);
+        } catch (MessagingException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void enviarRegistroAprobado(String destino, String nombres) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(destino);
-        message.setSubject("Recíclame - Solicitud aprobada");
-        message.setText(
-                "Hola " + obtenerNombreSeguro(nombres) + ".\n\n" +
-                        "Tu solicitud de registro en Recíclame ha sido aprobada.\n\n" +
-                        "Ya puedes iniciar sesión con el correo y contraseña que registraste.\n\n" +
-                        "Ingresa a la plataforma desde:\n" +
-                        "http://54.236.146.126:8080/login\n\n" +
-                        "Equipo Recíclame"
-        );
-        mailSender.send(message);
+        try {
+            String htmlContent = cargarTemplate("templates/emails/solicitud-aprobada.html");
+            htmlContent = htmlContent.replace("[[NOMBRE]]", obtenerNombreSeguro(nombres));
+            htmlContent = htmlContent.replace("[[CORREO]]", destino);
+            htmlContent = htmlContent.replace("[[APP_URL]]", appUrl);
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.toString());
+            helper.setTo(destino);
+            helper.setSubject("Recíclame - Solicitud aprobada");
+            helper.setText(htmlContent, true);
+
+            // Embeber logo
+            ClassPathResource logo = new ClassPathResource("static/images/logo-reciclame.png");
+            helper.addInline("logo", logo);
+
+            mailSender.send(message);
+        } catch (MessagingException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void enviarRegistroDenegado(String destino, String nombres, String motivo) {
-        String motivoFinal = (motivo != null && !motivo.isBlank())
-                ? motivo
-                : "No se especificó un motivo.";
+        try {
+            String motivoFinal = (motivo != null && !motivo.isBlank())
+                    ? motivo
+                    : "No se especificó un motivo.";
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(destino);
-        message.setSubject("Recíclame - Solicitud denegada");
-        message.setText(
-                "Hola " + obtenerNombreSeguro(nombres) + ".\n\n" +
-                        "Tu solicitud de registro en Recíclame ha sido denegada.\n\n" +
-                        "Motivo:\n" +
-                        motivoFinal + "\n\n" +
-                        "Si consideras que se trata de un error, puedes comunicarte con el equipo de soporte.\n\n" +
-                        "Equipo Recíclame"
-        );
-        mailSender.send(message);
+            String htmlContent = cargarTemplate("templates/emails/solicitud-denegada.html");
+            htmlContent = htmlContent.replace("[[NOMBRE]]", obtenerNombreSeguro(nombres));
+            htmlContent = htmlContent.replace("[[MOTIVO]]", motivoFinal);
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.toString());
+            helper.setTo(destino);
+            helper.setSubject("Recíclame - Solicitud denegada");
+            helper.setText(htmlContent, true);
+
+            // Embeber logo
+            ClassPathResource logo = new ClassPathResource("static/images/logo-reciclame.png");
+            helper.addInline("logo", logo);
+
+            mailSender.send(message);
+        } catch (MessagingException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private String obtenerNombreSeguro(String nombres) {
@@ -84,21 +122,34 @@ public class CorreoService {
     }
 
     public void enviarCredencialesAdministrador(String destino, String nombres, String contrasenaTemp) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(destino);
-        message.setSubject("Recíclame - Tu cuenta de administrador ha sido creada");
-        message.setText(
-                "Hola " + obtenerNombreSeguro(nombres) + ".\n\n" +
-                        "El Superadministrador de Recíclame ha creado una cuenta de administrador para ti.\n\n" +
-                        "Tus credenciales de acceso son:\n" +
-                        "   Correo: " + destino + "\n" +
-                        "   Contraseña temporal: " + contrasenaTemp + "\n\n" +
-                        "Por seguridad, te recomendamos cambiar tu contraseña al iniciar sesión.\n" +
-                        "Para hacerlo, ingresa a la plataforma y usa la opción 'Olvidé mi contraseña'.\n\n" +
-                        "Ingresa desde:\n" +
-                        appUrl + "/login\n\n" +
-                        "Equipo Recíclame"
-        );
-        mailSender.send(message);
+        try {
+            String htmlContent = cargarTemplate("templates/emails/credenciales-administrador.html");
+            htmlContent = htmlContent.replace("[[NOMBRE]]", obtenerNombreSeguro(nombres));
+            htmlContent = htmlContent.replace("[[CORREO]]", destino);
+            htmlContent = htmlContent.replace("[[CONTRASENA]]", contrasenaTemp);
+            htmlContent = htmlContent.replace("[[APP_URL]]", appUrl);
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.toString());
+            helper.setTo(destino);
+            helper.setSubject("Recíclame - Tu cuenta de administrador ha sido creada");
+            helper.setText(htmlContent, true);
+
+            // Embeber logo
+            ClassPathResource logo = new ClassPathResource("static/images/logo-reciclame.png");
+            helper.addInline("logo", logo);
+
+            mailSender.send(message);
+        } catch (MessagingException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Carga un template HTML desde el classpath
+     */
+    private String cargarTemplate(String rutaTemplate) throws IOException {
+        ClassPathResource resource = new ClassPathResource(rutaTemplate);
+        return new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
     }
 }
