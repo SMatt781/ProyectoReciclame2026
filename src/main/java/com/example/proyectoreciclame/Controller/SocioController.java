@@ -6,6 +6,7 @@ import com.example.proyectoreciclame.Entity.EspacioCarpeta;
 import com.example.proyectoreciclame.Entity.Estudio;
 import com.example.proyectoreciclame.Entity.Normativa;
 import com.example.proyectoreciclame.Entity.RegistroDescarga;
+import com.example.proyectoreciclame.Entity.RegistroSesion;
 import com.example.proyectoreciclame.Entity.Usuario;
 import com.example.proyectoreciclame.Repository.*;
 import com.example.proyectoreciclame.Service.MiEspacioService;
@@ -29,7 +30,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/socio")
@@ -167,16 +167,19 @@ public class SocioController {
             model.addAttribute("promedioSemanalVisitas", promedioSemanalVisitas);
 
             // Change 2: Novedades desde tu última visita
-            LocalDateTime fechaUltimaVisita = usuario.getUltimoAcceso() != null ? usuario.getUltimoAcceso() : LocalDateTime.now().minusYears(1);
+            LocalDateTime fechaUltimaVisita = resolveFechaUltimaVisita(idUsuario, usuario);
             List<NovedadDTO> novedades = new ArrayList<>();
 
-            List<Estudio> estudiosNuevos = estudioRepository.findByFechaCreacionAfter(fechaUltimaVisita);
-            List<Estudio> estudiosModificados = estudioRepository.findByFechaActualizacionAfterAndFechaCreacionBefore(fechaUltimaVisita, fechaUltimaVisita);
-            List<Normativa> normativasNuevas = normativaRepository.findByFechaCreacionAfter(fechaUltimaVisita);
-            List<Normativa> normativasModificadas = normativaRepository.findByFechaActualizacionAfterAndFechaCreacionBefore(fechaUltimaVisita, fechaUltimaVisita);
+            List<Estudio> estudiosNuevos = estudioRepository.findByFechaCreacionAfterAndEliminadoEnIsNull(fechaUltimaVisita);
+            List<Estudio> estudiosModificados = estudioRepository.findByFechaActualizacionAfterAndFechaCreacionBeforeAndEliminadoEnIsNull(fechaUltimaVisita, fechaUltimaVisita);
+            List<Normativa> normativasNuevas = normativaRepository.findByFechaCreacionAfterAndEliminadoEnIsNull(fechaUltimaVisita);
+            List<Normativa> normativasModificadas = normativaRepository.findByFechaActualizacionAfterAndFechaCreacionBeforeAndEliminadoEnIsNull(fechaUltimaVisita, fechaUltimaVisita);
 
             estudiosNuevos.forEach(e -> novedades.add(new NovedadDTO("Estudio", e.getTitulo(), "Añadido", "EST", "#378ADD", e.getFechaCreacion(), dateUtil.formatRelative(e.getFechaCreacion()))));
-            estudiosModificados.forEach(e -> novedades.add(new NovedadDTO("Estudio", e.getTitulo(), "Modificado", "EST", "#378ADD", e.getFechaActualizacion(), dateUtil.formatRelative(e.getFechaActualizacion()))));
+            estudiosModificados.forEach(e -> {
+                String accion = buildAccionActualizacionEstudio(e);
+                novedades.add(new NovedadDTO("Estudio", e.getTitulo(), accion, "EST", "#378ADD", e.getFechaActualizacion(), dateUtil.formatRelative(e.getFechaActualizacion())));
+            });
             normativasNuevas.forEach(n -> {
                 String cat = !n.getCategorias().isEmpty() ? n.getCategorias().get(0).getNombre().substring(0, 2) : "OT";
                 String color = getColorForCategory(cat);
@@ -185,20 +188,32 @@ public class SocioController {
             normativasModificadas.forEach(n -> {
                 String cat = !n.getCategorias().isEmpty() ? n.getCategorias().get(0).getNombre().substring(0, 2) : "OT";
                 String color = getColorForCategory(cat);
-                novedades.add(new NovedadDTO("Normativa", n.getTitulo(), "Modificado", cat, color, n.getFechaActualizacion(), dateUtil.formatRelative(n.getFechaActualizacion())));
+                String accion = buildAccionActualizacionNormativa(n);
+                novedades.add(new NovedadDTO("Normativa", n.getTitulo(), accion, cat, color, n.getFechaActualizacion(), dateUtil.formatRelative(n.getFechaActualizacion())));
             });
 
             novedades.sort(Comparator.comparing(NovedadDTO::getFecha).reversed());
             model.addAttribute("novedades", novedades);
 
             // Change 3: Mis últimas descargas
-            List<RegistroDescarga> ultimasDescargas = registroDescargaRepository.findTop3ByUsuarioIdUsuarioOrderByFechaDescargaDesc(idUsuario);
+            List<RegistroDescarga> ultimasDescargas = registroDescargaRepository.findTop2ByUsuarioIdUsuarioOrderByFechaDescargaDesc(idUsuario);
             model.addAttribute("ultimasDescargas", ultimasDescargas);
             model.addAttribute("dateUtil", dateUtil);
         }
 
         model.addAttribute("currentPage", "inicio");
         return "socio/panelPrincipal";
+    }
+
+    private LocalDateTime resolveFechaUltimaVisita(Long idUsuario, Usuario usuario) {
+        List<RegistroSesion> sesiones = registroSesionRepository.findTop2ByUsuarioIdUsuarioOrderByFechaInicioDesc(idUsuario);
+        if (sesiones.size() > 1 && sesiones.get(1).getFechaInicio() != null) {
+            return sesiones.get(1).getFechaInicio();
+        }
+        if (usuario != null && usuario.getUltimoAcceso() != null) {
+            return usuario.getUltimoAcceso();
+        }
+        return LocalDateTime.now().minusYears(1);
     }
 
     private String buildDiferenciaEtiqueta(long diferenciaDescargas) {
@@ -431,4 +446,45 @@ public class SocioController {
                 .map(u -> u.getIdUsuario())
                 .orElse(null);
     }
+
+    private String buildAccionActualizacionEstudio(Estudio estudio) {
+        String estado = buildEstadoEtiquetaEstudio(estudio != null ? estudio.getEstado() : null);
+        if (estado.isBlank()) {
+            return "Actualizado";
+        }
+        return "Actualizado - " + estado;
+    }
+
+    private String buildAccionActualizacionNormativa(Normativa normativa) {
+        String estado = buildEstadoEtiquetaNormativa(normativa != null ? normativa.getEstado() : null);
+        if (estado.isBlank()) {
+            return "Actualizado";
+        }
+        return "Actualizado - " + estado;
+    }
+
+    private String buildEstadoEtiquetaEstudio(Estudio.EstadoEstudio estado) {
+        if (estado == null) {
+            return "";
+        }
+        return switch (estado) {
+            case VIGENTE -> "VIGENTE";
+            case DEROGADO -> "DEROGADO";
+            case BORRADOR -> "BORRADOR";
+        };
+    }
+
+    private String buildEstadoEtiquetaNormativa(Normativa.EstadoNormativa estado) {
+        if (estado == null) {
+            return "";
+        }
+        return switch (estado) {
+            case VIGENTE -> "VIGENTE";
+            case DEROGADA -> "DEROGADO";
+            case BORRADOR_EN_PROCESO -> "BORRADOR";
+            case PUBLICADA -> "PUBLICADA";
+            case CONSULTA_PUBLICA -> "CONSULTA";
+        };
+    }
+
 }

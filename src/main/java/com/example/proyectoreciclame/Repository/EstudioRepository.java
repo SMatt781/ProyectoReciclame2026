@@ -35,8 +35,8 @@ public interface EstudioRepository extends JpaRepository<Estudio, Long> {
                      @Param("hasEstados") boolean hasEstados,
                      @Param("estados") List<String> estados);
 
-       List<Estudio> findByFechaCreacionAfter(LocalDateTime fechaCreacion);
-       List<Estudio> findByFechaActualizacionAfterAndFechaCreacionBefore(LocalDateTime fechaActualizacion, LocalDateTime fechaCreacion);
+       List<Estudio> findByFechaCreacionAfterAndEliminadoEnIsNull(LocalDateTime fechaCreacion);
+       List<Estudio> findByFechaActualizacionAfterAndFechaCreacionBeforeAndEliminadoEnIsNull(LocalDateTime fechaActualizacion, LocalDateTime fechaCreacion);
 
 
     @Query("""

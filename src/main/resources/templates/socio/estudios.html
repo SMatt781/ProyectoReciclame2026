@@ -143,100 +143,98 @@
 
 
 
+                <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+                    <article
+                        class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container">
+                        </div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div
+                                class="bg-emerald-50 text-secondary rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M3 6a2 2 0 012-2h8l2 2h4a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V6zm2 0v11h14V8h-4.5L12.5 6H5z" />
+                                </svg>
+                            </div>
+                            <span
+                                class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                Repositorio
+                            </span>
+                        </div>
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                            Total estudios
+                        </h4>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed"
+                            th:text="${totalEstudios}">0</div>
+                    </article>
+
+                    <article
+                        class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200"></div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div
+                                class="bg-blue-100 text-blue-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 3a1 1 0 011 1v8.59l2.3-2.3a1 1 0 111.4 1.42l-4 4a1 1 0 01-1.4 0l-4-4a1 1 0 111.4-1.42L11 12.59V4a1 1 0 011-1zm-7 14a1 1 0 011 1v1h12v-1a1 1 0 112 0v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2a1 1 0 011-1z" />
+                                </svg>
+                            </div>
+                            <span
+                                class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                Descargas
+                            </span>
+                        </div>
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                            Descargas de estudios
+                        </h4>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed"
+                            th:text="${totalDescargasEstudios}">0</div>
+                    </article>
+
+                    <article
+                        class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200"></div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div
+                                class="bg-orange-100 text-orange-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 7a1 1 0 011 1v4.17l2.24 1.3a1 1 0 11-1 1.74l-2.7-1.56A1 1 0 0111 12V8a1 1 0 011-1zm0-5a10 10 0 100 20 10 10 0 000-20zm0 2a8 8 0 110 16 8 8 0 010-16z" />
+                                </svg>
+                            </div>
+                            <span
+                                class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                Recientes
+                            </span>
+                        </div>
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                            Añadidos en 30 días
+                        </h4>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed"
+                            th:text="${estudiosRecientes}">0</div>
+                    </article>
+
+                    <article
+                        class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container"></div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div
+                                class="bg-error-container text-error rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M7 2a1 1 0 011 1v1h8V3a1 1 0 112 0v1h1a2 2 0 012 2v2H3V6a2 2 0 012-2h1V3a1 1 0 011-1zm14 8H3v9a2 2 0 002 2h14a2 2 0 002-2v-9z" />
+                                </svg>
+                            </div>
+                            <span
+                                class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                Publicación
+                            </span>
+                        </div>
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                            Año más activo
+                        </h4>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed"
+                            th:text="${anioMasActivo}">-</div>
+                    </article>
+                </section>
+
                 <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6 flex flex-col">
-                    <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-                        <article
-                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container">
-                            </div>
-                            <div class="flex justify-between items-start mb-3">
-                                <div
-                                    class="bg-emerald-50 text-secondary rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
-                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path d="M3 6a2 2 0 012-2h8l2 2h4a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V6zm2 0v11h14V8h-4.5L12.5 6H5z" />
-                                    </svg>
-                                </div>
-                                <span
-                                    class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                    Repositorio
-                                </span>
-                            </div>
-                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                                Total estudios
-                            </h4>
-                            <div class="text-3xl font-extrabold text-on-primary-fixed"
-                                th:text="${totalEstudios}">0</div>
-                        </article>
-
-                        <article
-                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200"></div>
-                            <div class="flex justify-between items-start mb-3">
-                                <div
-                                    class="bg-blue-100 text-blue-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
-                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path d="M12 3a1 1 0 011 1v8.59l2.3-2.3a1 1 0 111.4 1.42l-4 4a1 1 0 01-1.4 0l-4-4a1 1 0 111.4-1.42L11 12.59V4a1 1 0 011-1zm-7 14a1 1 0 011 1v1h12v-1a1 1 0 112 0v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2a1 1 0 011-1z" />
-                                    </svg>
-                                </div>
-                                <span
-                                    class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                    Descargas
-                                </span>
-                            </div>
-                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                                Descargas de estudios
-                            </h4>
-                            <div class="text-3xl font-extrabold text-on-primary-fixed"
-                                th:text="${totalDescargasEstudios}">0</div>
-                        </article>
-
-                        <article
-                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200"></div>
-                            <div class="flex justify-between items-start mb-3">
-                                <div
-                                    class="bg-orange-100 text-orange-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
-                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path d="M12 7a1 1 0 011 1v4.17l2.24 1.3a1 1 0 11-1 1.74l-2.7-1.56A1 1 0 0111 12V8a1 1 0 011-1zm0-5a10 10 0 100 20 10 10 0 000-20zm0 2a8 8 0 110 16 8 8 0 010-16z" />
-                                    </svg>
-                                </div>
-                                <span
-                                    class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                    Recientes
-                                </span>
-                            </div>
-                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                                Añadidos en 30 días
-                            </h4>
-                            <div class="text-3xl font-extrabold text-on-primary-fixed"
-                                th:text="${estudiosRecientes}">0</div>
-                        </article>
-
-                        <article
-                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container"></div>
-                            <div class="flex justify-between items-start mb-3">
-                                <div
-                                    class="bg-error-container text-error rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
-                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path d="M7 2a1 1 0 011 1v1h8V3a1 1 0 112 0v1h1a2 2 0 012 2v2H3V6a2 2 0 012-2h1V3a1 1 0 011-1zm14 8H3v9a2 2 0 002 2h14a2 2 0 002-2v-9z" />
-                                    </svg>
-                                </div>
-                                <span
-                                    class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                    Publicación
-                                </span>
-                            </div>
-                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                                Año más activo
-                            </h4>
-                            <div class="text-3xl font-extrabold text-on-primary-fixed"
-                                th:text="${anioMasActivo}">-</div>
-                        </article>
-                    </section>
-
-
-
                     <!-- Search Bar -->
                     <form action="/estudios"  method="GET" class="flex flex-col sm:flex-row gap-4 mb-6 w-full flex-wrap">
                         <div class="flex-1 relative">
@@ -246,6 +244,7 @@
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                             <input type="text" name="search" placeholder="Buscar en el repositorio..."
+                                th:value="${search}"
                                 class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
                         </div>
                         <a href="/estudios"
@@ -436,32 +435,24 @@
                         </div>
                     </div>
 
-                    <!-- Controles de Paginación -->
-                    <div class="flex justify-center items-center gap-2 mt-8"
-                         th:if="${totalPages != null and totalPages > 1}">
-                        <a th:href="@{/estudios(page=${page - 1}, search=${search}, yearSelect=${anioSeleccionado}, dateStart=${dateStart}, dateEnd=${dateEnd}, format=${formatosSeleccionados}, estado=${estadosSeleccionados})}"
-                           th:classappend="${!hasPrevious} ? 'pointer-events-none opacity-50' : ''"
-                           class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M15 19l-7-7 7-7" />
+                    <!-- Minimalist Pagination -->
+                    <div id="paginationContainer" class="mt-12 flex justify-center items-center gap-2 hidden">
+                        <button id="prevPageBtn"
+                            class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container hover:text-on-surface transition-colors disabled:opacity-50"
+                            disabled="">
+                            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
                             </svg>
-                        </a>
-                        <div class="flex gap-2">
-                            <a th:each="p : ${pageNumbers}"
-                               th:href="@{/estudios(page=${p}, search=${search}, yearSelect=${anioSeleccionado}, dateStart=${dateStart}, dateEnd=${dateEnd}, format=${formatosSeleccionados}, estado=${estadosSeleccionados})}"
-                               th:text="${p + 1}"
-                               th:classappend="${p == page} ? 'bg-secondary text-on-secondary' : 'text-on-surface-variant hover:bg-surface-container'"
-                               class="w-10 h-10 rounded-lg text-sm font-bold transition-colors flex items-center justify-center"></a>
+                        </button>
+                        <div id="pageNumbers" class="flex items-center gap-1 font-label text-sm font-semibold">
+                            <!-- Números generados por JS -->
                         </div>
-                        <a th:href="@{/estudios(page=${page + 1}, search=${search}, yearSelect=${anioSeleccionado}, dateStart=${dateStart}, dateEnd=${dateEnd}, format=${formatosSeleccionados}, estado=${estadosSeleccionados})}"
-                           th:classappend="${!hasNext} ? 'pointer-events-none opacity-50' : ''"
-                           class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M9 5l7 7-7 7" />
+                        <button id="nextPageBtn"
+                            class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors disabled:opacity-50">
+                            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                             </svg>
-                        </a>
+                        </button>
                     </div>
 
 
@@ -495,19 +486,23 @@
                         <div class="flex gap-4">
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="radio" name="dateType" value="year"
-                                    class="text-secondary focus:ring-secondary form-radio" checked>
+                                    th:checked="${(dateStart == null or #strings.isEmpty(dateStart)) and (dateEnd == null or #strings.isEmpty(dateEnd))}"
+                                    class="text-secondary focus:ring-secondary form-radio">
                                 <span class="text-sm font-semibold">Año</span>
                             </label>
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="radio" name="dateType" value="range"
+                                    th:checked="${(dateStart != null and !#strings.isEmpty(dateStart)) or (dateEnd != null and !#strings.isEmpty(dateEnd))}"
                                     class="text-secondary focus:ring-secondary form-radio">
                                 <span class="text-sm font-semibold">Rango de fechas</span>
                             </label>
                         </div>
 
                         <!-- Año Select -->
-                        <div id="yearContainer">
+                        <div id="yearContainer"
+                             th:classappend="${(dateStart != null and !#strings.isEmpty(dateStart)) or (dateEnd != null and !#strings.isEmpty(dateEnd))} ? 'hidden' : ''">
                             <select id="yearSelect" name="yearSelect"
+                                th:attr="data-selected-year=${anioSeleccionado}"
                                 class="w-full sm:w-1/2 appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
                                 <option value="">Seleccione un año</option>
                                 <!-- JS will populate 1990 - Current Year -->
@@ -515,12 +510,15 @@
                         </div>
 
                         <!-- Rango Input -->
-                        <div id="rangeContainer" class="hidden flex flex-col sm:flex-row gap-4">
+                        <div id="rangeContainer"
+                             th:classappend="${(dateStart != null and !#strings.isEmpty(dateStart)) or (dateEnd != null and !#strings.isEmpty(dateEnd))} ? '' : 'hidden'"
+                             class="hidden flex flex-col sm:flex-row gap-4">
                             <div class="flex-1">
                                 <label
                                     class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
                                     Inicio</label>
                                 <input type="date" id="dateStart" name="dateStart"
+                                    th:value="${dateStart}"
                                     class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
                             </div>
                             <div class="flex-1">
@@ -528,6 +526,7 @@
                                     class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
                                     Fin</label>
                                 <input type="date" id="dateEnd" name="dateEnd"
+                                    th:value="${dateEnd}"
                                     class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
                             </div>
                         </div>
@@ -544,21 +543,25 @@
                     <div class="flex flex-wrap gap-6">
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" name="format" value="PDF"
+                                th:checked="${formatosSeleccionados != null and #lists.contains(formatosSeleccionados, 'PDF')}"
                                 class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
                             <span class="text-sm font-body">PDF</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" name="format" value="PPTX"
+                                th:checked="${formatosSeleccionados != null and #lists.contains(formatosSeleccionados, 'PPTX')}"
                                 class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
                             <span class="text-sm font-body">PPTX</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" name="format" value="DOCX"
+                                th:checked="${formatosSeleccionados != null and #lists.contains(formatosSeleccionados, 'DOCX')}"
                                 class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
                             <span class="text-sm font-body">DOCX</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" name="format" value="XLSX"
+                                th:checked="${formatosSeleccionados != null and #lists.contains(formatosSeleccionados, 'XLSX')}"
                                 class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
                             <span class="text-sm font-body">.XLSX</span>
                         </label>
@@ -573,16 +576,19 @@
                     <div class="flex flex-wrap gap-6">
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" name="estado" value="VIGENTE"
+                                th:checked="${estadosSeleccionados != null and #lists.contains(estadosSeleccionados, 'VIGENTE')}"
                                 class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
                             <span class="text-sm font-body uppercase tracking-wide">Vigente</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" name="estado" value="DEROGADO"
+                                th:checked="${estadosSeleccionados != null and #lists.contains(estadosSeleccionados, 'DEROGADO')}"
                                 class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
                             <span class="text-sm font-body uppercase tracking-wide">Derogado</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" name="estado" value="BORRADOR"
+                                th:checked="${estadosSeleccionados != null and #lists.contains(estadosSeleccionados, 'BORRADOR')}"
                                 class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
                             <span class="text-sm font-body uppercase tracking-wide">Borrador</span>
                         </label>
@@ -609,11 +615,15 @@
 
             // Populating years
             const yearSelect = document.getElementById('yearSelect');
+            const selectedYear = yearSelect ? yearSelect.getAttribute('data-selected-year') : null;
             const currentYear = new Date().getFullYear();
             for (let y = currentYear; y >= 1990; y--) {
                 const opt = document.createElement('option');
                 opt.value = y;
                 opt.textContent = y;
+                if (selectedYear && String(y) === String(selectedYear)) {
+                    opt.selected = true;
+                }
                 yearSelect.appendChild(opt);
             }
 
@@ -716,6 +726,96 @@
                     }
                 });
             }
+
+            // Pagination Logic
+            const gridItems = document.querySelectorAll('.grid-item');
+            const listItems = document.querySelectorAll('.list-item');
+            const paginationContainer = document.getElementById('paginationContainer');
+            const pageNumbersContainer = document.getElementById('pageNumbers');
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+
+            let currentPage = 1;
+            const pageSize = 6;
+
+            function renderPagination() {
+                if (!paginationContainer) return;
+
+                const totalItems = gridItems.length > 0 ? gridItems.length : listItems.length;
+                const totalPages = Math.ceil(totalItems / pageSize) || 1;
+
+                if (currentPage > totalPages) currentPage = 1;
+
+                if (totalPages <= 1) {
+                    paginationContainer.classList.add('hidden');
+                    paginationContainer.classList.remove('flex');
+                } else {
+                    paginationContainer.classList.remove('hidden');
+                    paginationContainer.classList.add('flex');
+                }
+
+                const startIndex = (currentPage - 1) * pageSize;
+                const endIndex = startIndex + pageSize;
+
+                gridItems.forEach((item, index) => {
+                    if (index >= startIndex && index < endIndex) {
+                        item.classList.remove('hidden');
+                        item.classList.add('flex');
+                    } else {
+                        item.classList.add('hidden');
+                        item.classList.remove('flex');
+                    }
+                });
+
+                listItems.forEach((item, index) => {
+                    if (index >= startIndex && index < endIndex) {
+                        item.classList.remove('hidden');
+                        item.classList.add('flex', 'md:grid');
+                    } else {
+                        item.classList.add('hidden');
+                        item.classList.remove('flex', 'md:grid');
+                    }
+                });
+
+                if (prevPageBtn) prevPageBtn.disabled = currentPage === 1;
+                if (nextPageBtn) nextPageBtn.disabled = currentPage === totalPages;
+
+                if (pageNumbersContainer) {
+                    pageNumbersContainer.innerHTML = '';
+                    for (let i = 1; i <= totalPages; i++) {
+                        const btn = document.createElement('button');
+                        btn.textContent = i;
+                        btn.className = `w-10 h-10 rounded-full flex items-center justify-center transition-colors font-label text-sm font-semibold ${i === currentPage ? 'bg-secondary text-on-secondary shadow-md' : 'text-on-surface-variant hover:bg-surface-container'}`;
+                        btn.addEventListener('click', () => {
+                            currentPage = i;
+                            renderPagination();
+                        });
+                        pageNumbersContainer.appendChild(btn);
+                    }
+                }
+            }
+
+            if (prevPageBtn) {
+                prevPageBtn.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderPagination();
+                    }
+                });
+            }
+
+            if (nextPageBtn) {
+                nextPageBtn.addEventListener('click', () => {
+                    const totalItems = gridItems.length > 0 ? gridItems.length : listItems.length;
+                    if (currentPage < Math.ceil(totalItems / pageSize)) {
+                        currentPage++;
+                        renderPagination();
+                    }
+                });
+            }
+
+            // Inicializar paginación
+            renderPagination();
         });
     </script>
 </body>
