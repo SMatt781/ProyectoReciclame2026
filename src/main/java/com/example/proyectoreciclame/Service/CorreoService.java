@@ -54,7 +54,7 @@ public class CorreoService {
                         "Tu solicitud de registro en Recíclame ha sido aprobada.\n\n" +
                         "Ya puedes iniciar sesión con el correo y contraseña que registraste.\n\n" +
                         "Ingresa a la plataforma desde:\n" +
-                        "http://localhost:8080/login\n\n" +
+                        "http://54.236.146.126:8080/login\n\n" +
                         "Equipo Recíclame"
         );
         mailSender.send(message);

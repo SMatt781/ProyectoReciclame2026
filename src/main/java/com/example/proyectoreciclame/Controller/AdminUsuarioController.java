@@ -28,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -280,7 +281,8 @@ public class AdminUsuarioController {
                                 @RequestParam(required = false) String dateStart,
                                 @RequestParam(required = false) String dateEnd,
                                 @RequestParam(required = false) List<String> estado,
-                                Authentication authentication,   // ← agrega esto
+                                Authentication authentication,
+                                RedirectAttributes redirectAttributes,
                                 Model model) {
 
         Usuario usuario = usuarioRepository.findById(form.getIdUsuario()).orElse(null);
@@ -356,6 +358,10 @@ public class AdminUsuarioController {
             usuarioEmpresaRepository.save(ue);
         }
 
+        // ── Flash message ─────────────────────────────────────────────────────
+        redirectAttributes.addFlashAttribute("success", "Usuario editado correctamente.");
+        // ──────────────────────────────────────────────────────────────────────
+
         String url = "redirect:/admin/usuarios/gestion?page=" + page;
         if (texto != null && !texto.isBlank()) url += "&texto=" + texto;
         return url;
@@ -369,7 +375,8 @@ public class AdminUsuarioController {
                                   @RequestParam(required = false) String dateStart,
                                   @RequestParam(required = false) String dateEnd,
                                   @RequestParam(required = false) List<String> estado,
-                                  Authentication authentication) {
+                                  Authentication authentication,
+                                  RedirectAttributes redirectAttributes) {
 
         Usuario usuario = usuarioRepository.findById(form.getIdUsuario()).orElse(null);
         if (usuario == null) {
@@ -397,6 +404,10 @@ public class AdminUsuarioController {
         historialRolesRepository.save(historial);
         // ──────────────────────────────────────────────────────────────────────
 
+        // ── Flash message ─────────────────────────────────────────────────────
+        redirectAttributes.addFlashAttribute("success", "Usuario bloqueado correctamente.");
+        // ──────────────────────────────────────────────────────────────────────
+
         String url = "redirect:/admin/usuarios/gestion?page=" + page;
         if (texto != null && !texto.isBlank()) url += "&texto=" + texto;
         return url;
@@ -410,7 +421,8 @@ public class AdminUsuarioController {
                                      @RequestParam(required = false) String dateStart,
                                      @RequestParam(required = false) String dateEnd,
                                      @RequestParam(required = false) List<String> estado,
-                                     Authentication authentication) {
+                                     Authentication authentication,
+                                     RedirectAttributes redirectAttributes) {
 
         Usuario usuario = usuarioRepository.findById(form.getIdUsuario()).orElse(null);
         if (usuario == null) {
@@ -441,6 +453,10 @@ public class AdminUsuarioController {
         historialRolesRepository.save(historial);
         // ──────────────────────────────────────────────────────────────────────
 
+        // ── Flash message ─────────────────────────────────────────────────────
+        redirectAttributes.addFlashAttribute("success", "Usuario desbloqueado correctamente.");
+        // ──────────────────────────────────────────────────────────────────────
+
         String url = "redirect:/admin/usuarios/gestion?page=" + page;
         if (texto != null && !texto.isBlank()) url += "&texto=" + texto;
         return url;
@@ -468,8 +484,16 @@ public class AdminUsuarioController {
             form.setCargo(usuario.getUsuarioEmpresa().getCargo());
         }
 
+        // ── Filtrar roles: solo mostrar SOCIO y VISUALIZADOR ──────────────────
+        List<Rol> rolesDisponibles = rolRepository.findAll().stream()
+                .filter(rol -> rol.getNombre() != null &&
+                        (rol.getNombre().equalsIgnoreCase("SOCIO") ||
+                                rol.getNombre().equalsIgnoreCase("VISUALIZADOR")))
+                .toList();
+        // ──────────────────────────────────────────────────────────────────────
+
         model.addAttribute("editForm", form);
-        model.addAttribute("roles", rolRepository.findAll());
+        model.addAttribute("roles", rolesDisponibles);
         model.addAttribute("mostrarSelectorPendiente",
                 "RECHAZADO".equalsIgnoreCase(usuario.getEstadoAprobacion()));
     }

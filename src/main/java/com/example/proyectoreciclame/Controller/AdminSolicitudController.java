@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -201,7 +202,8 @@ public class AdminSolicitudController {
 
     @PostMapping("/{idUsuario}/aceptar")
     public String aceptarSolicitud(@PathVariable Long idUsuario,
-                                   Authentication authentication) {
+                                   Authentication authentication,
+                                   RedirectAttributes redirectAttributes) {
 
         Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
 
@@ -235,6 +237,10 @@ public class AdminSolicitudController {
             // ─────────────────────────────────────────────────────────────────
 
             correoService.enviarRegistroAprobado(usuario.getCorreo(), usuario.getNombres());
+
+            // ── Flash message ─────────────────────────────────────────────────
+            redirectAttributes.addFlashAttribute("success", "Solicitud aceptada correctamente. Usuario creado y activado.");
+            // ──────────────────────────────────────────────────────────────────
         }
 
         return "redirect:/admin/usuarios/solicitudes";
@@ -243,7 +249,8 @@ public class AdminSolicitudController {
     @PostMapping("/{idUsuario}/denegar")
     public String denegarSolicitud(@PathVariable Long idUsuario,
                                    @RequestParam(required = false) String motivo,
-                                   Authentication authentication) {
+                                   Authentication authentication,
+                                   RedirectAttributes redirectAttributes) {
 
         Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
 
@@ -278,6 +285,10 @@ public class AdminSolicitudController {
             // ─────────────────────────────────────────────────────────────────
 
             correoService.enviarRegistroDenegado(usuario.getCorreo(), usuario.getNombres(), motivo);
+
+            // ── Flash message ─────────────────────────────────────────────────
+            redirectAttributes.addFlashAttribute("success", "Solicitud denegada correctamente.");
+            // ──────────────────────────────────────────────────────────────────
         }
 
         return "redirect:/admin/usuarios/solicitudes";

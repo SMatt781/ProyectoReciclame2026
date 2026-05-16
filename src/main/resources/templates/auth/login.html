@@ -5,6 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Iniciar Sesión - Repositorio Circular</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="/js/flash-messages.js"></script>
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -142,7 +143,7 @@
             </div>
 
             <!-- Sesión cerrada correctamente -->
-            <div class="mt-6" th:if="${param.logout}">
+            <div class="mt-6 flash-message" th:if="${param.logout}">
                 <div class="rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
                     Sesión cerrada correctamente.
                 </div>
