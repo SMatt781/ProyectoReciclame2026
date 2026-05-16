@@ -247,6 +247,7 @@ public class SuperadminController {
         // 5. Estado de cuenta activo
         usuario.setEstadoCuenta(Usuario.EstadoCuenta.ACTIVO);
         usuario.setEstadoAprobacion("APROBADO");
+        usuarioRepository.save(usuario);
 
         Usuario superadmin = usuarioRepository
                 .findByCorreoWithRol(authentication.getName()).orElse(null);

@@ -9,10 +9,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin/reportes")
@@ -63,5 +67,30 @@ public class AdminReporteController {
         model.addAttribute("descargasSocio",       registroDescargaRepository.countByRolUsuario("SOCIO"));
         model.addAttribute("descargasVisualizador", registroDescargaRepository.countByRolUsuario("VISUALIZADOR"));
         return "admin/reportes";
+    }
+
+    @GetMapping("/datos-ingresos")
+    @ResponseBody
+    public Map<String, Object> obtenerDatosIngresos(@RequestParam(defaultValue = "7") int dias) {
+        LocalDateTime inicio = LocalDate.now().minusDays(dias - 1).atStartOfDay();
+
+        // Obtener datos por día
+        List<Object[]> porDia = registroSesionRepository.contarSesionesPorDia(inicio);
+
+        List<String> etiquetas = porDia.stream()
+                .map(r -> LocalDate.parse(r[0].toString())
+                        .getDayOfWeek()
+                        .getDisplayName(java.time.format.TextStyle.SHORT, new java.util.Locale("es", "PE")))
+                .toList();
+
+        List<Integer> valores = porDia.stream()
+                .map(r -> Integer.parseInt(r[1].toString()))
+                .toList();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("diasLabels", etiquetas);
+        response.put("diasValores", valores);
+
+        return response;
     }
 }

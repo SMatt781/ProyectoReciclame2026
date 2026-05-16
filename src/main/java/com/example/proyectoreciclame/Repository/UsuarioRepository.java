@@ -237,7 +237,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     @Query("SELECT u FROM Usuario u WHERE u.rol.idRol IN :rolIds " +
             "AND u.eliminadoEn IS NULL " +
-            "ORDER BY u.idUsuario DESC LIMIT 1")
+            "ORDER BY u.fechaRegistro DESC LIMIT 1")
     Optional<Usuario> findUltimoAdminCreado(@Param("rolIds") List<Integer> rolIds);
 
     @Query("SELECT u FROM Usuario u WHERE u.rol.idRol IN :rolIds AND u.eliminadoEn IS NULL")

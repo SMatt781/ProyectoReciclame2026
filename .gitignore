@@ -35,3 +35,4 @@ node_modules/
 
 ### Credenciales locales (nunca subir a git) ###
 src/main/resources/application-local.properties
+src/main/resources/application_local.properties
