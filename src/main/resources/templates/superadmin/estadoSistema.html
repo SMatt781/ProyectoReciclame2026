@@ -102,8 +102,6 @@
             height: 1px;
         }
     </style>
-    <div th:replace="~{fragments/responsive}"></div>
-
 </head>
 
 <body class="bg-surface text-on-surface h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
@@ -380,85 +378,50 @@
                     <!-- Variables: ${totalUsuarios}, ${totalRoles}, ${totalDominios}, ${totalNormativas},
                                    ${totalEstudios}, ${totalPublicaciones}, ${totalChatSesiones},
                                    ${totalAuditoria}, ${totalNotificaciones}, ${totalIndicadores} -->
-                    <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4">
-
+                    <div class="grid grid-cols-3 gap-2 mb-4">
                         <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
                             <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[12px]">group</span> usuarios
+                                <span class="material-symbols-outlined text-[12px]">group</span> Usuarios
                             </p>
                             <p class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalUsuarios}">—</p>
                         </div>
-
                         <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
                             <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[12px]">shield</span> roles
+                                <span class="material-symbols-outlined text-[12px]">shield</span> Roles
                             </p>
                             <p class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalRoles}">—</p>
                         </div>
-
                         <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
                             <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[12px]">domain</span> dominios
+                                <span class="material-symbols-outlined text-[12px]">domain</span> Dominios
                             </p>
                             <p class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalDominios}">—</p>
                         </div>
-
                         <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
                             <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[12px]">policy</span> normativas
+                                <span class="material-symbols-outlined text-[12px]">policy</span> Normativas
                             </p>
                             <p class="font-mono text-xl font-bold text-secondary" th:text="${totalNormativas}">—</p>
                         </div>
-
                         <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
                             <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[12px]">science</span> estudios
+                                <span class="material-symbols-outlined text-[12px]">science</span> Estudios
                             </p>
                             <p class="font-mono text-xl font-bold text-secondary" th:text="${totalEstudios}">—</p>
                         </div>
-
                         <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
                             <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[12px]">article</span> publicaciones
-                            </p>
-                            <p class="font-mono text-xl font-bold text-blue-600" th:text="${totalPublicaciones}">—</p>
-                        </div>
-
-                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[12px]">chat</span> chat
-                            </p>
-                            <p class="font-mono text-xl font-bold text-blue-600" th:text="${totalChatSesiones}">—</p>
-                        </div>
-
-                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[12px]">manage_search</span> auditoría
-                            </p>
-                            <p class="font-mono text-xl font-bold text-amber-600" th:text="${totalAuditoria}">—</p>
-                        </div>
-
-                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[12px]">notifications</span> notif.
+                                <span class="material-symbols-outlined text-[12px]">notifications</span> Notificaciones
                             </p>
                             <p class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalNotificaciones}">—</p>
                         </div>
-
-                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[12px]">bar_chart</span> indicadores
-                            </p>
-                            <p class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalIndicadores}">—</p>
-                        </div>
-
                     </div>
 
                     <!-- Barra de uptime 30 días -->
                     <div>
                         <div class="flex justify-between items-center mb-1.5">
                             <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Uptime BD — últimos 30 días</p>
-                            <!-- th:text="${uptimeBdPct} + '%'" -->
+                            <!----- th:text="${uptimeBdPct} + '%'" -->
                             <span class="font-mono text-[10px] font-bold text-secondary">99.8%</span>
                         </div>
                         <div class="flex gap-0.5 h-5">
@@ -469,9 +432,9 @@
                             <!-- 4 días OK -->
                             <div th:each="i : ${#numbers.sequence(1, 4)}" class="uptime-block bg-secondary/60 rounded-sm" title="Operativo"></div>
                         </div>
-                        <div class="flex justify-between mt-1">
-                            <span class="font-mono text-[9px] text-slate-400">Hace 30 días</span>
-                            <span class="font-mono text-[9px] text-slate-400">Hoy</span>
+                        <div class="flex justify-between mt-2 px-0.5">
+                            <span class="font-mono text-[10px] text-slate-400">Hace 30 días</span>
+                            <span class="font-mono text-[10px] text-slate-400">Hoy</span>
                         </div>
                     </div>
 
@@ -557,7 +520,7 @@
             </div>
 
             <!-- ── Log de errores — terminal (3 cols) ── -->
-            <div class="xl:col-span-3 rounded-[1.25rem] border border-slate-800 shadow-sm overflow-hidden">
+            <div class="xl:col-span-3 rounded-[1.25rem] border border-slate-800 shadow-sm overflow-hidden flex flex-col">
 
                 <!-- Header estilo terminal -->
                 <div class="bg-slate-900 px-5 py-3 flex items-center justify-between">
@@ -579,7 +542,7 @@
                 </div>
 
                 <!-- Cuerpo del terminal -->
-                <div class="log-terminal px-0 py-2 min-h-[240px] max-h-[280px] overflow-y-auto">
+                <div class="log-terminal px-0 py-2 flex-1 overflow-y-auto">
 
                     <!--
                         THYMELEAF: Itera sobre ${logEntries} (List<LogEntry>)
