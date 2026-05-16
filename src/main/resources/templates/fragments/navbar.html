@@ -90,6 +90,31 @@
 
     // Cerrar sidebar al hacer click en un enlace
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('🔍 DOMContentLoaded ejecutado');
+
+        // ─── Auto-desaparecer mensajes flash después de 5 segundos ───
+        function autoDisappearMessage(selector) {
+            const messages = document.querySelectorAll(selector);
+            messages.forEach(function(message) {
+                if (message) {
+                    setTimeout(function() {
+                        message.style.transition = 'opacity 0.5s ease-out';
+                        message.style.opacity = '0';
+                        setTimeout(function() {
+                            message.remove();
+                        }, 500);
+                    }, 5000);
+                }
+            });
+        }
+
+        // Seleccionar todos los tipos de mensajes flash
+        autoDisappearMessage('[class*="flash-message"]');
+        autoDisappearMessage('.alert-success');
+        autoDisappearMessage('.alert-error');
+        autoDisappearMessage('.alert-info');
+
+        // ─── Cerrar sidebar al hacer click en un enlace ───
         document.querySelectorAll('.sidebar-link').forEach(link => {
             link.addEventListener('click', () => {
                 const sidebar = document.getElementById('sidebar');
