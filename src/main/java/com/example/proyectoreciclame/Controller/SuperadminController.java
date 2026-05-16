@@ -349,6 +349,7 @@ public class SuperadminController {
             @RequestParam String dominioCorreo,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "texto", required = false) String texto,
+            @RequestParam(required = false) String estadoCuenta,
             RedirectAttributes redirectAttributes,
             org.springframework.security.core.Authentication authentication
     ) {
@@ -385,6 +386,9 @@ public class SuperadminController {
         admin.setTelefono(telefono != null ? telefono.trim() : null);
         admin.setCorreo(correo);
         admin.setActualizadoEn(LocalDateTime.now());
+        if (estadoCuenta != null && !estadoCuenta.isBlank()) {
+            admin.setEstadoCuenta(Usuario.EstadoCuenta.valueOf(estadoCuenta));
+        }
 
         usuarioRepository.save(admin);
 
