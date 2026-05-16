@@ -49,7 +49,9 @@ public interface NormativaRepository extends JpaRepository<Normativa, Long> {
     List<Normativa> findNormativasSimilaresPorCategoria(@Param("idsCategorias") List<Integer> idsCategorias, @Param("idActual") Long idActual, Pageable pageable);
 
     List<Normativa> findByFechaCreacionAfter(LocalDateTime fechaCreacion);
+    List<Normativa> findByFechaCreacionAfterAndEliminadoEnIsNull(LocalDateTime fechaCreacion);
     List<Normativa> findByFechaActualizacionAfterAndFechaCreacionBefore(LocalDateTime fechaActualizacion, LocalDateTime fechaCreacion);
+    List<Normativa> findByFechaActualizacionAfterAndFechaCreacionBeforeAndEliminadoEnIsNull(LocalDateTime fechaActualizacion, LocalDateTime fechaCreacion);
 
     long countByEstadoAndEliminadoEnIsNull(Normativa.EstadoNormativa estado);
 
