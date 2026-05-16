@@ -112,6 +112,8 @@
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
     </style>
+    <div th:replace="~{fragments/responsive}"></div>
+
 </head>
 
 <body
@@ -257,7 +259,7 @@
                         <div class="flex items-center justify-between text-sm">
                             <p class="text-on-surface-variant font-medium"
                                 th:text="${ultimaVisitaExacta}">14 may, 3:42 PM</p>
-                            <p class="font-semibold text-[#4caf50]" th:if="${enLineaAhora}">✅ En línea ahora</p>
+                            <p class="font-semibold text-[#4caf50]" th:if="${enLineaAhora}"> En línea ahora</p>
                             <p class="font-semibold text-on-surface-variant"
                                 th:if="${!enLineaAhora and tieneUltimoAcceso}">Acceso registrado</p>
                             <p class="font-semibold text-on-surface-variant" th:if="${!tieneUltimoAcceso}">Sin datos disponibles</p>
@@ -345,19 +347,8 @@
                             <div th:each="descarga : ${ultimasDescargas}"
                                 class="flex items-center gap-4 p-2 -mx-2 rounded-lg hover:bg-surface-container transition-colors">
                                 <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
-                                    th:classappend="${#strings.equalsIgnoreCase(descarga.tipoDocumento, 'ESTUDIO')} ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'">
-                                    <svg th:if="${#strings.equalsIgnoreCase(descarga.tipoDocumento, 'ESTUDIO')}"
-                                        class="icon-md" fill="currentColor" viewBox="0 0 24 24">
-                                        <path
-                                            d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z">
-                                        </path>
-                                    </svg>
-                                    <svg th:if="${#strings.equalsIgnoreCase(descarga.tipoDocumento, 'NORMATIVA')}"
-                                        class="icon-md" fill="currentColor" viewBox="0 0 24 24">
-                                        <path
-                                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
-                                        </path>
-                                    </svg>
+                                    th:classappend="${#strings.equalsIgnoreCase(descarga.tipoDocumento, 'ESTUDIO')} ? 'bg-blue-100' : 'bg-green-100'">
+                                    <div th:replace="${#strings.equalsIgnoreCase(descarga.tipoDocumento, 'ESTUDIO')} ? ~{fragments/icons.html :: icon-estudios-inicio} : ~{fragments/icons.html :: icon-normativas-inicio}"></div>
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="font-body text-sm font-medium text-on-primary-fixed truncate"

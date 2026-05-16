@@ -79,6 +79,7 @@
             }
         };
     </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
@@ -111,6 +112,8 @@
             height: 2.5rem;
         }
     </style>
+    <div th:replace="~{fragments/responsive}"></div>
+
 </head>
 
 <body
@@ -375,7 +378,7 @@
             <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
                 <!-- Search Bar -->
                 <!-- Search Bar -->
-                <form action="/normativas" method="GET" class="flex gap-4 mb-6">
+                <form action="/normativas"  method="GET" class="flex flex-col sm:flex-row gap-4 mb-6 w-full flex-wrap">
                     <div class="flex-1 relative">
                         <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
                              viewBox="0 0 24 24">

@@ -2,8 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<aside th:fragment="sidebar"
-       class="hidden md:flex flex-col h-full w-64 p-5 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50">
+<aside id="sidebar" th:fragment="sidebar" class="md:flex flex-col h-full w-64 p-5 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50 fixed md:static left-0 top-0 h-screen md:h-auto -translate-x-full md:translate-x-0 transition-transform duration-300">
+
 
   <!-- Brand / Header -->
   <div class="flex items-center gap-3 mb-10 pl-2">

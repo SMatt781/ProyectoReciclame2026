@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration
 public class SecurityConfig {
@@ -44,7 +45,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
+        CsrfTokenRequestAttributeHandler csrfHandler = new CsrfTokenRequestAttributeHandler();
+        csrfHandler.setCsrfRequestAttributeName(null);
+
         http
+                .csrf(csrf -> csrf.csrfTokenRequestHandler(csrfHandler))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/login",
@@ -68,7 +73,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
-                        .accessDeniedPage("/acceso-denegado")
+                        .accessDeniedHandler((request, response, ex) ->
+                                response.sendRedirect(request.getContextPath() + "/acceso-denegado"))
                 )
                 .addFilterBefore(
                         new RecaptchaLoginFilter(recaptchaService),

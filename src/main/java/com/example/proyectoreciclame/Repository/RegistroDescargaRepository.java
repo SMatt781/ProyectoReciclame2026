@@ -59,8 +59,7 @@ public interface RegistroDescargaRepository extends JpaRepository<RegistroDescar
     @Query("SELECT COUNT(rd) FROM RegistroDescarga rd WHERE rd.usuario.idUsuario = :idUsuario AND rd.fechaDescarga >= :fechaInicio AND rd.fechaDescarga <= :fechaFin")
     long countByUsuarioIdUsuarioAndFechaDescargaBetween(@Param("idUsuario") Long idUsuario, @Param("fechaInicio") LocalDateTime fechaInicio, @Param("fechaFin") LocalDateTime fechaFin);
 
-    @Query("SELECT rd FROM RegistroDescarga rd WHERE rd.usuario.idUsuario = :idUsuario ORDER BY rd.fechaDescarga DESC LIMIT 3")
-    List<RegistroDescarga> findTop3ByUsuarioIdUsuarioOrderByFechaDescargaDesc(@Param("idUsuario") Long idUsuario);
+    List<RegistroDescarga> findTop2ByUsuarioIdUsuarioOrderByFechaDescargaDesc(Long idUsuario);
 
     // Top 5 documentos más descargados
     @Query(value = "SELECT nombre_documento, tipo_documento, COUNT(*) AS total FROM registro_descarga GROUP BY nombre_documento, tipo_documento ORDER BY total DESC LIMIT 5", nativeQuery = true)
