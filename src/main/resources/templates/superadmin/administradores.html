@@ -283,6 +283,7 @@
                             </p>
                         </div>
                     </div>
+
                 </form>
 
                 <div class="px-8 py-5 bg-surface-container-low0 flex items-center justify-end gap-4 border-t border-slate-100">
@@ -743,20 +744,18 @@
                 <div class="overflow-x-auto w-full pb-4">
                     <div class="flex flex-col gap-4 min-w-full md:min-w-[900px] w-full">
                         <!-- Cabecera -->
-                        <div class="hidden md:grid grid-cols-[1.4fr_1.5fr_0.8fr_1.1fr_1fr] gap-0 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-on-surface-variant tracking-[0.12em] uppercase tracking-wider">
-
+                        <div class="hidden md:grid grid-cols-5 gap-0 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-on-surface-variant tracking-[0.12em] uppercase tracking-wider">
                             <div class="px-6 py-3">Nombre Completo</div>
                             <div class="px-3 py-3">Correo Electrónico</div>
-                            <div class="px-3 py-3 justify-center">Estado</div>
-                            <div class="px-3 py-3 justify-center">Última Conexión</div>
-                            <div class="px-3 py-3 justify-center">Acciones</div>
-
+                            <div class="px-3 py-3 flex justify-center">Estado</div>
+                            <div class="px-3 py-3 flex justify-center">Última Conexión</div>
+                            <div class="px-3 py-3 flex justify-center">Acciones</div>
                         </div>
 
                         <!-- Filas -->
                         <div th:each="admin : ${administradores.content}"
                              th:classappend="${admin.estadoCuenta == T(com.example.proyectoreciclame.Entity.Usuario.EstadoCuenta).BLOQUEADO} ? 'bg-red-50/80 border-red-100' : 'bg-surface-container-lowest border-transparent'"
-                             class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[1.4fr_1.5fr_0.8fr_1.1fr_1fr] md:gap-0 items-start md:items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                             class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-5 md:gap-0 items-start md:items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
 
                             <!-- Nombre -->
                             <div class="flex items-center gap-3 w-full px-3">
@@ -782,13 +781,11 @@
                             <!-- Estado -->
                             <!-- Estado — clickeable -->
                             <div class="flex items-center justify-center w-full px-3">
-                                <button type="button"
-                                        th:attr="onclick='abrirConfirmarEstadoAdmin(' + ${admin.idUsuario} + ', \'' + ${admin.nombres} + ' ' + ${admin.apellidoPaterno} + '\', \'' + ${admin.estadoCuenta} + '\')'"
-                                        th:class="${admin.estadoCuenta == T(com.example.proyectoreciclame.Entity.Usuario.EstadoCuenta).BLOQUEADO}
-                                           ? 'rounded-full px-3 py-1 text-[10px] font-extrabold uppercase bg-red-100 text-red-700 hover:bg-red-200 transition-all cursor-pointer'
-                                           : 'rounded-full px-3 py-1 text-[10px] font-extrabold uppercase bg-[#00743a]/10 text-secondaryhover:bg-emerald-200 transition-all cursor-pointer'"
-                                        th:text="${admin.estadoCuenta}">
-                                </button>
+                                <span th:class="${admin.estadoCuenta.name() == 'BLOQUEADO'}
+                                       ? 'rounded-full px-3 py-1 text-[10px] font-extrabold uppercase bg-red-100 text-red-700'
+                                       : 'rounded-full px-3 py-1 text-[10px] font-extrabold uppercase bg-secondary-container/20 text-secondary'"
+                                                                      th:text="${admin.estadoCuenta}">
+                                </span>
                             </div>
 
                             <!-- Última conexión -->
@@ -797,7 +794,7 @@
                                 Sin registro
                             </div>
                             <!-- Acciones -->
-                            <div class="flex items-center justify-center gap-2 whitespace-nowrap w-full px-3">
+                            <div class="flex items-center justify-end gap-2 whitespace-nowrap w-full px-3">
 
                                 <a th:href="@{/superadmin/administradores/editar/{id}(id=${admin.idUsuario}, page=${currentPage}, texto=${texto})}"
                                    class="inline-flex items-center justify-center h-9 rounded-lg px-3 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
@@ -954,6 +951,21 @@
                         </option>
                     </select>
                 </div>
+            </div>
+            <!-- Estado -->
+            <div class="space-y-2">
+                <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest block">Estado</label>
+                <select name="estadoCuenta"
+                        class="w-full h-12 px-4 bg-surface-container-low border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20 cursor-pointer">
+                    <option value="ACTIVO"
+                            th:selected="${adminEditar?.estadoCuenta?.name() == 'ACTIVO'}">
+                        Activo
+                    </option>
+                    <option value="BLOQUEADO"
+                            th:selected="${adminEditar?.estadoCuenta?.name() == 'BLOQUEADO'}">
+                        Bloqueado
+                    </option>
+                </select>
             </div>
         </form>
 
