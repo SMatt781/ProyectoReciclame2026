@@ -225,18 +225,17 @@
                         <div class="flex flex-col gap-4 min-w-[1100px] w-full">
 
                             <!-- Cabecera -->
-                            <div class="hidden md:grid grid-cols-[240px_140px_160px_90px_1fr] gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                            <div class="hidden md:grid grid-cols-5 gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
                                 <div>Nombre de dominio</div>
                                 <div>Fecha de adición</div>
-                                <div>Añadido por</div>
-                                <div>Estado</div>
-                                <div class="text-right">Acciones</div>
+                                <div class="flex justify-center">Añadido por</div>
+                                <div class="flex justify-center">Estado</div>
+                                <div class="flex justify-center">Acciones</div>
                             </div>
 
                             <!-- Filas -->
                             <div th:each="dominio : ${dominios}"
-                                 class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[240px_140px_160px_90px_1fr] gap-4 items-start md:items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
-
+                                 class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-5 gap-4 items-start md:items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
                                 <!-- Dominio -->
                                 <div class="flex items-center w-full">
                                     <div>
@@ -251,38 +250,33 @@
                                 </div>
 
                                 <!-- Fecha -->
-                                <div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant"
+                                <div class="flex justify-start w-full md:w-auto text-sm font-semibold text-on-primary-fixed"
                                      th:text="${#temporals.format(dominio.fechaRegistro, 'dd MMM yyyy')}">
                                     12 oct 2023
                                 </div>
 
                                 <!-- Usuario -->
-                                <div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant italic"
+                                <div class="flex justify-center w-full md:w-auto text-sm font-semibold text-on-primary-fixed"
                                      th:text="${dominio.usuarioCreador.nombres + ' ' + dominio.usuarioCreador.apellidoPaterno}">
                                     Admin
                                 </div>
 
                                 <!-- Estado -->
-                                <span th:if="${dominio.estado}" class="rounded-full bg-secondary-container/20 px-3 py-1 text-[10px] font-extrabold uppercase text-secondary w-fit">
-                                    Activo
-                                </span>
-                                <span th:unless="${dominio.estado}" class="rounded-full bg-error-container px-3 py-1 text-[10px] font-extrabold uppercase text-error w-fit">
-                                    Inactivo
-                                </span>
+                                <div class="flex items-center justify-center">
+                                        <span th:if="${dominio.estado}" class="rounded-full bg-secondary-container/20 px-3 py-1 text-[10px] font-extrabold uppercase text-secondary w-fit">
+                                            Activo
+                                        </span>
+                                        <span th:unless="${dominio.estado}" class="rounded-full bg-error-container px-3 py-1 text-[10px] font-extrabold uppercase text-error w-fit">
+                                            Inactivo
+                                        </span>
+                                </div>
 
                                 <!-- Acciones -->
-                                <div class="flex justify-end gap-1.5 flex-wrap w-full md:w-auto">
+                                <div class="flex justify-center gap-1.5 flex-wrap w-full md:w-auto">
                                     <button type="button"
                                             class="btn-editar-dominio inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors"
                                             th:attr="data-id=${dominio.idDominio}, data-nombre=${dominio.nombreDominio}, data-motivo=${dominio.motivoAutorizacion}, data-estado=${dominio.estado}">
                                         Editar
-                                    </button>
-
-                                    <button type="button"
-                                            class="btn-cambiar-estado inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors"
-                                            th:classappend="${dominio.estado} ? 'hover:bg-error-container hover:text-error' : 'hover:bg-secondary-container/20 hover:text-secondary'"
-                                            th:attr="data-id=${dominio.idDominio}, data-nombre=${dominio.nombreDominio}, data-estado=${dominio.estado}"
-                                            th:text="${dominio.estado} ? 'Desactivar' : 'Activar'">
                                     </button>
 
                                     <button type="button"
@@ -447,17 +441,15 @@
                         </div>
 
                         <!-- Vista previa de complejidad -->
-                        <div class="bg-primary-container rounded-xl p-8 flex items-center gap-6">
-                            <div class="flex items-center gap-3 text-secondary shrink-0">
-                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
-                                </svg>
-                                <span class="text-[10px] font-bold uppercase tracking-widest text-secondary whitespace-nowrap">
-                    CONTRASEÑA DE EJEMPLO
-                </span>
+                        <div class="bg-[#101F33] rounded-[24px] p-8 flex items-center gap-6">
+                            <div class="flex items-center gap-3 text-[#059669] shrink-0">
+                                <span class="material-symbols-outlined text-2xl">verified_user</span>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-[#56C596] whitespace-nowrap">
+                                    CONTRASEÑA DE EJEMPLO
+                                </span>
                             </div>
-                            <div class="h-8 w-px bg-outline-variant/30"></div>
-                            <div class="font-mono font-bold text-on-primary-fixed tracking-widest text-lg" id="previsualizacion">
+                            <div class="h-8 w-px bg-slate-600"></div>
+                            <div class="font-mono font-bold text-white tracking-widest text-xl" id="previsualizacion">
                             </div>
                         </div>
 
@@ -802,7 +794,6 @@
             }
         });
     }
-
     // ── Contraseña de ejemplo dinámica ────────────────────────────────────────────
     const BANCO_MINUSCULAS = 'abcdefghjkmnpqrstuvwxyz';
     const BANCO_MAYUSCULAS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -815,7 +806,6 @@
         const simbolo   = document.getElementById('toggle-simbolo').checked;
         const longitud  = parseInt(document.querySelector('input[name="longitudMinima"]').value) || 8;
 
-        // Construir pool de caracteres según reglas activas
         let pool = BANCO_MINUSCULAS;
         let obligatorios = [];
 
@@ -832,25 +822,19 @@
             obligatorios.push(BANCO_SIMBOLOS[Math.floor(Math.random() * BANCO_SIMBOLOS.length)]);
         }
 
-        // Rellenar hasta la longitud mínima
         let resultado = [...obligatorios];
         while (resultado.length < longitud) {
             resultado.push(pool[Math.floor(Math.random() * pool.length)]);
         }
-
-        // Mezclar para que los obligatorios no siempre estén al inicio
         resultado = resultado.sort(() => Math.random() - 0.5);
-
         document.getElementById('previsualizacion').textContent = resultado.join('');
     }
 
-    // Regenerar cuando cambia cualquier toggle o el número de longitud
     document.querySelectorAll('.toggle-politica').forEach(cb => {
         cb.addEventListener('change', () => setTimeout(generarContrasenaEjemplo, 50));
     });
     document.querySelector('input[name="longitudMinima"]').addEventListener('input', generarContrasenaEjemplo);
 
-    // Generar al cargar la página
     generarContrasenaEjemplo();
 </script>
 
