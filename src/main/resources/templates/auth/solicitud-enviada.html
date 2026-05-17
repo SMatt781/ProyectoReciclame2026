@@ -114,7 +114,7 @@
                     <line x1="12" y1="17" x2="12.01" y2="17"></line>
                 </svg>
                 <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tight">
-                        ¿Dudas? <a href="#" class="text-primary hover:underline ml-1">Contactar soporte</a>
+                        ¿Dudas? <a th:href="@{/soporte}" class="text-primary hover:underline ml-1">Contactar soporte</a>
                     </span>
             </div>
         </div>
@@ -127,9 +127,9 @@
             © 2026 THE CIRCULAR EDITORIAL. ALL RIGHTS RESERVED.
         </p>
         <nav class="flex flex-wrap justify-center gap-x-4 gap-y-2">
-            <a class="text-[8px] font-bold tracking-[0.1em] text-on-surface-variant/40 hover:text-primary transition-colors uppercase font-headline" href="#">PRIVACIDAD</a>
-            <a class="text-[8px] font-bold tracking-[0.1em] text-on-surface-variant/40 hover:text-primary transition-colors uppercase font-headline" href="#">SOPORTE</a>
-            <a class="text-[8px] font-bold tracking-[0.1em] text-on-surface-variant/40 hover:text-primary transition-colors uppercase font-headline" href="#">TÉRMINOS</a>
+            <a th:href="@{/privacidad}" class="text-[8px] font-bold tracking-[0.1em] text-on-surface-variant/40 hover:text-primary transition-colors uppercase font-headline">PRIVACIDAD</a>
+            <a th:href="@{/soporte}" class="text-[8px] font-bold tracking-[0.1em] text-on-surface-variant/40 hover:text-primary transition-colors uppercase font-headline">SOPORTE</a>
+            <a th:href="@{/terminos}" class="text-[8px] font-bold tracking-[0.1em] text-on-surface-variant/40 hover:text-primary transition-colors uppercase font-headline">TÉRMINOS</a>
         </nav>
     </div>
 </footer>

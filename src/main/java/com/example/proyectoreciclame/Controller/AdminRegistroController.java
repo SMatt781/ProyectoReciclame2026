@@ -75,6 +75,7 @@ public class AdminRegistroController {
         model.addAttribute("texto", texto);
         model.addAttribute("fecha", fecha);
         model.addAttribute("rol", rol);
+        model.addAttribute("today", LocalDate.now().format(java.time.format.DateTimeFormatter.ISO_DATE));
 
         Double promedio = registroSesionRepository.getPromedioDuracion();
         model.addAttribute("promedioDuracion", promedio != null ? Math.round(promedio) : 0);
@@ -120,6 +121,7 @@ public class AdminRegistroController {
         model.addAttribute("tipo", tipo);
         model.addAttribute("fechaInicio", fechaInicio);
         model.addAttribute("fechaFin", fechaFin);
+        model.addAttribute("today", LocalDate.now().format(java.time.format.DateTimeFormatter.ISO_DATE));
 
         model.addAttribute("totalDescargas", registroDescargaRepository.count());
         model.addAttribute("totalNormativas", registroDescargaRepository.countByTipoDocumento("NORMATIVA"));

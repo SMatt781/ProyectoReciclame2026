@@ -146,7 +146,7 @@
                                        class="w-full px-4 py-3 rounded-2xl bg-surface-container-low border-transparent focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-medium">
                             </div>
 
-                            <div class="space-y-2">
+                            <div class="space-y-2" th:if="${usuario.dni != null and !usuario.dni.isEmpty()}">
                                 <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1 text-opacity-50">DNI (No editable)</label>
                                 <input type="text" th:value="${usuario.dni}" readonly
                                        class="w-full px-4 py-3 rounded-2xl bg-surface-container/50 border-transparent text-on-surface-variant/60 cursor-not-allowed font-medium">
