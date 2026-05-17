@@ -119,6 +119,26 @@ public class AdminNotificacionController {
         crearNotificacionPorRol(List.of(4), titulo, mensaje, tipo, enlace);
     }
 
+    public void crearNotificacionPorUsuario(Long idUsuario, String titulo, String mensaje, String tipo, String enlace) {
+        try {
+            Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+            if (usuario != null) {
+                Notificacion n = new Notificacion();
+                n.setUsuario(usuario);
+                n.setTitulo(titulo);
+                n.setMensaje(mensaje);
+                n.setTipo(tipo);
+                n.setEnlaceReferencia(enlace);
+                n.setLeido(false);
+                n.setFecha(LocalDateTime.now());
+                notificacionRepository.save(n);
+            }
+        } catch (Exception e) {
+            System.out.println("ERROR notificación por usuario: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     private void crearNotificacionPorRol(List<Integer> rolIds, String titulo, String mensaje, String tipo, String enlace) {
         try {
             usuarioRepository.findByRolIdInAndEliminadoEnIsNull(rolIds)

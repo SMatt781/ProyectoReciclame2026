@@ -48,17 +48,20 @@ public class AdminUsuarioController {
     private final UsuarioEmpresaRepository usuarioEmpresaRepository;
     private final HistorialRolesRepository historialRolesRepository;
     private final IntentoLoginRepository intentoLoginRepository;
+    private final AdminNotificacionController adminNotificacionController;
 
     public AdminUsuarioController(UsuarioRepository usuarioRepository,
                                   RolRepository rolRepository,
                                   UsuarioEmpresaRepository usuarioEmpresaRepository,
                                   HistorialRolesRepository historialRolesRepository,
-                                  IntentoLoginRepository intentoLoginRepository) {
+                                  IntentoLoginRepository intentoLoginRepository,
+                                  AdminNotificacionController adminNotificacionController) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.usuarioEmpresaRepository = usuarioEmpresaRepository;
         this.historialRolesRepository = historialRolesRepository;
         this.intentoLoginRepository = intentoLoginRepository;
+        this.adminNotificacionController = adminNotificacionController;
     }
 
     @GetMapping("/gestion")
@@ -358,6 +361,15 @@ public class AdminUsuarioController {
             usuarioEmpresaRepository.save(ue);
         }
 
+        // ── Crear notificación para ADMIN cuando se edita un usuario ──────────
+        adminNotificacionController.crearNotificacionAdmin(
+                "Usuario editado",
+                "El usuario " + usuario.getNombres() + " " + usuario.getApellidoPaterno() + " ha sido editado.",
+                "USUARIO_EDITADO",
+                "/admin/usuarios/gestion"
+        );
+        // ──────────────────────────────────────────────────────────────────────
+
         // ── Flash message ─────────────────────────────────────────────────────
         redirectAttributes.addFlashAttribute("success", "Usuario editado correctamente.");
         // ──────────────────────────────────────────────────────────────────────
@@ -402,6 +414,29 @@ public class AdminUsuarioController {
         historial.setAutorizadoPor(adminQueActua);
         historial.setMotivo(form.getMotivo() != null ? form.getMotivo() : "Cuenta bloqueada por administrador");
         historialRolesRepository.save(historial);
+        // ──────────────────────────────────────────────────────────────────────
+
+        // ── Crear notificación para ADMIN y usuario bloqueado ──────────────────
+        // Notificación a todos los ADMINS
+        adminNotificacionController.crearNotificacionAdmin(
+                "Usuario bloqueado",
+                usuario.getNombres() + " " + usuario.getApellidoPaterno() + " ha sido bloqueado.",
+                "USUARIO_BLOQUEADO",
+                "/admin/usuarios/gestion"
+        );
+
+        // Notificación al usuario bloqueado
+        String motivoNotificacion = form.getMotivo() != null && !form.getMotivo().isBlank()
+                ? "Tu cuenta ha sido bloqueada. Motivo: " + form.getMotivo()
+                : "Tu cuenta ha sido bloqueada.";
+
+        adminNotificacionController.crearNotificacionPorUsuario(
+                usuario.getIdUsuario(),
+                "Tu cuenta ha sido bloqueada",
+                motivoNotificacion,
+                "USUARIO_BLOQUEADO",
+                null
+        );
         // ──────────────────────────────────────────────────────────────────────
 
         // ── Flash message ─────────────────────────────────────────────────────
@@ -451,6 +486,25 @@ public class AdminUsuarioController {
         historial.setAutorizadoPor(adminQueActua);
         historial.setMotivo("Cuenta desbloqueada por administrador");
         historialRolesRepository.save(historial);
+        // ──────────────────────────────────────────────────────────────────────
+
+        // ── Crear notificación para ADMIN y usuario desbloqueado ───────────────
+        // Notificación a todos los ADMINS
+        adminNotificacionController.crearNotificacionAdmin(
+                "Usuario desbloqueado",
+                usuario.getNombres() + " " + usuario.getApellidoPaterno() + " ha sido desbloqueado.",
+                "USUARIO_DESBLOQUEADO",
+                "/admin/usuarios/gestion"
+        );
+
+        // Notificación al usuario desbloqueado
+        adminNotificacionController.crearNotificacionPorUsuario(
+                usuario.getIdUsuario(),
+                "Tu cuenta ha sido desbloqueada",
+                "Tu cuenta ha sido reactivada. Ya puedes volver a acceder.",
+                "USUARIO_DESBLOQUEADO",
+                "/login"
+        );
         // ──────────────────────────────────────────────────────────────────────
 
         // ── Flash message ─────────────────────────────────────────────────────
