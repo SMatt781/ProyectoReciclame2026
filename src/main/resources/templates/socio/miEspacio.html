@@ -172,7 +172,7 @@
     <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
         <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-        <main class="flex-1 overflow-y-auto px-4 sm:px-6 py-2">
+        <main class="flex-1 overflow-y-auto px-4 sm:px-6 py-2 bg-[#f9f9ff]">
             <div class="w-full">
                 <!-- Toast notifications -->
                 <div th:if="${carpetaCreadaExito}"
@@ -223,77 +223,103 @@
 
                 <!-- Page Header -->
                 <div class="mb-5">
-                    <div>
-
-                        <h2
-                            class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight flex items-center gap-2">
-
-                            Mi Espacio
-                        </h2>
-                        <p class="font-body text-on-surface-variant text-sm mt-1 max-w-3xl">
-                            Organiza y accede rápidamente a tus estudios y normativas guardadas.
-                        </p>
+                    <div class="flex items-center gap-3 mb-1">
+                        <div class="w-10 h-10 rounded-xl bg-[#021d30] flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">Mi Espacio</h2>
+                            <p class="font-body text-on-surface-variant text-sm mt-1 max-w-3xl">Organiza y accede rápidamente a tus estudios y normativas guardadas.</p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- KPIs (Indicadores) -->
-                <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                    <article
-                        class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                        <div
-                            class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container">
-                        </div>
+                <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+                    <!-- KPI Total -->
+                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-emerald-200"></div>
                         <div class="flex justify-between items-start mb-3">
-                            <div
-                                class="bg-emerald-50 text-secondary rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
-                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                            <div class="bg-emerald-100 text-emerald-700 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
                                 </svg>
                             </div>
-                            <span
-                                class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">Total</span>
+                            <span class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                Total Guardados
+                            </span>
                         </div>
-                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">Total
-                            guardados</h4>
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                            Total de documentos
+                        </h4>
                         <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalGuardados}">0</div>
                     </article>
 
-                    <article
-                        class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                    <!-- KPI Estudios -->
+                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200"></div>
                         <div class="flex justify-between items-start mb-3">
-                            <div
-                                class="bg-blue-100 text-blue-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
-                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                            <div class="bg-[#eff6ff] rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-[#3b82f6]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
                                 </svg>
                             </div>
-                            <span
-                                class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">Estudios</span>
+                            <span class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                Estudios
+                            </span>
                         </div>
-                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">Estudios
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                            Total guardados
                         </h4>
                         <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalEstudios}">0</div>
                     </article>
 
-                    <article
-                        class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200">
-                        </div>
+                    <!-- KPI Normativas -->
+                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200"></div>
                         <div class="flex justify-between items-start mb-3">
-                            <div
-                                class="bg-orange-100 text-orange-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
-                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
+                            <div class="bg-[#fefce8] rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-[#d97706]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
                                 </svg>
                             </div>
-                            <span
-                                class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">Normativas</span>
+                            <span class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                Normativas
+                            </span>
                         </div>
-                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">Normativas
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                            Total guardadas
                         </h4>
                         <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalNormativas}">0</div>
+                    </article>
+
+                    <!-- KPI Carpeta más poblada -->
+                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-purple-200"></div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="bg-purple-100 text-purple-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+                                </svg>
+                            </div>
+                            <span class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                Top Carpeta
+                            </span>
+                        </div>
+                        <div th:if="${carpetaMasPoblada != null}">
+                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight truncate" th:text="${carpetaMasPoblada.nombre}">
+                                Carpeta Principal
+                            </h4>
+                            <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${maxDocumentos}">0</div>
+                        </div>
+                        <div th:if="${carpetaMasPoblada == null}">
+                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                                Sin datos
+                            </h4>
+                            <div class="text-3xl font-extrabold text-on-primary-fixed">0</div>
+                        </div>
                     </article>
                 </section>
 
@@ -441,68 +467,174 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
+                            <!-- Grid de documentos -->
+                            <div th:if="${!#lists.isEmpty(guardados)}"
+                                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="gridView">
+                                <div th:each="g : ${guardados}" th:data-tipo="${g.tipoDocumento}"
+                                    th:data-title="${g.nombreDocumento}"
+                                    class="doc-card grid-item group bg-white rounded-xl border border-outline-variant/20 shadow-sm overflow-hidden flex flex-col">
 
-                        <!-- Grid de documentos -->
-                        <div th:if="${!#lists.isEmpty(guardados)}"
-                            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="gridView">
-                            <div th:each="g : ${guardados}" th:data-tipo="${g.tipoDocumento}"
-                                th:data-title="${g.nombreDocumento}"
-                                class="doc-card grid-item group bg-white rounded-xl border border-outline-variant/20 shadow-sm overflow-hidden flex flex-col">
-
-                                <!-- Color top bar usando color de carpeta si existe -->
-                                <div class="h-1 w-full"
-                                    th:style="${g.carpeta != null ? 'background-color:' + g.carpeta.color : ('ESTUDIO' == g.tipoDocumento ? 'background-color:#1565c0' : 'background-color:#b45309')}">
-                                </div>
-
-                                <div class="p-4 flex flex-col flex-1 gap-3">
-                                    <!-- Badge tipo -->
-                                    <div class="flex items-center justify-between">
-                                        <span th:if="${'ESTUDIO' == g.tipoDocumento}"
-                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-[#e3f0ff] text-[#1565c0]">
-                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                                <path
-                                                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
-                                            </svg>
-                                            Estudio
-                                        </span>
-                                        <span th:if="${'NORMATIVA' == g.tipoDocumento}"
-                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-[#fef3c7] text-[#92400e]">
-                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                                <path
-                                                    d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
-                                            </svg>
-                                            Normativa
-                                        </span>
-                                        <!-- Chip de carpeta -->
-                                        <span th:if="${g.carpeta != null}"
-                                            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border"
-                                            th:style="'background-color:' + ${g.carpeta.color} + '18; color:' + ${g.carpeta.color} + '; border-color:' + ${g.carpeta.color} + '40'">
-                                            <span th:if="${g.carpeta.emoji != null}"
-                                                th:text="${g.carpeta.emoji}"></span>
-                                            <span th:text="${g.carpeta.nombre}"></span>
-                                        </span>
+                                    <!-- Color top bar usando color de carpeta si existe -->
+                                    <div class="h-1 w-full"
+                                        th:style="${g.carpeta != null ? 'background-color:' + g.carpeta.color : ('ESTUDIO' == g.tipoDocumento ? 'background-color:#1565c0' : 'background-color:#b45309')}">
                                     </div>
 
-                                    <!-- Título -->
-                                    <p th:text="${g.nombreDocumento}"
-                                        class="font-headline font-semibold text-on-primary-fixed text-sm leading-snug line-clamp-3 flex-1">
-                                        Título del documento
-                                    </p>
+                                    <div class="p-4 flex flex-col flex-1 gap-3">
+                                        <!-- Badge tipo -->
+                                        <div class="flex items-center justify-between">
+                                            <span th:if="${'ESTUDIO' == g.tipoDocumento}"
+                                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-[#e3f0ff] text-[#1565c0]">
+                                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path
+                                                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                                                </svg>
+                                                Estudio
+                                            </span>
+                                            <span th:if="${'NORMATIVA' == g.tipoDocumento}"
+                                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-[#fef3c7] text-[#92400e]">
+                                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path
+                                                        d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
+                                                </svg>
+                                                Normativa
+                                            </span>
+                                            <!-- Chip de carpeta -->
+                                            <span th:if="${g.carpeta != null}"
+                                                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border"
+                                                th:style="'background-color:' + ${g.carpeta.color} + '18; color:' + ${g.carpeta.color} + '; border-color:' + ${g.carpeta.color} + '40'">
+                                                <span th:if="${g.carpeta.emoji != null}"
+                                                    th:text="${g.carpeta.emoji}"></span>
+                                                <span th:text="${g.carpeta.nombre}"></span>
+                                            </span>
+                                        </div>
 
-                                    <!-- Fecha -->
-                                    <p class="font-body text-[11px] text-on-surface-variant">
-                                        Guardado
-                                        <span th:text="${#temporals.format(g.fechaGuardado, 'dd MMM yyyy')}">01 Jan
-                                            2025</span>
-                                    </p>
+                                        <!-- Título -->
+                                        <p th:text="${g.nombreDocumento}"
+                                            class="font-headline font-semibold text-on-primary-fixed text-sm leading-snug line-clamp-3 flex-1">
+                                            Título del documento
+                                        </p>
 
-                                    <!-- Acciones -->
-                                    <div class="flex items-center gap-2 pt-1 border-t border-surface-variant/40">
-                                        <!-- Ver -->
+                                        <!-- Fecha -->
+                                        <p class="font-body text-[11px] text-on-surface-variant">
+                                            Guardado
+                                            <span th:text="${#temporals.format(g.fechaGuardado, 'dd MMM yyyy')}">01 Jan
+                                                2025</span>
+                                        </p>
+
+                                        <!-- Acciones -->
+                                        <div class="flex items-center gap-2 pt-1 border-t border-surface-variant/40">
+                                            <!-- Ver -->
+                                            <a th:if="${'ESTUDIO' == g.tipoDocumento}"
+                                                th:href="@{/estudios/{id}(id=${g.idDocumento})}"
+                                                class="flex-1 flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[#006d37] hover:bg-[#005228] px-3 py-2 rounded-lg transition-colors">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                                Ver
+                                            </a>
+                                            <a th:if="${'NORMATIVA' == g.tipoDocumento}"
+                                                th:href="@{/normativas/{id}(id=${g.idDocumento})}"
+                                                class="flex-1 flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[#006d37] hover:bg-[#005228] px-3 py-2 rounded-lg transition-colors">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                                Ver
+                                            </a>
+                                            <!-- Mover -->
+                                            <button type="button" onclick="abrirMoverDoc(this)"
+                                                th:data-id="${g.idGuardado}" th:data-nombre="${g.nombreDocumento}"
+                                                th:data-carpeta="${g.carpeta != null ? g.carpeta.idCarpeta : ''}"
+                                                class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:text-[#006d37] hover:border-[#006d37] hover:bg-[#f0fdf4] transition-all"
+                                                title="Mover a carpeta">
+                                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path
+                                                        d="M20 6h-8l-2-2H4c-1.11 0-2 .89-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z" />
+                                                </svg>
+                                            </button>
+                                            <!-- Eliminar -->
+                                            <button type="button" onclick="abrirEliminarDoc(this)"
+                                                th:data-id="${g.idGuardado}" th:data-nombre="${g.nombreDocumento}"
+                                                class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:text-[#991b1b] hover:border-[#fecaca] hover:bg-[#fef2f2] transition-all"
+                                                title="Eliminar">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- List View (Hidden by Default) -->
+                            <div id="listView" class="hidden flex flex-col gap-3 w-full"
+                                th:if="${not #lists.isEmpty(guardados)}">
+                                <div th:each="g : ${guardados}" th:data-tipo="${g.tipoDocumento}"
+                                    th:data-title="${g.nombreDocumento}"
+                                    class="doc-card list-item w-full bg-white rounded-xl px-4 py-3 md:px-5 ambient-shadow justify-between gap-3 group hover:bg-surface-container/50 transition-colors border border-outline-variant/20 hover:border-outline-variant/40 overflow-hidden relative">
+
+                                    <div class="absolute top-0 left-0 h-full w-1"
+                                        th:style="${g.carpeta != null ? 'background-color:' + g.carpeta.color : ('ESTUDIO' == g.tipoDocumento ? 'background-color:#1565c0' : 'background-color:#b45309')}">
+                                    </div>
+
+                                    <!-- Izquierda: badges arriba + título + fecha -->
+                                    <div class="flex-1 min-w-0 pl-2 flex flex-col gap-1">
+                                        <!-- Badges fila superior -->
+                                        <div class="flex items-center gap-1.5">
+                                            <span th:if="${'ESTUDIO' == g.tipoDocumento}"
+                                                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#e3f0ff] text-[#1565c0]">
+                                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path
+                                                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                                                </svg>
+                                                Estudio
+                                            </span>
+                                            <span th:if="${'NORMATIVA' == g.tipoDocumento}"
+                                                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#fef3c7] text-[#92400e]">
+                                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path
+                                                        d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
+                                                </svg>
+                                                Normativa
+                                            </span>
+                                            <span th:if="${g.carpeta != null}"
+                                                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border"
+                                                th:style="'background-color:' + ${g.carpeta.color} + '18; color:' + ${g.carpeta.color} + '; border-color:' + ${g.carpeta.color} + '40'">
+                                                <span th:if="${g.carpeta.emoji != null}"
+                                                    th:text="${g.carpeta.emoji}"></span>
+                                                <span th:text="${g.carpeta.nombre}"></span>
+                                            </span>
+                                        </div>
+                                        <!-- Título -->
+                                        <p th:text="${g.nombreDocumento}"
+                                            class="font-headline font-semibold text-on-primary-fixed text-sm leading-snug truncate">
+                                            Título del documento
+                                        </p>
+                                        <!-- Fecha -->
+                                        <p class="font-body text-[11px] text-on-surface-variant">
+                                            Guardado
+                                            <span th:text="${#temporals.format(g.fechaGuardado, 'dd MMM yyyy')}">01 Jan
+                                                2025</span>
+                                        </p>
+                                    </div>
+
+                                    <!-- Derecha: solo botones de acción -->
+                                    <div class="flex items-center gap-2 shrink-0">
                                         <a th:if="${'ESTUDIO' == g.tipoDocumento}"
                                             th:href="@{/estudios/{id}(id=${g.idDocumento})}"
-                                            class="flex-1 flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[#006d37] hover:bg-[#005228] px-3 py-2 rounded-lg transition-colors">
+                                            class="flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[#006d37] hover:bg-[#005228] px-3 py-2 rounded-lg transition-colors">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -514,7 +646,7 @@
                                         </a>
                                         <a th:if="${'NORMATIVA' == g.tipoDocumento}"
                                             th:href="@{/normativas/{id}(id=${g.idDocumento})}"
-                                            class="flex-1 flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[#006d37] hover:bg-[#005228] px-3 py-2 rounded-lg transition-colors">
+                                            class="flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[#006d37] hover:bg-[#005228] px-3 py-2 rounded-lg transition-colors">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -524,7 +656,6 @@
                                             </svg>
                                             Ver
                                         </a>
-                                        <!-- Mover -->
                                         <button type="button" onclick="abrirMoverDoc(this)" th:data-id="${g.idGuardado}"
                                             th:data-nombre="${g.nombreDocumento}"
                                             th:data-carpeta="${g.carpeta != null ? g.carpeta.idCarpeta : ''}"
@@ -532,10 +663,8 @@
                                             title="Mover a carpeta">
                                             <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
                                                 <path
-                                                    d="M20 6h-8l-2-2H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z" />
-                                            </svg>
+                                                    d="M20 6h-8l-2-2H4c-1.11 0-2 .89-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z" />
                                         </button>
-                                        <!-- Eliminar -->
                                         <button type="button" onclick="abrirEliminarDoc(this)"
                                             th:data-id="${g.idGuardado}" th:data-nombre="${g.nombreDocumento}"
                                             class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:text-[#991b1b] hover:border-[#fecaca] hover:bg-[#fef2f2] transition-all"
@@ -549,136 +678,41 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- List View (Hidden by Default) -->
-                        <div id="listView" class="hidden flex flex-col gap-3 w-full" th:if="${not #lists.isEmpty(guardados)}">
-                            <div th:each="g : ${guardados}" th:data-tipo="${g.tipoDocumento}"
-                                th:data-title="${g.nombreDocumento}"
-                                class="doc-card list-item w-full bg-white rounded-xl px-4 py-3 md:px-5 ambient-shadow justify-between gap-3 group hover:bg-surface-container/50 transition-colors border border-outline-variant/20 hover:border-outline-variant/40 overflow-hidden relative">
+                            <!-- Minimalist Pagination -->
+                            <div class="w-full mt-8 flex justify-center">
+                                <div id="paginationContainer" class="flex items-center gap-2 hidden">
+                                    <button id="prevPageBtn"
+                                        class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container hover:text-on-surface transition-colors disabled:opacity-50"
+                                        aria-label="Anterior">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 19l-7-7 7-7" />
+                                        </svg>
+                                    </button>
 
-                                <div class="absolute top-0 left-0 h-full w-1"
-                                    th:style="${g.carpeta != null ? 'background-color:' + g.carpeta.color : ('ESTUDIO' == g.tipoDocumento ? 'background-color:#1565c0' : 'background-color:#b45309')}">
-                                </div>
-
-                                <!-- Izquierda: badges arriba + título + fecha -->
-                                <div class="flex-1 min-w-0 pl-2 flex flex-col gap-1">
-                                    <!-- Badges fila superior -->
-                                    <div class="flex items-center gap-1.5">
-                                        <span th:if="${'ESTUDIO' == g.tipoDocumento}"
-                                            class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#e3f0ff] text-[#1565c0]">
-                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                                <path
-                                                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
-                                            </svg>
-                                            Estudio
-                                        </span>
-                                        <span th:if="${'NORMATIVA' == g.tipoDocumento}"
-                                            class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#fef3c7] text-[#92400e]">
-                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                                <path
-                                                    d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
-                                            </svg>
-                                            Normativa
-                                        </span>
-                                        <span th:if="${g.carpeta != null}"
-                                            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border"
-                                            th:style="'background-color:' + ${g.carpeta.color} + '18; color:' + ${g.carpeta.color} + '; border-color:' + ${g.carpeta.color} + '40'">
-                                            <span th:if="${g.carpeta.emoji != null}" th:text="${g.carpeta.emoji}"></span>
-                                            <span th:text="${g.carpeta.nombre}"></span>
-                                        </span>
+                                    <div id="pageNumbers" class="flex items-center gap-1">
+                                        <!-- Botones de página inyectados por JS -->
                                     </div>
-                                    <!-- Título -->
-                                    <p th:text="${g.nombreDocumento}"
-                                        class="font-headline font-semibold text-on-primary-fixed text-sm leading-snug truncate">
-                                        Título del documento
-                                    </p>
-                                    <!-- Fecha -->
-                                    <p class="font-body text-[11px] text-on-surface-variant">
-                                        Guardado
-                                        <span th:text="${#temporals.format(g.fechaGuardado, 'dd MMM yyyy')}">01 Jan 2025</span>
-                                    </p>
-                                </div>
 
-                                <!-- Derecha: solo botones de acción -->
-                                <div class="flex items-center gap-2 shrink-0">
-                                    <a th:if="${'ESTUDIO' == g.tipoDocumento}"
-                                        th:href="@{/estudios/{id}(id=${g.idDocumento})}"
-                                        class="flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[#006d37] hover:bg-[#005228] px-3 py-2 rounded-lg transition-colors">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button id="nextPageBtn"
+                                        class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container hover:text-on-surface transition-colors disabled:opacity-50"
+                                        aria-label="Siguiente">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
-                                        Ver
-                                    </a>
-                                    <a th:if="${'NORMATIVA' == g.tipoDocumento}"
-                                        th:href="@{/normativas/{id}(id=${g.idDocumento})}"
-                                        class="flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[#006d37] hover:bg-[#005228] px-3 py-2 rounded-lg transition-colors">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
-                                        Ver
-                                    </a>
-                                    <button type="button" onclick="abrirMoverDoc(this)" th:data-id="${g.idGuardado}"
-                                        th:data-nombre="${g.nombreDocumento}"
-                                        th:data-carpeta="${g.carpeta != null ? g.carpeta.idCarpeta : ''}"
-                                        class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:text-[#006d37] hover:border-[#006d37] hover:bg-[#f0fdf4] transition-all"
-                                        title="Mover a carpeta">
-                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                                            <path
-                                                d="M20 6h-8l-2-2H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z" />
-                                        </svg>
-                                    </button>
-                                    <button type="button" onclick="abrirEliminarDoc(this)"
-                                        th:data-id="${g.idGuardado}" th:data-nombre="${g.nombreDocumento}"
-                                        class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:text-[#991b1b] hover:border-[#fecaca] hover:bg-[#fef2f2] transition-all"
-                                        title="Eliminar">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                d="M9 5l7 7-7 7" />
                                         </svg>
                                     </button>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Minimalist Pagination -->
-                        <div class="w-full mt-8 flex justify-center">
-                            <div id="paginationContainer" class="flex items-center gap-2 hidden">
-                                <button id="prevPageBtn"
-                                    class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container hover:text-on-surface transition-colors disabled:opacity-50"
-                                    aria-label="Anterior">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 19l-7-7 7-7" />
-                                </svg>
-                            </button>
-
-                            <div id="pageNumbers" class="flex items-center gap-1">
-                                <!-- Botones de página inyectados por JS -->
-                            </div>
-
-                            <button id="nextPageBtn"
-                                class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container hover:text-on-surface transition-colors disabled:opacity-50"
-                                aria-label="Siguiente">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 5l7 7-7 7" />
-                                </svg>
-                            </button>
+                            <!-- Mensaje No hay documentos -->
+                            <div id="noResultsMsg" class="hidden text-center py-10">
+                                <p class="text-lg font-bold text-on-surface-variant">No se encontraron documentos.</p>
                             </div>
                         </div>
 
-                        <!-- Mensaje No hay documentos -->
-                        <div id="noResultsMsg" class="hidden text-center py-10">
-                            <p class="text-lg font-bold text-on-surface-variant">No se encontraron documentos.</p>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -698,96 +732,6 @@
                         <svg class="w-5 h-5 text-[#006d37]" fill="currentColor" viewBox="0 0 24 24">
                             <path
                                 d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
-                        </svg>
-                    </div>
-                    <h2 class="font-headline font-bold text-on-primary-fixed">Nueva Carpeta</h2>
-                </div>
-                <button onclick="document.getElementById('modalCrearCarpeta').classList.add('hidden')"
-                    class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-            <form th:action="@{/socio/mi-espacio/carpetas/crear}" method="post" class="px-6 py-5 space-y-5">
-                <!-- Nombre -->
-                <div>
-                    <label
-                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Nombre
-                        de la carpeta</label>
-                    <input type="text" name="nombre" required maxlength="100" placeholder="ej. Leyes importantes"
-                        class="w-full border border-outline-variant/40 rounded-xl px-4 py-2.5 text-sm font-body focus:outline-none focus:border-[#006d37] focus:ring-1 focus:ring-[#006d37] transition-colors" />
-                </div>
-                <!-- Emoji opcional -->
-                <div>
-                    <label
-                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5 block">Emoji
-                        (opcional)</label>
-                    <input type="text" name="emoji" maxlength="4" placeholder="📁"
-                        class="w-32 border border-outline-variant/40 rounded-xl px-4 py-2.5 text-sm font-body focus:outline-none focus:border-[#006d37] focus:ring-1 focus:ring-[#006d37] transition-colors text-center text-lg" />
-                </div>
-                <!-- Selector de color -->
-                <div>
-                    <label
-                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2 block">Color</label>
-                    <input type="hidden" name="color" id="crear-color-input" value="#006d37" />
-                    <div class="flex flex-wrap gap-2">
-                        <button type="button" onclick="selColor(this,'#006d37','crear')" data-color="#006d37"
-                            class="color-swatch selected w-7 h-7 rounded-full border-2 border-white shadow"
-                            style="background:#006d37" title="Verde"></button>
-                        <button type="button" onclick="selColor(this,'#1565c0','crear')" data-color="#1565c0"
-                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
-                            style="background:#1565c0" title="Azul"></button>
-                        <button type="button" onclick="selColor(this,'#6d28d9','crear')" data-color="#6d28d9"
-                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
-                            style="background:#6d28d9" title="Morado"></button>
-                        <button type="button" onclick="selColor(this,'#be185d','crear')" data-color="#be185d"
-                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
-                            style="background:#be185d" title="Rosa"></button>
-                        <button type="button" onclick="selColor(this,'#c2410c','crear')" data-color="#c2410c"
-                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
-                            style="background:#c2410c" title="Naranja"></button>
-                        <button type="button" onclick="selColor(this,'#b45309','crear')" data-color="#b45309"
-                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
-                            style="background:#b45309" title="Ámbar"></button>
-                        <button type="button" onclick="selColor(this,'#0284c7','crear')" data-color="#0284c7"
-                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
-                            style="background:#0284c7" title="Celeste"></button>
-                        <button type="button" onclick="selColor(this,'#374151','crear')" data-color="#374151"
-                            class="color-swatch w-7 h-7 rounded-full border-2 border-white shadow"
-                            style="background:#374151" title="Gris"></button>
-                    </div>
-                </div>
-                <!-- Acciones -->
-                <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="document.getElementById('modalCrearCarpeta').classList.add('hidden')"
-                        class="flex-1 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant text-sm font-semibold hover:bg-surface-container transition-colors">
-                        Cancelar
-                    </button>
-                    <button type="submit"
-                        class="flex-1 px-4 py-2.5 rounded-xl bg-[#006d37] text-white text-sm font-bold hover:bg-[#005228] transition-colors">
-                        Crear carpeta
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════════════════════
-         MODAL: Crear Carpeta
-    ═══════════════════════════════════════════════════════════════════ -->
-    <div id="modalCrearCarpeta"
-        class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-        onclick="if(event.target===this)this.classList.add('hidden')">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-            <div class="flex items-center justify-between px-6 py-5 border-b border-surface-variant/50">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 bg-[#f0fdf4] rounded-xl flex items-center justify-center">
-                        <svg class="w-5 h-5 text-[#006d37]" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
-                        </svg>
                     </div>
                     <h2 class="font-headline font-bold text-on-primary-fixed">Nueva Carpeta</h2>
                 </div>
@@ -960,8 +904,7 @@
                     <div class="w-9 h-9 bg-[#f0fdf4] rounded-xl flex items-center justify-center">
                         <svg class="w-5 h-5 text-[#006d37]" fill="currentColor" viewBox="0 0 24 24">
                             <path
-                                d="M20 6h-8l-2-2H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z" />
-                        </svg>
+                                d="M20 6h-8l-2-2H4c-1.11 0-2 .89-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z" />
                     </div>
                     <div>
                         <h2 class="font-headline font-bold text-on-primary-fixed text-sm">Mover a carpeta</h2>
@@ -987,8 +930,6 @@
                     <svg class="w-4 h-4 text-on-surface-variant" fill="currentColor" viewBox="0 0 24 24">
                         <path
                             d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
-                    </svg>
-                    <span class="font-body text-sm text-on-surface-variant font-semibold">Sin clasificar</span>
                 </label>
                 <!-- Carpetas del usuario -->
                 <div th:each="c : ${carpetas}">
@@ -1094,7 +1035,7 @@
             </div>
         </div>
     </div>
-    
+
     <script>
         // ── Selector de color ────────────────────────────────────────────
         function selColor(btn, color, ctx) {
@@ -1156,7 +1097,7 @@
             document.getElementById('modalMoverDoc').classList.remove('hidden');
         }
 
-        let currentFiltroTipo = 'TODOS';
+        let currentFiltroTipo = 'todos';
         let currentSearchQuery = '';
         let currentPage = 1;
         const pageSize = 6;
@@ -1165,26 +1106,26 @@
             var searchStr = currentSearchQuery.toLowerCase();
             var gridItems = Array.from(document.querySelectorAll('.grid-item'));
             var listItems = Array.from(document.querySelectorAll('.list-item'));
-            
+
             var visibleCount = 0;
-            
+
             // Primero, filtramos y obtenemos los elementos que deberían verse
             var filteredIndices = [];
-            
+
             gridItems.forEach(function (gItem, index) {
                 var lItem = listItems[index];
 
                 var t = gItem.dataset.tipo || '';
                 var n = (gItem.dataset.title || '').toLowerCase();
 
-                var matchTipo = (currentFiltroTipo === 'TODOS') || (t === currentFiltroTipo);
+                var matchTipo = (currentFiltroTipo === 'todos') || (t === currentFiltroTipo);
                 var matchSearch = (searchStr === '') || (n.includes(searchStr));
 
                 if (matchTipo && matchSearch) {
                     filteredIndices.push(index);
                 } else {
                     gItem.style.display = 'none';
-                    if(lItem) lItem.style.setProperty('display', 'none', 'important');
+                    if (lItem) lItem.style.setProperty('display', 'none', 'important');
                 }
             });
 
@@ -1199,17 +1140,17 @@
             var endIndex = startIndex + pageSize;
 
             // Aplicamos paginación solo a los filtrados
-            filteredIndices.forEach(function(originalIndex, filteredIndex) {
+            filteredIndices.forEach(function (originalIndex, filteredIndex) {
                 var gItem = gridItems[originalIndex];
                 var lItem = listItems[originalIndex];
 
                 if (filteredIndex >= startIndex && filteredIndex < endIndex) {
                     gItem.style.display = '';
-                    if(lItem) lItem.style.removeProperty('display');
+                    if (lItem) lItem.style.removeProperty('display');
                     visibleCount++;
                 } else {
                     gItem.style.display = 'none';
-                    if(lItem) lItem.style.setProperty('display', 'none', 'important');
+                    if (lItem) lItem.style.setProperty('display', 'none', 'important');
                 }
             });
 
@@ -1221,7 +1162,7 @@
                     noResultsMsg.classList.add('hidden');
                 }
             }
-            
+
             renderPagination(totalItems, totalPages);
         }
 
@@ -1232,6 +1173,12 @@
             const nextPageBtn = document.getElementById('nextPageBtn');
 
             if (!paginationContainer) return;
+
+            if (totalItems === 0) {
+                paginationContainer.classList.add('hidden');
+                paginationContainer.classList.remove('flex');
+                return;
+            }
 
             paginationContainer.classList.remove('hidden');
             paginationContainer.classList.add('flex');
@@ -1256,10 +1203,10 @@
 
         // ── Auto-dismiss toasts ──────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.toast-msg').forEach(function(toast) {
-                setTimeout(function() {
+            document.querySelectorAll('.toast-msg').forEach(function (toast) {
+                setTimeout(function () {
                     toast.classList.add('toast-hiding');
-                    setTimeout(function() {
+                    setTimeout(function () {
                         toast.style.display = 'none';
                     }, 500);
                 }, 7000);
@@ -1284,44 +1231,10 @@
                     updateView();
                 });
             }
-            
+
             // Inicializar la vista por primera vez
             updateView();
         });
-
-        // ── Filtro por Tipo ──────────────────────────────────────────────
-        function filtrarTipo(tipo) {
-            currentFiltroTipo = tipo;
-            currentPage = 1; // reset a la pagina 1
-            
-            var btnTodos = document.getElementById('btn-todos');
-            var btnEstudios = document.getElementById('btn-ESTUDIO');
-            var btnNormativas = document.getElementById('btn-NORMATIVA');
-
-            // Reset classes
-            btnTodos.classList.remove('bg-[#006d37]', 'text-white', 'shadow-md');
-            btnTodos.classList.add('bg-white', 'text-on-surface-variant', 'border-outline-variant/30');
-
-            btnEstudios.classList.remove('bg-[#1565c0]', 'text-white', 'shadow-md');
-            btnEstudios.classList.add('bg-white', 'text-on-surface-variant', 'border-outline-variant/30');
-
-            btnNormativas.classList.remove('bg-[#c2410c]', 'text-white', 'shadow-md');
-            btnNormativas.classList.add('bg-white', 'text-on-surface-variant', 'border-outline-variant/30');
-
-            // Apply specific active class
-            if (tipo === 'TODOS') {
-                btnTodos.classList.remove('bg-white', 'text-on-surface-variant', 'border-outline-variant/30');
-                btnTodos.classList.add('bg-[#006d37]', 'text-white', 'shadow-md');
-            } else if (tipo === 'ESTUDIO') {
-                btnEstudios.classList.remove('bg-white', 'text-on-surface-variant', 'border-outline-variant/30');
-                btnEstudios.classList.add('bg-[#1565c0]', 'text-white', 'shadow-md');
-            } else if (tipo === 'NORMATIVA') {
-                btnNormativas.classList.remove('bg-white', 'text-on-surface-variant', 'border-outline-variant/30');
-                btnNormativas.classList.add('bg-[#c2410c]', 'text-white', 'shadow-md');
-            }
-
-            updateView();
-        }
 
         // ── Búsqueda ─────────────────────────────────────────────────────
         document.getElementById('searchInput').addEventListener('keydown', function (e) {
@@ -1370,8 +1283,11 @@
             }
         });
 
-        // Función para filtrar documentos por tipo
+        // Filtro por tipo: actualiza estado, estilo de botones y delega el renderizado a updateView()
         function filtrarTipo(tipo) {
+            currentFiltroTipo = tipo;
+            currentPage = 1;
+
             const botonesTipo = document.querySelectorAll('.tipo-btn');
             botonesTipo.forEach(btn => {
                 btn.classList.remove('bg-[#006d37]', 'text-white', 'border-[#006d37]', 'bg-[#1565c0]', 'border-[#1565c0]', 'bg-[#b45309]', 'border-[#b45309]');
@@ -1390,15 +1306,7 @@
                 }
             }
 
-            // Aplicar filtro a ambos contenedores (Grid y List)
-            document.querySelectorAll('.grid-item, .list-item').forEach(item => {
-                // Si es 'todos' o coincide el data-tipo
-                if (tipo === 'todos' || item.dataset.tipo === tipo) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+            updateView();
         }
 
         // Función para cambiar entre vista de cuadrícula y lista

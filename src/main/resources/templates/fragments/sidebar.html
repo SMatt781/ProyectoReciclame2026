@@ -93,7 +93,7 @@
             </a>
 
             <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-               th:classappend="${currentPage == 'repoNormativo'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+               th:classappend="${currentPage == 'repoNormativo' or currentPage == 'visualizadorNormativa' or currentPage == 'visualizadorNormativaPago'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
                th:href="@{/normativas}">
                 <div th:replace="~{fragments/icons.html :: icon-normativas-sidebar}"></div>
                 Repositorio Normativo
@@ -121,14 +121,14 @@
             </a>
 
             <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-               th:classappend="${currentPage == 'visualizadorEstudios'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+               th:classappend="${currentPage == 'visualizadorEstudios' or currentPage == 'visualizadorEstudio'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
                th:href="@{/visualizador/estudios}">
                 <div th:replace="~{fragments/icons.html :: icon-estudios-sidebar}"></div>
                 Estudios
             </a>
 
             <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
-               th:classappend="${currentPage == 'visualizadorRepoNormativo'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+               th:classappend="${currentPage == 'visualizadorRepoNormativo' or currentPage == 'visualizadorNormativa' or currentPage == 'visualizadorNormativaPago'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
                th:href="@{/visualizador/normativas}">
                 <div th:replace="~{fragments/icons.html :: icon-normativas-sidebar}"></div>
                 Repositorio Normativo
@@ -157,7 +157,7 @@
 
     <button type="button"
             th:if="${usuarioRol != null and #strings.equalsIgnoreCase(usuarioRol,'ADMIN') and currentPage == 'repoNormativo'}"
-            onclick="document.getElementById('modalNuevaNormativa').classList.remove('hidden')"
+            onclick="abrirModalNuevaNormativa()"
             class="w-full bg-primary-container text-on-primary font-label font-bold text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-fixed-variant transition-colors ambient-shadow">
         <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
             <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
@@ -193,7 +193,7 @@
                             <path d="M7 18H17M7 14H17M7 10H11M13 3H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V9L13 3Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
                     </div>
                     <div>
-                        <h1 class="text-lg font-extrabold text-[#0f172a] tracking-tight text-left">Nuevo Estudio</h1>
+                        <h1 id="modalEstudioTitulo" class="text-lg font-extrabold text-[#0f172a] tracking-tight text-left">Nuevo Estudio</h1>
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">PANEL DE ADMINISTRACIÓN</p>
                     </div>
                 </div>
@@ -227,8 +227,8 @@
                                 <textarea id="estudioDescripcion" name="descripcion" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all resize-none placeholder:text-gray-300" placeholder="Define el propósito y alcance de este nuevo estudio..." rows="3"></textarea>
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                <div class="space-y-2">
+                            <div class="grid grid-cols-12 gap-4">
+                                <div class="col-span-12 md:col-span-2 space-y-2">
                                     <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Año</label>
                                     <select id="estudioAnio" name="anio" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
                                         <option>2024</option>
@@ -237,14 +237,14 @@
                                     </select>
                                 </div>
 
-                                <div class="space-y-2">
+                                <div class="col-span-12 md:col-span-4 space-y-2">
                                     <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Formato</label>
                                     <select id="estudioFormato" name="formato" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
                                         <option>Reporte Técnico (PDF)</option>
                                         <option>Planilla de Datos (XLSX)</option>
                                     </select>
                                 </div>
-                                <div class="space-y-2">
+                                <div class="col-span-12 md:col-span-3 space-y-2">
                                     <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
                                         Estado
                                     </label>
@@ -258,7 +258,7 @@
 
                                     </select>
                                 </div>
-                                <div class="space-y-2">
+                                <div class="col-span-12 md:col-span-3 space-y-2">
                                     <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Tipo de Acceso</label>
                                     <select id="estudioTipoAcceso" name="tipoAcceso"
                                             class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
@@ -276,6 +276,27 @@
                             <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Archivo</h2>
                         </div>
 
+                        <!-- Archivo actual (solo visible en modo edición) -->
+                        <div id="archivoActualSection" style="display:none;">
+                            <div class="flex items-center gap-3 p-4 bg-[#f8faff] border border-gray-200 rounded-xl">
+                                <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 bg-red-50 text-red-500">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p id="archivoActualNombre" class="text-sm font-bold text-gray-700 truncate">archivo.pdf</p>
+                                    <p class="text-xs text-gray-400">Archivo actual del estudio</p>
+                                </div>
+                                <button type="button" id="btnCambiarArchivo" onclick="mostrarSustituirArchivo()"
+                                    class="text-xs font-bold text-[#059669] hover:underline flex-shrink-0 whitespace-nowrap">
+                                    Cambiar archivo
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Subir archivo (nuevo, o reemplazo al editar) -->
+                        <div id="dropZoneWrapper">
                         <!-- Input oculto — activado solo por el label -->
                         <input id="archivoInputSidebar" name="archivo" type="file" accept=".pdf,.pptx" style="display:none;">
 
@@ -327,6 +348,7 @@
                                 </label>
                             </div>
                         </div>
+                        </div><!-- /dropZoneWrapper -->
                     </section>
                 </div>
 
@@ -420,246 +442,486 @@
             }
         })();
 
+        function mostrarSustituirArchivo() {
+            var wrapper = document.getElementById('dropZoneWrapper');
+            var input = document.getElementById('archivoInputSidebar');
+            var btn = document.getElementById('btnCambiarArchivo');
+            if (wrapper) wrapper.style.display = '';
+            if (input) input.setAttribute('name', 'archivo');
+            if (btn) btn.style.display = 'none';
+        }
+
         function abrirModalNuevoEstudio() {
-            // Limpiar el formulario
+            abrirModalEstudio('nuevo');
+        }
+
+        function abrirModalEstudio(modo, data) {
+            var titulo = document.getElementById('modalEstudioTitulo');
             var form = document.getElementById('formEstudio');
-            if (form) {
-                form.reset();
+            var archivoActualSection = document.getElementById('archivoActualSection');
+            var dropZoneWrapper = document.getElementById('dropZoneWrapper');
+            var archivoInput = document.getElementById('archivoInputSidebar');
+
+            if (modo === 'editar' && data) {
+                titulo.textContent = 'Editar Estudio';
+                form.action = '/admin/estudios/' + data.id + '/actualizar';
+                document.getElementById('estudioNombre').value = data.nombre || '';
+                document.getElementById('estudioDescripcion').value = data.descripcion || '';
+                document.getElementById('estudioAnio').value = data.anio || '';
+                document.getElementById('estudioEstado').value = data.estado || 'BORRADOR';
+                document.getElementById('estudioTipoAcceso').value = data.tipoacceso || 'DESCARGA';
+                var formato = data.formato || 'PDF';
+                if (formato === 'PDF') {
+                    document.getElementById('estudioFormato').value = 'Reporte Técnico (PDF)';
+                } else {
+                    document.getElementById('estudioFormato').value = 'Planilla de Datos (XLSX)';
+                }
+                // Mostrar archivo actual y ocultar drop zone
+                if (archivoActualSection) archivoActualSection.style.display = 'block';
+                if (dropZoneWrapper) dropZoneWrapper.style.display = 'none';
+                if (archivoInput) archivoInput.removeAttribute('name');
+                var nombreEl = document.getElementById('archivoActualNombre');
+                if (nombreEl) nombreEl.textContent = (data.archivo && data.archivo !== 'null') ? data.archivo : 'Archivo existente';
+                var btnCambiar = document.getElementById('btnCambiarArchivo');
+                if (btnCambiar) btnCambiar.style.display = '';
+            } else {
+                titulo.textContent = 'Nuevo Estudio';
                 form.action = '/admin/estudio_new';
+                form.reset();
+                var campos = ['estudioNombre', 'estudioDescripcion', 'estudioAnio', 'estudioFormato', 'estudioEstado', 'estudioTipoAcceso'];
+                campos.forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el) el.value = el.options ? el.options[0].value : '';
+                });
+                if (typeof resetearArchivoSidebar === 'function') resetearArchivoSidebar();
+                // Ocultar sección archivo actual, mostrar drop zone
+                if (archivoActualSection) archivoActualSection.style.display = 'none';
+                if (dropZoneWrapper) dropZoneWrapper.style.display = '';
+                if (archivoInput) archivoInput.setAttribute('name', 'archivo');
             }
-            // Limpiar campos individuales por si acaso
-            var campos = ['estudioNombre', 'estudioDescripcion', 'estudioAnio', 'estudioFormato', 'estudioEstado', 'estudioTipoAcceso'];
-            campos.forEach(function(id) {
-                var el = document.getElementById(id);
-                if (el) el.value = el.options ? el.options[0].value : '';
-            });
-            // Resetear UI del archivo
-            if (typeof resetearArchivoSidebar === 'function') resetearArchivoSidebar();
-            // Abrir modal
+
             document.getElementById('modalNuevoEstudio').classList.remove('hidden');
         }
     </script>
 
     <div id="modalNuevaNormativa" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-surface text-on-surface w-full max-w-3xl rounded-[1.5rem] p-6 sm:p-8 flex flex-col relative scale-100 ambient-shadow max-h-[90vh] overflow-y-auto text-left">
-            <button type="button"
-                    onclick="document.getElementById('modalNuevaNormativa').classList.add('hidden')"
-                    class="absolute top-6 right-6 p-2 rounded-full hover:bg-surface-container text-on-surface-variant transition-colors">
-                <svg class="icon-md w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                </svg>
-            </button>
+        <div class="w-full max-w-[800px] bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden relative">
 
-            <h2 id="tituloModalNormativa"
-                class="text-2xl font-headline font-bold text-on-primary-fixed mb-6">
-                Nueva Normativa
-            </h2>
-            <form id="formNormativa" th:action="@{/admin/repo_new}" method="post" class="space-y-8" onsubmit="return validarNormativaForm()">
+            <header class="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-white sticky top-0 z-30">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg bg-[#dcfce7] flex items-center justify-center text-[#064e3b]">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24">
+                            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 id="tituloModalNormativa" class="text-lg font-extrabold text-[#0f172a] tracking-tight text-left">Nueva Normativa</h1>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">PANEL DE ADMINISTRACIÓN</p>
+                    </div>
+                </div>
+                <button type="button"
+                        onclick="document.getElementById('modalNuevaNormativa').classList.add('hidden')"
+                        class="text-gray-400 hover:bg-gray-100 p-2 rounded-full transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                    </svg>
+                </button>
+            </header>
 
-                <section>
-                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Identificación</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Nombre de la Normativa</label>
-                            <input id="normativaTitulo" name="titulo" type="text" required minlength="5"
-                                   placeholder="Ej: Ley de Fomento a la Economía Circular"
-                                   class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 bg-surface-container-low text-sm"/>
+            <form id="formNormativa" th:action="@{/admin/repo_new}" method="post" enctype="multipart/form-data" class="flex flex-col overflow-hidden text-left" onsubmit="return validarNormativaForm()">
+                <div class="overflow-y-auto px-6 py-8 flex flex-col gap-10">
+
+                    <!-- Identificación -->
+                    <section class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-1 h-5 bg-[#059669] rounded-full"></div>
+                            <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Identificación</h2>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Nombre de la Normativa</label>
+                                <input id="normativaTitulo" name="titulo" type="text" required minlength="5"
+                                       placeholder="Ej: Ley de Fomento a la Economía Circular"
+                                       class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300"/>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                                <div class="md:col-span-6 space-y-2">
+                                    <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Organismo / Ministerio</label>
+                                    <input id="normativaOrganismo" name="organismoEmisor" type="text" required minlength="3" placeholder="Ej. Ministerio de Ambiente"
+                                           class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300"/>
+                                </div>
+                                <div class="md:col-span-3 space-y-2">
+                                    <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Código</label>
+                                    <input id="normativaCodigo" name="codigo" type="text" required minlength="2" placeholder="N° 21.325"
+                                           class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300"/>
+                                </div>
+                                <div class="md:col-span-3 space-y-2">
+                                    <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Año</label>
+                                    <select id="normativaAnio" name="anio" required
+                                            class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                        <option>2024</option>
+                                        <option>2023</option>
+                                        <option>2022</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Clasificación -->
+                    <section class="space-y-4 pt-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-1 h-5 bg-[#059669] rounded-full"></div>
+                            <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Clasificación</h2>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                            <div class="md:col-span-6">
-                                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Organismo / Ministerio</label>
-                                <input id="normativaOrganismo" name="organismoEmisor" type="text" required minlength="3" placeholder="Ej. Ministerio de Ambiente"
-                                       class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 bg-surface-container-low text-sm" />
+                        <!-- TEMÁTICA PRINCIPAL - cards sin cambios -->
+                        <div class="mb-6">
+                            <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-2">Temática Principal</label>
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" name="categorias" value="1" class="peer hidden">
+                                    <div class="px-4 py-3 rounded-lg border border-outline-variant/30 bg-[#f8faff] text-center peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                        <p class="font-black text-secondary">EC</p>
+                                        <p class="text-[10px] font-bold uppercase text-on-surface-variant">E. Circular</p>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" name="categorias" value="2" class="peer hidden">
+                                    <div class="px-4 py-3 rounded-lg border border-outline-variant/30 bg-[#f8faff] text-center peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                        <p class="font-black text-secondary">GR</p>
+                                        <p class="text-[10px] font-bold uppercase text-on-surface-variant">G. Residuos</p>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" name="categorias" value="3" class="peer hidden">
+                                    <div class="px-4 py-3 rounded-lg border border-outline-variant/30 bg-[#f8faff] text-center peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                        <p class="font-black text-secondary">EE</p>
+                                        <p class="text-[10px] font-bold uppercase text-on-surface-variant">E. Eficiente</p>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" name="categorias" value="4" class="peer hidden">
+                                    <div class="px-4 py-3 rounded-lg border border-outline-variant/30 bg-[#f8faff] text-center peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                        <p class="font-black text-secondary">REP</p>
+                                        <p class="text-[10px] font-bold uppercase text-on-surface-variant">Resp. Ext</p>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="checkbox" name="categorias" value="5" class="peer hidden">
+                                    <div class="px-4 py-3 rounded-lg border border-outline-variant/30 bg-[#f8faff] text-center peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                        <p class="font-black text-secondary">...</p>
+                                        <p class="text-[10px] font-bold uppercase text-on-surface-variant">Otro</p>
+                                    </div>
+                                </label>
                             </div>
+                        </div>
 
-                            <div class="md:col-span-3">
-                                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Código</label>
-                                <input id="normativaCodigo" name="codigo" type="text" required minlength="2" placeholder="N° 21.325"
-                                       class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 bg-surface-container-low text-sm" />
+                        <!-- TIPO Y ESTADO -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Tipo de Norma</label>
+                                <select id="normativaTipo" name="tipoNorma" required
+                                        class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                    <option value="DECRETO_LEY">Decreto Ley</option>
+                                    <option value="LEY_NACIONAL">Ley Nacional</option>
+                                    <option value="DECRETO_SUPREMO">Decreto Supremo</option>
+                                    <option value="REGLAMENTO">Reglamento</option>
+                                    <option value="ANTEPROYECTO">Anteproyecto</option>
+                                    <option value="HOJA_DE_RUTA">Hoja de Ruta</option>
+                                    <option value="OTRO">Otro</option>
+                                </select>
                             </div>
-
-                            <div class="md:col-span-3">
-                                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Año</label>
-                                <select id="normativaAnio" name="anio" required
-                                        class="w-full appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
-                                    <option>2024</option>
-                                    <option>2023</option>
-                                    <option>2022</option>
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Estado Actual</label>
+                                <select id="normativaEstado" name="estado" required
+                                        class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                    <option value="VIGENTE">Vigente</option>
+                                    <option value="DEROGADA">Derogada</option>
+                                    <option value="PUBLICADA">Publicada</option>
+                                    <option value="CONSULTA_PUBLICA">Consulta Pública</option>
+                                    <option value="BORRADOR_EN_PROCESO">Borrador en Proceso</option>
                                 </select>
                             </div>
                         </div>
-                    </div>
-                </section>
 
-                <hr class="border-outline-variant/30">
-
-                <section>
-                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Clasificación</h3>
-
-                    <!-- TEMÁTICA PRINCIPAL -->
-                    <div class="mb-6">
-                        <label class="block text-xs font-bold text-on-surface-variant uppercase mb-2">Temática Principal</label>
-
-                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                            <label class="cursor-pointer">
-                                <input type="checkbox" name="categorias" value="1" class="peer hidden">
-                                <div class="px-4 py-3 rounded-lg border border-outline-variant/30 bg-surface-container-low text-center peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
-                                    <p class="font-black text-secondary">EC</p>
-                                    <p class="text-[10px] font-bold uppercase text-on-surface-variant">E. Circular</p>
-                                </div>
-                            </label>
-
-                            <label class="cursor-pointer">
-                                <input type="checkbox" name="categorias" value="2" class="peer hidden">
-                                <div class="px-4 py-3 rounded-lg border border-outline-variant/30 bg-surface-container-low text-center peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
-                                    <p class="font-black text-secondary">GR</p>
-                                    <p class="text-[10px] font-bold uppercase text-on-surface-variant">G. Residuos</p>
-                                </div>
-                            </label>
-
-                            <label class="cursor-pointer">
-                                <input type="checkbox" name="categorias" value="3" class="peer hidden">
-                                <div class="px-4 py-3 rounded-lg border border-outline-variant/30 bg-surface-container-low text-center peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
-                                    <p class="font-black text-secondary">EE</p>
-                                    <p class="text-[10px] font-bold uppercase text-on-surface-variant">E. Eficiente</p>
-                                </div>
-                            </label>
-
-                            <label class="cursor-pointer">
-                                <input type="checkbox" name="categorias" value="4" class="peer hidden">
-                                <div class="px-4 py-3 rounded-lg border border-outline-variant/30 bg-surface-container-low text-center peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
-                                    <p class="font-black text-secondary">REP</p>
-                                    <p class="text-[10px] font-bold uppercase text-on-surface-variant">Resp. Ext</p>
-                                </div>
-                            </label>
-
-                            <label class="cursor-pointer">
-                                <input type="checkbox" name="categorias" value="5" class="peer hidden">
-                                <div class="px-4 py-3 rounded-lg border border-outline-variant/30 bg-surface-container-low text-center peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
-                                    <p class="font-black text-secondary">...</p>
-                                    <p class="text-[10px] font-bold uppercase text-on-surface-variant">Otro</p>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- TIPO Y ESTADO -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Tipo de Norma</label>
-                            <select id="normativaTipo" name="tipoNorma" required
-                                    class="w-full appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
-                                <option value="DECRETO_LEY">Decreto Ley</option>
-                                <option value="LEY_NACIONAL">Ley Nacional</option>
-                                <option value="DECRETO_SUPREMO">Decreto Supremo</option>
-                                <option value="REGLAMENTO">Reglamento</option>
-                                <option value="ANTEPROYECTO">Anteproyecto</option>
-                                <option value="HOJA_DE_RUTA">Hoja de Ruta</option>
-                                <option value="OTRO">Otro</option>
-                            </select>
+                        <!-- ALCANCE GEOGRÁFICO - cards sin cambios -->
+                        <div class="mt-6">
+                            <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-2">Alcance Geográfico</label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="alcance" value="NACIONAL" class="peer hidden">
+                                    <div class="px-4 py-4 rounded-lg border border-outline-variant/30 bg-[#f8faff] flex items-center gap-3 peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                        <span class="text-xl">🌎</span>
+                                        <div>
+                                            <p class="text-sm font-bold text-on-surface">Nacional</p>
+                                            <p class="text-[10px] uppercase font-bold text-on-surface-variant">Territorio local</p>
+                                        </div>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="alcance" value="INTERNACIONAL" class="peer hidden">
+                                    <div class="px-4 py-4 rounded-lg border border-outline-variant/30 bg-[#f8faff] flex items-center gap-3 peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                        <span class="text-xl">🌐</span>
+                                        <div>
+                                            <p class="text-sm font-bold text-on-surface">Internacional</p>
+                                            <p class="text-[10px] uppercase font-bold text-on-surface-variant">Tratados / Global</p>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Estado Actual</label>
-                            <select id="normativaEstado" name="estado" required
-                                    class="w-full appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
-                                <option value="VIGENTE">Vigente</option>
-                                <option value="DEROGADA">Derogada</option>
-                                <option value="PUBLICADA">Publicada</option>
-                                <option value="CONSULTA_PUBLICA">Consulta Pública</option>
-                                <option value="BORRADOR_EN_PROCESO">Borrador en Proceso</option>
-                            </select>
-
+                        <!-- TIPO DE ACCESO - cards sin cambios -->
+                        <div class="mt-6">
+                            <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-2">Tipo de Acceso</label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="acceso" value="GRATIS" class="peer hidden">
+                                    <div class="px-4 py-4 rounded-lg border border-outline-variant/30 bg-[#f8faff] flex items-center gap-3 peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                        <span class="text-xl">🔓</span>
+                                        <div>
+                                            <p class="text-sm font-bold text-on-surface">Gratuito</p>
+                                            <p class="text-[10px] uppercase font-bold text-on-surface-variant">Acceso libre</p>
+                                        </div>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="acceso" value="PAGO" class="peer hidden">
+                                    <div class="px-4 py-4 rounded-lg border border-outline-variant/30 bg-[#f8faff] flex items-center gap-3 peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
+                                        <span class="text-xl">🔒</span>
+                                        <div>
+                                            <p class="text-sm font-bold text-on-surface">De pago</p>
+                                            <p class="text-[10px] uppercase font-bold text-on-surface-variant">Requiere compra o suscripción</p>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
                         </div>
-                    </div>
+                    </section>
 
-                    <!-- ALCANCE GEOGRÁFICO -->
-                    <div class="mt-6">
-                        <label class="block text-xs font-bold text-on-surface-variant uppercase mb-2">Alcance Geográfico</label>
+                    <!-- Acceso al Documento -->
+                    <section class="space-y-4 pt-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-1 h-5 bg-[#059669] rounded-full"></div>
+                            <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Acceso al Documento</h2>
+                        </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <label class="cursor-pointer">
-                                <input type="radio" name="alcance" value="NACIONAL" class="peer hidden" checked>
-                                <div class="px-4 py-4 rounded-lg border border-outline-variant/30 bg-surface-container-low flex items-center gap-3 peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
-                                    <span class="text-xl">🌎</span>
-                                    <div>
-                                        <p class="text-sm font-bold text-on-surface">Nacional</p>
-                                        <p class="text-[10px] uppercase font-bold text-on-surface-variant">Territorio local</p>
+                        <!-- Sección de archivo (visible sólo cuando acceso = GRATIS) -->
+                        <div id="seccionArchivoNormativa" class="space-y-2">
+                            <!-- Archivo actual (solo modo edición) -->
+                            <div id="archivoActualSectionNorm" style="display:none;">
+                                <div class="flex items-center gap-3 p-4 bg-[#f8faff] border border-gray-200 rounded-xl">
+                                    <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 bg-red-50 text-red-500">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p id="archivoActualNombreNorm" class="text-sm font-bold text-gray-700 truncate">archivo.pdf</p>
+                                        <p class="text-xs text-gray-400">Archivo actual de la normativa</p>
+                                    </div>
+                                    <button type="button" id="btnCambiarArchivoNorm" onclick="mostrarSustituirArchivoNorm()"
+                                        class="text-xs font-bold text-[#059669] hover:underline flex-shrink-0 whitespace-nowrap">
+                                        Cambiar archivo
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Drop zone (nuevo, o al reemplazar en edición) -->
+                            <div id="dropZoneWrapperNorm">
+                                <input id="archivoInputNormSidebar" name="archivo" type="file" accept=".pdf" style="display:none;">
+                                <div id="dropZoneNormSidebar"
+                                     class="border-2 border-dashed border-gray-200 rounded-2xl transition-all duration-200"
+                                     style="background:#f9fafb;">
+                                    <div id="dropDefaultNormSidebar" class="flex flex-col items-center justify-center py-12 px-6 text-center">
+                                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4" style="background:#d1fae5;">
+                                            <svg class="w-7 h-7" style="color:#059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                            </svg>
+                                        </div>
+                                        <p class="text-base font-bold text-gray-700 mb-1">Arrastra tu archivo aquí</p>
+                                        <p class="text-sm text-gray-400 mb-5">PDF · máximo 50 MB</p>
+                                        <label for="archivoInputNormSidebar"
+                                               class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold text-white cursor-pointer"
+                                               style="background:#059669;"
+                                               onmouseover="this.style.background='#047857'" onmouseout="this.style.background='#059669'">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                            </svg>
+                                            Seleccionar archivo
+                                        </label>
+                                    </div>
+                                    <div id="dropSelectedNormSidebar" style="display:none;"
+                                         class="flex flex-col items-center justify-center py-12 px-6 text-center">
+                                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4" style="background:#d1fae5;">
+                                            <svg class="w-7 h-7" style="color:#059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                        </div>
+                                        <p class="text-base font-bold mb-1" style="color:#059669;">Archivo listo para subir</p>
+                                        <p id="dropFileNameNormSidebar" class="text-sm font-semibold text-gray-700 mb-1 break-all">documento.pdf</p>
+                                        <p id="dropFileSizeNormSidebar" class="text-xs text-gray-400 mb-5">0 MB</p>
+                                        <label for="archivoInputNormSidebar"
+                                               class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-gray-600 cursor-pointer border border-gray-200"
+                                               style="background:#f3f4f6;"
+                                               onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                                            Cambiar archivo
+                                        </label>
                                     </div>
                                 </div>
-                            </label>
-
-                            <label class="cursor-pointer">
-                                <input type="radio" name="alcance" value="INTERNACIONAL" class="peer hidden">
-                                <div class="px-4 py-4 rounded-lg border border-outline-variant/30 bg-surface-container-low flex items-center gap-3 peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
-                                    <span class="text-xl">🌐</span>
-                                    <div>
-                                        <p class="text-sm font-bold text-on-surface">Internacional</p>
-                                        <p class="text-[10px] uppercase font-bold text-on-surface-variant">Tratados / Global</p>
-                                    </div>
-                                </div>
-                            </label>
+                            </div>
                         </div>
-                    </div>
-                    <!-- TIPO DE ACCESO -->
-                    <div class="mt-6">
-                        <label class="block text-xs font-bold text-on-surface-variant uppercase mb-2">Tipo de Acceso</label>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <label class="cursor-pointer">
-                                <input type="radio" name="acceso" value="GRATIS" class="peer hidden" checked>
-                                <div class="px-4 py-4 rounded-lg border border-outline-variant/30 bg-surface-container-low flex items-center gap-3 peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
-                                    <span class="text-xl">🔓</span>
-                                    <div>
-                                        <p class="text-sm font-bold text-on-surface">Gratuito</p>
-                                        <p class="text-[10px] uppercase font-bold text-on-surface-variant">Acceso libre</p>
-                                    </div>
-                                </div>
-                            </label>
-
-                            <label class="cursor-pointer">
-                                <input type="radio" name="acceso" value="PAGO" class="peer hidden">
-                                <div class="px-4 py-4 rounded-lg border border-outline-variant/30 bg-surface-container-low flex items-center gap-3 peer-checked:border-secondary peer-checked:ring-2 peer-checked:ring-secondary/20 transition-all">
-                                    <span class="text-xl">🔒</span>
-                                    <div>
-                                        <p class="text-sm font-bold text-on-surface">De pago</p>
-                                        <p class="text-[10px] uppercase font-bold text-on-surface-variant">Requiere compra o suscripción</p>
-                                    </div>
-                                </div>
-                            </label>
+                        <!-- Enlace oficial (siempre visible) -->
+                        <div class="space-y-2">
+                            <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Enlace oficial de descarga</label>
+                            <input id="normativaEnlace" name="enlace" type="url" placeholder="https://bibliotecadelcongreso.cl/..."
+                                   class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300"/>
                         </div>
-                    </div>
-                </section>
+                    </section>
 
-                <hr class="border-outline-variant/30">
+                </div>
 
-                <section>
-                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Acceso al Documento</h3>
-                    <div>
-                        <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Enlace oficial de descarga</label>
-                        <input name="enlace" type="url" placeholder="https://bibliotecadelcongreso.cl/..."
-                               class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 bg-surface-container-low text-sm" />
-                    </div>
-                </section>
-
-                <div class="pt-6 mt-4 flex justify-end gap-3 border-t border-outline-variant/30">
+                <footer class="px-6 py-5 border-t border-gray-100 bg-white flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-0 z-30">
                     <button type="button"
                             onclick="document.getElementById('modalNuevaNormativa').classList.add('hidden')"
-                            class="px-6 py-2.5 rounded-lg border border-outline-variant/30 bg-white text-on-surface font-bold text-sm hover:bg-surface-container transition-colors">
+                            class="w-full sm:w-auto px-8 py-3 text-[11px] font-black text-gray-400 uppercase tracking-widest hover:text-gray-600 transition-colors">
                         Cancelar
                     </button>
-
-                    <button id="btnGuardarNormativa" type="submit"
-                            class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary font-bold text-sm hover:bg-[#00210c] transition-colors shadow-sm cursor-pointer">
-                        Guardar Normativa
-                    </button>
-                </div>
+                    <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+                        <span class="hidden sm:block text-[9px] font-bold text-gray-400 uppercase tracking-widest text-right leading-tight">
+                            Todos los campos<br/>son obligatorios
+                        </span>
+                        <button id="btnGuardarNormativa" type="submit"
+                                class="w-full sm:w-auto px-10 py-4 bg-[#059669] text-white text-[11px] font-black uppercase tracking-[0.15em] rounded-xl shadow-lg shadow-[#059669]/20 hover:bg-[#047857] active:scale-95 transition-all flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                            </svg>
+                            Guardar Normativa
+                        </button>
+                    </div>
+                </footer>
             </form>
         </div>
     </div>
 
 <script>
+    // === Normativa file dropzone ===
+    (function () {
+        var fileInput    = document.getElementById('archivoInputNormSidebar');
+        var dropZone     = document.getElementById('dropZoneNormSidebar');
+        var dropDefault  = document.getElementById('dropDefaultNormSidebar');
+        var dropSelected = document.getElementById('dropSelectedNormSidebar');
+        var dropFileName = document.getElementById('dropFileNameNormSidebar');
+        var dropFileSize = document.getElementById('dropFileSizeNormSidebar');
+
+        function mostrarSeleccionadoNorm(file) {
+            if (dropFileName) dropFileName.textContent = file.name;
+            if (dropFileSize) dropFileSize.textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+            if (dropDefault)  dropDefault.style.display  = 'none';
+            if (dropSelected) dropSelected.style.display = 'flex';
+            if (dropZone) { dropZone.style.borderColor = '#059669'; dropZone.style.background = '#f0fdf4'; }
+        }
+
+        function mostrarDefaultNorm() {
+            if (dropDefault)  dropDefault.style.display  = 'flex';
+            if (dropSelected) dropSelected.style.display = 'none';
+            if (dropZone) { dropZone.style.borderColor = '#e5e7eb'; dropZone.style.background = '#f9fafb'; }
+        }
+
+        window.resetearArchivoNormSidebar = function () {
+            if (fileInput) fileInput.value = '';
+            mostrarDefaultNorm();
+        };
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function () {
+                if (this.files && this.files.length > 0) {
+                    mostrarSeleccionadoNorm(this.files[0]);
+                } else {
+                    mostrarDefaultNorm();
+                }
+            });
+        }
+
+        if (dropZone) {
+            dropZone.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                dropZone.style.borderColor = '#3b82f6';
+                dropZone.style.background  = '#eff6ff';
+            });
+            dropZone.addEventListener('dragleave', function () {
+                if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                    mostrarDefaultNorm();
+                } else {
+                    dropZone.style.borderColor = '#059669';
+                    dropZone.style.background  = '#f0fdf4';
+                }
+            });
+            dropZone.addEventListener('drop', function (e) {
+                e.preventDefault();
+                var dt = e.dataTransfer;
+                if (dt && dt.files && dt.files.length > 0) {
+                    fileInput.files = dt.files;
+                    mostrarSeleccionadoNorm(dt.files[0]);
+                }
+            });
+        }
+    })();
+
+    // === Visibilidad de sección archivo según acceso ===
+    function actualizarVisibilidadArchivoNormativa() {
+        var accesoChecked = document.querySelector('#modalNuevaNormativa input[name="acceso"]:checked');
+        var seccion = document.getElementById('seccionArchivoNormativa');
+        var archivoInput = document.getElementById('archivoInputNormSidebar');
+        if (!seccion) return;
+        if (accesoChecked && accesoChecked.value === 'GRATIS') {
+            seccion.style.display = '';
+            if (archivoInput) archivoInput.setAttribute('name', 'archivo');
+        } else {
+            seccion.style.display = 'none';
+            if (archivoInput) archivoInput.removeAttribute('name');
+        }
+    }
+
+    document.querySelectorAll('#modalNuevaNormativa input[name="acceso"]').forEach(function (radio) {
+        radio.addEventListener('change', actualizarVisibilidadArchivoNormativa);
+    });
+
+    function mostrarSustituirArchivoNorm() {
+        var wrapper = document.getElementById('dropZoneWrapperNorm');
+        var input   = document.getElementById('archivoInputNormSidebar');
+        var btn     = document.getElementById('btnCambiarArchivoNorm');
+        if (wrapper) wrapper.style.display = '';
+        if (input)   input.setAttribute('name', 'archivo');
+        if (btn)     btn.style.display = 'none';
+    }
+
+    function abrirModalNuevaNormativa() {
+        var form = document.getElementById('formNormativa');
+        if (form) {
+            form.action = '/admin/repo_new';
+            form.reset();
+        }
+        document.getElementById('tituloModalNormativa').textContent = 'Nueva Normativa';
+        document.getElementById('btnGuardarNormativa').textContent = 'Guardar Normativa';
+        // Sin pre-selección de radios — usuario debe elegir explícitamente
+        document.querySelectorAll('#modalNuevaNormativa input[name="acceso"]').forEach(r => r.checked = false);
+        document.querySelectorAll('#modalNuevaNormativa input[name="alcance"]').forEach(r => r.checked = false);
+        document.querySelectorAll('#modalNuevaNormativa input[name="categorias"]').forEach(cb => cb.checked = false);
+        var archivoActualSection = document.getElementById('archivoActualSectionNorm');
+        var dropZoneWrapper = document.getElementById('dropZoneWrapperNorm');
+        var archivoInput = document.getElementById('archivoInputNormSidebar');
+        if (archivoActualSection) archivoActualSection.style.display = 'none';
+        if (dropZoneWrapper) dropZoneWrapper.style.display = '';
+        if (archivoInput) archivoInput.setAttribute('name', 'archivo');
+        actualizarVisibilidadArchivoNormativa();
+        if (typeof resetearArchivoNormSidebar === 'function') resetearArchivoNormSidebar();
+        document.getElementById('modalNuevaNormativa').classList.remove('hidden');
+    }
+
     function validarNormativaForm() {
         const titulo = document.getElementById('normativaTitulo').value.trim();
         const organismo = document.getElementById('normativaOrganismo').value.trim();
@@ -670,22 +932,18 @@
             alert('El nombre de la normativa debe tener al menos 5 caracteres.');
             return false;
         }
-
         if (organismo.length < 3) {
             alert('Debe ingresar un organismo o ministerio válido.');
             return false;
         }
-
         if (codigo.length < 2) {
             alert('Debe ingresar un código válido.');
             return false;
         }
-
         if (categorias.length === 0) {
             alert('Debe seleccionar al menos una temática principal.');
             return false;
         }
-
         return true;
     }
 </script>

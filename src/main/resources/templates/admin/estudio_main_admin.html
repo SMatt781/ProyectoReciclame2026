@@ -330,6 +330,7 @@
                                         th:data-formato="${estudio.formato.name()}"
                                         th:data-estado="${estudio.estado.name()}"
                                         th:data-tipoacceso="${estudio.tipoAcceso.name()}"
+                                        th:data-archivo="${estudio.archivoNombre}"
                                         onclick="abrirModalEditarEstudio(this)"
                                         class="px-2.5 py-1 text-sm font-semibold rounded-lg text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition">
                                     Editar
@@ -429,6 +430,7 @@
                                     th:data-formato="${estudio.formato.name()}"
                                     th:data-estado="${estudio.estado.name()}"
                                     th:data-tipoacceso="${estudio.tipoAcceso.name()}"
+                                    th:data-archivo="${estudio.archivoNombre}"
                                     onclick="abrirModalEditarEstudio(this)"
                                     class="flex items-center gap-1.5 px-3 py-1.5
                bg-transparent text-[#666]
@@ -905,27 +907,16 @@
 
 <script>
     function abrirModalEditarEstudio(btn) {
-
-        const id = btn.dataset.id;
-
-        document.getElementById("formEstudio").action =
-            "/admin/estudios/" + id + "/actualizar";
-
-        document.getElementById("estudioNombre").value = btn.dataset.nombre || "";
-        document.getElementById("estudioDescripcion").value = btn.dataset.descripcion || "";
-        document.getElementById("estudioAnio").value = btn.dataset.anio || "";
-        document.getElementById("estudioEstado").value = btn.dataset.estado || "BORRADOR";
-        document.getElementById("estudioTipoAcceso").value = btn.dataset.tipoacceso || "DESCARGA";
-
-        const formato = btn.dataset.formato || "PDF";
-
-        if (formato === "PDF") {
-            document.getElementById("estudioFormato").value = "Reporte Técnico (PDF)";
-        } else {
-            document.getElementById("estudioFormato").value = "Planilla de Datos (XLSX)";
-        }
-
-        document.getElementById("modalNuevoEstudio").classList.remove("hidden");
+        abrirModalEstudio('editar', {
+            id:          btn.dataset.id,
+            nombre:      btn.dataset.nombre,
+            descripcion: btn.dataset.descripcion,
+            anio:        btn.dataset.anio,
+            estado:      btn.dataset.estado,
+            tipoacceso:  btn.dataset.tipoacceso,
+            formato:     btn.dataset.formato,
+            archivo:     btn.dataset.archivo
+        });
     }
 </script>
 
@@ -941,7 +932,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h1 class="text-lg font-extrabold text-[#0f172a] tracking-tight">Nuevo Estudio</h1>
+                    <h1 id="modalEstudioTituloMain" class="text-lg font-extrabold text-[#0f172a] tracking-tight">Nuevo Estudio</h1>
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">PANEL DE ADMINISTRACIÓN</p>
                 </div>
             </div>

@@ -159,7 +159,7 @@ public class VisualizadorController {
 
         model.addAttribute("estudio", estudio);
         model.addAttribute("citas", citaService.generarCitasEstudio(id));
-        model.addAttribute("currentPage", "visualizadorEstudios");
+        model.addAttribute("currentPage", "visualizadorEstudio");
 
         return "visualizador/visualizadorEstudio";
     }
@@ -375,6 +375,10 @@ public class VisualizadorController {
         model.addAttribute("normativa", normativa);
         model.addAttribute("citas", citaService.generarCitasNormativa(id));
         model.addAttribute("currentPage", "visualizadorRepoNormativo");
+
+        if (normativa.getAcceso() == Normativa.AccesoNormativa.PAGO) {
+            return "visualizador/visualizadorNormativaPago";
+        }
 
         return "visualizador/visualizadorNormativa";
     }

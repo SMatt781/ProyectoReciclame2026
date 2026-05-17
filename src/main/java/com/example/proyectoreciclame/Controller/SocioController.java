@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -324,7 +325,7 @@ public class SocioController {
         if (idUsuario == null) return "redirect:/login";
 
         List<EspacioCarpeta> carpetas = miEspacioService.listarCarpetas(idUsuario);
-        java.util.Map<Long, Long> conteosCarpeta = miEspacioService.conteosPorCarpeta(idUsuario);
+        Map<Long, Long> conteosCarpeta = miEspacioService.conteosPorCarpeta(idUsuario);
 
         List<ContenidoGuardado> guardados;
         EspacioCarpeta carpetaActual = null;
@@ -342,6 +343,22 @@ public class SocioController {
         long totalEstudios = miEspacioService.contarPorTipo(idUsuario, "ESTUDIO");
         long totalNormativas = miEspacioService.contarPorTipo(idUsuario, "NORMATIVA");
 
+        EspacioCarpeta carpetaMasPoblada = null;
+        long maxDocumentos = 0;
+
+        if (!conteosCarpeta.isEmpty()) {
+            Optional<Map.Entry<Long, Long>> entry = conteosCarpeta.entrySet().stream().max(Map.Entry.comparingByValue());
+            if (entry.isPresent()) {
+                Long idCarpetaMasPoblada = entry.get().getKey();
+                maxDocumentos = entry.get().getValue();
+                carpetaMasPoblada = carpetas.stream()
+                        .filter(c -> c.getIdCarpeta().equals(idCarpetaMasPoblada))
+                        .findFirst()
+                        .orElse(null);
+            }
+        }
+
+
         model.addAttribute("guardados", guardados);
         model.addAttribute("carpetas", carpetas);
         model.addAttribute("conteosCarpeta", conteosCarpeta);
@@ -350,6 +367,8 @@ public class SocioController {
         model.addAttribute("totalGuardados", totalGuardados);
         model.addAttribute("totalEstudios", totalEstudios);
         model.addAttribute("totalNormativas", totalNormativas);
+        model.addAttribute("carpetaMasPoblada", carpetaMasPoblada);
+        model.addAttribute("maxDocumentos", maxDocumentos);
         model.addAttribute("currentPage", "miEspacio");
         return "socio/miEspacio";
     }

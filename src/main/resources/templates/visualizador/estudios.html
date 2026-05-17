@@ -141,78 +141,80 @@
 
                 </div>
 
+                <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
+                    <article
+                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container">
+                        </div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div
+                                    class="bg-emerald-50 text-secondary rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M3 6a2 2 0 012-2h8l2 2h4a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V6zm2 0v11h14V8h-4.5L12.5 6H5z" />
+                                </svg>
+                            </div>
+                            <span
+                                    class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                    Repositorio
+                                </span>
+                        </div>
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                            Total estudios disponibles
+                        </h4>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed"
+                             th:text="${totalEstudios}">0</div>
+                    </article>
+
+                    <article
+                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200"></div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div
+                                    class="bg-orange-100 text-orange-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 7a1 1 0 011 1v4.17l2.24 1.3a1 1 0 11-1 1.74l-2.7-1.56A1 1 0 0111 12V8a1 1 0 011-1zm0-5a10 10 0 100 20 10 10 0 000-20zm0 2a8 8 0 110 16 8 8 0 010-16z" />
+                                </svg>
+                            </div>
+                            <span
+                                    class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                    Consultados
+                                </span>
+                        </div>
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                            Consultados en 30 días
+                        </h4>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed"
+                             th:text="${estudiosRecientes}">0</div>
+                    </article>
+
+                    <article
+                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container"></div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div
+                                    class="bg-error-container text-error rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M7 2a1 1 0 011 1v1h8V3a1 1 0 112 0v1h1a2 2 0 012 2v2H3V6a2 2 0 012-2h1V3a1 1 0 011-1zm14 8H3v9a2 2 0 002 2h14a2 2 0 002-2v-9z" />
+                                </svg>
+                            </div>
+                            <span
+                                    class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                                    Publicación
+                                </span>
+                        </div>
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                            Año más activo
+                        </h4>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed"
+                             th:text="${anioMasActivo}">-</div>
+                    </article>
+                </section>
+
 
 
                 <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6 flex flex-col">
                     <!-- Reduced Metrics for Visualizador Role -->
-                    <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
-                        <article
-                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container">
-                            </div>
-                            <div class="flex justify-between items-start mb-3">
-                                <div
-                                    class="bg-emerald-50 text-secondary rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
-                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path d="M3 6a2 2 0 012-2h8l2 2h4a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V6zm2 0v11h14V8h-4.5L12.5 6H5z" />
-                                    </svg>
-                                </div>
-                                <span
-                                    class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                    Repositorio
-                                </span>
-                            </div>
-                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                                Total estudios disponibles
-                            </h4>
-                            <div class="text-3xl font-extrabold text-on-primary-fixed"
-                                th:text="${totalEstudios}">0</div>
-                        </article>
 
-                        <article
-                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200"></div>
-                            <div class="flex justify-between items-start mb-3">
-                                <div
-                                    class="bg-orange-100 text-orange-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
-                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path d="M12 7a1 1 0 011 1v4.17l2.24 1.3a1 1 0 11-1 1.74l-2.7-1.56A1 1 0 0111 12V8a1 1 0 011-1zm0-5a10 10 0 100 20 10 10 0 000-20zm0 2a8 8 0 110 16 8 8 0 010-16z" />
-                                    </svg>
-                                </div>
-                                <span
-                                    class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                    Consultados
-                                </span>
-                            </div>
-                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                                Consultados en 30 días
-                            </h4>
-                            <div class="text-3xl font-extrabold text-on-primary-fixed"
-                                th:text="${estudiosRecientes}">0</div>
-                        </article>
-
-                        <article
-                            class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container"></div>
-                            <div class="flex justify-between items-start mb-3">
-                                <div
-                                    class="bg-error-container text-error rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
-                                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path d="M7 2a1 1 0 011 1v1h8V3a1 1 0 112 0v1h1a2 2 0 012 2v2H3V6a2 2 0 012-2h1V3a1 1 0 011-1zm14 8H3v9a2 2 0 002 2h14a2 2 0 002-2v-9z" />
-                                    </svg>
-                                </div>
-                                <span
-                                    class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                    Publicación
-                                </span>
-                            </div>
-                            <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                                Año más activo
-                            </h4>
-                            <div class="text-3xl font-extrabold text-on-primary-fixed"
-                                th:text="${anioMasActivo}">-</div>
-                        </article>
-                    </section>
 
 
 
