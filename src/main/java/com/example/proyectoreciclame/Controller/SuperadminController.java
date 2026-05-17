@@ -329,8 +329,8 @@ public class SuperadminController {
         model.addAttribute("modalEditar", true);
         model.addAttribute("listaDominios",
                 dominioAutorizadoRepository.findByEstadoTrue());
-
-
+        model.addAttribute("politica",
+                politicaContrasenaRepository.findById(1).orElse(null));
 
         return "superadmin/administradores";
     }
@@ -366,17 +366,18 @@ public class SuperadminController {
         if (!admin.getCorreo().equalsIgnoreCase(correo)
                 && usuarioRepository.existsByCorreoAndEliminadoEnIsNull(correo)) {
             redirectAttributes.addFlashAttribute("error", "Ya existe un administrador con ese correo.");
-            return "redirect:/superadmin/administradores?page=" + page
-                    + (texto != null ? "&texto=" + texto : "");
+            return "redirect:/superadmin/administradores/editar/" + idUsuario
+                    + "?page=" + page + (texto != null ? "&texto=" + texto : "");
         }
 
         // Validar unicidad de DNI (excluyendo el mismo usuario)
         if (dni != null && !dni.isBlank()
                 && !dni.equals(admin.getDni())
                 && usuarioRepository.existsByDniAndEliminadoEnIsNull(dni)) {
+            // DESPUÉS
             redirectAttributes.addFlashAttribute("error", "Ya existe un administrador con ese DNI.");
-            return "redirect:/superadmin/administradores?page=" + page
-                    + (texto != null ? "&texto=" + texto : "");
+            return "redirect:/superadmin/administradores/editar/" + idUsuario
+                    + "?page=" + page + (texto != null ? "&texto=" + texto : "");
         }
 
         admin.setNombres(nombres.trim());
@@ -614,6 +615,46 @@ public class SuperadminController {
                         "/superadmin/estadoSistema"
                 );
             }
+        }
+
+        // ── CPU, RAM, Disco ───────────────────────────────────────────────────────
+        try {
+            // CPU
+            com.sun.management.OperatingSystemMXBean osBean =
+                    (com.sun.management.OperatingSystemMXBean)
+                            java.lang.management.ManagementFactory.getOperatingSystemMXBean();
+            double cpuLoad = osBean.getCpuLoad();
+            int cpuUsage = cpuLoad >= 0 ? (int) Math.round(cpuLoad * 100) : -1;
+            model.addAttribute("cpuUsage", cpuUsage);
+
+            // RAM
+            Runtime runtime = Runtime.getRuntime();
+            long ramTotalMb = runtime.totalMemory() / (1024 * 1024);
+            long ramLibreMb = runtime.freeMemory() / (1024 * 1024);
+            long ramUsadaMb = ramTotalMb - ramLibreMb;
+            int ramUsagePct = (int) ((ramUsadaMb * 100) / ramTotalMb);
+            model.addAttribute("ramUsage", ramUsagePct);
+            model.addAttribute("ramUsadaMb", ramUsadaMb);
+            model.addAttribute("ramTotalMb", ramTotalMb);
+
+            // Disco
+            java.io.File disco = new java.io.File("/");
+            long totalGb = disco.getTotalSpace() / (1024 * 1024 * 1024);
+            long libreGb = disco.getUsableSpace() / (1024 * 1024 * 1024);
+            long usadoGb = totalGb - libreGb;
+            int diskUsagePct = totalGb > 0 ? (int) ((usadoGb * 100) / totalGb) : 0;
+            model.addAttribute("diskUsage", diskUsagePct);
+            model.addAttribute("diskUsadoGb", usadoGb);
+            model.addAttribute("diskTotalGb", totalGb);
+
+        } catch (Exception e) {
+            model.addAttribute("cpuUsage", -1);
+            model.addAttribute("ramUsage", -1);
+            model.addAttribute("ramUsadaMb", 0);
+            model.addAttribute("ramTotalMb", 0);
+            model.addAttribute("diskUsage", -1);
+            model.addAttribute("diskUsadoGb", 0);
+            model.addAttribute("diskTotalGb", 0);
         }
 
         return "superadmin/estadoSistema";

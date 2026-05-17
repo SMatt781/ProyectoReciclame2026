@@ -575,7 +575,7 @@
             </button>
         </div>
 
-        <form th:action="@{/superadmin/confSeguridad/crear}" method="post" id="formCrearDominio" class="px-6 pb-6 space-y-5">
+        <form th:action="@{/superadmin/confSeguridad/crear}" method="post" id="formCrearDominio" novalidate class="px-6 pb-6 space-y-5">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <input type="hidden" name="page" th:value="${currentPage}"/>
 
@@ -583,10 +583,9 @@
                 <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest block">NOMBRE DE DOMINIO *</label>
                 <input name="nombreDominio" required type="text"
                        placeholder="Ej: @empresa.com"
-                       pattern="@[a-zA-Z0-9]+(\.[a-zA-Z0-9]+){1,2}"
-                       title="Debe empezar con @, tener entre 1 y 2 puntos, y terminar en letra. Ej: @empresa.com o @mail.empresa.com"
                        class="w-full h-10 px-4 bg-surface-container-low border border-outline-variant/30 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20"/>
                 <p class="text-xs text-on-surface-variant">Debe comenzar con @ y terminar en letra. Ej: @empresa.com</p>
+                <span class="campo-error hidden text-xs text-red-500 block"></span>
             </div>
 
             <div class="space-y-2">
@@ -630,7 +629,7 @@
             </button>
         </div>
 
-        <form th:action="@{/superadmin/confSeguridad/editar}" method="post" id="formEditarDominio" class="px-6 pb-6 space-y-5">
+        <form th:action="@{/superadmin/confSeguridad/editar}" method="post" id="formEditarDominio" novalidate class="px-6 pb-6 space-y-5">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <input type="hidden" name="idDominio" id="editarDominioId" th:value="${dominioEditar?.idDominio}"/>
             <input type="hidden" name="page" th:value="${currentPage}"/>
@@ -640,9 +639,8 @@
                 <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest block">NOMBRE DE DOMINIO *</label>
                 <input name="nombreDominio" id="editarNombreDominio" required type="text"
                        th:value="${dominioEditar?.nombreDominio}"
-                       pattern="@[a-zA-Z0-9]+(\.[a-zA-Z0-9]+){1,2}"
-                       title="Debe empezar con @, tener entre 1 y 2 puntos, y terminar en letra. Ej: @empresa.com o @mail.empresa.com"
                        class="w-full h-10 px-4 bg-surface-container-low border border-outline-variant/30 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20"/>
+                <span class="campo-error hidden text-xs text-red-500 block"></span>
             </div>
 
             <div class="space-y-2">
@@ -1078,6 +1076,53 @@
     // - Si presionas Enter, busca al instante.
     // - Estado filtra al primer click.
     // - La URL queda limpia: ?texto=...&estadoDominio=...
+
+    // ── Validación de dominio ─────────────────────────────────────────────────
+    const DOMINIO_REGEX = /^@[a-zA-Z0-9]+(\.[a-zA-Z0-9]+){1,2}$/;
+
+    function mostrarErrorDominio(input, msg) {
+        const wrap = input.closest('.space-y-2');
+        const span = wrap ? wrap.querySelector('.campo-error') : null;
+        if (span) { span.textContent = msg; span.classList.remove('hidden'); }
+    }
+
+    function limpiarErrorDominio(form) {
+        form.querySelectorAll('.campo-error').forEach(s => {
+            s.textContent = ''; s.classList.add('hidden');
+        });
+    }
+
+    function validarDominio(form) {
+        limpiarErrorDominio(form);
+        const input = form.querySelector('[name="nombreDominio"]');
+        if (!input) return true;
+        const v = input.value.trim();
+        if (!v) {
+            mostrarErrorDominio(input, 'El nombre de dominio es obligatorio.');
+            return false;
+        }
+        if (!DOMINIO_REGEX.test(v)) {
+            mostrarErrorDominio(input, 'Formato inválido. Debe empezar con @ y seguir el formato @empresa.com o @mail.empresa.com.');
+            return false;
+        }
+        return true;
+    }
+
+    ['formCrearDominio', 'formEditarDominio'].forEach(id => {
+        const f = document.getElementById(id);
+        if (!f) return;
+        f.addEventListener('submit', function(e) {
+            if (!validarDominio(this)) e.preventDefault();
+        });
+        const input = f.querySelector('[name="nombreDominio"]');
+        if (input) {
+            input.addEventListener('input', () => {
+                const wrap = input.closest('.space-y-2');
+                const span = wrap ? wrap.querySelector('.campo-error') : null;
+                if (span) { span.textContent = ''; span.classList.add('hidden'); }
+            });
+        }
+    });
 
 </script>
 
