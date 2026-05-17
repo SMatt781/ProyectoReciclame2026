@@ -7,6 +7,7 @@ public class UsuarioEditForm {
     private String apellidoPaterno;
     private String apellidoMaterno;
     private String dni;
+    private String ruc;
     private String correo;
     private String telefono;
     private Integer idRol;
@@ -54,6 +55,14 @@ public class UsuarioEditForm {
 
     public void setDni(String dni) {
         this.dni = dni;
+    }
+
+    public String getRuc() {
+        return ruc;
+    }
+
+    public void setRuc(String ruc) {
+        this.ruc = ruc;
     }
 
     public String getCorreo() {
