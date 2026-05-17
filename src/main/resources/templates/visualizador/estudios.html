@@ -488,11 +488,22 @@
 
                         <!-- Año Select -->
                         <div id="yearContainer">
-                            <select id="yearSelect" name="yearSelect"
-                                class="w-full sm:w-1/2 appearance-none bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30">
-                                <option value="">Seleccione un año</option>
-                                <!-- JS will populate 1990 - Current Year -->
-                            </select>
+                            <div class="relative w-full sm:w-1/2">
+                                <input type="hidden" id="yearSelect" name="yearSelect">
+
+                                <button type="button" id="yearDropdownBtn"
+                                        class="w-full bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30 flex items-center justify-between">
+                                    <span id="yearDropdownLabel">Seleccione un año</span>
+                                    <svg class="w-4 h-4 text-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+
+                                <div id="yearDropdownMenu"
+                                     class="hidden absolute left-0 top-full z-50 mt-1 w-full bg-white border border-outline-variant/30 rounded-lg shadow-lg max-h-40 overflow-y-auto">
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Rango Input -->
@@ -512,8 +523,9 @@
                                     class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
                             </div>
                         </div>
-                        <p id="dateError" class="text-error text-xs font-semibold hidden">La Fecha Incial no puede ser
-                            mayor que la Fecha Final.</p>
+                        <p id="dateError" class="text-error text-xs font-semibold hidden">
+                            La fecha inicio no puede ser mayor que la fecha fin, y no se permiten fechas futuras.
+                        </p>
                     </div>
                 </section>
 
@@ -616,6 +628,46 @@
                 if (e.target === filtersModal) closeModal();
             });
 
+            // Populating years
+            // Populating years
+            const yearDropdownBtn = document.getElementById('yearDropdownBtn');
+            const yearDropdownMenu = document.getElementById('yearDropdownMenu');
+            const yearDropdownLabel = document.getElementById('yearDropdownLabel');
+
+            if (yearSelect && yearDropdownBtn && yearDropdownMenu && yearDropdownLabel) {
+                const currentYear = new Date().getFullYear();
+                const startYear = 1990;
+
+                for (let y = currentYear; y >= startYear; y--) {
+                    const option = document.createElement('button');
+                    option.type = 'button';
+                    option.textContent = y;
+                    option.className = 'w-full text-left px-4 py-2 text-sm font-body hover:bg-surface-container transition-colors';
+
+                    option.addEventListener('click', () => {
+                        yearSelect.value = y;
+                        yearDropdownLabel.textContent = y;
+                        yearDropdownMenu.classList.add('hidden');
+                    });
+
+                    yearDropdownMenu.appendChild(option);
+                }
+
+                yearDropdownBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    yearDropdownMenu.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!yearDropdownBtn.contains(e.target) && !yearDropdownMenu.contains(e.target)) {
+                        yearDropdownMenu.classList.add('hidden');
+                    }
+                });
+            }
+
+
+
+
             // Toggle Logic
             const dateTypeRadios = document.querySelectorAll('input[name="dateType"]');
             const yearContainer = document.getElementById('yearContainer');
@@ -636,22 +688,78 @@
             });
 
             // Validation
+            // Validation
             const dateStart = document.getElementById('dateStart');
             const dateEnd = document.getElementById('dateEnd');
             const filtersForm = document.getElementById('filtersForm');
 
+            const today = new Date().toISOString().split('T')[0];
+
+            if (dateStart) {
+                dateStart.setAttribute('max', today);
+            }
+
+            if (dateEnd) {
+                dateEnd.setAttribute('max', today);
+            }
+
+            function validateDateRange() {
+                dateError.classList.add('hidden');
+
+                if (!dateStart || !dateEnd) return true;
+
+                const startValue = dateStart.value;
+                const endValue = dateEnd.value;
+
+                if (startValue && startValue > today) {
+                    dateError.textContent = 'La fecha inicio no puede ser mayor al día de hoy.';
+                    dateError.classList.remove('hidden');
+                    return false;
+                }
+
+                if (endValue && endValue > today) {
+                    dateError.textContent = 'La fecha fin no puede ser mayor al día de hoy.';
+                    dateError.classList.remove('hidden');
+                    return false;
+                }
+
+                if (startValue && endValue && startValue > endValue) {
+                    dateError.textContent = 'La fecha inicio no puede ser mayor que la fecha fin.';
+                    dateError.classList.remove('hidden');
+                    return false;
+                }
+
+                return true;
+            }
+
+            if (dateStart && dateEnd) {
+                dateStart.addEventListener('change', validateDateRange);
+                dateEnd.addEventListener('change', validateDateRange);
+            }
+
             filtersForm.addEventListener('submit', (e) => {
+                if (yearDropdownMenu) {
+                    yearDropdownMenu.classList.add('hidden');
+                }
+
                 const checkedDateType = document.querySelector('input[name="dateType"]:checked');
                 const isRange = checkedDateType && checkedDateType.value === 'range';
 
                 if (isRange) {
                     yearSelect.name = '';
+
+                    if (!validateDateRange()) {
+                        e.preventDefault();
+                        return;
+                    }
+
                     if (!dateStart.value && !dateEnd.value) {
                         checkedDateType.name = '';
                     }
                 } else {
                     dateStart.name = '';
                     dateEnd.name = '';
+
                     if (!yearSelect.value) {
                         if (checkedDateType) checkedDateType.name = '';
                         yearSelect.name = '';
