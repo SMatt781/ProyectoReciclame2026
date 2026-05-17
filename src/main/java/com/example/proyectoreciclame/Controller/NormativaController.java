@@ -251,7 +251,6 @@ public class NormativaController {
         Normativa normativa = detalle.getNormativa();
         model.addAttribute("detalle", detalle);
         model.addAttribute("normativa", normativa);
-        model.addAttribute("currentPage", "repoNormativo");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean esVisualizador = authentication != null && authentication.getAuthorities().stream()
@@ -262,23 +261,27 @@ public class NormativaController {
         Long idUsuario = resolveIdUsuario(authentication);
 
         if (esVisualizador) {
+            model.addAttribute("currentPage", "visualizadorRepoNormativo");
             if (idUsuario != null) {
                 historialLecturaService.registrarOActualizar(idUsuario, "NORMATIVA", id, normativa.getTitulo());
             }
             model.addAttribute("citas", citaService.generarCitasNormativa(id));
             if (normativa.getAcceso() == Normativa.AccesoNormativa.PAGO) {
-                return "socio/visualizadorNormativaPago";
+                return "visualizador/visualizadorNormativaPago";
             }
             return "visualizador/visualizadorNormativa";
         } else if (esSocio && idUsuario != null) {
+            model.addAttribute("currentPage", "repoNormativo");
             model.addAttribute("estaGuardado", miEspacioService.estaGuardado(idUsuario, "NORMATIVA", id));
             if (normativa.getAcceso() == Normativa.AccesoNormativa.PAGO) {
                 return "socio/visualizadorNormativaPago";
             }
             return "socio/visualizadorNormativa";
         } else if (normativa.getAcceso() == Normativa.AccesoNormativa.PAGO) {
+            model.addAttribute("currentPage", "repoNormativo");
             return "socio/visualizadorNormativaPago";
         } else {
+            model.addAttribute("currentPage", "repoNormativo");
             return "socio/visualizadorNormativa";
         }
     }

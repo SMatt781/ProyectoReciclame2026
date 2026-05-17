@@ -88,29 +88,12 @@
             box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
         }
 
-        /* SVG Icon utility */
-        .icon-sm {
-            width: 1.25rem;
-            height: 1.25rem;
-        }
-
-        .icon-md {
-            width: 1.5rem;
-            height: 1.5rem;
-        }
-
-        .icon-lg {
-            width: 2rem;
-            height: 2rem;
-        }
-
-        .icon-xl {
-            width: 2.5rem;
-            height: 2.5rem;
-        }
+        .icon-sm { width: 1.25rem; height: 1.25rem; }
+        .icon-md { width: 1.5rem; height: 1.5rem; }
+        .icon-lg { width: 2rem; height: 2rem; }
+        .icon-xl { width: 2.5rem; height: 2.5rem; }
     </style>
     <div th:replace="~{fragments/responsive}"></div>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
 <body
@@ -121,20 +104,19 @@
     <!-- Main Content Canvas -->
     <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
         <!-- TopAppBar -->
-        <!-- TopAppBar -->
         <div th:replace="~{fragments/navbar :: navbar}"></div>
-        <!-- Main Content canvas modified to force h-full mapping without scroll -->
+
         <main class="flex-1 flex flex-col overflow-y-auto px-4 sm:px-6 py-2 bg-[#f9f9ff]">
             <div class="w-full flex-shrink-0">
                 <!-- Page Header -->
                 <header class="mb-6">
                     <div
                         class="flex items-center font-label text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-4 flex-wrap gap-2">
-                        <a th:href="@{/socio}" class="cursor-pointer hover:underline">INICIO</a>
+                        <a th:href="@{/visualizador}" class="cursor-pointer hover:underline">INICIO</a>
                         <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                         </svg>
-                        <a th:href="@{/normativas}" class="cursor-pointer hover:underline">NORMATIVAS</a>
+                        <a th:href="@{/visualizador/normativas}" class="cursor-pointer hover:underline">NORMATIVAS</a>
                         <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                         </svg>
@@ -151,9 +133,8 @@
                             class="inline-flex items-center gap-1.5 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase">
                         </span>
                         <span
-                            th:text="${normativa.acceso != null ? normativa.acceso.name().replace('_', ' ') : 'GRATUITO'}"
-                            th:classappend="${normativa.acceso != null and normativa.acceso.name() == 'PAGO' ? 'text-de-pago bg-[#fef3c7] border-de-pago' : 'text-gratuito bg-[#dcfce7] border-gratuito'}"
-                            class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold uppercase border">
+                            class="inline-flex items-center gap-1.5 text-de-pago bg-[#fef3c7] px-4 py-1.5 rounded-full text-xs font-bold uppercase border border-de-pago">
+                            ACCESO DE PAGO
                         </span>
                         <span th:if="${normativa.categorias != null and !normativa.categorias.isEmpty()}"
                             th:text="${normativa.categorias[0].nombre}"
@@ -164,62 +145,70 @@
                 </header>
             </div>
 
-            <!-- CONTENEDOR PADRE (GRID) -->
+            <!-- CONTENEDOR PADRE -->
             <div class="w-full flex flex-col xl:flex-row gap-6">
 
-                <!-- Columna Izquierda: PDF Viewer -->
+                <!-- Columna Izquierda: Documento Protegido -->
                 <div class="w-full xl:flex-1 flex flex-col">
                     <section
-                        class="flex-1 bg-surface-container-lowest rounded-xl flex flex-col overflow-hidden min-w-0"
-                        style="box-shadow: 0 24px 40px -4px rgba(0, 27, 46, 0.04);">
+                        class="flex-1 bg-surface-container-lowest rounded-xl flex flex-col overflow-hidden min-w-0 shadow-sm border border-outline-variant/20 xl:max-h-[calc(100vh-12rem)]">
                         <!-- Viewer Toolbar -->
                         <div
-                            class="h-16 bg-surface-container-lowest flex items-center justify-between px-6 z-10 sticky top-0 border-b border-surface-container/50 flex-wrap">
+                            class="h-14 bg-white flex items-center justify-between px-6 border-b border-surface-variant/50">
                             <div class="flex items-center gap-3">
-                                <svg class="icon-md text-on-surface-variant shrink-0" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                <svg class="icon-md text-on-surface-variant" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
                                 </svg>
-                                <h3 class="font-headline font-semibold text-on-primary-fixed text-sm">Vista Previa</h3>
-                                <div class="h-4 w-px bg-outline-variant/30"></div>
-                                <span class="font-body text-sm text-on-surface-variant w-40 truncate sm:w-auto"
+                                <h3 class="font-headline font-semibold text-on-primary-fixed text-sm">Vista Previa del
+                                    Documento</h3>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="text-xs font-medium text-on-surface-variant"
                                     th:text="${normativa.archivoNombre != null ? normativa.archivoNombre : 'documento.pdf'}">normativa.pdf</span>
                             </div>
                         </div>
 
-                        <!-- Viewer Canvas -->
+                        <!-- Viewer Canvas with Blur Overlay -->
                         <div id="viewerContainer"
                             class="flex-1 bg-surface-container relative overflow-hidden transition-all duration-300">
-                            <div class="absolute inset-0 bg-white/50 z-10 pointer-events-none"></div>
-                            <div class="relative w-full h-full" style="z-index: 20;">
-                                <!-- PDF Iframe -->
-                                <iframe id="pdfViewer" th:if="${normativa.archivoUrl != null}"
-                                    class="w-full h-full border-0 flex-1" oncontextmenu="return false;"></iframe>
-
-                                <div th:if="${normativa.archivoUrl == null}"
-                                    class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
-                                    <svg class="icon-xl opacity-50 mb-4 shrink-0" width="40" height="40"
-                                        fill="currentColor" viewBox="0 0 24 24">
-                                        <path
-                                            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
-                                    </svg>
-                                    <span>No hay documento disponible</span>
-                                </div>
-
-                                <!-- Watermark Overlay -->
-                                <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]"
-                                    style="z-index: 50;">
-                                    <div
-                                        class="transform -rotate-45 text-4xl sm:text-5xl font-bold text-gray-800 whitespace-nowrap p-10 flex flex-col gap-24 text-center">
-                                        <span
-                                            th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
-                                            - CONFIDENCIAL</span>
-                                        <span
-                                            th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
-                                            - CONFIDENCIAL</span>
-                                        <span
-                                            th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
-                                            - CONFIDENCIAL</span>
+                            <!-- Blurred background (simulated document) -->
+                            <div class="absolute inset-0 overflow-hidden pointer-events-none select-none">
+                                <div class="w-full h-full bg-white/80 backdrop-blur-[2px]">
+                                    <div class="p-8 space-y-4 opacity-30">
+                                        <div class="h-3 bg-gray-300 rounded w-3/4"></div>
+                                        <div class="h-3 bg-gray-300 rounded w-1/2"></div>
+                                        <div class="h-3 bg-gray-300 rounded w-5/6"></div>
+                                        <div class="h-3 bg-gray-300 rounded w-2/3"></div>
+                                        <div class="h-3 bg-gray-300 rounded w-4/5"></div>
+                                        <div class="h-3 bg-gray-300 rounded w-3/4"></div>
+                                        <div class="h-3 bg-gray-300 rounded w-1/2"></div>
+                                        <div class="h-3 bg-gray-300 rounded w-5/6"></div>
+                                        <div class="h-3 bg-gray-300 rounded w-2/3"></div>
+                                        <div class="h-3 bg-gray-300 rounded w-4/5"></div>
+                                        <div class="h-3 bg-gray-300 rounded w-3/4"></div>
+                                        <div class="h-3 bg-gray-300 rounded w-1/2"></div>
                                     </div>
+                                </div>
+                                <!-- Strong blur filter -->
+                                <div class="absolute inset-0 backdrop-blur-md bg-white/30"></div>
+                            </div>
+
+                            <!-- Centered lock overlay -->
+                            <div class="absolute inset-0 flex items-center justify-center z-10 p-6">
+                                <div class="text-center max-w-sm">
+                                    <div
+                                        class="mx-auto w-16 h-16 rounded-2xl bg-[#041533] flex items-center justify-center mb-4 shadow-lg">
+                                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-on-surface mb-2">Documento Protegido</h3>
+                                    <p class="text-sm text-on-surface-variant leading-relaxed mb-5">
+                                        Esta normativa requiere un plan de acceso de pago para visualizar el documento
+                                        completo.
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -243,7 +232,7 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            Historial
+                            Registro
                         </button>
                         <button id="tab-relacionados" onclick="switchTab('relacionados')"
                                 class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-on-surface-variant border-b-2 border-transparent -mb-px transition-all duration-200 hover:text-on-surface">
@@ -254,7 +243,7 @@
                         </button>
                     </div>
 
-                    <!-- Tab Content Container — panels scroll inside, height matches PDF viewer -->
+                    <!-- Tab Content Container -->
                     <div class="flex-1 overflow-hidden">
 
                         <!-- Panel: Detalles -->
@@ -302,53 +291,30 @@
                                 </div>
                             </div>
 
+
+
+                            <!-- Botones: Ver fuente original + Exportar Cita -->
                             <div class="pt-4 border-t border-surface-variant/50">
                                 <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">FUENTE ORIGINAL</h3>
-                                <div class="flex items-center gap-2">
+                                <div class="flex flex-col gap-2">
                                     <a th:href="${normativa.enlaceExterno}" target="_blank"
-                                       class="flex-1 inline-flex items-center justify-center gap-2 bg-[#041533] hover:bg-[#00743a] text-white font-bold text-sm py-3 px-4 rounded-[14px] transition-colors shadow-sm">
+                                       class="w-full inline-flex items-center justify-center gap-2 bg-[#041533] hover:bg-[#00743a] text-white font-bold text-sm py-3 px-4 rounded-[14px] transition-colors shadow-sm">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                   d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                         </svg>
                                         Ver fuente original
                                     </a>
-                                    <a th:unless="${normativa.archivoUrl == null}"
-                                       th:href="${normativa.archivoUrl}" target="_blank"
-                                       class="flex-1 inline-flex items-center justify-center gap-2 bg-[#041533] hover:bg-[#00743a] text-white font-bold text-sm py-3 px-4 rounded-[14px] transition-colors shadow-sm">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                    <button th:if="${citas != null}"
+                                            onclick="document.getElementById('citaModal').classList.remove('hidden')"
+                                            class="w-full bg-[#006d37] hover:bg-[#00522a] text-white font-bold text-sm py-3 px-4 rounded-[14px] flex items-center justify-center gap-2 transition-colors shadow-sm">
+                                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
                                         </svg>
-                                        Descargar
-                                    </a>
-                                </div>
-                                <div class="pt-4 border-t border-surface-variant/50" th:if="${estaGuardado != null and estaGuardado}">
-                                    <a th:href="@{/socio/mi-espacio}" title="Ver Mi Espacio"
-                                       class="w-full flex items-center justify-center gap-2 bg-[#e8f5e9] border border-[#006d37] text-[#006d37] font-bold text-sm py-3 px-4 rounded-[14px] transition-colors">
-                                        <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                                        </svg>
-                                        Guardado en Mi Espacio
-                                    </a>
-                                </div>
-                                <div class="pt-4 border-t border-surface-variant/50" th:if="${estaGuardado == null or !estaGuardado}">
-                                    <form th:action="@{/socio/mi-espacio/guardar}" method="post">
-                                        <input type="hidden" name="tipoDocumento" value="NORMATIVA" />
-                                        <input type="hidden" name="idDocumento" th:value="${normativa.idNormativa}" />
-                                        <input type="hidden" name="nombreDocumento" th:value="${normativa.titulo}" />
-                                        <input type="hidden" name="redirectUrl" th:value="'/normativas/' + ${normativa.idNormativa}" />
-                                        <button type="submit" title="Guardar en Mi Espacio"
-                                                class="w-full flex items-center justify-center gap-2 bg-[#006d37] hover:bg-[#00522a] text-white font-bold text-sm py-3 px-4 rounded-[14px] transition-colors shadow-sm">
-                                            <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M17 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-8H5V5h10v6z" />
-                                            </svg>
-                                            Guardar en Mi Espacio
-                                        </button>
-                                    </form>
+                                        Exportar Cita Académica
+                                    </button>
                                 </div>
                             </div>
-
 
                         </div>
 
@@ -358,8 +324,7 @@
                             <div>
                                 <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                     HISTORIAL
                                 </h3>
@@ -431,8 +396,7 @@
                                 <div th:each="sim : ${detalle.normativasSimilares}"
                                      class="bg-[#f9f9fb] p-3 rounded-xl border border-transparent hover:border-outline-variant/30 transition-colors">
                                     <a th:href="@{/normativas/{id}(id=${sim.id})}" class="block">
-                                        <h4 class="text-sm font-bold text-on-primary-fixed leading-snug"
-                                            th:text="${sim.titulo}">Título similar</h4>
+                                        <h4 class="text-sm font-bold text-on-primary-fixed leading-snug" th:text="${sim.titulo}">Título similar</h4>
                                         <div class="flex items-center justify-between mt-2">
                                             <span class="text-xs text-on-surface-variant">★★★★☆</span>
                                             <span th:text="${sim.acceso}"
@@ -451,6 +415,126 @@
             </div>
         </main>
     </div>
+
+    <!-- Modal: Exportar Cita -->
+    <div id="citaModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+         onclick="if(event.target===this)closeCitaModal()">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between px-6 py-5 border-b border-surface-variant/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-[#f0fdf4] rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5 text-[#006d37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="font-headline font-bold text-on-primary-fixed text-base">Exportar Cita Académica</h2>
+                        <p class="font-body text-xs text-on-surface-variant">Copia la referencia en el formato de tu preferencia</p>
+                    </div>
+                </div>
+                <button onclick="closeCitaModal()" class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <!-- Tab Bar -->
+            <div class="flex gap-1 px-6 pt-3 border-b border-surface-variant/50">
+                <button id="tab-APA" onclick="switchCitaTab('APA')"
+                        class="px-4 py-2.5 font-label text-sm font-semibold rounded-t-lg border-b-2 border-[#006d37] text-[#006d37] bg-[#f0fdf4] transition-all">
+                    APA
+                </button>
+                <button id="tab-MLA" onclick="switchCitaTab('MLA')"
+                        class="px-4 py-2.5 font-label text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-on-surface-variant hover:text-on-primary-fixed hover:bg-surface-container/50 transition-all">
+                    MLA
+                </button>
+                <button id="tab-Chicago" onclick="switchCitaTab('Chicago')"
+                        class="px-4 py-2.5 font-label text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-on-surface-variant hover:text-on-primary-fixed hover:bg-surface-container/50 transition-all">
+                    Chicago
+                </button>
+                <button id="tab-Harvard" onclick="switchCitaTab('Harvard')"
+                        class="px-4 py-2.5 font-label text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-on-surface-variant hover:text-on-primary-fixed hover:bg-surface-container/50 transition-all">
+                    Harvard
+                </button>
+            </div>
+            <!-- Tab Contents -->
+            <div class="flex-1 overflow-y-auto p-6 space-y-0">
+                <!-- APA -->
+                <div id="content-APA" class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">Formato APA (7ª edición)</span>
+                        <button id="copy-btn-APA" onclick="copyCita('APA')"
+                                class="flex items-center gap-1.5 text-xs font-semibold text-[#006d37] hover:text-[#004d27] bg-[#f0fdf4] hover:bg-[#dcfce7] px-3 py-1.5 rounded-lg transition-all border border-[#86efac]">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                            </svg>
+                            Copiar
+                        </button>
+                    </div>
+                    <div class="bg-[#f8fafc] border border-outline-variant/30 rounded-xl p-5">
+                        <p id="cita-text-APA" th:text="${citas['APA']}" class="font-body text-sm text-on-primary-fixed leading-relaxed"></p>
+                    </div>
+                </div>
+                <!-- MLA -->
+                <div id="content-MLA" class="hidden space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">Formato MLA (9ª edición)</span>
+                        <button id="copy-btn-MLA" onclick="copyCita('MLA')"
+                                class="flex items-center gap-1.5 text-xs font-semibold text-[#006d37] hover:text-[#004d27] bg-[#f0fdf4] hover:bg-[#dcfce7] px-3 py-1.5 rounded-lg transition-all border border-[#86efac]">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                            </svg>
+                            Copiar
+                        </button>
+                    </div>
+                    <div class="bg-[#f8fafc] border border-outline-variant/30 rounded-xl p-5">
+                        <p id="cita-text-MLA" th:text="${citas['MLA']}" class="font-body text-sm text-on-primary-fixed leading-relaxed"></p>
+                    </div>
+                </div>
+                <!-- Chicago -->
+                <div id="content-Chicago" class="hidden space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">Formato Chicago (17ª edición)</span>
+                        <button id="copy-btn-Chicago" onclick="copyCita('Chicago')"
+                                class="flex items-center gap-1.5 text-xs font-semibold text-[#006d37] hover:text-[#004d27] bg-[#f0fdf4] hover:bg-[#dcfce7] px-3 py-1.5 rounded-lg transition-all border border-[#86efac]">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                            </svg>
+                            Copiar
+                        </button>
+                    </div>
+                    <div class="bg-[#f8fafc] border border-outline-variant/30 rounded-xl p-5">
+                        <p id="cita-text-Chicago" th:text="${citas['Chicago']}" class="font-body text-sm text-on-primary-fixed leading-relaxed"></p>
+                    </div>
+                </div>
+                <!-- Harvard -->
+                <div id="content-Harvard" class="hidden space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">Formato Harvard</span>
+                        <button id="copy-btn-Harvard" onclick="copyCita('Harvard')"
+                                class="flex items-center gap-1.5 text-xs font-semibold text-[#006d37] hover:text-[#004d27] bg-[#f0fdf4] hover:bg-[#dcfce7] px-3 py-1.5 rounded-lg transition-all border border-[#86efac]">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                            </svg>
+                            Copiar
+                        </button>
+                    </div>
+                    <div class="bg-[#f8fafc] border border-outline-variant/30 rounded-xl p-5">
+                        <p id="cita-text-Harvard" th:text="${citas['Harvard']}" class="font-body text-sm text-on-primary-fixed leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer -->
+            <div class="px-6 py-4 bg-surface-container/40 border-t border-surface-variant/50 flex items-center gap-2">
+                <svg class="w-4 h-4 text-on-surface-variant flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p class="text-xs text-on-surface-variant">Cita generada automáticamente a partir de los metadatos del documento. Verifica los datos antes de publicar.</p>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Load pre-signed URL and setup document viewer
         document.addEventListener('DOMContentLoaded', async function () {
@@ -459,15 +543,10 @@
             const viewerContainer = document.getElementById('viewerContainer');
 
             try {
-                // Fetch pre-signed URL from backend
                 const response = await fetch(`/documentos/normativa/${normativaId}/presigned-url`);
-                if (!response.ok) {
-                    throw new Error('Failed to get presigned URL');
-                }
+                if (!response.ok) throw new Error('Failed to get presigned URL');
                 const data = await response.json();
                 const presignedUrl = data.url;
-
-                // Set iframe src with presigned URL
                 if (pdfViewer && presignedUrl) {
                     pdfViewer.src = presignedUrl + '#toolbar=0&navpanes=0&scrollbar=0';
                 }
@@ -476,10 +555,8 @@
                 if (pdfViewer) pdfViewer.style.display = 'none';
             }
 
-            // Block context menu (right click)
             document.addEventListener('contextmenu', event => event.preventDefault());
 
-            // Block common screen capture/print shortcuts
             document.addEventListener('keydown', function (e) {
                 if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'c' || e.key === 'C')) ||
                     e.key === 'PrintScreen' || e.key === 'F12') {
@@ -488,14 +565,10 @@
                 }
             });
 
-            // Clear clipboard if PrintScreen is pressed
             window.addEventListener('keyup', function (e) {
-                if (e.key == 'PrintScreen') {
-                    navigator.clipboard.writeText('');
-                }
+                if (e.key == 'PrintScreen') navigator.clipboard.writeText('');
             });
 
-            // Blur content when window loses focus (prevent snipping tool)
             window.addEventListener('blur', function () {
                 if (viewerContainer) viewerContainer.style.filter = 'blur(10px)';
             });
@@ -521,6 +594,45 @@
                 }
             });
         }
+
+        function switchCitaTab(format) {
+            ['APA', 'MLA', 'Chicago', 'Harvard'].forEach(function(f) {
+                var content = document.getElementById('content-' + f);
+                var tab = document.getElementById('tab-' + f);
+                if (f === format) {
+                    content.classList.remove('hidden');
+                    tab.classList.add('border-[#006d37]', 'text-[#006d37]', 'bg-[#f0fdf4]');
+                    tab.classList.remove('border-transparent', 'text-on-surface-variant');
+                } else {
+                    content.classList.add('hidden');
+                    tab.classList.remove('border-[#006d37]', 'text-[#006d37]', 'bg-[#f0fdf4]');
+                    tab.classList.add('border-transparent', 'text-on-surface-variant');
+                }
+            });
+        }
+
+        function closeCitaModal() {
+            document.getElementById('citaModal').classList.add('hidden');
+        }
+
+        function copyCita(format) {
+            var text = document.getElementById('cita-text-' + format).textContent.trim();
+            var btn = document.getElementById('copy-btn-' + format);
+            navigator.clipboard.writeText(text).then(function() {
+                var checkSvg = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+                btn.innerHTML = checkSvg + ' ¡Copiado!';
+                btn.classList.add('bg-[#dcfce7]', 'text-[#004d27]');
+                setTimeout(function() {
+                    var copySvg = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>';
+                    btn.innerHTML = copySvg + ' Copiar';
+                    btn.classList.remove('bg-[#dcfce7]', 'text-[#004d27]');
+                }, 2000);
+            });
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeCitaModal();
+        });
     </script>
 </body>
 </html>

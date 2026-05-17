@@ -697,6 +697,7 @@ public class AdminEstudiosController {
             @RequestParam(required = false) List<Integer> categorias,
             @RequestParam(required = false) String enlace,
             @RequestParam(required = false) String acceso,
+            @RequestParam(required = false) org.springframework.web.multipart.MultipartFile archivo,
 
             RedirectAttributes attr
     ) {
@@ -727,6 +728,11 @@ public class AdminEstudiosController {
             n.setEnlaceExterno(enlace);
         }
 
+        if (archivo != null && !archivo.isEmpty()) {
+            String clave = s3StorageService.uploadFile(archivo, "normativas");
+            n.setArchivoNombre(s3StorageService.getFileName(clave));
+            n.setArchivoUrl(clave);
+        }
 
         n.setFechaActualizacion(java.time.LocalDateTime.now());
 

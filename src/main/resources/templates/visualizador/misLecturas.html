@@ -82,6 +82,8 @@
         .row-hover:hover { background: #f0fdf4; transform: translateX(3px); }
         .pulse-dot { animation: pulse-dot 2s cubic-bezier(0.4,0,0.6,1) infinite; }
         @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.4} }
+        .ghost-border { box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15); }
+        .icon-sm { width: 1.25rem; height: 1.25rem; }
     </style>
     <div th:replace="~{fragments/responsive}"></div>
 
@@ -93,118 +95,179 @@
     <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
         <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-        <main class="flex-1 overflow-y-auto px-8 py-6 bg-[#f9f9ff]">
-
+        <main class="flex-1 overflow-y-auto px-8 py-3 bg-[#f9f9ff]">
+            <div class="w-full">
             <!-- Header -->
-            <div class="mb-8">
+            <div class="mb-5">
                 <div class="flex items-center gap-3 mb-1">
-                    <div class="w-10 h-10 rounded-xl bg-[#021d30] flex items-center justify-center flex-shrink-0">
-                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                        </svg>
-                    </div>
+
                     <div>
                         <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">Mis Lecturas</h2>
-                        <p class="font-body text-on-surface-variant text-sm">Historial automático de los últimos 15 documentos consultados</p>
+                        <p class="font-body text-on-surface-variant text-base mt-2">Historial automático de los documentos consultados</p>
                     </div>
                 </div>
             </div>
 
             <!-- Stats strip -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                <div class="bg-white rounded-xl px-5 py-4 ambient-shadow flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-lg bg-[#f0f9ff] flex items-center justify-center">
-                        <svg class="w-5 h-5 text-[#0284c7]" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                        </svg>
+            <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
+                <article
+                    class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                    <div
+                        class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container">
                     </div>
-                    <div>
-                        <p class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">Documentos consultados</p>
-                        <p class="text-2xl font-extrabold text-on-primary-fixed font-headline" th:text="${lecturas.size()}">0</p>
+                    <div class="flex justify-between items-start mb-3">
+                        <div
+                            class="bg-[#f0f9ff] rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                            <svg class="icon-sm text-[#0284c7]" fill="currentColor" viewBox="0 0 24 24"
+                                aria-hidden="true">
+                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                            </svg>
+                        </div>
+                        <span
+                            class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                            Total
+                        </span>
                     </div>
-                </div>
-                <div class="bg-white rounded-xl px-5 py-4 ambient-shadow flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-lg bg-[#eff6ff] flex items-center justify-center">
-                        <svg class="w-5 h-5 text-[#3b82f6]" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-                        </svg>
+                    <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                        Documentos consultados
+                    </h4>
+                    <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${lecturas.size()}">0</div>
+                </article>
+                <article
+                    class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200"></div>
+                    <div class="flex justify-between items-start mb-3">
+                        <div
+                            class="bg-[#eff6ff] rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                            <svg class="icon-sm text-[#3b82f6]" fill="currentColor" viewBox="0 0 24 24"
+                                aria-hidden="true">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                            </svg>
+                        </div>
+                        <span
+                            class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                            Estudios
+                        </span>
                     </div>
-                    <div>
-                        <p class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">Estudios</p>
-                        <p class="text-2xl font-extrabold text-on-primary-fixed font-headline" th:text="${totalEstudios}">0</p>
+                    <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                        Estudios
+                    </h4>
+                    <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalEstudios}">0
                     </div>
-                </div>
-                <div class="bg-white rounded-xl px-5 py-4 ambient-shadow flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-lg bg-[#fefce8] flex items-center justify-center">
-                        <svg class="w-5 h-5 text-[#d97706]" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
-                        </svg>
+                </article>
+
+                <article
+                    class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200">
                     </div>
-                    <div>
-                        <p class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">Normativas</p>
-                        <p class="text-2xl font-extrabold text-on-primary-fixed font-headline" th:text="${totalNormativas}">0</p>
+                    <div class="flex justify-between items-start mb-3">
+                        <div
+                            class="bg-[#fefce8] rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
+                            <svg class="icon-sm text-[#d97706]" fill="currentColor" viewBox="0 0 24 24"
+                                aria-hidden="true">
+                                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                        </div>
+                        <span
+                            class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                            Normativas
+                        </span>
                     </div>
-                </div>
-            </div>
+                    <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
+                        Normativas
+                    </h4>
+                    <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalNormativas}">0
+                    </div>
+                </article>
+            </section>
 
             <!-- Lista de lecturas -->
             <div th:if="${lecturas != null and !lecturas.isEmpty()}" class="flex flex-col gap-3">
                 <!-- Cabecera -->
-                <!-- Cabecera -->
-                <div class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 border-b border-surface-variant text-xs font-extrabold text-on-surface-variant uppercase tracking-wider">
-                    <div class="col-span-1">#</div>
-                    <div class="col-span-1">Tipo</div>
-                    <div class="col-span-6">Documento</div>
-                    <div class="col-span-2 text-center">Vistas</div>
-                    <div class="col-span-2 text-right">Última lectura</div>
+                <div class="hidden md:grid grid-cols-[40px_100px_minmax(200px,1fr)_80px_120px] gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider items-center">
+                    <div>#</div>
+                    <div>Tipo</div>
+                    <div>Documento</div>
+                    <div class="text-center">Vistas</div>
+                    <div class="text-right">Última lectura</div>
                 </div>
 
                 <!-- Filas -->
                 <div th:each="l, iter : ${lecturas}"
-                     class="bg-surface-container-lowest rounded-xl px-4 md:px-6 py-4 ambient-shadow flex md:grid flex-col md:grid-cols-12 gap-4 items-start md:items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30 cursor-pointer"
+                     class="list-item bg-surface-container-lowest rounded-xl ambient-shadow flex flex-col overflow-hidden border border-transparent hover:border-outline-variant/30 transition-colors group cursor-pointer"
                      th:onclick="${l.tipoDocumento == 'ESTUDIO'} ? 'window.location=\'/visualizador/estudios/' + ${l.idDocumento} + '\'' : 'window.location=\'/visualizador/normativas/' + ${l.idDocumento} + '\''">
 
-                    <!-- Número -->
-                    <div class="hidden md:block md:col-span-1">
-                        <span class="text-xs font-bold text-on-surface-variant" th:text="${iter.index + 1}">1</span>
-                    </div>
-
-                    <!-- Badge tipo -->
-                    <div class="md:col-span-1">
-                        <span th:if="${l.tipoDocumento == 'ESTUDIO'}" class="px-2 py-1 rounded bg-[#eef2ff] text-[#4f46e5] text-[10px] font-bold uppercase tracking-wide">ESTUDIO</span>
-                        <span th:if="${l.tipoDocumento == 'NORMATIVA'}" class="px-2 py-1 rounded bg-[#fefce8] text-[#ca8a04] text-[10px] font-bold uppercase tracking-wide">NORMA</span>
-                    </div>
-
-                    <!-- Título -->
-                    <div class="col-span-6">
-                        <p class="font-headline font-semibold text-on-primary-fixed text-sm leading-snug line-clamp-2 group-hover:text-secondary transition-colors"
-                           th:text="${l.nombreDocumento}">Título del documento</p>
-                        <p class="text-[10px] text-on-surface-variant mt-0.5 font-medium"
-                           th:text="'Primera vez: ' + ${#temporals.format(l.primeraLectura, 'dd MMM yyyy')}">Primera vez: 01 Ene 2025</p>
-                    </div>
-
-                    <!-- Vistas -->
-                    <div class="md:col-span-2 flex md:justify-center w-full md:w-auto">
-                        <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-low">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[#006d37] pulse-dot"></span>
-                            <span class="text-xs font-bold text-on-surface-variant"
-                                  th:text="${l.vecesVisto} + 'x'">3x</span>
+                    <div class="p-4 md:px-6 md:py-4 flex flex-col md:grid md:grid-cols-[40px_100px_minmax(200px,1fr)_80px_120px] gap-3 md:gap-4 items-start md:items-center">
+                        <!-- Número -->
+                        <div class="hidden md:block">
+                            <span class="text-xs font-bold text-on-surface-variant" th:text="${iter.index + 1}">1</span>
                         </div>
-                    </div>
 
-                    <!-- Fecha última lectura -->
-                    <div class="md:col-span-2 text-left md:text-right w-full md:w-auto mt-2 md:mt-0">
-                        <p class="text-xs font-semibold text-on-primary-fixed"
-                           th:text="${#temporals.format(l.ultimaLectura, 'dd MMM yyyy')}">01 Ene 2025</p>
-                        <p class="text-[10px] text-on-surface-variant"
-                           th:text="${#temporals.format(l.ultimaLectura, 'HH:mm')}">14:30</p>
+                        <!-- Badge tipo -->
+                        <div class="flex items-center w-full md:w-auto">
+                            <span th:if="${'ESTUDIO' == l.tipoDocumento}"
+                                  class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#e3f0ff] text-[#1565c0]">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                                </svg>
+                                Estudio
+                            </span>
+                            <span th:if="${'NORMATIVA' == l.tipoDocumento}"
+                                  class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#fef3c7] text-[#92400e]">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
+                                </svg>
+                                Normativa
+                            </span>
+                        </div>
+
+                        <!-- Título -->
+                        <div class="w-full text-left md:pr-4">
+                            <p class="font-headline font-semibold text-on-primary-fixed text-sm leading-snug line-clamp-2 group-hover:text-secondary transition-colors"
+                               th:text="${l.nombreDocumento}">Título del documento</p>
+                            <p class="text-[10px] text-on-surface-variant mt-0.5 font-medium"
+                               th:text="'Primera vez: ' + ${#temporals.format(l.primeraLectura, 'dd MMM yyyy')}">Primera vez: 01 Ene 2025</p>
+                        </div>
+
+                        <!-- Vistas -->
+                        <div class="flex md:justify-center w-full md:w-auto">
+                            <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-low">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#006d37] pulse-dot"></span>
+                                <span class="text-xs font-bold text-on-surface-variant"
+                                      th:text="${l.vecesVisto} + 'x'">3x</span>
+                            </div>
+                        </div>
+
+                        <!-- Fecha última lectura -->
+                        <div class="text-left md:text-right w-full md:w-auto mt-2 md:mt-0">
+                            <p class="text-xs font-semibold text-on-primary-fixed"
+                               th:text="${#temporals.format(l.ultimaLectura, 'dd MMM yyyy')}">01 Ene 2025</p>
+                            <p class="text-[10px] text-on-surface-variant"
+                               th:text="${#temporals.format(l.ultimaLectura, 'HH:mm')}">14:30</p>
+                        </div>
                     </div>
                 </div>
 
-                <p class="text-center text-xs text-on-surface-variant mt-1 font-medium">
-                    Mostrando los últimos <span class="font-bold" th:text="${lecturas.size()}">15</span> documentos consultados.
-                    El historial se actualiza automáticamente al abrir un documento.
-                </p>
+                <div id="paginationContainer" class="mt-12 flex justify-center items-center gap-2 hidden">
+                    <button id="prevPageBtn"
+                        class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container hover:text-on-surface transition-colors disabled:opacity-50"
+                        disabled="">
+                        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                        </svg>
+                    </button>
+                    <div id="pageNumbers" class="flex items-center gap-1 font-label text-sm font-semibold">
+                        <!-- Números generados por JS -->
+                    </div>
+                    <button id="nextPageBtn"
+                        class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors disabled:opacity-50">
+                        <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             <!-- Estado vacío -->
@@ -230,8 +293,82 @@
                     </a>
                 </div>
             </div>
-
+            </div>
         </main>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const listItems = Array.from(document.querySelectorAll('.list-item'));
+            const paginationContainer = document.getElementById('paginationContainer');
+            const pageNumbersContainer = document.getElementById('pageNumbers');
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+
+            let currentPage = 1;
+            const pageSize = 5;
+
+            function renderPagination() {
+                if (!paginationContainer) return;
+
+                const totalItems = listItems.length;
+                const totalPages = Math.ceil(totalItems / pageSize) || 1;
+
+                if (currentPage > totalPages) currentPage = totalPages;
+                if (currentPage < 1) currentPage = 1;
+
+                paginationContainer.classList.remove('hidden');
+                paginationContainer.classList.add('flex');
+
+                const startIndex = (currentPage - 1) * pageSize;
+                const endIndex = startIndex + pageSize;
+
+                listItems.forEach((item, index) => {
+                    if (index >= startIndex && index < endIndex) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                if (prevPageBtn) prevPageBtn.disabled = currentPage === 1;
+                if (nextPageBtn) nextPageBtn.disabled = currentPage === totalPages;
+
+                if (pageNumbersContainer) {
+                    pageNumbersContainer.innerHTML = '';
+                    for (let i = 1; i <= totalPages; i++) {
+                        const btn = document.createElement('button');
+                        btn.textContent = i;
+                        btn.className = `w-10 h-10 rounded-full flex items-center justify-center transition-colors font-label text-sm font-semibold ${i === currentPage ? 'bg-secondary text-on-secondary shadow-md' : 'text-on-surface-variant hover:bg-surface-container'}`;
+                        btn.addEventListener('click', () => {
+                            currentPage = i;
+                            renderPagination();
+                        });
+                        pageNumbersContainer.appendChild(btn);
+                    }
+                }
+            }
+
+            if (prevPageBtn) {
+                prevPageBtn.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderPagination();
+                    }
+                });
+            }
+
+            if (nextPageBtn) {
+                nextPageBtn.addEventListener('click', () => {
+                    const totalPages = Math.ceil(listItems.length / pageSize) || 1;
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        renderPagination();
+                    }
+                });
+            }
+
+            renderPagination();
+        });
+    </script>
 </body>
 </html>
