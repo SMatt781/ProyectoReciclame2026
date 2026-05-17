@@ -122,14 +122,11 @@ public class AdminUsuarioController {
             String fecha = (u.getFechaRegistro() != null) ? u.getFechaRegistro().format(formatter) : "-";
             String iniciales = obtenerIniciales(u.getNombres(), u.getApellidoPaterno());
 
-            // Fetch RUC from SolicitudRegistro if user doesn't have DNI
-            String ruc = null;
-            if ((u.getDni() == null || u.getDni().isEmpty())) {
-                Optional<SolicitudRegistro> solicitudOpt = solicitudRegistroRepository.findTopByCorreoOrderByFechaSolicitudDesc(u.getCorreo());
-                if (solicitudOpt.isPresent()) {
-                    ruc = solicitudOpt.get().getRuc();
-                }
-            }
+            // Fetch RUC from SolicitudRegistro or UsuarioEmpresa
+            Optional<SolicitudRegistro> solicitudOpt = solicitudRegistroRepository.findTopByCorreoOrderByFechaSolicitudDesc(u.getCorreo());
+            String ruc = solicitudOpt.map(SolicitudRegistro::getRuc).orElse(
+                    u.getUsuarioEmpresa() != null ? u.getUsuarioEmpresa().getRuc() : null
+            );
 
             lista.add(new UsuarioGestionDto(
                     u.getIdUsuario(),
@@ -323,8 +320,10 @@ public class AdminUsuarioController {
 
         usuario.setNombres(form.getNombres().trim());
         usuario.setApellidoPaterno(form.getApellidoPaterno().trim());
-        usuario.setApellidoMaterno(form.getApellidoMaterno() != null ? form.getApellidoMaterno().trim() : null);
-        usuario.setDni(form.getDni().trim());
+        usuario.setApellidoMaterno(form.getApellidoMaterno() != null && !form.getApellidoMaterno().isBlank() ? form.getApellidoMaterno().trim() : null);
+        // Convertir cadena vacía a null para DNI (ya que es opcional)
+        String dniTrimmed = form.getDni() != null ? form.getDni().trim() : null;
+        usuario.setDni(dniTrimmed != null && !dniTrimmed.isEmpty() ? dniTrimmed : null);
         usuario.setCorreo(form.getCorreo().trim());
         usuario.setTelefono(form.getTelefono().trim());
         usuario.setActualizadoEn(LocalDateTime.now());
@@ -370,17 +369,24 @@ public class AdminUsuarioController {
                 .findByUsuario_IdUsuario(usuario.getIdUsuario());
         if (usuarioEmpresaOpt.isPresent()) {
             UsuarioEmpresa ue = usuarioEmpresaOpt.get();
-            ue.setRazonSocial(form.getRazonSocial() != null ? form.getRazonSocial().trim() : null);
-            ue.setCargo(form.getCargo() != null ? form.getCargo().trim() : null);
+            String razonSocialTrimmed = form.getRazonSocial() != null && !form.getRazonSocial().isBlank() ? form.getRazonSocial().trim() : null;
+            String cargoTrimmed = form.getCargo() != null && !form.getCargo().isBlank() ? form.getCargo().trim() : null;
+            String rucTrimmed = form.getRuc() != null ? form.getRuc().trim() : null;
+            rucTrimmed = (rucTrimmed != null && !rucTrimmed.isEmpty()) ? rucTrimmed : null;
+
+            ue.setRazonSocial(razonSocialTrimmed);
+            ue.setCargo(cargoTrimmed);
+            ue.setRuc(rucTrimmed);
             usuarioEmpresaRepository.save(ue);
         }
 
         // Update RUC in SolicitudRegistro if user has RUC
-        if (form.getRuc() != null && !form.getRuc().isEmpty()) {
+        String rucTrimmedForm = form.getRuc() != null ? form.getRuc().trim() : null;
+        if (rucTrimmedForm != null && !rucTrimmedForm.isEmpty()) {
             Optional<SolicitudRegistro> solicitudOpt = solicitudRegistroRepository.findTopByCorreoOrderByFechaSolicitudDesc(usuario.getCorreo());
             if (solicitudOpt.isPresent()) {
                 SolicitudRegistro solicitud = solicitudOpt.get();
-                solicitud.setRuc(form.getRuc().trim());
+                solicitud.setRuc(rucTrimmedForm);
                 solicitudRegistroRepository.save(solicitud);
             }
         }
@@ -560,10 +566,11 @@ public class AdminUsuarioController {
         if (usuario.getUsuarioEmpresa() != null) {
             form.setRazonSocial(usuario.getUsuarioEmpresa().getRazonSocial());
             form.setCargo(usuario.getUsuarioEmpresa().getCargo());
+            form.setRuc(usuario.getUsuarioEmpresa().getRuc());
         }
 
-        // Fetch RUC from SolicitudRegistro if user doesn't have DNI
-        if ((usuario.getDni() == null || usuario.getDni().isEmpty())) {
+        // Fetch RUC from SolicitudRegistro if not already set from UsuarioEmpresa
+        if (form.getRuc() == null || form.getRuc().isEmpty()) {
             Optional<SolicitudRegistro> solicitudOpt = solicitudRegistroRepository.findTopByCorreoOrderByFechaSolicitudDesc(usuario.getCorreo());
             if (solicitudOpt.isPresent()) {
                 form.setRuc(solicitudOpt.get().getRuc());
@@ -643,14 +650,11 @@ public class AdminUsuarioController {
             String fecha = (u.getFechaRegistro() != null) ? u.getFechaRegistro().format(formatter) : "-";
             String iniciales = obtenerIniciales(u.getNombres(), u.getApellidoPaterno());
 
-            // Fetch RUC from SolicitudRegistro if user doesn't have DNI
-            String ruc = null;
-            if ((u.getDni() == null || u.getDni().isEmpty())) {
-                Optional<SolicitudRegistro> solicitudOpt = solicitudRegistroRepository.findTopByCorreoOrderByFechaSolicitudDesc(u.getCorreo());
-                if (solicitudOpt.isPresent()) {
-                    ruc = solicitudOpt.get().getRuc();
-                }
-            }
+            // Fetch RUC from SolicitudRegistro or UsuarioEmpresa
+            Optional<SolicitudRegistro> solicitudOpt = solicitudRegistroRepository.findTopByCorreoOrderByFechaSolicitudDesc(u.getCorreo());
+            String ruc = solicitudOpt.map(SolicitudRegistro::getRuc).orElse(
+                    u.getUsuarioEmpresa() != null ? u.getUsuarioEmpresa().getRuc() : null
+            );
 
             lista.add(new UsuarioGestionDto(u.getIdUsuario(), nombreCompleto, u.getCorreo(), u.getDni(), ruc,
                     empresa, rolUsuario, estadoUsuario, fecha, iniciales));
@@ -678,8 +682,17 @@ public class AdminUsuarioController {
         Map<String, String> errores = new HashMap<>();
         if (form.getNombres() == null || form.getNombres().isBlank()) errores.put("nombres", "Campo nombre obligatorio");
         if (form.getApellidoPaterno() == null || form.getApellidoPaterno().isBlank()) errores.put("apellidoPaterno", "Campo apellido paterno obligatorio");
-        if (form.getDni() == null || form.getDni().isBlank()) errores.put("dni", "Campo DNI obligatorio");
-        else if (!form.getDni().matches("\\d{8}")) errores.put("dni", "El DNI debe tener 8 dígitos");
+
+        // DNI es opcional si RUC está presente
+        boolean dniPresente = form.getDni() != null && !form.getDni().isBlank();
+        boolean rucPresente = form.getRuc() != null && !form.getRuc().isBlank();
+
+        if (!dniPresente && !rucPresente) {
+            errores.put("dni", "Debe proporcionar DNI o RUC");
+        } else if (dniPresente && !form.getDni().matches("\\d{8}")) {
+            errores.put("dni", "El DNI debe tener 8 dígitos");
+        }
+
         if (form.getCorreo() == null || form.getCorreo().isBlank()) errores.put("correo", "Campo correo obligatorio");
         else if (!form.getCorreo().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) errores.put("correo", "Correo no válido");
         if (form.getTelefono() == null || form.getTelefono().isBlank()) errores.put("telefono", "Campo teléfono obligatorio");

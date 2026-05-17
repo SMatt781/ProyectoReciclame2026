@@ -561,7 +561,7 @@
                 <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Nombres</label>
                 <input type="text" th:field="*{nombres}"
                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                <p th:if="${fieldErrors != null and fieldErrors.nombres != null}" th:text="${fieldErrors.nombres}"
+                <p th:if="${fieldErrors != null and fieldErrors['nombres'] != null}" th:text="${fieldErrors['nombres']}"
                    class="mt-1 text-xs font-medium text-error"></p>
             </div>
 
@@ -570,8 +570,8 @@
                     paterno</label>
                 <input type="text" th:field="*{apellidoPaterno}"
                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                <p th:if="${fieldErrors != null and fieldErrors.apellidoPaterno != null}"
-                   th:text="${fieldErrors.apellidoPaterno}" class="mt-1 text-xs font-medium text-error"></p>
+                <p th:if="${fieldErrors != null and fieldErrors['apellidoPaterno'] != null}"
+                   th:text="${fieldErrors['apellidoPaterno']}" class="mt-1 text-xs font-medium text-error"></p>
             </div>
 
             <div>
@@ -581,40 +581,30 @@
                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
             </div>
 
-            <!-- DNI or RUC Field - Show if form exists and has either DNI or RUC -->
-            <div th:if="${form != null}">
-                <!-- Show DNI if user has DNI -->
-                <div th:if="${form.dni != null and !form.dni.isEmpty()}">
-                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">DNI</label>
-                    <input type="text" th:field="*{dni}"
-                           class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                    <p th:if="${fieldErrors != null and fieldErrors.dni != null}" th:text="${fieldErrors.dni}"
-                       class="mt-1 text-xs font-medium text-error"></p>
-                </div>
+            <!-- DNI or RUC Fields - Always show both fields to allow editing -->
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">DNI</label>
+                <input type="text" th:field="*{dni}"
+                       class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                       placeholder="Ej: 12345678 (opcional si tiene RUC)">
+                <p th:if="${fieldErrors != null and fieldErrors['dni'] != null}" th:text="${fieldErrors['dni']}"
+                   class="mt-1 text-xs font-medium text-error"></p>
+            </div>
 
-                <!-- Show RUC if user has RUC (DNI is empty but RUC exists) -->
-                <div th:if="${(form.dni == null or form.dni.isEmpty()) and form.ruc != null and !form.ruc.isEmpty()}">
-                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">RUC</label>
-                    <input type="text" th:field="*{ruc}"
-                           class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                    <p th:if="${fieldErrors != null and fieldErrors.ruc != null}" th:text="${fieldErrors.ruc}"
-                       class="mt-1 text-xs font-medium text-error"></p>
-                </div>
-
-                <!-- Fallback: Show empty DNI field if neither DNI nor RUC exist (shouldn't happen) -->
-                <div th:if="${(form.dni == null or form.dni.isEmpty()) and (form.ruc == null or form.ruc.isEmpty())}">
-                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">DNI</label>
-                    <input type="text" th:field="*{dni}"
-                           class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20"
-                           placeholder="Sin DNI/RUC registrado">
-                </div>
+            <div>
+                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">RUC</label>
+                <input type="text" th:field="*{ruc}"
+                       class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                       placeholder="Ej: 12345678901 (opcional si tiene DNI)">
+                <p th:if="${fieldErrors != null and fieldErrors['ruc'] != null}" th:text="${fieldErrors['ruc']}"
+                   class="mt-1 text-xs font-medium text-error"></p>
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Correo</label>
                 <input type="email" th:field="*{correo}"
                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                <p th:if="${fieldErrors != null and fieldErrors.correo != null}" th:text="${fieldErrors.correo}"
+                <p th:if="${fieldErrors != null and fieldErrors['correo'] != null}" th:text="${fieldErrors['correo']}"
                    class="mt-1 text-xs font-medium text-error"></p>
             </div>
 
@@ -622,7 +612,7 @@
                 <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Teléfono</label>
                 <input type="text" th:field="*{telefono}"
                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                <p th:if="${fieldErrors != null and fieldErrors.telefono != null}" th:text="${fieldErrors.telefono}"
+                <p th:if="${fieldErrors != null and fieldErrors['telefono'] != null}" th:text="${fieldErrors['telefono']}"
                    class="mt-1 text-xs font-medium text-error"></p>
             </div>
 
@@ -633,7 +623,7 @@
                     <option value="">Seleccione un rol</option>
                     <option th:each="rol : ${roles}" th:value="${rol.idRol}" th:text="${rol.nombre}"></option>
                 </select>
-                <p th:if="${fieldErrors != null and fieldErrors.idRol != null}" th:text="${fieldErrors.idRol}"
+                <p th:if="${fieldErrors != null and fieldErrors['idRol'] != null}" th:text="${fieldErrors['idRol']}"
                    class="mt-1 text-xs font-medium text-error"></p>
             </div>
 
