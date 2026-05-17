@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Registros de Inicio de Sesión - Recíclame</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#f7f9fb",
+                        "background": "#f7f9fb",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container": "#eceef0",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-variant": "#e0e3e5",
+                        "outline-variant": "#c3c7cd",
+                        "outline": "#73777d",
+                        "on-surface": "#191c1e",
+                        "on-surface-variant": "#43474c",
+                        "on-primary-fixed": "#021d30",
+                        "primary-container": "#021d30",
+                        "on-primary": "#ffffff",
+                        "secondary": "#006d37",
+                        "secondary-container": "#6bfe9c",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+                        body: ["Inter", "system-ui", "sans-serif"],
+                        label: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
+        }
+
+        .ghost-border {
+            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
+        }
+
+        .icon-sm {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+    </style>
+    <div th:replace="~{fragments/responsive}"></div>
+
+</head>
+
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-secondary">
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="flex-1 overflow-y-auto px-4 py-2">
+        <div class="w-full h-full">
+
+            <!-- Encabezado -->
+            <div class="mb-3">
+                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
+                    <div>
+                        <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
+                            Registros de Inicio de Sesión
+                        </h2>
+                        <p class="font-body text-on-surface-variant text-sm mt-1 max-w-3xl">
+                            Monitoreo histórico de accesos y persistencia de sesión dentro del ecosistema Recíclame.
+                        </p>
+                    </div>
+
+                    <section class="bg-primary-container text-on-primary rounded-xl px-4 py-3 ambient-shadow min-w-[300px] max-w-[390px]">
+                        <div class="flex items-start gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                                !
+                            </div>
+                            <div>
+                                <h3 class="font-headline text-sm font-bold">Monitoreo de actividad</h3>
+                                <p class="text-[11px] text-white/70 mt-1 leading-relaxed">
+                                    Revisa los accesos recientes, duración de sesión y estado de actividad de los usuarios.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+                <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-cyan-400"></div>
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shadow-sm">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <span class="text-[9px] font-bold uppercase text-on-surface-variant bg-surface-container px-2 py-1 rounded">Minutos</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-on-primary-fixed">Promedio Duración</h4>
+                    <div class="text-2xl font-extrabold text-on-primary-fixed" th:text="${promedioDuracion + ' min'}">0 min</div>
+                </article>
+
+                <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-emerald-400"></div>
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="w-9 h-9 rounded-lg bg-green-50 text-green-600 flex items-center justify-center shadow-sm">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                    </div>
+                    <h4 class="text-sm font-bold text-on-primary-fixed">Última Sesión</h4>
+                    <div class="text-lg font-extrabold text-on-primary-fixed" th:text="${#temporals.format(ultimaSesion, 'dd/MM/yyyy HH:mm')}">--/--/--</div>
+                </article>
+
+                <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-orange-400"></div>
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shadow-sm">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        </div>
+                        <span class="text-[9px] font-bold uppercase text-amber-600 bg-amber-100 px-2 py-1 rounded">Vigentes</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-on-primary-fixed">Total Activos</h4>
+                    <div class="text-2xl font-extrabold text-amber-600" th:text="${totalActivos}">0</div>
+                </article>
+
+                <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-indigo-400"></div>
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="w-9 h-9 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shadow-sm">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </div>
+                    </div>
+                    <h4 class="text-sm font-bold text-on-primary-fixed">Más Frecuente</h4>
+                    <div class="text-sm font-extrabold text-on-primary-fixed truncate mt-1" th:text="${usuarioFrecuente != null ? usuarioFrecuente : 'Sin datos'}">N/A</div>
+                </article>
+            </section>
+
+            <!-- Contenedor principal -->
+            <div class="bg-transparent border border-outline-variant/30 rounded-xl p-4 mb-4 flex flex-col">
+
+                <!-- Filtros -->
+                <form method="get" th:action="@{/admin/registros/actividad}"
+                      class="grid grid-cols-1 gap-2 mb-6 w-full xl:grid-cols-[1.5fr_0.8fr_0.8fr_auto_auto_auto] xl:items-end">
+
+                    <div>
+                        <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+                            Buscar usuario
+                        </label>
+                        <input type="text"
+                               name="texto"
+                               th:value="${texto}"
+                               placeholder="Nombre o correo..."
+                               class="w-full px-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa] text-sm" />
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+                            Fecha
+                        </label>
+                        <input type="date"
+                               name="fecha"
+                               th:value="${fecha}"
+                               class="w-full px-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa] text-sm" />
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+                            Rol
+                        </label>
+                        <select name="rol"
+                                class="w-full px-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa] text-sm">
+                            <option value="">Todos los roles</option>
+                            <option value="SOCIO" th:selected="${rol == 'SOCIO'}">SOCIO</option>
+                            <option value="VISUALIZADOR" th:selected="${rol == 'VISUALIZADOR'}">VISUALIZADOR</option>
+                            <option value="ADMIN" th:selected="${rol == 'ADMIN'}">ADMIN</option>
+                        </select>
+                    </div>
+
+                    <!-- Limpiar filtros -->
+                    <a th:href="@{/admin/registros/actividad}"
+                       class="flex items-center justify-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition no-underline">
+                        <svg class="w-5 h-5 text-current"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <span class="text-sm font-medium whitespace-nowrap">Limpiar</span>
+                    </a>
+
+                    <!-- Filtrar -->
+                    <button type="submit"
+                            class="flex items-center justify-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                        <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 4a1 1 0 011-1h16a1 1 0 01.8 1.6L14 13.5V19a1 1 0 01-1.447.894l-3-1.5A1 1 0 019 17.5v-4L3.2 4.6A1 1 0 013 4z" />
+                        </svg>
+                        <span class="text-sm font-medium whitespace-nowrap">Filtrar</span>
+                    </button>
+
+                    <!-- Exportar -->
+                    <a th:href="@{/admin/registros/actividad/exportar(texto=${texto},fecha=${fecha},rol=${rol})}"
+                       class="flex items-center justify-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition no-underline">
+                        <svg class="w-5 h-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9.414V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span class="text-sm font-medium whitespace-nowrap">Exportar</span>
+                    </a>
+                </form>
+
+                <!-- Tabla tipo diseño moderno -->
+                <div class="flex flex-col">
+                    <div class="overflow-x-auto w-full pb-4" th:if="${not #lists.isEmpty(sesiones)}">
+                        <div class="flex flex-col gap-2 min-w-[1000px] w-full">
+
+                            <!-- Cabecera -->
+                            <div class="hidden md:grid grid-cols-[minmax(260px,2fr)_1fr_1fr_1fr_1fr_1fr] gap-2 px-4 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                                <div>Usuario</div>
+                                <div>Rol</div>
+                                <div>Fecha</div>
+                                <div>Hora entrada</div>
+                                <div>Duración</div>
+                                <div>Estado</div>
+                            </div>
+
+                            <!-- Filas -->
+                            <div th:each="r : ${sesiones}"
+                                 class="bg-surface-container-lowest rounded-xl p-4 md:px-4 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[minmax(260px,2fr)_1fr_1fr_1fr_1fr_1fr] gap-2 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+
+                                <!-- Usuario -->
+                                <div class="flex items-center gap-3 w-full min-w-0">
+                                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary-container/30 text-sm font-bold text-secondary"
+                                         th:text="${r.usuarioIniciales}"></div>
+
+                                    <div class="min-w-0 flex-1">
+                                        <p class="truncate text-sm font-bold leading-tight text-on-primary-fixed group-hover:text-secondary transition-colors"
+                                           th:text="${r.usuarioNombreCompleto}"></p>
+                                        <p class="truncate text-[11px] leading-tight text-on-surface-variant"
+                                           th:text="${r.usuario.correo}"></p>
+                                    </div>
+                                </div>
+
+                                <!-- Rol -->
+                                <div class="w-full md:w-auto flex items-center justify-start">
+                                        <span class="rounded-full bg-secondary-container/20 px-3 py-1 text-[10px] font-extrabold uppercase text-secondary"
+                                              th:text="${r.usuario.rol.nombre}">
+                                        </span>
+                                </div>
+
+                                <!-- Fecha -->
+                                <div class="w-full md:w-auto flex items-center justify-start text-sm font-body text-on-surface-variant"
+                                     th:text="${r.fechaTexto}"></div>
+
+                                <!-- Hora -->
+                                <div class="w-full md:w-auto flex items-center justify-start text-sm font-body text-on-surface-variant"
+                                     th:text="${r.horaEntradaTexto}"></div>
+
+                                <!-- Duración -->
+                                <div class="w-full md:w-auto flex items-center justify-start text-sm font-body text-on-surface-variant"
+                                     th:text="${r.duracionTexto}"></div>
+
+                                <!-- Estado -->
+                                <div class="w-full md:w-auto flex items-center justify-start">
+                                    <div class="flex items-center gap-2" th:if="${r.estado == 'VIGENTE'}">
+                                        <div class="h-2 w-2 rounded-full bg-secondary"></div>
+                                        <span class="text-sm font-bold text-secondary">Vigente</span>
+                                    </div>
+
+                                    <div class="flex items-center gap-2" th:if="${r.estado == 'FINALIZADA'}">
+                                        <div class="h-2 w-2 rounded-full bg-outline"></div>
+                                        <span class="text-sm font-bold text-outline">Finalizada</span>
+                                    </div>
+
+                                    <div class="flex items-center gap-2" th:if="${r.estado == 'EXPIRADA'}">
+                                        <div class="h-2 w-2 rounded-full bg-error"></div>
+                                        <span class="text-sm font-bold text-error">Sesión expirada</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estado vacío -->
+                    <div th:if="${#lists.isEmpty(sesiones)}"
+                         class="py-12 flex flex-col items-center justify-center text-center bg-surface-container-lowest rounded-xl border border-outline-variant/30 border-dashed">
+                        <svg class="w-16 h-16 text-outline-variant mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 class="text-lg font-bold text-on-surface mb-2">No se encontraron registros de actividad</h3>
+                    </div>
+
+                    <!-- Paginación -->
+                    <!-- Paginación -->
+                    <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-4">
+
+                        <!-- Botón anterior -->
+                        <a th:if="${hasPrevious}"
+                           th:href="@{/admin/registros/actividad(page=${currentPage - 1}, texto=${texto}, fecha=${fecha}, rol=${rol})}"
+                           class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </a>
+
+                        <span th:if="${!hasPrevious}"
+                              class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 19l-7-7 7-7" />
+        </svg>
+    </span>
+
+                        <!-- Números -->
+                        <div id="pageNumbers" class="flex gap-2">
+
+                            <span th:each="p : ${pageNumbers}">
+
+                                <span th:if="${p == '...'}"
+                                      class="w-10 h-10 flex items-center justify-center text-sm font-bold text-on-surface-variant">
+                                    ...
+                                </span>
+
+                                <a th:if="${p != '...'}"
+                                   th:href="@{/admin/registros/actividad(page=${p}, texto=${texto}, fecha=${fecha}, rol=${rol})}"
+                                   th:text="${p + 1}"
+                                   th:class="${p == currentPage} ?
+                                   'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
+                                   :
+                                   'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container transition'">
+                                </a>
+
+                            </span>
+
+                        </div>
+
+                        <!-- Botón siguiente -->
+                        <a th:if="${hasNext}"
+                           th:href="@{/admin/registros/actividad(page=${currentPage + 1}, texto=${texto}, fecha=${fecha}, rol=${rol})}"
+                           class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+
+                        <span th:if="${!hasNext}"
+                              class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5l7 7-7 7" />
+        </svg>
+    </span>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>
