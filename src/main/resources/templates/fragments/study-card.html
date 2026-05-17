@@ -1,0 +1,63 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- Card reutilizable para estudios -->
+<article th:fragment="card(estudio)" class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden" th:classappend="${estudio.estado == 'ARCHIVADO' ? 'bg-opacity-80' : ''}">
+
+    <!-- Decorative top accent -->
+    <div th:if="${estudio.estado != 'ARCHIVADO'}" class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+    <!-- Header: Icon + Metadata -->
+    <div class="flex justify-between items-start mb-5" th:classappend="${estudio.estado == 'ARCHIVADO' ? 'opacity-70' : ''}">
+
+        <!-- Icon basado en formato -->
+        <div th:switch="${estudio.formato}" class="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm"
+             th:classappend="${estudio.formato == 'PDF' ? 'bg-error-container text-on-error-container' : 'bg-surface-container-high text-outline'}">
+            <span th:case="'PDF'" class="material-symbols-outlined" data-weight="fill">picture_as_pdf</span>
+            <span th:case="'DOCX'" class="material-symbols-outlined" data-weight="fill">description</span>
+            <span th:case="'PPT'" class="material-symbols-outlined" data-weight="fill">slideshow</span>
+            <span th:case="*" class="material-symbols-outlined">attach_file</span>
+        </div>
+
+        <!-- Badge: Año + Formato -->
+        <div class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
+            <span th:text="${#calendars.format(estudio.fechaPublicacion, 'yyyy')}">2024</span>
+            <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+            <span th:text="${estudio.formato}">PDF</span>
+        </div>
+
+    </div>
+
+    <!-- Content -->
+    <div class="flex-1" th:classappend="${estudio.estado == 'ARCHIVADO' ? 'opacity-70' : ''}">
+        <h4 class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors" th:classappend="${estudio.estado == 'ARCHIVADO' ? 'line-through decoration-outline-variant' : ''}" th:text="${estudio.titulo}">Título del Estudio</h4>
+        <p class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3" th:text="${estudio.descripcion}">Descripción del estudio...</p>
+    </div>
+
+    <!-- Footer: Status + Link -->
+    <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
+
+        <!-- Status Badge -->
+        <div th:switch="${estudio.estado}" class="flex items-center gap-1.5 font-label text-xs font-bold uppercase tracking-wide"
+             th:classappend="${estudio.estado == 'VIGENTE' ? 'text-secondary' : estudio.estado == 'BORRADOR' ? 'text-outline' : 'text-error'}">
+
+            <span th:case="'VIGENTE'" class="material-symbols-outlined text-[18px]" data-weight="fill">check_circle</span>
+            <span th:case="'BORRADOR'" class="material-symbols-outlined text-[18px]">edit_document</span>
+            <span th:case="'ARCHIVADO'" class="material-symbols-outlined text-[18px]">cancel</span>
+
+            <span th:case="'VIGENTE'">Vigente</span>
+            <span th:case="'BORRADOR'">Borrador</span>
+            <span th:case="'ARCHIVADO'">Archivado</span>
+
+        </div>
+
+        <!-- View Link -->
+        <a th:href="@{/estudios/{id}(id=${estudio.id})}" class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link">
+            Ver Estudio
+            <span class="material-symbols-outlined text-[16px] group-hover/link:translate-x-1 transition-transform">arrow_forward</span>
+        </a>
+
+    </div>
+
+</article>
+
+</html>

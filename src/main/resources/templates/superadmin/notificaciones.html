@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Notificaciones | Reciclame</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary": "#ffffff", "secondary-fixed": "#c3ecd7",
+                        "surface-container-high": "#dce9ff", "surface-container-lowest": "#ffffff",
+                        "surface-container": "#e5eeff", "on-primary-fixed-variant": "#3f465c",
+                        "on-background": "#0b1c30", "inverse-surface": "#213145",
+                        "on-tertiary-container": "#3980f4", "on-secondary-container": "#476c5b",
+                        "inverse-on-surface": "#eaf1ff", "on-error": "#ffffff",
+                        "surface-bright": "#f8f9ff", "on-tertiary": "#ffffff",
+                        "surface-tint": "#565e74", "background": "#f8f9ff",
+                        "surface-dim": "#cbdbf5", "on-tertiary-fixed-variant": "#004395",
+                        "tertiary-container": "#001a42", "on-error-container": "#93000a",
+                        "on-surface-variant": "#45464d", "primary-container": "#131b2e",
+                        "on-secondary-fixed": "#002115", "error": "#ba1a1a",
+                        "outline-variant": "#c6c6cd", "secondary-fixed-dim": "#a8cfbc",
+                        "on-primary-container": "#7c839b", "tertiary-fixed-dim": "#adc6ff",
+                        "primary": "#000000", "secondary": "#416656",
+                        "surface-container-highest": "#d3e4fe", "on-tertiary-fixed": "#001a42",
+                        "surface-variant": "#d3e4fe", "surface-container-low": "#eff4ff",
+                        "primary-fixed-dim": "#bec6e0", "on-primary-fixed": "#131b2e",
+                        "on-secondary-fixed-variant": "#294e3f", "error-container": "#ffdad6",
+                        "primary-fixed": "#dae2fd", "outline": "#76777d",
+                        "on-surface": "#0b1c30", "inverse-primary": "#bec6e0",
+                        "secondary-container": "#c3ecd7", "on-primary": "#ffffff",
+                        "tertiary-fixed": "#d8e2ff", "surface": "#f8f9ff", "tertiary": "#000000"
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                    fontFamily: { "sans": ["Plus Jakarta Sans", "sans-serif"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .notif-card { transition: transform 0.2s, box-shadow 0.2s; }
+        .notif-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(65,102,86,0.10); }
+    </style>
+    <div th:replace="~{fragments/responsive}"></div>
+
+</head>
+
+<body class="bg-surface text-on-surface h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+
+<div th:replace="~{fragments/sidebar_superadmin :: sidebar}"></div>
+
+<div class="flex-1 flex flex-col min-w-0 bg-surface relative">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="flex-1 overflow-y-auto px-6 py-5">
+
+        <!-- Flash messages -->
+        <div th:if="${success}"
+             class="flash-message mb-4 flex items-center gap-3 rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-green-800 text-sm">
+            <span class="material-symbols-outlined text-green-600" style="font-size:20px">check_circle</span>
+            <span th:text="${success}"></span>
+        </div>
+
+        <!-- Header -->
+        <div class="mb-6 flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-3 mb-1.5">
+                    <h2 class="font-extrabold text-[1.875rem] text-on-primary-fixed leading-tight tracking-tight">
+                        Notificaciones
+                    </h2>
+                    <span th:if="${totalNoLeidas > 0}"
+                          class="bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full"
+                          th:text="${totalNoLeidas} + ' sin leer'">
+                </span>
+                </div>
+                <p class="text-on-surface-variant text-sm">
+                    Actividad reciente del sistema — administradores, dominios y seguridad.
+                </p>
+            </div>
+
+            <form th:action="@{/superadmin/notificaciones/marcar-leidas}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit"
+                        class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-slate-500 border border-[#e0e0e0] bg-white rounded-xl hover:bg-slate-50 hover:text-secondary transition">
+                    <span class="material-symbols-outlined text-[18px]">done_all</span>
+                    Marcar todas como leídas
+                </button>
+            </form>
+        </div>
+
+        <!-- Contenedor principal -->
+        <div class="bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
+
+            <!-- Tabs -->
+            <div class="flex flex-wrap gap-6 px-6 pt-5 pb-0 border-b border-slate-100" id="notifTabs">
+                <button data-filter="ALL"
+                        class="pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px">
+                    Todas
+                </button>
+                <button data-filter="ADMIN"
+                        class="pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px">
+                    Administradores
+                </button>
+                <button data-filter="DOMINIO"
+                        class="pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px">
+                    Dominios
+                </button>
+                <button data-filter="SISTEMA"
+                        class="pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px">
+                    Sistema
+                </button>
+            </div>
+
+            <!-- Cards -->
+            <div class="p-6 space-y-3">
+
+                <!-- Empty state global -->
+                <div th:if="${notificaciones == null or #lists.isEmpty(notificaciones)}"
+                     class="py-16 flex flex-col items-center justify-center text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mb-4">
+                        <span class="material-symbols-outlined text-[32px]">notifications_off</span>
+                    </div>
+                    <h3 class="font-bold text-slate-700 text-lg mb-1">Sin notificaciones</h3>
+                    <p class="text-sm text-slate-400">Las acciones del sistema aparecerán aquí.</p>
+                </div>
+
+                <!-- Empty state filtro -->
+                <div id="emptyFilter"
+                     class="hidden py-16 flex flex-col items-center justify-center text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mb-4">
+                        <span class="material-symbols-outlined text-[32px]">filter_list_off</span>
+                    </div>
+                    <h3 class="font-bold text-slate-700 text-lg mb-1">Sin resultados</h3>
+                    <p class="text-sm text-slate-400">No hay notificaciones de este tipo.</p>
+                </div>
+
+                <!-- Cards de notificaciones -->
+                <div th:each="n : ${notificaciones}"
+                     th:attr="data-tipo=${n.tipo}"
+                     th:classappend="${n.leido == false} ? 'border-l-4 border-secondary' : 'border-l-4 border-transparent'"
+                     class="notif-card bg-slate-50 rounded-[1.25rem] p-5 border border-slate-100 flex items-start gap-4 relative">
+
+                    <!-- Ícono -->
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                         th:classappend="${#strings.startsWith(n.tipo, 'ADMIN')} ? 'bg-secondary-container/40 text-secondary' :
+                                    (${#strings.startsWith(n.tipo, 'DOMINIO')} ? 'bg-blue-50 text-blue-600' :
+                                    (${#strings.startsWith(n.tipo, 'SOLICITUD')} ? 'bg-amber-50 text-amber-600' :
+                                    'bg-slate-200 text-slate-500'))">
+                    <span class="material-symbols-outlined text-[22px]"
+                          th:text="${#strings.startsWith(n.tipo, 'ADMIN_CREADO')} ? 'person_add' :
+                                   (${#strings.startsWith(n.tipo, 'ADMIN_BLOQUEADO')} ? 'block' :
+                                   (${#strings.startsWith(n.tipo, 'ADMIN_ELIMINADO')} ? 'person_remove' :
+                                   (${#strings.startsWith(n.tipo, 'DOMINIO')} ? 'domain' :
+                                   (${#strings.startsWith(n.tipo, 'SOLICITUD')} ? 'assignment' :
+                                   'notifications'))))">
+                        notifications
+                    </span>
+                    </div>
+
+                    <!-- Contenido -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between gap-4 mb-1.5">
+                            <div class="flex items-center gap-2">
+                            <span class="text-secondary font-bold text-[11px] uppercase tracking-wider"
+                                  th:text="${n.etiqueta}">Tipo</span>
+                                <span th:if="${n.leido == false}"
+                                      class="w-2 h-2 rounded-full bg-red-500 flex-shrink-0"></span>
+                            </div>
+                            <span class="text-on-surface-variant text-xs flex-shrink-0"
+                                  th:text="${n.tiempo}">Hace un momento</span>
+                        </div>
+
+                        <h3 class="font-bold text-on-primary-fixed text-sm mb-1.5"
+                            th:text="${n.titulo}">Título</h3>
+                        <p class="text-on-surface-variant text-sm leading-relaxed mb-3"
+                           th:text="${n.mensaje}">Mensaje</p>
+
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <a th:if="${n.enlace != null}"
+                               th:href="${n.enlace}"
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 text-secondary font-semibold rounded-lg text-xs hover:bg-secondary-container/20 transition-colors">
+                                <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                                Ver detalle
+                            </a>
+
+                            <form th:if="${n.leido == false}"
+                                  th:action="@{/superadmin/notificaciones/marcar-leida/{id}(id=${n.id})}"
+                                  method="post">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                <button type="submit"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 text-slate-500 font-semibold rounded-lg text-xs hover:bg-slate-100 transition-colors">
+                                    <span class="material-symbols-outlined text-[14px]">mark_email_read</span>
+                                    Marcar leída
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script>
+    (function () {
+        const tabs  = document.querySelectorAll('#notifTabs button[data-filter]');
+        const cards = document.querySelectorAll('[data-tipo]');
+        const emptyFilter = document.getElementById('emptyFilter');
+
+        function setActive(tab) {
+            tabs.forEach(t => {
+                t.classList.remove('text-secondary', 'font-bold', 'border-b-2', 'border-secondary');
+                t.classList.add('text-on-surface-variant', 'font-semibold');
+            });
+            tab.classList.add('text-secondary', 'font-bold', 'border-b-2', 'border-secondary');
+            tab.classList.remove('text-on-surface-variant', 'font-semibold');
+        }
+
+        function applyFilter(filter) {
+            let visible = 0;
+            cards.forEach(card => {
+                const tipo = (card.getAttribute('data-tipo') || '').toUpperCase();
+                const match = filter === 'ALL' || tipo.startsWith(filter);
+                card.classList.toggle('hidden', !match);
+                if (match) visible++;
+            });
+            if (emptyFilter) {
+                emptyFilter.classList.toggle('hidden', visible > 0);
+            }
+        }
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                setActive(tab);
+                applyFilter(tab.getAttribute('data-filter') || 'ALL');
+            });
+        });
+
+        applyFilter('ALL');
+    })();
+    document.addEventListener('DOMContentLoaded', function() {
+        const flashes = document.querySelectorAll('[data-flash-success], [data-flash-error], .flash-message');
+        flashes.forEach(function(el) {
+            setTimeout(function() {
+                el.style.transition = 'opacity 0.5s ease';
+                el.style.opacity = '0';
+                setTimeout(function() { el.remove(); }, 500);
+            }, 4000);
+        });
+    });
+</script>
+
+</body>
+</html>
