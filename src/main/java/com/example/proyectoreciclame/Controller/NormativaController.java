@@ -98,24 +98,34 @@ public class NormativaController {
                 .map(NormativaDTO::fromEntity)
                 .collect(Collectors.toList());
 
-        int totalNormas = normativasDTO.size();
-        long countEc = normativasDTO.stream()
+        // ✅ Usa TODOS los datos
+
+// Lista general SOLO para gráficos superiores
+        List<NormativaDTO> normativasGraficoDTO = normativaRepository.findAllNormativas().stream()
+                .map(NormativaDTO::fromEntity)
+                .collect(Collectors.toList());
+
+        int totalNormas = normativasGraficoDTO.size();
+
+
+
+        long countEc = normativasGraficoDTO.stream()
                 .filter(n -> n.categorias() != null && n.categorias().stream()
                         .anyMatch(c -> c.equalsIgnoreCase("Economía circular")))
                 .count();
-        long countGr = normativasDTO.stream()
+        long countGr = normativasGraficoDTO.stream()
                 .filter(n -> n.categorias() != null && n.categorias().stream()
                         .anyMatch(c -> c.equalsIgnoreCase("Gestión de residuos")))
                 .count();
-        long countEe = normativasDTO.stream()
+        long countEe = normativasGraficoDTO.stream()
                 .filter(n -> n.categorias() != null && n.categorias().stream()
                         .anyMatch(c -> c.equalsIgnoreCase("Envases y Embalajes")))
                 .count();
-        long countRep = normativasDTO.stream()
+        long countRep = normativasGraficoDTO.stream()
                 .filter(n -> n.categorias() != null && n.categorias().stream()
                         .anyMatch(c -> c.equalsIgnoreCase("Ley REP") || c.equalsIgnoreCase("Responsabilidad Extendida")))
                 .count();
-        long countOtro = normativasDTO.stream()
+        long countOtro = normativasGraficoDTO.stream()
                 .filter(n -> n.categorias() != null && n.categorias().stream()
                         .anyMatch(c -> c.equalsIgnoreCase("Otro")))
                 .count();
@@ -154,26 +164,26 @@ public class NormativaController {
 
         // CHarts logic
 
-        long nacVigente = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "VIGENTE".equalsIgnoreCase(n.estado())).count();
-        long nacPublicada = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "PUBLICADA".equalsIgnoreCase(n.estado())).count();
-        long nacConsulta = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "CONSULTA PUBLICA".equalsIgnoreCase(n.estado())).count();
-        long nacBorrador = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "BORRADOR EN PROCESO".equalsIgnoreCase(n.estado())).count();
-        long nacDerogada = normativasDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "DEROGADA".equalsIgnoreCase(n.estado())).count();
+        long nacVigente = normativasGraficoDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "VIGENTE".equalsIgnoreCase(n.estado())).count();
+        long nacPublicada = normativasGraficoDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "PUBLICADA".equalsIgnoreCase(n.estado())).count();
+        long nacConsulta = normativasGraficoDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "CONSULTA PUBLICA".equalsIgnoreCase(n.estado())).count();
+        long nacBorrador = normativasGraficoDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "BORRADOR EN PROCESO".equalsIgnoreCase(n.estado())).count();
+        long nacDerogada = normativasGraficoDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "DEROGADA".equalsIgnoreCase(n.estado())).count();
         long nacTotal = nacVigente + nacPublicada + nacConsulta + nacBorrador + nacDerogada;
 
-        long intVigente = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "VIGENTE".equalsIgnoreCase(n.estado())).count();
-        long intPublicada = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "PUBLICADA".equalsIgnoreCase(n.estado())).count();
-        long intConsulta = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "CONSULTA PUBLICA".equalsIgnoreCase(n.estado())).count();
-        long intBorrador = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "BORRADOR EN PROCESO".equalsIgnoreCase(n.estado())).count();
-        long intDerogada = normativasDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "DEROGADA".equalsIgnoreCase(n.estado())).count();
+        long intVigente = normativasGraficoDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "VIGENTE".equalsIgnoreCase(n.estado())).count();
+        long intPublicada = normativasGraficoDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "PUBLICADA".equalsIgnoreCase(n.estado())).count();
+        long intConsulta = normativasGraficoDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "CONSULTA PUBLICA".equalsIgnoreCase(n.estado())).count();
+        long intBorrador = normativasGraficoDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "BORRADOR EN PROCESO".equalsIgnoreCase(n.estado())).count();
+        long intDerogada = normativasGraficoDTO.stream().filter(n -> "INTERNACIONAL".equalsIgnoreCase(n.alcance()) && "DEROGADA".equalsIgnoreCase(n.estado())).count();
         long intTotal = intVigente + intPublicada + intConsulta + intBorrador + intDerogada;
 
-        long gratisNac = normativasDTO.stream().filter(n -> "GRATIS".equalsIgnoreCase(n.acceso()) && "NACIONAL".equalsIgnoreCase(n.alcance())).count();
-        long gratisInt = normativasDTO.stream().filter(n -> "GRATIS".equalsIgnoreCase(n.acceso()) && "INTERNACIONAL".equalsIgnoreCase(n.alcance())).count();
+        long gratisNac = normativasGraficoDTO.stream().filter(n -> "GRATIS".equalsIgnoreCase(n.acceso()) && "NACIONAL".equalsIgnoreCase(n.alcance())).count();
+        long gratisInt = normativasGraficoDTO.stream().filter(n -> "GRATIS".equalsIgnoreCase(n.acceso()) && "INTERNACIONAL".equalsIgnoreCase(n.alcance())).count();
         long gratisTotal = gratisNac + gratisInt;
 
-        long pagoNac = normativasDTO.stream().filter(n -> "PAGO".equalsIgnoreCase(n.acceso()) && "NACIONAL".equalsIgnoreCase(n.alcance())).count();
-        long pagoInt = normativasDTO.stream().filter(n -> "PAGO".equalsIgnoreCase(n.acceso()) && "INTERNACIONAL".equalsIgnoreCase(n.alcance())).count();
+        long pagoNac = normativasGraficoDTO.stream().filter(n -> "PAGO".equalsIgnoreCase(n.acceso()) && "NACIONAL".equalsIgnoreCase(n.alcance())).count();
+        long pagoInt = normativasGraficoDTO.stream().filter(n -> "PAGO".equalsIgnoreCase(n.acceso()) && "INTERNACIONAL".equalsIgnoreCase(n.alcance())).count();
         long pagoTotal = pagoNac + pagoInt;
 
         model.addAttribute("normativas", normativasDTO);
