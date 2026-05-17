@@ -202,10 +202,13 @@ public class AdminEstudiosController {
         model.addAttribute("currentPage", "repoNormativo");
         model.addAttribute("currentSection", "admin-normativas");
 
+        java.util.List<Normativa> lista;
+
         if (search != null && !search.isBlank()) {
-            model.addAttribute("normativas", normativaRepository.findByKeyword(search));
+            lista = normativaRepository.findByKeyword(search);
+            model.addAttribute("normativas", lista);
         } else {
-            model.addAttribute("normativas", normativaRepository.findWithAdvancedFilters(
+            lista = normativaRepository.findWithAdvancedFilters(
                     anio != null, anio,
                     fechaInicio,
                     fechaFin,
@@ -214,7 +217,8 @@ public class AdminEstudiosController {
                     hasAlcance, hasAlcance ? alcance : java.util.List.of(),
                     hasObligatoriedad, hasObligatoriedad ? obligatoriedad : java.util.List.of(),
                     hasCategoria, hasCategoria ? categoria : java.util.List.of()
-            ));
+            );
+            model.addAttribute("normativas", lista);
         }
 
         model.addAttribute("searchQuery", search);
@@ -227,8 +231,10 @@ public class AdminEstudiosController {
         model.addAttribute("selectedAlcances", alcance);
         model.addAttribute("selectedObligatoriedades", obligatoriedad);
 
-        // 🔥 OBTENER TODAS LAS NORMATIVAS (para dashboard)
-        java.util.List<Normativa> lista = normativaRepository.findAllNormativas();
+        // 🔥 OBTENER TODAS LAS NORMATIVAS (para dashboard) - SOLO SI NO HAY BÚSQUEDA
+        if (search == null || search.isBlank()) {
+            lista = normativaRepository.findAllNormativas();
+        }
 
 // TOTAL
         long totalNormas = lista.size();

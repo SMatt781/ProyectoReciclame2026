@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html class="light h-full" lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Contacto | Soporte Recíclame</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+</head>
+
+<body class="bg-gray-50 antialiased">
+
+<div class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+        <div class="max-w-4xl mx-auto px-6 py-6 flex items-center justify-between">
+            <a th:href="@{/}" class="flex items-center gap-2">
+                <svg class="w-8 h-8 text-primary-container fill-current" viewBox="0 0 24 24">
+                    <path d="M17 17h5l-4 4-4-4h3V9c0-2.21-1.79-4-4-4S9 6.79 9 9h2c0-1.1.9-2 2-2s2 .9 2 2v8h-3l4 4 4-4zM7 7H2l4-4 4 4H7v8c0 2.21 1.79 4 4 4s4-1.79 4-4h-2c0 1.1-.9 2-2 2s-2-.9-2-2V7z"/>
+                </svg>
+                <span class="text-2xl font-bold text-secondary">Recíclame</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-4xl mx-auto px-6 py-12 w-full">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <!-- Información de Contacto -->
+            <div>
+                <h1 class="text-4xl font-bold text-secondary mb-8">Contáctanos</h1>
+
+                <div class="space-y-6">
+                    <!-- Email -->
+                    <div class="bg-white rounded-lg p-6 shadow">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-full bg-primary-container/10 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-primary-container" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-secondary mb-1">Email de Soporte</h3>
+                                <a href="mailto:reciclame.soporte@gmail.com" class="text-primary-container hover:underline font-semibold">
+                                    reciclame.soporte@gmail.com
+                                </a>
+                                <p class="text-sm text-gray-600 mt-2">Respuesta en menos de 24 horas</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Horario de Atención -->
+                    <div class="bg-white rounded-lg p-6 shadow">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-full bg-primary-container/10 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-primary-container" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 2m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-secondary mb-1">Horario de Atención</h3>
+                                <p class="text-gray-700">Lunes a Viernes: 9:00 AM - 6:00 PM</p>
+                                <p class="text-gray-700">Sábado: 10:00 AM - 2:00 PM</p>
+                                <p class="text-sm text-gray-600 mt-2">Zona Horaria: Perú (UTC-5)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Temas de Soporte -->
+                    <div class="bg-white rounded-lg p-6 shadow">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-full bg-primary-container/10 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-primary-container" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-secondary mb-3">Soporte para:</h3>
+                                <ul class="text-gray-700 space-y-2">
+                                    <li class="flex items-center gap-2">
+                                        <span class="w-2 h-2 bg-primary-container rounded-full"></span>
+                                        Problemas de acceso a cuenta
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <span class="w-2 h-2 bg-primary-container rounded-full"></span>
+                                        Recuperación de contraseña
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <span class="w-2 h-2 bg-primary-container rounded-full"></span>
+                                        Consultas técnicas
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <span class="w-2 h-2 bg-primary-container rounded-full"></span>
+                                        Reportar errores
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <span class="w-2 h-2 bg-primary-container rounded-full"></span>
+                                        Sugerencias y feedback
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de Contacto -->
+            <div>
+                <div class="bg-white rounded-lg p-6 shadow">
+                    <h2 class="text-2xl font-bold text-secondary mb-6">Enviar Mensaje</h2>
+
+                    <form th:action="@{/soporte/enviar}" method="post" class="space-y-4">
+                        <input type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}"/>
+
+                        <!-- Nombre -->
+                        <div>
+                            <label class="block text-sm font-semibold text-secondary mb-2">Nombre completo *</label>
+                            <input type="text"
+                                   name="nombre"
+                                   required
+                                   class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-container focus:border-transparent"
+                                   placeholder="Tu nombre"/>
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            <label class="block text-sm font-semibold text-secondary mb-2">Correo electrónico *</label>
+                            <input type="email"
+                                   name="email"
+                                   required
+                                   class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-container focus:border-transparent"
+                                   placeholder="tu@email.com"/>
+                        </div>
+
+                        <!-- Asunto -->
+                        <div>
+                            <label class="block text-sm font-semibold text-secondary mb-2">Asunto *</label>
+                            <select name="asunto"
+                                    required
+                                    class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-container focus:border-transparent">
+                                <option value="">Selecciona un asunto</option>
+                                <option value="acceso">Problema de acceso</option>
+                                <option value="contraseña">Recuperar contraseña</option>
+                                <option value="tecnico">Problema técnico</option>
+                                <option value="error">Reportar error</option>
+                                <option value="sugerencia">Sugerencia o feedback</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+
+                        <!-- Mensaje -->
+                        <div>
+                            <label class="block text-sm font-semibold text-secondary mb-2">Mensaje *</label>
+                            <textarea name="mensaje"
+                                      required
+                                      rows="5"
+                                      class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-container focus:border-transparent"
+                                      placeholder="Cuéntanos cómo podemos ayudarte..."></textarea>
+                        </div>
+
+                        <!-- Checkbox términos -->
+                        <div class="flex items-start gap-2">
+                            <input type="checkbox"
+                                   name="aceptaPrivacidad"
+                                   id="privacidad"
+                                   required
+                                   class="mt-1 rounded border-gray-300"/>
+                            <label for="privacidad" class="text-sm text-gray-600">
+                                Acepto la
+                                <a th:href="@{/privacidad}" target="_blank" class="text-primary-container font-semibold hover:underline">Política de Privacidad</a>
+                            </label>
+                        </div>
+
+                        <!-- Botón Enviar -->
+                        <button type="submit"
+                                class="w-full py-3 bg-secondary text-white font-bold rounded-lg hover:bg-slate-800 transition flex items-center justify-center gap-2">
+                            Enviar Mensaje
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </button>
+
+                        <p class="text-xs text-gray-500 text-center">* Campos obligatorios</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="mt-12">
+            <h2 class="text-3xl font-bold text-secondary mb-8">Preguntas Frecuentes</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg p-6 shadow">
+                    <h3 class="font-bold text-secondary mb-2">¿Cuánto tarda en responder soporte?</h3>
+                    <p class="text-gray-700 text-sm">Respondemos dentro de 24 horas hábiles. Durante fines de semana, responderemos el próximo día laboral.</p>
+                </div>
+
+                <div class="bg-white rounded-lg p-6 shadow">
+                    <h3 class="font-bold text-secondary mb-2">¿Cómo recupero mi contraseña?</h3>
+                    <p class="text-gray-700 text-sm">En la página de login, haz clic en "¿Olvidaste tu contraseña?" y sigue las instrucciones enviadas a tu email.</p>
+                </div>
+
+                <div class="bg-white rounded-lg p-6 shadow">
+                    <h3 class="font-bold text-secondary mb-2">¿Mi información está segura?</h3>
+                    <p class="text-gray-700 text-sm">Sí. Usamos encriptación SSL/TLS y cumplimos con estándares de seguridad de datos internacionales.</p>
+                </div>
+
+                <div class="bg-white rounded-lg p-6 shadow">
+                    <h3 class="font-bold text-secondary mb-2">¿Puedo cambiar mi tipo de usuario?</h3>
+                    <p class="text-gray-700 text-sm">Contacta a soporte con tu solicitud. Evaluaremos tu caso y realizaremos el cambio si es aplicable.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-4xl mx-auto px-6 py-8 text-center text-sm text-gray-600">
+            <p>© 2026 THE CIRCULAR EDITORIAL. ALL RIGHTS RESERVED.</p>
+            <div class="flex justify-center gap-4 mt-4">
+                <a th:href="@{/privacidad}" class="hover:text-primary-container">Privacidad</a>
+                <a th:href="@{/terminos}" class="hover:text-primary-container">Términos</a>
+                <a th:href="@{/soporte}" class="hover:text-primary-container">Soporte</a>
+            </div>
+        </div>
+    </footer>
+</div>
+
+</body>
+</html>
