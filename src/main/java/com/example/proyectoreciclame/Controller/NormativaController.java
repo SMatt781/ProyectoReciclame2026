@@ -84,11 +84,12 @@ public class NormativaController {
                 fechaFin = java.time.LocalDate.parse(dateEnd).atTime(23, 59, 59);
             }
 
+            java.util.List<String> queryEstados = java.util.List.of();
             if (hasEstados) {
-                estado = estado.stream().map(e -> e.replace(" ", "_")).collect(Collectors.toList());
+                queryEstados = estado.stream().map(e -> e.replace(" ", "_")).collect(Collectors.toList());
             }
 
-            normativas = normativaRepository.findWithAdvancedFilters(hasAnio, anio, fechaInicio, fechaFin, hasEstados, estado, hasAccesos,
+            normativas = normativaRepository.findWithAdvancedFilters(hasAnio, anio, fechaInicio, fechaFin, hasEstados, queryEstados, hasAccesos,
                     acceso, hasAlcance, alcance, hasObligatoriedad, obligatoriedad, hasCategoria, categoria);
         } else {
             normativas = normativaRepository.findAllNormativas();

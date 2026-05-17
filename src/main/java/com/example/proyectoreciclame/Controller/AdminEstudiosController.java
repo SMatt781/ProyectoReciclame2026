@@ -211,11 +211,15 @@ public class AdminEstudiosController {
             lista = normativaRepository.findByKeyword(search);
             model.addAttribute("normativas", lista);
         } else {
+            java.util.List<String> queryEstados = java.util.List.of();
+            if (hasEstado) {
+                queryEstados = estado.stream().map(e -> e.replace(" ", "_")).collect(java.util.stream.Collectors.toList());
+            }
             lista = normativaRepository.findWithAdvancedFilters(
                     anio != null, anio,
                     fechaInicio,
                     fechaFin,
-                    hasEstado, hasEstado ? estado : java.util.List.of(),
+                    hasEstado, hasEstado ? queryEstados : java.util.List.of(),
                     hasAcceso, hasAcceso ? acceso : java.util.List.of(),
                     hasAlcance, hasAlcance ? alcance : java.util.List.of(),
                     hasObligatoriedad, hasObligatoriedad ? obligatoriedad : java.util.List.of(),
