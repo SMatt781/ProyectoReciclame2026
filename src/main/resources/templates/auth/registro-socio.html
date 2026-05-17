@@ -413,9 +413,9 @@
                            type="checkbox"/>
                     <label class="text-[11px] text-on-surface-variant leading-tight" for="termsSocio">
                         Acepto los
-                        <a class="text-secondary font-bold underline decoration-primary-container" href="#">Términos</a>
+                        <a th:href="@{/terminos}" target="_blank" class="text-secondary font-bold underline decoration-primary-container hover:text-primary-container">Términos</a>
                         y la
-                        <a class="text-secondary font-bold underline decoration-primary-container" href="#">Privacidad</a>.
+                        <a th:href="@{/privacidad}" target="_blank" class="text-secondary font-bold underline decoration-primary-container hover:text-primary-container">Privacidad</a>.
                     </label>
                 </div>
 
@@ -463,21 +463,25 @@
         const campoRUC = document.getElementById("campoRUC");
         const labelDNI = document.getElementById("labelDNI");
         const labelRUC = document.getElementById("labelRUC");
+        const inputDNI = document.getElementById("inputDNI");
+        const inputRUC = document.getElementById("inputRUC");
 
         if (tipo === "DNI") {
             campoDNI.classList.remove("hidden");
             campoRUC.classList.add("hidden");
             labelDNI.classList.add("border-primary-container", "bg-primary-container/10");
             labelRUC.classList.remove("border-primary-container", "bg-primary-container/10");
-            // Limpiar RUC
-            document.getElementById("id_ruc").value = "";
+            // Limpiar RUC cuando se selecciona DNI
+            if (inputRUC) inputRUC.value = "";
+            document.getElementById("errorRUC").classList.add("hidden");
         } else {
             campoDNI.classList.add("hidden");
             campoRUC.classList.remove("hidden");
             labelRUC.classList.add("border-primary-container", "bg-primary-container/10");
             labelDNI.classList.remove("border-primary-container", "bg-primary-container/10");
-            // Limpiar DNI
-            document.getElementById("id_dni").value = "";
+            // Limpiar DNI cuando se selecciona RUC
+            if (inputDNI) inputDNI.value = "";
+            document.getElementById("errorDNI").classList.add("hidden");
         }
     }
 
