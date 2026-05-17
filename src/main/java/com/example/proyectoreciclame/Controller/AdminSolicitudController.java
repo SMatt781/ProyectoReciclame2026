@@ -93,8 +93,13 @@ public class AdminSolicitudController {
 
             String nombreCompleto = construirNombreCompleto(u.getNombres(), u.getApellidoPaterno(), u.getApellidoMaterno());
 
+            // Obtener RUC de SolicitudRegistro o UsuarioEmpresa
+            String ruc = solicitudOpt.map(SolicitudRegistro::getRuc).orElse(
+                    u.getUsuarioEmpresa() != null ? u.getUsuarioEmpresa().getRuc() : null
+            );
+
             solicitudes.add(new SolicitudRegistroDto(
-                    u.getIdUsuario(), nombreCompleto, u.getCorreo(), u.getDni(),
+                    u.getIdUsuario(), nombreCompleto, u.getCorreo(), u.getDni(), ruc,
                     rolSolicitado, u.getEstadoAprobacion(), fecha,
                     obtenerIniciales(u.getNombres(), u.getApellidoPaterno())
             ));

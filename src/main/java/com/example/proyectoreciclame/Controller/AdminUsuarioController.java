@@ -9,6 +9,7 @@ import com.example.proyectoreciclame.Entity.HistorialRoles;
 import com.example.proyectoreciclame.Entity.Usuario;
 import com.example.proyectoreciclame.Entity.Rol;
 import com.example.proyectoreciclame.Entity.UsuarioEmpresa;
+import com.example.proyectoreciclame.Entity.SolicitudRegistro;
 
 import com.example.proyectoreciclame.Repository.*;
 
@@ -49,19 +50,22 @@ public class AdminUsuarioController {
     private final HistorialRolesRepository historialRolesRepository;
     private final IntentoLoginRepository intentoLoginRepository;
     private final AdminNotificacionController adminNotificacionController;
+    private final SolicitudRegistroRepository solicitudRegistroRepository;
 
     public AdminUsuarioController(UsuarioRepository usuarioRepository,
                                   RolRepository rolRepository,
                                   UsuarioEmpresaRepository usuarioEmpresaRepository,
                                   HistorialRolesRepository historialRolesRepository,
                                   IntentoLoginRepository intentoLoginRepository,
-                                  AdminNotificacionController adminNotificacionController) {
+                                  AdminNotificacionController adminNotificacionController,
+                                  SolicitudRegistroRepository solicitudRegistroRepository) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.usuarioEmpresaRepository = usuarioEmpresaRepository;
         this.historialRolesRepository = historialRolesRepository;
         this.intentoLoginRepository = intentoLoginRepository;
         this.adminNotificacionController = adminNotificacionController;
+        this.solicitudRegistroRepository = solicitudRegistroRepository;
     }
 
     @GetMapping("/gestion")
@@ -118,11 +122,21 @@ public class AdminUsuarioController {
             String fecha = (u.getFechaRegistro() != null) ? u.getFechaRegistro().format(formatter) : "-";
             String iniciales = obtenerIniciales(u.getNombres(), u.getApellidoPaterno());
 
+            // Fetch RUC from SolicitudRegistro if user doesn't have DNI
+            String ruc = null;
+            if ((u.getDni() == null || u.getDni().isEmpty())) {
+                Optional<SolicitudRegistro> solicitudOpt = solicitudRegistroRepository.findTopByCorreoOrderByFechaSolicitudDesc(u.getCorreo());
+                if (solicitudOpt.isPresent()) {
+                    ruc = solicitudOpt.get().getRuc();
+                }
+            }
+
             lista.add(new UsuarioGestionDto(
                     u.getIdUsuario(),
                     nombreCompleto,
                     u.getCorreo(),
                     u.getDni(),
+                    ruc,
                     empresa,
                     rolUsuario,
                     estadoUsuario,
@@ -361,6 +375,16 @@ public class AdminUsuarioController {
             usuarioEmpresaRepository.save(ue);
         }
 
+        // Update RUC in SolicitudRegistro if user has RUC
+        if (form.getRuc() != null && !form.getRuc().isEmpty()) {
+            Optional<SolicitudRegistro> solicitudOpt = solicitudRegistroRepository.findTopByCorreoOrderByFechaSolicitudDesc(usuario.getCorreo());
+            if (solicitudOpt.isPresent()) {
+                SolicitudRegistro solicitud = solicitudOpt.get();
+                solicitud.setRuc(form.getRuc().trim());
+                solicitudRegistroRepository.save(solicitud);
+            }
+        }
+
         // ── Crear notificación para ADMIN cuando se edita un usuario ──────────
         adminNotificacionController.crearNotificacionAdmin(
                 "Usuario editado",
@@ -538,6 +562,14 @@ public class AdminUsuarioController {
             form.setCargo(usuario.getUsuarioEmpresa().getCargo());
         }
 
+        // Fetch RUC from SolicitudRegistro if user doesn't have DNI
+        if ((usuario.getDni() == null || usuario.getDni().isEmpty())) {
+            Optional<SolicitudRegistro> solicitudOpt = solicitudRegistroRepository.findTopByCorreoOrderByFechaSolicitudDesc(usuario.getCorreo());
+            if (solicitudOpt.isPresent()) {
+                form.setRuc(solicitudOpt.get().getRuc());
+            }
+        }
+
         // ── Filtrar roles: solo mostrar SOCIO y VISUALIZADOR ──────────────────
         List<Rol> rolesDisponibles = rolRepository.findAll().stream()
                 .filter(rol -> rol.getNombre() != null &&
@@ -611,7 +643,16 @@ public class AdminUsuarioController {
             String fecha = (u.getFechaRegistro() != null) ? u.getFechaRegistro().format(formatter) : "-";
             String iniciales = obtenerIniciales(u.getNombres(), u.getApellidoPaterno());
 
-            lista.add(new UsuarioGestionDto(u.getIdUsuario(), nombreCompleto, u.getCorreo(), u.getDni(),
+            // Fetch RUC from SolicitudRegistro if user doesn't have DNI
+            String ruc = null;
+            if ((u.getDni() == null || u.getDni().isEmpty())) {
+                Optional<SolicitudRegistro> solicitudOpt = solicitudRegistroRepository.findTopByCorreoOrderByFechaSolicitudDesc(u.getCorreo());
+                if (solicitudOpt.isPresent()) {
+                    ruc = solicitudOpt.get().getRuc();
+                }
+            }
+
+            lista.add(new UsuarioGestionDto(u.getIdUsuario(), nombreCompleto, u.getCorreo(), u.getDni(), ruc,
                     empresa, rolUsuario, estadoUsuario, fecha, iniciales));
         }
 

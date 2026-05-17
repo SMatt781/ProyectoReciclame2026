@@ -158,7 +158,9 @@ public class AuthController {
         usuario.setNombres(form.getNombres().trim());
         usuario.setApellidoPaterno(form.getApellidoPaterno().trim());
         usuario.setApellidoMaterno(form.getApellidoMaterno().trim());
-        usuario.setDni(form.getDni().trim());
+        // Guardar NULL si DNI está vacío, para evitar conflictos de uniqueness con otros usuarios sin DNI
+        String dniTrimmed = form.getDni() != null ? form.getDni().trim() : "";
+        usuario.setDni(dniTrimmed.isEmpty() ? null : dniTrimmed);
         usuario.setCorreo(form.getCorreo().trim().toLowerCase());
         usuario.setTelefono(form.getTelefono().trim());
         usuario.setContrasenaHash(passwordEncoder.encode(form.getPassword()));
@@ -182,7 +184,7 @@ public class AuthController {
         solicitud.setNombres(usuario.getNombres());
         solicitud.setApellidoPaterno(usuario.getApellidoPaterno());
         solicitud.setApellidoMaterno(usuario.getApellidoMaterno());
-        solicitud.setDni(usuario.getDni());
+        solicitud.setDni(usuario.getDni()); // Será NULL si el usuario no tiene DNI
         solicitud.setCorreo(usuario.getCorreo());
         solicitud.setTelefono(usuario.getTelefono());
         solicitud.setRuc(
