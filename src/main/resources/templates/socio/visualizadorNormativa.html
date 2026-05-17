@@ -145,7 +145,7 @@
                         class="font-headline text-[2rem] leading-tight font-bold text-on-primary-fixed mb-4 max-w-4xl tracking-tight">
                         Ley de Fomento al Reciclaje y Responsabilidad Extendida del Productor
                     </h1>
-                    <div class="flex items-center gap-3 mb-2">
+                    <div class="flex items-center gap-3 mb-2 flex-wrap">
                         <span th:text="${normativa.estado.name().replace('_', ' ')}"
                             th:classappend="${normativa.estado.name() == 'VIGENTE' ? 'bg-[#006c46]' : (normativa.estado.name() == 'DEROGADA' ? 'bg-[#e53935]' : (normativa.estado.name() == 'CONSULTA_PUBLICA' ? 'bg-[#2196f3]' : (normativa.estado.name() == 'PUBLICADA' ? 'bg-[#ffc107]' : 'bg-[#f49e0b]')))}"
                             class="inline-flex items-center gap-1.5 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase">
@@ -155,11 +155,22 @@
                             th:classappend="${normativa.acceso != null and normativa.acceso.name() == 'PAGO' ? 'text-de-pago bg-[#fef3c7] border-de-pago' : 'text-gratuito bg-[#dcfce7] border-gratuito'}"
                             class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold uppercase border">
                         </span>
-                        <span th:if="${normativa.categorias != null and !normativa.categorias.isEmpty()}"
-                            th:text="${normativa.categorias[0].nombre}"
-                            th:classappend="${normativa.categorias[0].nombre == 'ECONOMIA CIRCULAR' ? 'bg-[#e3f2fd] text-[#1e88e5] border-[#1e88e5]' : (normativa.categorias[0].nombre == 'GESTION DE RESIDUOS' ? 'bg-[#e8f5e9] text-[#2e7d32] border-[#2e7d32]' : (normativa.categorias[0].nombre == 'EFICIENCIA ENERGETICA' ? 'bg-[#fff3e0] text-[#ef6c00] border-[#ef6c00]' : (normativa.categorias[0].nombre == 'REP' ? 'bg-[#f3e5f5] text-[#8e24aa] border-[#8e24aa]' : 'bg-[#e0e7ff] text-[#4338ca] border-[#4338ca]')))}"
-                            class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold uppercase border">
-                        </span>
+                        
+                        <!-- Contenedor de Temas con etiqueta TEMAS: -->
+                        <div th:if="${normativa.categorias != null and !normativa.categorias.isEmpty()}" 
+                             class="inline-flex items-center gap-2 bg-[#374151] px-3 py-1 rounded-lg shadow-sm border border-[#4b5563]/50 ml-1">
+                            <span class="text-[10px] font-black uppercase tracking-wider text-[#e5e7eb]">TEMAS:</span>
+                            <div class="flex items-center gap-1.5">
+                                <th:block th:each="cat : ${normativa.categorias}">
+                                    <span th:with="isEc=${#strings.equalsIgnoreCase(cat.nombre, 'Economía circular')}, isGr=${#strings.equalsIgnoreCase(cat.nombre, 'Gestión de residuos')}, isEe=${#strings.equalsIgnoreCase(cat.nombre, 'Envases y Embalajes') or #strings.equalsIgnoreCase(cat.nombre, 'Eficiencia Energética')}, isRep=${#strings.equalsIgnoreCase(cat.nombre, 'Ley REP') or #strings.equalsIgnoreCase(cat.nombre, 'Responsabilidad Extendida')}"
+                                        th:text="${isEc ? 'EC' : (isGr ? 'GR' : (isEe ? 'EE' : (isRep ? 'REP' : 'OTRO')))}"
+                                        th:title="${cat.nombre}"
+                                        class="inline-flex items-center justify-center px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider text-white border border-black/10 transition-transform duration-200 hover:scale-105"
+                                        th:classappend="${isEc ? 'bg-[#006C46]' : (isGr ? 'bg-[#3B82F6]' : (isEe ? 'bg-[#F49E0B]' : (isRep ? 'bg-[#BA1A1A]' : 'bg-[#888780]')))}">
+                                    </span>
+                                </th:block>
+                            </div>
+                        </div>
                     </div>
                 </header>
             </div>

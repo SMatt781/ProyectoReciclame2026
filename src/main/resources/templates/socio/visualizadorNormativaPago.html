@@ -88,10 +88,25 @@
             box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
         }
 
-        .icon-sm { width: 1.25rem; height: 1.25rem; }
-        .icon-md { width: 1.5rem; height: 1.5rem; }
-        .icon-lg { width: 2rem; height: 2rem; }
-        .icon-xl { width: 2.5rem; height: 2.5rem; }
+        .icon-sm {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .icon-md {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .icon-lg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .icon-xl {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
     </style>
     <div th:replace="~{fragments/responsive}"></div>
 
@@ -128,7 +143,7 @@
                         class="font-headline text-[2rem] leading-tight font-bold text-on-primary-fixed mb-4 max-w-4xl tracking-tight">
                         Ley de Fomento al Reciclaje y Responsabilidad Extendida del Productor
                     </h1>
-                    <div class="flex items-center gap-3 mb-2">
+                    <div class="flex items-center gap-3 mb-2 flex-wrap">
                         <span th:text="${normativa.estado.name().replace('_', ' ')}"
                             th:classappend="${normativa.estado.name() == 'VIGENTE' ? 'bg-[#006c46]' : (normativa.estado.name() == 'DEROGADA' ? 'bg-[#e53935]' : (normativa.estado.name() == 'CONSULTA_PUBLICA' ? 'bg-[#2196f3]' : (normativa.estado.name() == 'PUBLICADA' ? 'bg-[#ffc107]' : 'bg-[#f49e0b]')))}"
                             class="inline-flex items-center gap-1.5 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase">
@@ -137,11 +152,23 @@
                             class="inline-flex items-center gap-1.5 text-de-pago bg-[#fef3c7] px-4 py-1.5 rounded-full text-xs font-bold uppercase border border-de-pago">
                             ACCESO DE PAGO
                         </span>
-                        <span th:if="${normativa.categorias != null and !normativa.categorias.isEmpty()}"
-                            th:text="${normativa.categorias[0].nombre}"
-                            th:classappend="${normativa.categorias[0].nombre == 'ECONOMIA CIRCULAR' ? 'bg-[#e3f2fd] text-[#1e88e5] border-[#1e88e5]' : (normativa.categorias[0].nombre == 'GESTION DE RESIDUOS' ? 'bg-[#e8f5e9] text-[#2e7d32] border-[#2e7d32]' : (normativa.categorias[0].nombre == 'EFICIENCIA ENERGETICA' ? 'bg-[#fff3e0] text-[#ef6c00] border-[#ef6c00]' : (normativa.categorias[0].nombre == 'REP' ? 'bg-[#f3e5f5] text-[#8e24aa] border-[#8e24aa]' : 'bg-[#e0e7ff] text-[#4338ca] border-[#4338ca]')))}"
-                            class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold uppercase border">
-                        </span>
+
+                        <!-- Contenedor de Temas con etiqueta TEMAS: -->
+                        <div th:if="${normativa.categorias != null and !normativa.categorias.isEmpty()}"
+                            class="inline-flex items-center gap-2 bg-[#374151] px-3 py-1 rounded-lg shadow-sm border border-[#4b5563]/50 ml-1">
+                            <span class="text-[10px] font-black uppercase tracking-wider text-[#e5e7eb]">TEMAS:</span>
+                            <div class="flex items-center gap-1.5">
+                                <th:block th:each="cat : ${normativa.categorias}">
+                                    <span
+                                        th:with="isEc=${#strings.equalsIgnoreCase(cat.nombre, 'Economía circular')}, isGr=${#strings.equalsIgnoreCase(cat.nombre, 'Gestión de residuos')}, isEe=${#strings.equalsIgnoreCase(cat.nombre, 'Envases y Embalajes') or #strings.equalsIgnoreCase(cat.nombre, 'Eficiencia Energética')}, isRep=${#strings.equalsIgnoreCase(cat.nombre, 'Ley REP') or #strings.equalsIgnoreCase(cat.nombre, 'Responsabilidad Extendida')}"
+                                        th:text="${isEc ? 'EC' : (isGr ? 'GR' : (isEe ? 'EE' : (isRep ? 'REP' : 'OTRO')))}"
+                                        th:title="${cat.nombre}"
+                                        class="inline-flex items-center justify-center px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider text-white border border-black/10 transition-transform duration-200 hover:scale-105"
+                                        th:classappend="${isEc ? 'bg-[#006C46]' : (isGr ? 'bg-[#3B82F6]' : (isEe ? 'bg-[#F49E0B]' : (isRep ? 'bg-[#BA1A1A]' : 'bg-[#888780]')))}">
+                                    </span>
+                                </th:block>
+                            </div>
+                        </div>
                     </div>
                 </header>
             </div>
@@ -218,28 +245,32 @@
                 </div>
 
                 <!-- Columna Derecha: Información -->
-                <div class="w-full xl:w-[460px] flex flex-col xl:h-[calc(100vh-12rem)] bg-white rounded-2xl shadow-sm border border-outline-variant/20 overflow-hidden">
+                <div
+                    class="w-full xl:w-[460px] flex flex-col xl:h-[calc(100vh-12rem)] bg-white rounded-2xl shadow-sm border border-outline-variant/20 overflow-hidden">
 
                     <!-- Tab Nav — underline style -->
                     <div class="flex-shrink-0 flex px-2 border-b border-outline-variant/40">
                         <button id="tab-detalles" onclick="switchTab('detalles')"
-                                class="flex items-center gap-2 px-4 py-3 text-sm font-semibold text-on-surface border-b-2 border-on-surface -mb-px transition-all duration-200">
+                            class="flex items-center gap-2 px-4 py-3 text-sm font-semibold text-on-surface border-b-2 border-on-surface -mb-px transition-all duration-200">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM12 18H8v-2h4v2zm4-4H8v-2h8v2zm0-4H8V8h8v2z"/>
+                                <path
+                                    d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM12 18H8v-2h4v2zm4-4H8v-2h8v2zm0-4H8V8h8v2z" />
                             </svg>
                             Detalles
                         </button>
                         <button id="tab-historial" onclick="switchTab('historial')"
-                                class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-on-surface-variant border-b-2 border-transparent -mb-px transition-all duration-200 hover:text-on-surface">
+                            class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-on-surface-variant border-b-2 border-transparent -mb-px transition-all duration-200 hover:text-on-surface">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             Registro
                         </button>
                         <button id="tab-relacionados" onclick="switchTab('relacionados')"
-                                class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-on-surface-variant border-b-2 border-transparent -mb-px transition-all duration-200 hover:text-on-surface">
+                            class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-on-surface-variant border-b-2 border-transparent -mb-px transition-all duration-200 hover:text-on-surface">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                             </svg>
                             Relacionados
                         </button>
@@ -252,19 +283,24 @@
                         <div id="panel-detalles" class="h-full overflow-y-auto p-5 space-y-5">
 
                             <div>
-                                <h4 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">DESCRIPCIÓN</h4>
+                                <h4
+                                    class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
+                                    DESCRIPCIÓN</h4>
                                 <p th:text="${normativa.descripcion}"
-                                   class="font-body text-sm text-on-surface-variant leading-relaxed text-[#1a1a1a]">
+                                    class="font-body text-sm text-on-surface-variant leading-relaxed text-[#1a1a1a]">
                                     Descripción de la normativa...
                                 </p>
                             </div>
 
-                            <div th:if="${normativa.campoAplicacion != null}" class="pt-4 border-t border-surface-variant/50">
-                                <h4 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">CAMPOS DE APLICACIÓN</h4>
+                            <div th:if="${normativa.campoAplicacion != null}"
+                                class="pt-4 border-t border-surface-variant/50">
+                                <h4
+                                    class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
+                                    CAMPOS DE APLICACIÓN</h4>
                                 <div class="flex flex-wrap gap-2">
                                     <span th:each="campo : ${#strings.arraySplit(normativa.campoAplicacion, ',')}"
-                                          th:text="${campo.trim()}"
-                                          class="px-3 py-1 bg-surface-container text-on-surface-variant rounded-md text-[11px] font-semibold border border-outline-variant/20">
+                                        th:text="${campo.trim()}"
+                                        class="px-3 py-1 bg-surface-container text-on-surface-variant rounded-md text-[11px] font-semibold border border-outline-variant/20">
                                         Campo
                                     </span>
                                 </div>
@@ -272,39 +308,42 @@
 
                             <div class="grid grid-cols-2 gap-y-4 pt-4 border-t border-surface-variant/50">
                                 <div>
-                                    <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">CÓDIGO</h3>
-                                    <p th:text="${normativa.codigo != null ? normativa.codigo : 'N/A'}" class="text-sm font-medium text-[#1a1a1a]">LEY-20920</p>
+                                    <h3
+                                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">
+                                        CÓDIGO</h3>
+                                    <p th:text="${normativa.codigo != null ? normativa.codigo : 'N/A'}"
+                                        class="text-sm font-medium text-[#1a1a1a]">LEY-20920</p>
                                 </div>
                                 <div>
-                                    <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">AÑO</h3>
+                                    <h3
+                                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">
+                                        AÑO</h3>
                                     <p th:text="${normativa.anio}" class="text-sm font-medium text-[#1a1a1a]">2016</p>
                                 </div>
                                 <div>
-                                    <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">TIPO</h3>
-                                    <p th:text="${normativa.tipoNorma.name().replace('_', ' ')}" class="text-sm font-medium text-[#1a1a1a]">Ley de la República</p>
+                                    <h3
+                                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">
+                                        TIPO</h3>
+                                    <p th:text="${normativa.tipoNorma.name().replace('_', ' ')}"
+                                        class="text-sm font-medium text-[#1a1a1a]">Ley de la República</p>
                                 </div>
                                 <div>
-                                    <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">OBLIGATORIEDAD</h3>
-                                    <p th:text="${normativa.obligatoriedad}" class="text-sm font-medium text-[#1a1a1a]">Vinculante</p>
+                                    <h3
+                                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">
+                                        OBLIGATORIEDAD</h3>
+                                    <p th:text="${normativa.obligatoriedad}" class="text-sm font-medium text-[#1a1a1a]">
+                                        Vinculante</p>
                                 </div>
                                 <div class="col-span-2">
-                                    <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">ORGANISMO EMISOR</h3>
-                                    <p th:text="${normativa.organismoEmisor}" class="text-sm font-medium text-[#1a1a1a]">Ministerio del Medio Ambiente</p>
+                                    <h3
+                                        class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">
+                                        ORGANISMO EMISOR</h3>
+                                    <p th:text="${normativa.organismoEmisor}"
+                                        class="text-sm font-medium text-[#1a1a1a]">Ministerio del Medio Ambiente</p>
                                 </div>
                             </div>
 
-                            <div class="pt-4 border-t border-surface-variant/50" th:if="${normativa.clasificacion != null}">
-                                <h4 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">CLASIFICACIÓN CIRCULAR</h4>
-                                <div class="flex items-center gap-3 bg-tertiary-fixed/30 p-3 rounded-xl border border-tertiary-fixed-dim/20">
-                                    <div class="w-8 h-8 rounded-lg bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed flex-shrink-0">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                                        </svg>
-                                    </div>
-                                    <span th:text="${normativa.clasificacion.name().replace('_', ' ')}"
-                                          class="text-xs font-bold text-on-tertiary-fixed-variant uppercase">Prioridad Alta</span>
-                                </div>
-                            </div>
+
 
                             <!-- Botones: Guardar + Comprar Acceso -->
                             <div class="pt-4 border-t border-surface-variant/50 flex gap-2">
@@ -322,11 +361,13 @@
                                         <input type="hidden" name="tipoDocumento" value="NORMATIVA" />
                                         <input type="hidden" name="idDocumento" th:value="${normativa.idNormativa}" />
                                         <input type="hidden" name="nombreDocumento" th:value="${normativa.titulo}" />
-                                        <input type="hidden" name="redirectUrl" th:value="'/normativas/' + ${normativa.idNormativa}" />
+                                        <input type="hidden" name="redirectUrl"
+                                            th:value="'/normativas/' + ${normativa.idNormativa}" />
                                         <button type="submit" title="Guardar en Mi Espacio"
-                                                class="w-full flex items-center justify-center gap-2 bg-[#006d37] hover:bg-[#00522a] text-white font-bold text-sm py-3 px-3 rounded-[14px] transition-colors shadow-sm">
+                                            class="w-full flex items-center justify-center gap-2 bg-[#006d37] hover:bg-[#00522a] text-white font-bold text-sm py-3 px-3 rounded-[14px] transition-colors shadow-sm">
                                             <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M17 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-8H5V5h10v6z" />
+                                                <path
+                                                    d="M17 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-8H5V5h10v6z" />
                                             </svg>
                                             Guardar
                                         </button>
@@ -334,8 +375,10 @@
                                 </div>
                                 <a th:href="${normativa.enlaceExterno}" target="_blank"
                                     class="flex-1 inline-flex items-center justify-center gap-2 bg-[#041533] hover:bg-[#00743a] text-white font-bold text-sm py-3 px-3 rounded-[14px] transition-colors shadow-sm">
-                                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                     </svg>
                                     Comprar Acceso
                                 </a>
@@ -347,87 +390,111 @@
                         <div id="panel-historial" class="h-full overflow-y-auto p-5 space-y-5" style="display:none;">
 
                             <div>
-                                <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
+                                <h3
+                                    class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                     HISTORIAL
                                 </h3>
                                 <ul class="space-y-3 text-sm text-on-surface-variant">
                                     <li class="flex items-center gap-2 bg-surface-container-low rounded-lg px-3 py-2.5">
                                         <span class="font-semibold w-28 text-on-surface">Publicada:</span>
-                                        <span th:text="${#temporals.format(normativa.fechaCreacion, 'dd MMM yyyy')}">01 Jun 2016</span>
+                                        <span th:text="${#temporals.format(normativa.fechaCreacion, 'dd MMM yyyy')}">01
+                                            Jun 2016</span>
                                     </li>
                                     <li class="flex items-center gap-2 bg-surface-container-low rounded-lg px-3 py-2.5">
                                         <span class="font-semibold w-28 text-on-surface">Actualizada:</span>
-                                        <span th:text="${#temporals.format(normativa.fechaActualizacion, 'dd MMM yyyy')}">24 May 2024</span>
+                                        <span
+                                            th:text="${#temporals.format(normativa.fechaActualizacion, 'dd MMM yyyy')}">24
+                                            May 2024</span>
                                     </li>
                                     <li class="flex items-center gap-2 bg-surface-container-low rounded-lg px-3 py-2.5">
                                         <span class="font-semibold w-28 text-on-surface">Estado:</span>
                                         <span th:text="${normativa.estado.name().replace('_', ' ')}"
-                                              th:classappend="${normativa.estado.name() == 'VIGENTE' ? 'text-gratuito' : 'text-de-pago'}"
-                                              class="font-bold uppercase">VIGENTE</span>
+                                            th:classappend="${normativa.estado.name() == 'VIGENTE' ? 'text-gratuito' : 'text-de-pago'}"
+                                            class="font-bold uppercase">VIGENTE</span>
                                     </li>
                                 </ul>
                             </div>
 
                             <div class="pt-4 border-t border-surface-variant/50">
-                                <h4 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
+                                <h4
+                                    class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                        </path>
                                     </svg>
                                     ESTADÍSTICAS
                                 </h4>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div class="text-center bg-secondary-container/30 p-4 rounded-xl">
-                                        <p class="text-3xl font-bold text-secondary" th:text="${detalle.totalDescargas}">125</p>
-                                        <p class="text-xs font-semibold text-on-secondary-container uppercase tracking-wider mt-1">Descargas</p>
+                                        <p class="text-3xl font-bold text-secondary"
+                                            th:text="${detalle.totalDescargas}">125</p>
+                                        <p
+                                            class="text-xs font-semibold text-on-secondary-container uppercase tracking-wider mt-1">
+                                            Descargas</p>
                                     </div>
                                     <div class="text-center bg-surface-container p-4 rounded-xl">
                                         <p class="text-sm font-bold text-on-surface"
-                                           th:text="${#temporals.format(normativa.fechaActualizacion, 'dd MMM yyyy')}">24 May 2024</p>
-                                        <p class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mt-1">Actualización</p>
+                                            th:text="${#temporals.format(normativa.fechaActualizacion, 'dd MMM yyyy')}">
+                                            24 May 2024</p>
+                                        <p
+                                            class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mt-1">
+                                            Actualización</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="pt-4 border-t border-surface-variant/50" th:if="${normativa.clasificacion != null}">
-                                <h4 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">CLASIFICACIÓN CIRCULAR</h4>
-                                <div class="flex items-center gap-3 bg-tertiary-fixed/30 p-3 rounded-xl border border-tertiary-fixed-dim/20">
-                                    <div class="w-8 h-8 rounded-lg bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed flex-shrink-0">
+                            <div class="pt-4 border-t border-surface-variant/50"
+                                th:if="${normativa.clasificacion != null}">
+                                <h4
+                                    class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">
+                                    CLASIFICACIÓN CIRCULAR</h4>
+                                <div
+                                    class="flex items-center gap-3 bg-tertiary-fixed/30 p-3 rounded-xl border border-tertiary-fixed-dim/20">
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed flex-shrink-0">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                                            <path
+                                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                                         </svg>
                                     </div>
                                     <span th:text="${normativa.clasificacion.name().replace('_', ' ')}"
-                                          class="text-xs font-bold text-on-tertiary-fixed-variant uppercase">Prioridad Alta</span>
+                                        class="text-xs font-bold text-on-tertiary-fixed-variant uppercase">Prioridad
+                                        Alta</span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Panel: Relacionados -->
                         <div id="panel-relacionados" class="h-full overflow-y-auto p-5" style="display:none;">
-                            <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <h3
+                                class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                 </svg>
                                 También te podría interesar
                             </h3>
                             <div class="flex flex-col gap-2">
                                 <div th:each="sim : ${detalle.normativasSimilares}"
-                                     class="bg-[#f9f9fb] p-3 rounded-xl border border-transparent hover:border-outline-variant/30 transition-colors">
+                                    class="bg-[#f9f9fb] p-3 rounded-xl border border-transparent hover:border-outline-variant/30 transition-colors">
                                     <a th:href="@{/normativas/{id}(id=${sim.id})}" class="block">
-                                        <h4 class="text-sm font-bold text-on-primary-fixed leading-snug" th:text="${sim.titulo}">Título similar</h4>
+                                        <h4 class="text-sm font-bold text-on-primary-fixed leading-snug"
+                                            th:text="${sim.titulo}">Título similar</h4>
                                         <div class="flex items-center justify-between mt-2">
                                             <span class="text-xs text-on-surface-variant">★★★★☆</span>
                                             <span th:text="${sim.acceso}"
-                                                  th:classappend="${#strings.equalsIgnoreCase(sim.acceso, 'PAGO') ? 'text-de-pago bg-de-pago/10' : 'text-gratuito bg-gratuito/10'}"
-                                                  class="px-2 py-0.5 rounded-md text-xs font-bold uppercase">GRATIS</span>
+                                                th:classappend="${#strings.equalsIgnoreCase(sim.acceso, 'PAGO') ? 'text-de-pago bg-de-pago/10' : 'text-gratuito bg-gratuito/10'}"
+                                                class="px-2 py-0.5 rounded-md text-xs font-bold uppercase">GRATIS</span>
                                         </div>
                                     </a>
                                 </div>
                                 <p th:if="${#lists.isEmpty(detalle.normativasSimilares)}"
-                                   class="text-sm text-on-surface-variant">No hay normativas similares.</p>
+                                    class="text-sm text-on-surface-variant">No hay normativas similares.</p>
                             </div>
                         </div>
 
@@ -472,7 +539,7 @@
         function switchTab(tab) {
             var activeClass = 'flex items-center gap-2 px-4 py-3 text-sm font-semibold text-on-surface border-b-2 border-on-surface -mb-px transition-all duration-200';
             var inactiveClass = 'flex items-center gap-2 px-4 py-3 text-sm font-medium text-on-surface-variant border-b-2 border-transparent -mb-px transition-all duration-200 hover:text-on-surface';
-            ['detalles', 'historial', 'relacionados'].forEach(function(t) {
+            ['detalles', 'historial', 'relacionados'].forEach(function (t) {
                 var panel = document.getElementById('panel-' + t);
                 var btn = document.getElementById('tab-' + t);
                 if (!panel || !btn) return;
