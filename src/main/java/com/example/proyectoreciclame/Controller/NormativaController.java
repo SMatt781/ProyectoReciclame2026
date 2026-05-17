@@ -93,6 +93,7 @@ public class NormativaController {
         } else {
             normativas = normativaRepository.findAllNormativas();
         }
+
         List<NormativaDTO> normativasDTO = normativas.stream()
                 .map(NormativaDTO::fromEntity)
                 .collect(Collectors.toList());

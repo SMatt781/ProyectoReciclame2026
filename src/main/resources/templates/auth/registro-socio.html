@@ -42,6 +42,58 @@
             font-weight: 800;
             letter-spacing: -0.05em;
         }
+
+        /* Carrusel de imágenes */
+        .carousel-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            animation: fadeInOut 12s infinite;
+        }
+
+        .carousel-slide:nth-child(1) { animation-delay: 0s; }
+        .carousel-slide:nth-child(2) { animation-delay: 3s; }
+        .carousel-slide:nth-child(3) { animation-delay: 6s; }
+        .carousel-slide:nth-child(4) { animation-delay: 9s; }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            15% { opacity: 1; }
+            30% { opacity: 1; }
+            45% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Animaciones de entrada */
+        .fade-in-subtle {
+            animation: fadeInSubtle 0.6s ease-out 0.4s forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeInSubtle {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
     <div th:replace="~{fragments/responsive}"></div>
 
@@ -51,12 +103,29 @@
 <main class="flex min-h-screen w-full">
 
     <section class="hidden lg:flex lg:w-[35%] relative overflow-hidden flex-col justify-between p-10 bg-secondary text-white">
-        <div class="absolute inset-0 z-0">
-            <img class="w-full h-full object-cover opacity-50"
-                 alt="Bosque"
-                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXcO6OUR9PxZJLCzfFz3IZ_ybQ4-DgKKosfDRPu5Wb48Zq38imshgI8Wk5sUvdBBbBRRn1ylsrPOFzO6POZxYRs9XkJd-n-3DJ7s95r4Wr7LzyVtJxYUrHTA9Vue77rsRPCDq8-2eCDUMZcAR1vd3tLc_SN_ZQEpS2QmQ6hT7sClfGfOKBdaeQ3h7BY8IaX9qwK5HwU8XV5HY3V6HX1EhVdQTq0TDrs7lUeqecPtFfTDlDgN-YYG1EBrE7GHDtkA87WyI2h952W7E"/>
-            <div class="absolute inset-0 bg-gradient-to-b from-secondary/40 via-transparent to-secondary/90"></div>
+        <div class="carousel-container absolute inset-0 z-0">
+            <!-- Imagen 1: Medio ambiente y sostenibilidad -->
+            <div class="carousel-slide">
+                <img alt="Medio ambiente sostenible"
+                     src="/images/registro-1.jpg"/>
+            </div>
+            <!-- Imagen 2: Clasificación y gestión de residuos -->
+            <div class="carousel-slide">
+                <img alt="Gestión de residuos"
+                     src="/images/registro-2.jpg"/>
+            </div>
+            <!-- Imagen 3: Reciclaje y sostenibilidad -->
+            <div class="carousel-slide">
+                <img alt="Proceso de reciclaje"
+                     src="/images/registro-3.jpg"/>
+            </div>
+            <!-- Imagen 4: Economía circular -->
+            <div class="carousel-slide">
+                <img alt="Economía circular"
+                     src="/images/registro-4.jpg"/>
+            </div>
         </div>
+        <div class="absolute inset-0 bg-[#0f172a]/80 z-1"></div>
 
         <div class="relative z-10">
             <div class="flex items-center gap-2">
@@ -81,7 +150,7 @@
         </div>
     </section>
 
-    <section class="w-full lg:w-[65%] bg-white flex items-center justify-center p-6 md:p-10 overflow-y-auto">
+    <section class="w-full lg:w-[65%] bg-white flex items-center justify-center p-6 md:p-10 overflow-y-auto fade-in-subtle">
         <div class="w-full max-w-lg">
 
             <header class="mb-6">
@@ -121,7 +190,8 @@
                     <input th:field="*{nombres}"
                            class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
                            placeholder="Ej. Javier"
-                           type="text"/>
+                           type="text"
+                           oninput="validarNombres(this)"/>
                     <p th:if="${#fields.hasErrors('nombres')}"
                        th:errors="*{nombres}"
                        class="text-xs text-red-600 ml-1"></p>
@@ -134,7 +204,8 @@
                     <input th:field="*{apellidoPaterno}"
                            class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
                            placeholder="Ej. Salvador"
-                           type="text"/>
+                           type="text"
+                           oninput="validarNombres(this)"/>
                     <p th:if="${#fields.hasErrors('apellidoPaterno')}"
                        th:errors="*{apellidoPaterno}"
                        class="text-xs text-red-600 ml-1"></p>
@@ -147,33 +218,77 @@
                     <input th:field="*{apellidoMaterno}"
                            class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
                            placeholder="Ej. Sotelo"
-                           type="text"/>
+                           type="text"
+                           oninput="validarNombres(this)"/>
                     <p th:if="${#fields.hasErrors('apellidoMaterno')}"
                        th:errors="*{apellidoMaterno}"
                        class="text-xs text-red-600 ml-1"></p>
                 </div>
 
-                <div class="space-y-1">
+                <!-- Selector DNI/RUC -->
+                <div class="md:col-span-2 space-y-2">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        Tipo de documento
+                    </label>
+                    <div class="flex gap-3">
+                        <label class="flex-1 flex items-center gap-2 py-2.5 px-4 rounded-xl bg-surface-container-low border-2 border-transparent cursor-pointer transition hover:bg-surface-container-high"
+                               id="labelDNI">
+                            <input type="radio"
+                                   name="tipoDocumento"
+                                   id="radioDNI"
+                                   value="DNI"
+                                   checked
+                                   class="w-4 h-4 border-0 text-primary-container focus:ring-primary-container"
+                                   onchange="toggleDocumento('DNI')"/>
+                            <span class="text-sm font-semibold text-secondary">DNI</span>
+                        </label>
+
+                        <label class="flex-1 flex items-center gap-2 py-2.5 px-4 rounded-xl bg-surface-container-low border-2 border-transparent cursor-pointer transition hover:bg-surface-container-high"
+                               id="labelRUC">
+                            <input type="radio"
+                                   name="tipoDocumento"
+                                   id="radioRUC"
+                                   value="RUC"
+                                   class="w-4 h-4 border-0 text-primary-container focus:ring-primary-container"
+                                   onchange="toggleDocumento('RUC')"/>
+                            <span class="text-sm font-semibold text-secondary">RUC</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Campo DNI (visible por defecto) -->
+                <div class="space-y-1" id="campoDNI">
                     <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
                         DNI
                     </label>
                     <input th:field="*{dni}"
+                           id="inputDNI"
                            class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
-                           placeholder="8 dígitos"
-                           type="text"/>
+                           placeholder="12345678"
+                           type="text"
+                           inputmode="numeric"
+                           maxlength="8"
+                           oninput="validarDNI(this)"/>
+                    <p id="errorDNI" class="text-xs text-red-600 ml-1 hidden">DNI debe tener 8 dígitos</p>
                     <p th:if="${#fields.hasErrors('dni')}"
                        th:errors="*{dni}"
                        class="text-xs text-red-600 ml-1"></p>
                 </div>
 
-                <div class="space-y-1">
+                <!-- Campo RUC (oculto por defecto) -->
+                <div class="space-y-1 hidden" id="campoRUC">
                     <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
                         RUC
                     </label>
                     <input th:field="*{ruc}"
+                           id="inputRUC"
                            class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
-                           placeholder="11 dígitos"
-                           type="text"/>
+                           placeholder="12345678901"
+                           type="text"
+                           inputmode="numeric"
+                           maxlength="11"
+                           oninput="validarRUC(this)"/>
+                    <p id="errorRUC" class="text-xs text-red-600 ml-1 hidden">RUC debe tener 11 dígitos</p>
                     <p th:if="${#fields.hasErrors('ruc')}"
                        th:errors="*{ruc}"
                        class="text-xs text-red-600 ml-1"></p>
@@ -183,10 +298,15 @@
                     <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
                         Teléfono
                     </label>
-                    <input th:field="*{telefono}"
+                    <input id="inputTelefono"
+                           th:field="*{telefono}"
                            class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
-                           placeholder="+51 987..."
-                           type="tel"/>
+                           placeholder="987654321"
+                           type="tel"
+                           inputmode="numeric"
+                           maxlength="9"
+                           oninput="validarTelefono(this)"/>
+                    <p id="errorTelefono" class="text-xs text-red-600 ml-1 hidden">Teléfono debe tener 9 dígitos</p>
                     <p th:if="${#fields.hasErrors('telefono')}"
                        th:errors="*{telefono}"
                        class="text-xs text-red-600 ml-1"></p>
@@ -196,10 +316,13 @@
                     <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
                         Correo corporativo
                     </label>
-                    <input th:field="*{correo}"
+                    <input id="inputCorreo"
+                           th:field="*{correo}"
                            class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
                            placeholder="nombre@empresa.com"
-                           type="email"/>
+                           type="text"
+                           oninput="validarEmail(this)"/>
+                    <p id="errorCorreo" class="text-xs text-red-600 ml-1 hidden">Correo inválido. Formato: nombre@empresa.com</p>
                     <p th:if="${#fields.hasErrors('correo')}"
                        th:errors="*{correo}"
                        class="text-xs text-red-600 ml-1"></p>
@@ -265,7 +388,8 @@
                                th:value="${registroForm.confirmPassword}"
                                class="w-full px-4 py-2.5 pr-10 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
                                placeholder="••••••••"
-                               type="password"/>
+                               type="password"
+                               oninput="validarConfirmPassword('Socio')"/>
 
                         <button type="button"
                                 class="absolute right-3 top-2.5 text-slate-400"
@@ -276,6 +400,7 @@
                         </button>
                     </div>
 
+                    <p id="errorConfirmSocio" class="text-xs text-red-600 ml-1 hidden">Las contraseñas no coinciden</p>
                     <p th:if="${#fields.hasErrors('confirmPassword')}"
                        th:errors="*{confirmPassword}"
                        class="text-xs text-red-600 ml-1"></p>
@@ -327,17 +452,146 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const passwordSocio = document.getElementById("passwordSocio");
-
         if (passwordSocio && passwordSocio.value) {
             evaluarPassword(passwordSocio.value, "Socio");
         }
     });
 
+    // ========== SELECTOR DNI/RUC ==========
+    function toggleDocumento(tipo) {
+        const campoDNI = document.getElementById("campoDNI");
+        const campoRUC = document.getElementById("campoRUC");
+        const labelDNI = document.getElementById("labelDNI");
+        const labelRUC = document.getElementById("labelRUC");
+
+        if (tipo === "DNI") {
+            campoDNI.classList.remove("hidden");
+            campoRUC.classList.add("hidden");
+            labelDNI.classList.add("border-primary-container", "bg-primary-container/10");
+            labelRUC.classList.remove("border-primary-container", "bg-primary-container/10");
+            // Limpiar RUC
+            document.getElementById("id_ruc").value = "";
+        } else {
+            campoDNI.classList.add("hidden");
+            campoRUC.classList.remove("hidden");
+            labelRUC.classList.add("border-primary-container", "bg-primary-container/10");
+            labelDNI.classList.remove("border-primary-container", "bg-primary-container/10");
+            // Limpiar DNI
+            document.getElementById("id_dni").value = "";
+        }
+    }
+
+    // ========== VALIDACIÓN DNI (8 dígitos) ==========
+    function validarDNI(input) {
+        // Solo permitir números
+        input.value = input.value.replace(/[^0-9]/g, "");
+
+        const errorMsg = document.getElementById("errorDNI");
+        if (input.value.length === 8 && /^\d{8}$/.test(input.value)) {
+            errorMsg.classList.add("hidden");
+            input.classList.remove("ring-2", "ring-red-400");
+        } else if (input.value.length > 0 && input.value.length < 8) {
+            errorMsg.classList.remove("hidden");
+            errorMsg.textContent = `DNI debe tener 8 dígitos (${input.value.length}/8)`;
+            input.classList.add("ring-2", "ring-red-400");
+        } else if (input.value.length === 8 && !/^\d{8}$/.test(input.value)) {
+            errorMsg.classList.remove("hidden");
+            errorMsg.textContent = "DNI solo debe contener números";
+            input.classList.add("ring-2", "ring-red-400");
+        }
+    }
+
+    // ========== VALIDACIÓN RUC (11 dígitos) ==========
+    function validarRUC(input) {
+        // Solo permitir números
+        input.value = input.value.replace(/[^0-9]/g, "");
+
+        const errorMsg = document.getElementById("errorRUC");
+        if (input.value.length === 11 && /^\d{11}$/.test(input.value)) {
+            errorMsg.classList.add("hidden");
+            input.classList.remove("ring-2", "ring-red-400");
+        } else if (input.value.length > 0 && input.value.length < 11) {
+            errorMsg.classList.remove("hidden");
+            errorMsg.textContent = `RUC debe tener 11 dígitos (${input.value.length}/11)`;
+            input.classList.add("ring-2", "ring-red-400");
+        } else if (input.value.length === 11 && !/^\d{11}$/.test(input.value)) {
+            errorMsg.classList.remove("hidden");
+            errorMsg.textContent = "RUC solo debe contener números";
+            input.classList.add("ring-2", "ring-red-400");
+        }
+    }
+
+    // ========== VALIDACIÓN EMAIL ==========
+    function validarEmail(input) {
+        const errorMsg = document.getElementById("errorCorreo");
+        const email = input.value.trim();
+
+        // Regex para validación de email más estricta
+        // No permite: a20222079@, nombre@, @empresa.com, etc
+        const emailRegex = /^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        if (email === "") {
+            errorMsg.classList.add("hidden");
+            input.classList.remove("ring-2", "ring-red-400");
+        } else if (emailRegex.test(email)) {
+            errorMsg.classList.add("hidden");
+            input.classList.remove("ring-2", "ring-red-400");
+        } else {
+            errorMsg.classList.remove("hidden");
+            input.classList.add("ring-2", "ring-red-400");
+        }
+    }
+
+    // ========== VALIDACIÓN NOMBRES/APELLIDOS ==========
+    function validarNombres(input) {
+        // Solo permitir letras, espacios y acentos
+        const soloLetras = /^[a-zA-ZáéíóúñÁÉÍÓÚÑ\s]*$/;
+        const valor = input.value;
+
+        if (!soloLetras.test(valor)) {
+            // Remover caracteres no válidos
+            input.value = valor.replace(/[^a-zA-ZáéíóúñÁÉÍÓÚÑ\s]/g, "");
+        }
+    }
+
+    // ========== VALIDACIÓN TELÉFONO (9 dígitos) ==========
+    function validarTelefono(input) {
+        // Solo permitir números
+        input.value = input.value.replace(/[^0-9]/g, "");
+
+        const errorMsg = document.getElementById("errorTelefono");
+        if (input.value.length === 9 && /^\d{9}$/.test(input.value)) {
+            errorMsg.classList.add("hidden");
+            input.classList.remove("ring-2", "ring-red-400");
+        } else if (input.value.length > 0 && input.value.length < 9) {
+            errorMsg.classList.remove("hidden");
+            errorMsg.textContent = `Teléfono debe tener 9 dígitos (${input.value.length}/9)`;
+            input.classList.add("ring-2", "ring-red-400");
+        }
+    }
+
+    // ========== VALIDACIÓN CONFIRMACIÓN DE CONTRASEÑA ==========
+    function validarConfirmPassword(prefix) {
+        const password = document.getElementById(`password${prefix}`).value;
+        const confirmPassword = document.getElementById(`confirmPassword${prefix}`).value;
+        const errorMsg = document.getElementById(`errorConfirm${prefix}`);
+
+        if (confirmPassword === "") {
+            errorMsg.classList.add("hidden");
+        } else if (password === confirmPassword) {
+            errorMsg.classList.add("hidden");
+        } else {
+            errorMsg.classList.remove("hidden");
+        }
+    }
+
+    // ========== TOGGLE CONTRASEÑA ==========
     function togglePassword(inputId) {
         const input = document.getElementById(inputId);
         input.type = input.type === "password" ? "text" : "password";
     }
 
+    // ========== EVALUACIÓN CONTRASEÑA ==========
     function evaluarPassword(password, prefix) {
         const input = document.getElementById(`password${prefix}`);
 

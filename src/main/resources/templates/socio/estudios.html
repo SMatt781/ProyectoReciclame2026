@@ -530,16 +530,16 @@
                                     class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
                                     Inicio</label>
                                 <input type="date" id="dateStart" name="dateStart"
-                                       th:value="${dateStart}"
-                                       class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
+                                    th:value="${dateStart}"
+                                    class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
                             </div>
                             <div class="flex-1">
                                 <label
                                     class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
                                     Fin</label>
                                 <input type="date" id="dateEnd" name="dateEnd"
-                                       th:value="${dateEnd}"
-                                       class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
+                                    th:value="${dateEnd}"
+                                    class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
                             </div>
                         </div>
                         <p id="dateError" class="text-error text-xs font-semibold hidden">
@@ -711,7 +711,6 @@
             });
 
             // Validation
-            // Validation
             const dateStart = document.getElementById('dateStart');
             const dateEnd = document.getElementById('dateEnd');
             const filtersForm = document.getElementById('filtersForm');
@@ -782,6 +781,16 @@
                     if (!yearSelect.value) {
                         if (checkedDateType) checkedDateType.name = '';
                         yearSelect.name = '';
+                    }
+                }
+
+                if (isRange && dateStart.value && dateEnd.value) {
+                    if (new Date(dateStart.value) > new Date(dateEnd.value)) {
+                        e.preventDefault(); // Bloqueamos el envío porque hay error
+                        dateError.classList.remove('hidden');
+                        return;
+                    } else {
+                        dateError.classList.add('hidden');
                     }
                 }
             });
