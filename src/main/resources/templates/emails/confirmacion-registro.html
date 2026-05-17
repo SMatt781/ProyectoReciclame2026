@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recíclame - Registro Recibido</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #f7f9fb;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 27, 46, 0.06);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .logo {
+            height: 50px;
+            margin-bottom: 20px;
+        }
+        .content {
+            padding: 40px 30px;
+            color: #191c1e;
+        }
+        .greeting {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #22c55e;
+        }
+        .text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #43474c;
+            margin-bottom: 15px;
+        }
+        .highlight {
+            background-color: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #22c55e;
+            color: white;
+            padding: 14px 40px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            margin: 25px 0;
+            transition: background-color 0.3s;
+            border: 2px solid #16a34a;
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #15803d;
+        }
+        .footer {
+            background-color: #f7f9fb;
+            padding: 20px 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #73777d;
+            border-top: 1px solid #e0e3e5;
+        }
+        .footer-text {
+            margin: 5px 0;
+        }
+        .divider {
+            height: 1px;
+            background-color: #e0e3e5;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <img src="cid:logo" alt="Recíclame" class="logo">
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <p class="greeting">Hola [[NOMBRE]]</p>
+
+            <p class="text">
+                Hemos recibido tu solicitud de registro en <strong>Recíclame</strong> como <strong>[[ROL]]</strong>.
+            </p>
+
+            <div class="highlight">
+                <strong>📋 Estado:</strong> Pendiente de revisión
+                <br><br>
+                Tu cuenta se encuentra en revisión por nuestro equipo de administradores. Este proceso generalmente toma entre 24 y 48 horas.
+            </div>
+
+            <p class="text">
+                Te enviaremos un correo de confirmación cuando tu solicitud sea aprobada o denegada.
+            </p>
+
+            <p class="text" style="font-style: italic; color: #73777d;">
+                Si tienes dudas sobre tu registro, no dudes en contactar con nuestro equipo de soporte.
+            </p>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <p style="font-size: 14px; color: #22c55e; font-weight: 600;">
+                    ✓ Gracias por registrarte en Recíclame
+                </p>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p class="footer-text"><strong>Recíclame</strong> - Red de Economía Circular</p>
+            <p class="footer-text">Este es un correo automático, por favor no respondas a este mensaje.</p>
+            <p class="footer-text">© 2024 Recíclame. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>

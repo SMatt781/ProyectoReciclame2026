@@ -598,6 +598,16 @@
             const filtersModal = document.getElementById('filtersModal');
             const modalContent = filtersModal.querySelector('div');
 
+            // Populating years
+            const yearSelect = document.getElementById('yearSelect');
+            const currentYear = new Date().getFullYear();
+            for (let y = currentYear; y >= 1990; y--) {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = y;
+                yearSelect.appendChild(opt);
+            }
+
             const openModal = () => {
                 filtersModal.classList.remove('opacity-0', 'pointer-events-none');
                 modalContent.classList.remove('scale-95');
@@ -609,6 +619,7 @@
                 modalContent.classList.remove('scale-100');
                 modalContent.classList.add('scale-95');
             };
+
             openFiltersBtn.addEventListener('click', openModal);
             closeFiltersBtn.addEventListener('click', closeModal);
             filtersModal.addEventListener('click', (e) => {
@@ -751,6 +762,16 @@
                     if (!yearSelect.value) {
                         if (checkedDateType) checkedDateType.name = '';
                         yearSelect.name = '';
+                    }
+                }
+
+                if (isRange && dateStart.value && dateEnd.value) {
+                    if (new Date(dateStart.value) > new Date(dateEnd.value)) {
+                        e.preventDefault(); // Bloqueamos el envío porque hay error
+                        dateError.classList.remove('hidden');
+                        return;
+                    } else {
+                        dateError.classList.add('hidden');
                     }
                 }
             });

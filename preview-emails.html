@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vista Previa de Emails - Recíclame</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            padding: 20px;
+        }
+        .preview-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .preview-header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #191c1e;
+        }
+        .preview-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #22c55e;
+        }
+        .preview-header p {
+            color: #73777d;
+            font-size: 14px;
+        }
+        .email-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .email-tabs button {
+            padding: 10px 20px;
+            border: 2px solid #e0e3e5;
+            background: white;
+            color: #191c1e;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .email-tabs button.active {
+            background: #16a34a;
+            color: white;
+            border-color: #22c55e;
+        }
+        .email-tabs button:hover {
+            border-color: #22c55e;
+        }
+        .email-preview {
+            display: none;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 27, 46, 0.1);
+        }
+        .email-preview.active {
+            display: block;
+        }
+        .email-preview iframe {
+            width: 100%;
+            height: 800px;
+            border: none;
+        }
+        .preview-info {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #1b5e20;
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-container">
+        <div class="preview-header">
+            <h1>📧 Vista Previa de Emails</h1>
+            <p>Haz clic en los botones para ver cada tipo de email</p>
+        </div>
+
+        <div class="preview-info">
+            <strong>💡 Nota:</strong> Estos son ejemplos con datos de prueba. En producción, los placeholders se reemplazan con datos reales del usuario.
+        </div>
+
+        <div class="email-tabs">
+            <button class="tab-btn active" onclick="showEmail('confirmacion')">📋 Confirmación de Registro</button>
+            <button class="tab-btn" onclick="showEmail('aprobada')">✓ Solicitud Aprobada</button>
+            <button class="tab-btn" onclick="showEmail('denegada')">⚠️ Solicitud Denegada</button>
+            <button class="tab-btn" onclick="showEmail('admin')">🔑 Credenciales Admin</button>
+            <button class="tab-btn" onclick="showEmail('recuperacion')">🔐 Código Recuperación</button>
+        </div>
+
+        <div id="confirmacion" class="email-preview active">
+            <iframe srcdoc='
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #f7f9fb;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 27, 46, 0.06);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .logo {
+            height: 50px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .content {
+            padding: 40px 30px;
+            color: #191c1e;
+        }
+        .greeting {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #22c55e;
+        }
+        .text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #43474c;
+            margin-bottom: 15px;
+        }
+        .highlight {
+            background-color: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .footer {
+            background-color: #f7f9fb;
+            padding: 20px 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #73777d;
+            border-top: 1px solid #e0e3e5;
+        }
+        .divider {
+            height: 1px;
+            background-color: #e0e3e5;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="src/main/resources/static/images/logo-reciclame.png" alt="Recíclame" style="height: 50px; margin-bottom: 20px;">
+        </div>
+        <div class="content">
+            <p class="greeting">Hola Juan García</p>
+            <p class="text">Hemos recibido tu solicitud de registro en <strong>Recíclame</strong> como <strong>SOCIO</strong>.</p>
+            <div class="highlight">
+                <strong>📋 Estado:</strong> Pendiente de revisión<br><br>
+                Tu cuenta se encuentra en revisión por nuestro equipo de administradores. Este proceso generalmente toma entre 24 y 48 horas.
+            </div>
+            <p class="text">Te enviaremos un correo de confirmación cuando tu solicitud sea aprobada o denegada.</p>
+            <p class="text" style="font-style: italic; color: #73777d;">Si tienes dudas sobre tu registro, no dudes en contactar con nuestro equipo de soporte.</p>
+            <div style="text-align: center; margin: 30px 0;">
+                <p style="font-size: 14px; color: #22c55e; font-weight: 600;">✓ Gracias por registrarte en Recíclame</p>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="footer">
+            <p style="margin: 5px 0;"><strong>Recíclame</strong> - Red de Economía Circular</p>
+            <p style="margin: 5px 0;">Este es un correo automático, por favor no respondas a este mensaje.</p>
+            <p style="margin: 5px 0;">© 2024 Recíclame. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
+            '></iframe>
+        </div>
+
+        <div id="aprobada" class="email-preview">
+            <iframe srcdoc='
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #f7f9fb;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 27, 46, 0.06);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .logo {
+            height: 50px;
+            margin-bottom: 20px;
+        }
+        .checkmark {
+            font-size: 60px;
+            margin: 10px 0;
+        }
+        .content {
+            padding: 40px 30px;
+            color: #191c1e;
+        }
+        .greeting {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #22c55e;
+        }
+        .text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #43474c;
+            margin-bottom: 15px;
+        }
+        .success-box {
+            background-color: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .credentials {
+            background-color: #f7f9fb;
+            border: 1px solid #e0e3e5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .credentials-label {
+            color: #73777d;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .credentials-value {
+            background-color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: "Courier New", monospace;
+            color: #191c1e;
+            margin-bottom: 12px;
+            word-break: break-all;
+        }
+        .button {
+            display: inline-block;
+            background-color: #22c55e;
+            color: white;
+            padding: 16px 50px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            margin: 30px 0;
+            text-align: center;
+            border: 2px solid #16a34a;
+            font-size: 16px;
+        }
+        .footer {
+            background-color: #f7f9fb;
+            padding: 20px 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #73777d;
+            border-top: 1px solid #e0e3e5;
+        }
+        .divider {
+            height: 1px;
+            background-color: #e0e3e5;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="src/main/resources/static/images/logo-reciclame.png" alt="Recíclame" style="height: 50px; margin-bottom: 20px;">
+            <div class="checkmark">🎉</div>
+        </div>
+        <div class="content">
+            <p class="greeting">¡Felicidades, Juan García!</p>
+            <p class="text" style="font-size: 16px; font-weight: 500;">Tu solicitud de registro en <strong>Recíclame</strong> ha sido <strong style="color: #22c55e;">aprobada</strong>.</p>
+            <div class="success-box">
+                <strong>✓ Estado:</strong> Cuenta activada<br>Ya puedes acceder a la plataforma con tus credenciales.
+            </div>
+            <p class="text"><strong>Tus datos de acceso:</strong></p>
+            <div class="credentials">
+                <div class="credentials-label">Correo</div>
+                <div class="credentials-value">juan.garcia@example.com</div>
+                <div class="credentials-label">Contraseña</div>
+                <div class="credentials-value">La que registraste durante el proceso</div>
+            </div>
+            <p style="text-align: center;">
+                <a href="http://localhost:8080/login" class="button">Acceder a Recíclame</a>
+            </p>
+            <p class="text" style="font-size: 13px; color: #73777d;">
+                <strong>Próximos pasos:</strong><br>
+                • Completa tu perfil con información adicional<br>
+                • Explora los estudios y normativas de la plataforma<br>
+                • Conecta con otros miembros de la red
+            </p>
+            <div class="divider"></div>
+            <p class="text" style="font-size: 13px; color: #73777d;">Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos. Estamos aquí para apoyarte.</p>
+        </div>
+        <div class="divider"></div>
+        <div class="footer">
+            <p style="margin: 5px 0;"><strong>Recíclame</strong> - Red de Economía Circular</p>
+            <p style="margin: 5px 0;">Este es un correo automático, por favor no respondas a este mensaje.</p>
+            <p style="margin: 5px 0;">© 2024 Recíclame. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
+            '></iframe>
+        </div>
+
+        <div id="denegada" class="email-preview">
+            <iframe srcdoc='
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #f7f9fb;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 27, 46, 0.06);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .logo {
+            height: 50px;
+            margin-bottom: 20px;
+        }
+        .icon {
+            font-size: 50px;
+            margin: 10px 0;
+        }
+        .content {
+            padding: 40px 30px;
+            color: #191c1e;
+        }
+        .greeting {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #ba1a1a;
+        }
+        .text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #43474c;
+            margin-bottom: 15px;
+        }
+        .alert-box {
+            background-color: #fff5f5;
+            border-left: 4px solid #ba1a1a;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .reason-box {
+            background-color: #f7f9fb;
+            border: 1px solid #e0e3e5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+            font-size: 14px;
+            border-left: 4px solid #ba1a1a;
+        }
+        .reason-label {
+            color: #73777d;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .reason-text {
+            color: #191c1e;
+            font-style: italic;
+        }
+        .support-box {
+            background-color: #f0fdf4;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .footer {
+            background-color: #f7f9fb;
+            padding: 20px 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #73777d;
+            border-top: 1px solid #e0e3e5;
+        }
+        .divider {
+            height: 1px;
+            background-color: #e0e3e5;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="src/main/resources/static/images/logo-reciclame.png" alt="Recíclame" style="height: 50px; margin-bottom: 20px;">
+            <div class="icon">⚠️</div>
+        </div>
+        <div class="content">
+            <p class="greeting">Hola María López</p>
+            <p class="text">Lamentamos informarte que tu solicitud de registro en <strong>Recíclame</strong> ha sido <strong style="color: #ef4444;">denegada</strong>.</p>
+            <div class="alert-box">
+                <strong>ℹ️ Estado:</strong> Solicitud denegada<br><br>
+                Tu solicitud fue revisada por nuestro equipo y no cumple con los requisitos necesarios en este momento.
+            </div>
+            <p class="text"><strong>Motivo de la denegación:</strong></p>
+            <div class="reason-box">
+                <div class="reason-label">Motivo</div>
+                <div class="reason-text">No se proporcionó información verificable sobre la empresa. Requerimos documentación fiscal actualizada.</div>
+            </div>
+            <div class="support-box">
+                <p style="margin: 0; font-size: 14px; color: #22c55e;">
+                    <strong>¿Tienes dudas?</strong><br>
+                    Si consideras que esto es un error, contáctanos a través de nuestro equipo de soporte.
+                </p>
+            </div>
+            <p class="text" style="font-size: 13px; color: #73777d; text-align: center;">Esperamos poder trabajar contigo en el futuro cuando las circunstancias lo permitan.</p>
+        </div>
+        <div class="divider"></div>
+        <div class="footer">
+            <p style="margin: 5px 0;"><strong>Recíclame</strong> - Red de Economía Circular</p>
+            <p style="margin: 5px 0;">Este es un correo automático, por favor no respondas a este mensaje.</p>
+            <p style="margin: 5px 0;">© 2024 Recíclame. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
+            '></iframe>
+        </div>
+
+        <div id="admin" class="email-preview">
+            <iframe srcdoc='
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #f7f9fb;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 27, 46, 0.06);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .logo {
+            height: 50px;
+            margin-bottom: 20px;
+        }
+        .icon {
+            font-size: 50px;
+            margin: 10px 0;
+        }
+        .content {
+            padding: 40px 30px;
+            color: #191c1e;
+        }
+        .greeting {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #3b82f6;
+        }
+        .text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #43474c;
+            margin-bottom: 15px;
+        }
+        .alert-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .credentials {
+            background-color: #f7f9fb;
+            border: 1px solid #e0e3e5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .credentials-label {
+            color: #73777d;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .credentials-value {
+            background-color: white;
+            padding: 12px 15px;
+            border-radius: 4px;
+            font-family: "Courier New", monospace;
+            color: #191c1e;
+            margin-bottom: 15px;
+            border: 1px solid #e0e3e5;
+        }
+        .warning-box {
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #e65100;
+        }
+        .button {
+            display: inline-block;
+            background-color: #3b82f6;
+            color: white;
+            padding: 16px 50px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            margin: 30px 0;
+            text-align: center;
+            border: 2px solid #0066cc;
+            font-size: 16px;
+        }
+        .footer {
+            background-color: #f7f9fb;
+            padding: 20px 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #73777d;
+            border-top: 1px solid #e0e3e5;
+        }
+        .divider {
+            height: 1px;
+            background-color: #e0e3e5;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="src/main/resources/static/images/logo-reciclame.png" alt="Recíclame" style="height: 50px; margin-bottom: 20px;">
+            <div class="icon">🔑</div>
+        </div>
+        <div class="content">
+            <p class="greeting">Bienvenido, Carlos Rodríguez</p>
+            <p class="text">Tu cuenta de <strong>administrador</strong> en la plataforma <strong>Recíclame</strong> ha sido creada correctamente.</p>
+            <div class="alert-box">
+                <strong>ℹ️ Acceso de Administrador Activado</strong><br><br>
+                A continuación encontrarás tus credenciales de acceso. Úsalas para acceder a la plataforma con permisos de administrador.
+            </div>
+            <p class="text"><strong>Tus credenciales de acceso:</strong></p>
+            <div class="credentials">
+                <div class="credentials-label">Correo Electrónico</div>
+                <div class="credentials-value">carlos.rodriguez@reciclame.com</div>
+                <div class="credentials-label">Contraseña Temporal</div>
+                <div class="credentials-value">TmpPass@12345678</div>
+            </div>
+            <div class="warning-box">
+                <strong>⚠️ Importante:</strong> Esta es una contraseña temporal generada por el sistema. Te recomendamos cambiarla en tu primer acceso a la plataforma por tu propia seguridad. Nunca compartas estas credenciales con terceros.
+            </div>
+            <p style="text-align: center;">
+                <a href="http://localhost:8080/login" class="button">Acceder a Recíclame</a>
+            </p>
+            <p class="text" style="font-size: 13px; color: #73777d;">
+                <strong>Próximos pasos:</strong><br>
+                • Inicia sesión con las credenciales proporcionadas<br>
+                • Cambia tu contraseña temporal en la configuración de tu perfil<br>
+                • Explora el panel de administración<br>
+                • Revisa la documentación de administrador
+            </p>
+        </div>
+        <div class="divider"></div>
+        <div class="footer">
+            <p style="margin: 5px 0;"><strong>Recíclame</strong> - Red de Economía Circular</p>
+            <p style="margin: 5px 0;">Este es un correo automático, por favor no respondas a este mensaje.</p>
+            <p style="margin: 5px 0;">© 2024 Recíclame. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
+            '></iframe>
+        </div>
+
+        <div id="recuperacion" class="email-preview">
+            <iframe srcdoc='
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #f7f9fb;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 27, 46, 0.06);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .logo {
+            height: 50px;
+            margin-bottom: 20px;
+        }
+        .icon {
+            font-size: 50px;
+            margin: 10px 0;
+        }
+        .content {
+            padding: 40px 30px;
+            color: #191c1e;
+        }
+        .greeting {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #f97316;
+        }
+        .text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #43474c;
+            margin-bottom: 15px;
+        }
+        .alert-box {
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .code-box {
+            background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+            border: 2px solid #ff9800;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .code-label {
+            color: #73777d;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: block;
+        }
+        .code-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #f97316;
+            font-family: "Courier New", monospace;
+            letter-spacing: 3px;
+            font-style: italic;
+            margin: 10px 0;
+        }
+        .code-note {
+            font-size: 12px;
+            color: #73777d;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        .warning-box {
+            background-color: #ffebee;
+            border-left: 4px solid #d32f2f;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #b71c1c;
+        }
+        .instructions {
+            background-color: #f0f9f5;
+            border: 1px solid #c8e6c9;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .instructions-step {
+            margin-bottom: 10px;
+            color: #1b5e20;
+        }
+        .footer {
+            background-color: #f7f9fb;
+            padding: 20px 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #73777d;
+            border-top: 1px solid #e0e3e5;
+        }
+        .divider {
+            height: 1px;
+            background-color: #e0e3e5;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="src/main/resources/static/images/logo-reciclame.png" alt="Recíclame" style="height: 50px; margin-bottom: 20px;">
+            <div class="icon">🔐</div>
+        </div>
+        <div class="content">
+            <p class="greeting">Hola,</p>
+            <p class="text">Hemos recibido una solicitud para recuperar la contraseña de tu cuenta en <strong>Recíclame</strong>. Si no fuiste tú quien realizó esta solicitud, ignora este correo de manera segura.</p>
+            <div class="alert-box">
+                <strong>🔑 Código de Recuperación</strong><br><br>
+                Usa el siguiente código para recuperar el acceso a tu cuenta. Este código es temporal y solo es válido durante un tiempo limitado.
+            </div>
+            <div class="code-box">
+                <span class="code-label">Tu código de recuperación</span>
+                <div class="code-value">A7K9M2P5</div>
+                <span class="code-note">El código expira en 30 minutos</span>
+            </div>
+            <div class="instructions">
+                <strong style="color: #1b5e20;">Cómo usar este código:</strong>
+                <div class="instructions-step"><strong>1.</strong> Ve al formulario de recuperación de contraseña</div>
+                <div class="instructions-step"><strong>2.</strong> Copia o ingresa el código anterior</div>
+                <div class="instructions-step"><strong>3.</strong> Crea una nueva contraseña segura</div>
+                <div class="instructions-step"><strong>4.</strong> Confirma los cambios</div>
+            </div>
+            <div class="warning-box">
+                <strong>⚠️ Seguridad:</strong> Nunca compartas este código con otros. Recíclame nunca te pedirá que compartas este código por correo, teléfono o mensaje.
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="footer">
+            <p style="margin: 5px 0;"><strong>Recíclame</strong> - Red de Economía Circular</p>
+            <p style="margin: 5px 0;">Este es un correo automático, por favor no respondas a este mensaje.</p>
+            <p style="margin: 5px 0;">© 2024 Recíclame. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
+            '></iframe>
+        </div>
+    </div>
+
+    <script>
+        function showEmail(type) {
+            // Ocultar todos los previews
+            document.querySelectorAll('.email-preview').forEach(preview => {
+                preview.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Mostrar el seleccionado
+            document.getElementById(type).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
