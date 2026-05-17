@@ -322,7 +322,7 @@
                             <!-- Cabecera -->
                             <div class="hidden lg:grid lg:grid-cols-[minmax(180px,2fr)_minmax(80px,0.8fr)_minmax(120px,1fr)_minmax(90px,0.8fr)_minmax(90px,0.8fr)_minmax(90px,0.8fr)_minmax(160px,1.3fr)] gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider items-center">
                                 <div>Nombre</div>
-                                <div>DNI</div>
+                                <div>DNI/RUC</div>
                                 <div>Empresa</div>
                                 <div class="text-center">Rol</div>
                                 <div class="text-center">Estado</div>
@@ -346,9 +346,20 @@
                                     </div>
                                 </div>
 
-                                <!-- DNI -->
-                                <div class="flex justify-start min-w-0 text-xs font-body text-on-surface-variant"
-                                     th:text="${u.dni}"></div>
+                                <!-- DNI/RUC -->
+                                <div class="flex justify-start min-w-0">
+                                    <!-- DNI Badge -->
+                                    <span th:if="${u.dni != null and !u.dni.isEmpty()}"
+                                          class="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-extrabold uppercase text-blue-600 border border-blue-200">
+                                        <span class="font-bold">DNI</span>: <span th:text="${u.dni}"></span>
+                                    </span>
+
+                                    <!-- RUC Badge (fallback when DNI is empty) -->
+                                    <span th:if="${u.dni == null or u.dni.isEmpty()}"
+                                          class="rounded-full bg-orange-50 px-3 py-1 text-[10px] font-extrabold uppercase text-orange-600 border border-orange-200">
+                                        <span class="font-bold">RUC</span>
+                                    </span>
+                                </div>
 
                                 <!-- Empresa -->
                                 <div class="flex justify-start min-w-0 text-xs font-body text-on-surface-variant italic whitespace-normal"
@@ -356,8 +367,17 @@
 
                                 <!-- Rol -->
                                 <div class="flex lg:justify-center justify-start min-w-0 text-sm font-body text-on-surface-variant min-w-0">
-                                        <span class="rounded-full bg-secondary-container/20 px-3 py-1 text-[10px] font-extrabold uppercase text-secondary"
-                                              th:text="${u.rol}"></span>
+                                    <!-- SOCIO Badge (Green) -->
+                                    <span th:if="${u.rol == 'SOCIO'}"
+                                          class="rounded-full bg-secondary-container/20 px-3 py-1 text-[10px] font-extrabold uppercase text-secondary border border-secondary/10">
+                                        <span th:text="${u.rol}"></span>
+                                    </span>
+
+                                    <!-- VISUALIZADOR Badge (Indigo/Purple) -->
+                                    <span th:if="${u.rol == 'VISUALIZADOR'}"
+                                          class="rounded-full bg-indigo-50 px-3 py-1 text-[10px] font-extrabold uppercase text-indigo-600 border border-indigo-200">
+                                        <span th:text="${u.rol}"></span>
+                                    </span>
                                 </div>
 
                                 <!-- Estado -->

@@ -45,6 +45,7 @@ public class AuthController {
     private final DominioAutorizadoRepository dominioAutorizadoRepository;
     private final PoliticaContrasenaRepository politicaContrasenaRepository;
     private final RegistroSesionRepository registroSesionRepository;
+    private final AdminNotificacionController adminNotificacionController;
 
     public AuthController(UsuarioRepository usuarioRepository,
                           RolRepository rolRepository,
@@ -53,7 +54,9 @@ public class AuthController {
                           BCryptPasswordEncoder passwordEncoder,
                           CorreoService correoService,
                           DominioAutorizadoRepository dominioAutorizadoRepository,
-                          PoliticaContrasenaRepository politicaContrasenaRepository,RegistroSesionRepository registroSesionRepository) {
+                          PoliticaContrasenaRepository politicaContrasenaRepository,
+                          RegistroSesionRepository registroSesionRepository,
+                          AdminNotificacionController adminNotificacionController) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.usuarioEmpresaRepository = usuarioEmpresaRepository;
@@ -63,6 +66,7 @@ public class AuthController {
         this.dominioAutorizadoRepository = dominioAutorizadoRepository;
         this.politicaContrasenaRepository = politicaContrasenaRepository;
         this.registroSesionRepository = registroSesionRepository;
+        this.adminNotificacionController = adminNotificacionController;
     }
 
     @Value("${google.recaptcha.site-key}")
@@ -181,7 +185,11 @@ public class AuthController {
         solicitud.setDni(usuario.getDni());
         solicitud.setCorreo(usuario.getCorreo());
         solicitud.setTelefono(usuario.getTelefono());
-        solicitud.setRuc(form.getRuc().trim());
+        solicitud.setRuc(
+                form.getRuc() != null
+                        ? form.getRuc().trim()
+                        : null
+        );
         solicitud.setRolSolicitado("SOCIO");
         solicitud.setEstado("PENDIENTE");
         solicitud.setMotivoRechazo(null);
@@ -196,6 +204,14 @@ public class AuthController {
                 usuario.getCorreo(),
                 usuario.getNombres(),
                 "SOCIO"
+        );
+
+        // Crear notificación para los admins
+        adminNotificacionController.crearNotificacionAdmin(
+                "Nueva solicitud de registro - Socio",
+                usuario.getNombres() + " " + usuario.getApellidoPaterno() + " ha solicitado registrarse como SOCIO. Correo: " + usuario.getCorreo(),
+                "REGISTRO",
+                "/admin/usuarios/solicitudes"
         );
 
         return "redirect:/solicitud-enviada";
@@ -263,6 +279,14 @@ public class AuthController {
                 usuario.getCorreo(),
                 usuario.getNombres(),
                 "VISUALIZADOR"
+        );
+
+        // Crear notificación para los admins
+        adminNotificacionController.crearNotificacionAdmin(
+                "Nueva solicitud de registro - Visualizador",
+                usuario.getNombres() + " " + usuario.getApellidoPaterno() + " ha solicitado registrarse como VISUALIZADOR. Correo: " + usuario.getCorreo(),
+                "REGISTRO",
+                "/admin/usuarios/solicitudes"
         );
 
         return "redirect:/solicitud-enviada";

@@ -40,15 +40,18 @@ public class AdminSolicitudController {
     private final UsuarioRepository usuarioRepository;
     private final CorreoService correoService;
     private final HistorialRolesRepository historialRolesRepository;
+    private final AdminNotificacionController adminNotificacionController;
 
     public AdminSolicitudController(SolicitudRegistroRepository solicitudRegistroRepository,
                                     UsuarioRepository usuarioRepository,
                                     CorreoService correoService,
-                                    HistorialRolesRepository historialRolesRepository) {
+                                    HistorialRolesRepository historialRolesRepository,
+                                    AdminNotificacionController adminNotificacionController) {
         this.solicitudRegistroRepository = solicitudRegistroRepository;
         this.usuarioRepository = usuarioRepository;
         this.correoService = correoService;
         this.historialRolesRepository = historialRolesRepository;
+        this.adminNotificacionController = adminNotificacionController;
     }
 
     @GetMapping
@@ -238,6 +241,17 @@ public class AdminSolicitudController {
 
             correoService.enviarRegistroAprobado(usuario.getCorreo(), usuario.getNombres());
 
+            // ── Crear notificación para el usuario ─────────────────────────────
+            String rolSolicitado = usuario.getRol() != null ? usuario.getRol().getNombre() : "USUARIO";
+            adminNotificacionController.crearNotificacionPorUsuario(
+                    usuario.getIdUsuario(),
+                    "¡Tu solicitud ha sido aprobada!",
+                    "Tu cuenta como " + rolSolicitado + " ha sido aprobada. Ahora puedes iniciar sesión.",
+                    "REGISTRO_APROBADO",
+                    "/login"
+            );
+            // ──────────────────────────────────────────────────────────────────
+
             // ── Flash message ─────────────────────────────────────────────────
             redirectAttributes.addFlashAttribute("success", "Solicitud aceptada correctamente. Usuario creado y activado.");
             // ──────────────────────────────────────────────────────────────────
@@ -285,6 +299,20 @@ public class AdminSolicitudController {
             // ─────────────────────────────────────────────────────────────────
 
             correoService.enviarRegistroDenegado(usuario.getCorreo(), usuario.getNombres(), motivo);
+
+            // ── Crear notificación para el usuario ─────────────────────────────
+            String mensajeRechazo = motivo != null && !motivo.isBlank()
+                    ? "Lamentablemente, tu solicitud de registro ha sido rechazada. Motivo: " + motivo
+                    : "Lamentablemente, tu solicitud de registro ha sido rechazada.";
+
+            adminNotificacionController.crearNotificacionPorUsuario(
+                    usuario.getIdUsuario(),
+                    "Tu solicitud de registro ha sido rechazada",
+                    mensajeRechazo,
+                    "REGISTRO_RECHAZADO",
+                    null
+            );
+            // ──────────────────────────────────────────────────────────────────
 
             // ── Flash message ─────────────────────────────────────────────────
             redirectAttributes.addFlashAttribute("success", "Solicitud denegada correctamente.");
