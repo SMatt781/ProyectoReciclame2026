@@ -951,7 +951,7 @@
 
                         <!-- Filas -->
                         <div th:each="admin : ${administradores.content}"
-                             th:classappend="${admin.estadoCuenta == T(com.example.proyectoreciclame.Entity.Usuario.EstadoCuenta).BLOQUEADO} ? 'bg-red-50/80 border-red-100' : 'bg-surface-container-lowest border-transparent'"
+                             th:classappend="${admin.estadoCuenta?.name() == 'BLOQUEADO'} ? 'bg-red-50/80 border-red-100' : 'bg-surface-container-lowest border-transparent'"
                              class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-5 md:gap-0 items-start md:items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
 
                             <!-- Nombre -->
