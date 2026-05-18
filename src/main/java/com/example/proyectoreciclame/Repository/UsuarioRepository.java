@@ -29,16 +29,18 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
         LEFT JOIN FETCH u.rol r
         LEFT JOIN FETCH u.usuarioEmpresa ue
         WHERE u.eliminadoEn IS NULL
+          AND UPPER(r.nombre) NOT IN ('ADMIN', 'SUPERADMIN')
         ORDER BY u.fechaRegistro DESC
     """)
     Page<Usuario> findAllGestionUsuarios(Pageable pageable);
 
-    // ── Para AdminUsuarioController (todos los roles, con razonSocial) ──────────
+    // ── Para AdminUsuarioController (socios y visualizadores, con razonSocial) ──────────
     @Query("""
     SELECT u FROM Usuario u
     LEFT JOIN FETCH u.rol r
     LEFT JOIN FETCH u.usuarioEmpresa ue
     WHERE u.eliminadoEn IS NULL
+      AND UPPER(r.nombre) NOT IN ('ADMIN', 'SUPERADMIN')
       AND (
         :texto IS NULL OR :texto = ''
         OR LOWER(u.nombres) LIKE LOWER(CONCAT('%', :texto, '%'))

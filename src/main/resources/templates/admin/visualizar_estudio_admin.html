@@ -147,14 +147,14 @@
                         </span>
                         <!-- LECTURA badge -->
                         <span
-                            th:if="${estudio.tipoAcceso == T(com.example.proyectoreciclame.Entity.Estudio.TipoAcceso).LECTURA}"
+                            th:if="${estudio.tipoAcceso.name() == 'LECTURA'}"
                             class="inline-flex items-center gap-1.5 justify-center bg-[#e2e8f8] text-[#00210c] px-4 py-1.5 rounded-full font-label text-xs font-bold tracking-wide uppercase">
                             <div th:replace="~{fragments/icons.html :: icon-solo-lectura}"></div>
                             <span> LECTURA</span>
                         </span>
                         <!-- DESCARGA badge -->
                         <span
-                            th:if="${estudio.tipoAcceso == T(com.example.proyectoreciclame.Entity.Estudio.TipoAcceso).DESCARGA}"
+                            th:if="${estudio.tipoAcceso.name() == 'DESCARGA'}"
                             class="inline-flex items-center gap-1.5 justify-center bg-[#e2e8f8] text-[#00210c] px-4 py-1.5 rounded-full font-label text-xs font-bold tracking-wide uppercase">
                             <div th:replace="~{fragments/icons.html :: icon-descargable}"></div>
                             <span>DESCARGABLE</span>
@@ -181,7 +181,7 @@
                                 th:text="${estudio.archivoNombre != null ? estudio.archivoNombre : 'documento.pdf'}">documento.pdf</span>
                         </div>
                         <!-- Vista Protegida badge for LECTURA -->
-                        <div th:if="${estudio.tipoAcceso == T(com.example.proyectoreciclame.Entity.Estudio.TipoAcceso).LECTURA}"
+                        <div th:if="${estudio.tipoAcceso.name() == 'LECTURA'}"
                             class="flex items-center space-x-2">
                             <span
                                 class="font-label text-xs font-medium text-error uppercase px-2 py-1 bg-error-container rounded-md">
@@ -290,7 +290,7 @@
                                     class="font-body text-sm font-medium text-on-primary-fixed">15 de Enero, 2024</p>
                             </div>
                             <!-- Download button only for DESCARGA type -->
-                            <div th:if="${estudio.tipoAcceso == T(com.example.proyectoreciclame.Entity.Estudio.TipoAcceso).DESCARGA}"
+                            <div th:if="${estudio.tipoAcceso.name() == 'DESCARGA'}"
                                 class="col-span-2 pt-2">
                                 <a th:href="@{/admin/estudios/{id}/descargar(id=${estudio.idEstudio})}"
                                     class="w-full bg-[#041533] hover:bg-[#00743a] text-white font-bold text-sm py-3 px-4 rounded-[14px] flex items-center justify-center gap-3 transition-colors shadow-sm">

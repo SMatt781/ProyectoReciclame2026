@@ -179,7 +179,7 @@
                 <div class="w-full xl:flex-1 flex flex-col">
                     <!-- GRATIS Viewer -->
                     <section
-                        th:if="${normativa.acceso != T(com.example.proyectoreciclame.Entity.Normativa.AccesoNormativa).PAGO}"
+                        th:if="${normativa.acceso?.name() != 'PAGO'}"
                         class="flex-1 bg-surface-container-lowest rounded-xl flex flex-col overflow-hidden min-w-0"
                         style="box-shadow: 0 24px 40px -4px rgba(0, 27, 46, 0.04);">
                         <!-- Viewer Toolbar -->
@@ -236,7 +236,7 @@
 
                     <!-- PAGO Viewer (Blurred/Locked) -->
                     <section
-                        th:if="${normativa.acceso == T(com.example.proyectoreciclame.Entity.Normativa.AccesoNormativa).PAGO}"
+                        th:if="${normativa.acceso?.name() == 'PAGO'}"
                         class="flex-1 bg-surface-container-lowest rounded-xl flex flex-col overflow-hidden min-w-0 shadow-sm border border-outline-variant/20 xl:max-h-[calc(100vh-12rem)]">
                         <!-- Viewer Toolbar -->
                         <div
@@ -407,7 +407,7 @@
                                     class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">
                                     FUENTE ORIGINAL</h4>
                                 <!-- GRATIS Buttons -->
-                                <div th:if="${normativa.acceso != T(com.example.proyectoreciclame.Entity.Normativa.AccesoNormativa).PAGO}"
+                                <div th:if="${normativa.acceso?.name() != 'PAGO'}"
                                     class="flex gap-3">
                                     <a th:href="${normativa.enlaceExterno}" target="_blank"
                                         class="flex-1 inline-flex items-center justify-center gap-2 bg-gratuito text-white px-4 py-2.5 rounded-lg font-bold text-sm hover:bg-gratuito/90 transition">
@@ -430,7 +430,7 @@
 
                                 <!-- PAGO Buttons -->
                                 <div
-                                    th:if="${normativa.acceso == T(com.example.proyectoreciclame.Entity.Normativa.AccesoNormativa).PAGO}">
+                                    th:if="${normativa.acceso?.name() == 'PAGO'}">
                                     <a th:href="${normativa.enlaceExterno}" target="_blank"
                                         class="inline-flex items-center justify-center gap-2 bg-[#041533] hover:bg-[#00743a] text-white px-4 py-2.5 rounded-lg font-bold text-sm transition w-full">
                                         Comprar Acceso
