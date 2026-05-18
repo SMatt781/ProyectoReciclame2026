@@ -38,19 +38,25 @@ public class AdminEstudiosController {
     public String estudiosAdmin(
             @RequestParam(required = false) String search,
             @RequestParam(required = false, name = "yearSelect") Integer anio,
+
+            // Se mantienen por compatibilidad visual del formulario,
+            // pero para estudios se filtrará por año.
             @RequestParam(required = false, name = "dateStart") String dateStartStr,
             @RequestParam(required = false, name = "dateEnd") String dateEndStr,
+
+            // Estos llegan desde el HTML cuando el usuario usa rango de fechas.
+            @RequestParam(required = false) Integer anioInicio,
+            @RequestParam(required = false) Integer anioFin,
+
             @RequestParam(required = false) java.util.List<String> format,
             @RequestParam(required = false) java.util.List<String> estado,
             Model model
     ) {
-        java.time.LocalDate fechaInicio = (dateStartStr != null && !dateStartStr.isBlank())
-                ? java.time.LocalDate.parse(dateStartStr)
-                : null;
-
-        java.time.LocalDate fechaFin = (dateEndStr != null && !dateEndStr.isBlank())
-                ? java.time.LocalDate.parse(dateEndStr)
-                : null;
+        // IMPORTANTE:
+        // El formulario de estudio guarda solo el campo anio.
+        // Por eso no filtramos por fecha completa, sino por rango de años.
+        java.time.LocalDate fechaInicio = null;
+        java.time.LocalDate fechaFin = null;
 
         boolean hasFormatos = format != null && !format.isEmpty();
         boolean hasEstados = estado != null && !estado.isEmpty();
@@ -58,8 +64,7 @@ public class AdminEstudiosController {
         model.addAttribute("currentSection", "admin-estudios");
         model.addAttribute("currentPage", "estudios");
 
-
-        model.addAttribute("estudios", estudioRepository.filtrarAdmin(
+        java.util.List<Estudio> lista = estudioRepository.filtrarAdmin(
                 (search != null && !search.isBlank()) ? search : null,
                 anio,
                 fechaInicio,
@@ -68,11 +73,33 @@ public class AdminEstudiosController {
                 hasFormatos ? format : java.util.List.of(),
                 hasEstados,
                 hasEstados ? estado : java.util.List.of()
-        ));
+        );
+
+        // FILTRO REAL DE LA TABLA/CARDS POR RANGO DE AÑOS
+        // Ejemplo:
+        // dateStart = 2024-05-20 -> anioInicio = 2024
+        // dateEnd   = 2026-05-18 -> anioFin = 2026
+        if (anioInicio != null || anioFin != null) {
+            lista = lista.stream()
+                    .filter(e -> e.getAnio() != null)
+                    .filter(e -> anioInicio == null || e.getAnio() >= anioInicio)
+                    .filter(e -> anioFin == null || e.getAnio() <= anioFin)
+                    .toList();
+        }
+
+        model.addAttribute("estudios", lista);
+
         model.addAttribute("search", search);
         model.addAttribute("anioSeleccionado", anio);
+
+        // Para que el modal conserve lo seleccionado al recargar
+        model.addAttribute("dateStart", dateStartStr);
+        model.addAttribute("dateEnd", dateEndStr);
         model.addAttribute("fechaInicioSeleccionada", dateStartStr);
         model.addAttribute("fechaFinSeleccionada", dateEndStr);
+        model.addAttribute("anioInicio", anioInicio);
+        model.addAttribute("anioFin", anioFin);
+
         model.addAttribute("formatosSeleccionados", format);
         model.addAttribute("estadosSeleccionados", estado);
 
@@ -184,8 +211,13 @@ public class AdminEstudiosController {
     public String normativasAdmin(
             @RequestParam(required = false) String search,
             @RequestParam(required = false, name = "yearSelect") Integer anio,
+
             @RequestParam(required = false, name = "dateStart") String dateStartStr,
             @RequestParam(required = false, name = "dateEnd") String dateEndStr,
+
+            @RequestParam(required = false) Integer anioInicio,
+            @RequestParam(required = false) Integer anioFin,
+
             @RequestParam(required = false) java.util.List<String> categoria,
             @RequestParam(required = false) java.util.List<String> estado,
             @RequestParam(required = false) java.util.List<String> acceso,
@@ -193,13 +225,8 @@ public class AdminEstudiosController {
             @RequestParam(required = false) java.util.List<String> obligatoriedad,
             Model model
     ) {
-        java.time.LocalDateTime fechaInicio = (dateStartStr != null && !dateStartStr.isBlank())
-                ? java.time.LocalDate.parse(dateStartStr).atStartOfDay()
-                : null;
-
-        java.time.LocalDateTime fechaFin = (dateEndStr != null && !dateEndStr.isBlank())
-                ? java.time.LocalDate.parse(dateEndStr).atTime(23, 59, 59)
-                : null;
+        java.time.LocalDateTime fechaInicio = null;
+        java.time.LocalDateTime fechaFin = null;
 
         boolean hasCategoria = categoria != null && !categoria.isEmpty();
         boolean hasEstado = estado != null && !estado.isEmpty();
@@ -212,14 +239,16 @@ public class AdminEstudiosController {
 
         java.util.List<Normativa> lista;
 
+        java.util.List<String> queryEstados = java.util.List.of();
+        if (hasEstado) {
+            queryEstados = estado.stream()
+                    .map(e -> e.replace(" ", "_"))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+
         if (search != null && !search.isBlank()) {
             lista = normativaRepository.findByKeyword(search);
-            model.addAttribute("normativas", lista);
         } else {
-            java.util.List<String> queryEstados = java.util.List.of();
-            if (hasEstado) {
-                queryEstados = estado.stream().map(e -> e.replace(" ", "_")).collect(java.util.stream.Collectors.toList());
-            }
             lista = normativaRepository.findWithAdvancedFilters(
                     anio != null, anio,
                     fechaInicio,
@@ -230,54 +259,69 @@ public class AdminEstudiosController {
                     hasObligatoriedad, hasObligatoriedad ? obligatoriedad : java.util.List.of(),
                     hasCategoria, hasCategoria ? categoria : java.util.List.of()
             );
-            model.addAttribute("normativas", lista);
         }
+
+        // FILTRO REAL DE TABLA POR RANGO DE AÑOS
+        if (anioInicio != null || anioFin != null) {
+            lista = lista.stream()
+                    .filter(n -> n.getAnio() != null)
+                    .filter(n -> anioInicio == null || n.getAnio() >= anioInicio)
+                    .filter(n -> anioFin == null || n.getAnio() <= anioFin)
+                    .toList();
+        }
+
+        // ESTA LISTA ES SOLO PARA LA TABLA
+        model.addAttribute("normativas", lista);
 
         model.addAttribute("searchQuery", search);
         model.addAttribute("selectedYear", anio);
         model.addAttribute("dateStart", dateStartStr);
         model.addAttribute("dateEnd", dateEndStr);
+        model.addAttribute("anioInicio", anioInicio);
+        model.addAttribute("anioFin", anioFin);
         model.addAttribute("selectedCategorias", categoria);
         model.addAttribute("selectedEstados", estado);
         model.addAttribute("selectedAccesos", acceso);
         model.addAttribute("selectedAlcances", alcance);
         model.addAttribute("selectedObligatoriedades", obligatoriedad);
 
-        // 🔥 OBTENER TODAS LAS NORMATIVAS (para dashboard) - SOLO SI NO HAY BÚSQUEDA
-        if (search == null || search.isBlank()) {
-            lista = normativaRepository.findAllNormativas();
-        }
+        // ESTA LISTA ES SOLO PARA GRÁFICAS
+        // NO SE FILTRA
+        java.util.List<Normativa> listaDashboard = normativaRepository.findAllNormativas();
 
-// TOTAL
-        long totalNormas = lista.size();
+        // TOTAL
+        long totalNormas = listaDashboard.size();
         model.addAttribute("totalNormas", totalNormas);
 
-// =====================
-// 🔵 DISTRIBUCIÓN POR TEMA
-// =====================
+        // =====================
+        // DISTRIBUCIÓN POR TEMA
+        // =====================
 
-        long countEc = lista.stream()
-                .filter(n -> n.getCategorias().stream()
-                        .anyMatch(c -> c.getNombre().equalsIgnoreCase("Economía circular")))
+        long countEc = listaDashboard.stream()
+                .filter(n -> n.getCategorias() != null && n.getCategorias().stream()
+                        .anyMatch(c -> c.getNombre() != null &&
+                                c.getNombre().equalsIgnoreCase("Economía circular")))
                 .count();
 
-        long countGr = lista.stream()
-                .filter(n -> n.getCategorias().stream()
-                        .anyMatch(c -> c.getNombre().equalsIgnoreCase("Gestión de residuos")))
+        long countGr = listaDashboard.stream()
+                .filter(n -> n.getCategorias() != null && n.getCategorias().stream()
+                        .anyMatch(c -> c.getNombre() != null &&
+                                c.getNombre().equalsIgnoreCase("Gestión de residuos")))
                 .count();
 
-        long countEe = lista.stream()
-                .filter(n -> n.getCategorias().stream()
-                        .anyMatch(c -> c.getNombre().equalsIgnoreCase("Envases y Embalajes")))
+        long countEe = listaDashboard.stream()
+                .filter(n -> n.getCategorias() != null && n.getCategorias().stream()
+                        .anyMatch(c -> c.getNombre() != null &&
+                                c.getNombre().equalsIgnoreCase("Envases y Embalajes")))
                 .count();
 
-        long countRep = lista.stream()
+        long countRep = listaDashboard.stream()
                 .filter(n -> n.getCategorias() != null && n.getCategorias().stream()
                         .anyMatch(c -> c.getNombre() != null &&
                                 c.getNombre().equalsIgnoreCase("Responsabilidad Extendida")))
                 .count();
 
-        long countOtro = lista.stream()
+        long countOtro = listaDashboard.stream()
                 .filter(n -> n.getCategorias() != null)
                 .flatMap(n -> n.getCategorias().stream())
                 .filter(c -> c.getNombre() != null)
@@ -289,26 +333,27 @@ public class AdminEstudiosController {
                 )
                 .count();
 
-        long sinCategoria = lista.stream()
+        long sinCategoria = listaDashboard.stream()
                 .filter(n -> n.getCategorias() == null || n.getCategorias().isEmpty())
                 .count();
 
         countOtro = countOtro + sinCategoria;
+
         long totalTemas = countEc + countGr + countEe + countRep + countOtro;
 
-// porcentajes
-        double pctEc = totalNormas > 0 ? (countEc * 100.0 / totalTemas) : 0;
-        double pctGr = totalNormas > 0 ? (countGr * 100.0 / totalTemas) : 0;
-        double pctEe = totalNormas > 0 ? (countEe * 100.0 / totalTemas) : 0;
-        double pctRep = totalNormas > 0 ? (countRep * 100.0 / totalTemas) : 0;
-        double pctOtro = totalNormas > 0 ? (countOtro * 100.0 / totalTemas) : 0;
+        double pctEc = totalTemas > 0 ? (countEc * 100.0 / totalTemas) : 0;
+        double pctGr = totalTemas > 0 ? (countGr * 100.0 / totalTemas) : 0;
+        double pctEe = totalTemas > 0 ? (countEe * 100.0 / totalTemas) : 0;
+        double pctRep = totalTemas > 0 ? (countRep * 100.0 / totalTemas) : 0;
+        double pctOtro = totalTemas > 0 ? (countOtro * 100.0 / totalTemas) : 0;
+
         double circ = 282.74;
 
-        double dashEc = totalNormas > 0 ? (countEc * circ / totalTemas) : 0;
-        double dashGr = totalNormas > 0 ? (countGr * circ / totalTemas) : 0;
-        double dashEe = totalNormas > 0 ? (countEe * circ / totalTemas) : 0;
-        double dashRep = totalNormas > 0 ? (countRep * circ / totalTemas) : 0;
-        double dashOtro = totalNormas > 0 ? (countOtro * circ / totalTemas) : 0;
+        double dashEc = totalTemas > 0 ? (countEc * circ / totalTemas) : 0;
+        double dashGr = totalTemas > 0 ? (countGr * circ / totalTemas) : 0;
+        double dashEe = totalTemas > 0 ? (countEe * circ / totalTemas) : 0;
+        double dashRep = totalTemas > 0 ? (countRep * circ / totalTemas) : 0;
+        double dashOtro = totalTemas > 0 ? (countOtro * circ / totalTemas) : 0;
 
         double startEc = -90;
         double startGr = startEc + (pctEc * 3.6);
@@ -328,7 +373,6 @@ public class AdminEstudiosController {
         model.addAttribute("startRep", startRep);
         model.addAttribute("startOtro", startOtro);
 
-// enviar al model
         model.addAttribute("countEc", countEc);
         model.addAttribute("countGr", countGr);
         model.addAttribute("countEe", countEe);
@@ -341,24 +385,67 @@ public class AdminEstudiosController {
         model.addAttribute("pctRep", pctRep);
         model.addAttribute("pctOtro", pctOtro);
 
-// =====================
-// 🟢 ESTADO POR ALCANCE
-// =====================
+        // =====================
+        // ESTADO POR ALCANCE
+        // =====================
 
-        long nacTotal = lista.stream().filter(n -> n.getAlcance().name().equals("NACIONAL")).count();
-        long intTotal = lista.stream().filter(n -> n.getAlcance().name().equals("INTERNACIONAL")).count();
+        long nacTotal = listaDashboard.stream()
+                .filter(n -> n.getAlcance() != null && n.getAlcance().name().equals("NACIONAL"))
+                .count();
 
-        long nacVigente = lista.stream().filter(n -> n.getAlcance().name().equals("NACIONAL") && n.getEstado().name().equals("VIGENTE")).count();
-        long nacPublicada = lista.stream().filter(n -> n.getAlcance().name().equals("NACIONAL") && n.getEstado().name().equals("PUBLICADA")).count();
-        long nacConsulta = lista.stream().filter(n -> n.getAlcance().name().equals("NACIONAL") && n.getEstado().name().equals("CONSULTA_PUBLICA")).count();
-        long nacBorrador = lista.stream().filter(n -> n.getAlcance().name().equals("NACIONAL") && n.getEstado().name().equals("BORRADOR_EN_PROCESO")).count();
-        long nacDerogada = lista.stream().filter(n -> n.getAlcance().name().equals("NACIONAL") && n.getEstado().name().equals("DEROGADA")).count();
+        long intTotal = listaDashboard.stream()
+                .filter(n -> n.getAlcance() != null && n.getAlcance().name().equals("INTERNACIONAL"))
+                .count();
 
-        long intVigente = lista.stream().filter(n -> n.getAlcance().name().equals("INTERNACIONAL") && n.getEstado().name().equals("VIGENTE")).count();
-        long intPublicada = lista.stream().filter(n -> n.getAlcance().name().equals("INTERNACIONAL") && n.getEstado().name().equals("PUBLICADA")).count();
-        long intConsulta = lista.stream().filter(n -> n.getAlcance().name().equals("INTERNACIONAL") && n.getEstado().name().equals("CONSULTA_PUBLICA")).count();
-        long intBorrador = lista.stream().filter(n -> n.getAlcance().name().equals("INTERNACIONAL") && n.getEstado().name().equals("BORRADOR_EN_PROCESO")).count();
-        long intDerogada = lista.stream().filter(n -> n.getAlcance().name().equals("INTERNACIONAL") && n.getEstado().name().equals("DEROGADA")).count();
+        long nacVigente = listaDashboard.stream()
+                .filter(n -> n.getAlcance() != null && n.getEstado() != null)
+                .filter(n -> n.getAlcance().name().equals("NACIONAL") && n.getEstado().name().equals("VIGENTE"))
+                .count();
+
+        long nacPublicada = listaDashboard.stream()
+                .filter(n -> n.getAlcance() != null && n.getEstado() != null)
+                .filter(n -> n.getAlcance().name().equals("NACIONAL") && n.getEstado().name().equals("PUBLICADA"))
+                .count();
+
+        long nacConsulta = listaDashboard.stream()
+                .filter(n -> n.getAlcance() != null && n.getEstado() != null)
+                .filter(n -> n.getAlcance().name().equals("NACIONAL") && n.getEstado().name().equals("CONSULTA_PUBLICA"))
+                .count();
+
+        long nacBorrador = listaDashboard.stream()
+                .filter(n -> n.getAlcance() != null && n.getEstado() != null)
+                .filter(n -> n.getAlcance().name().equals("NACIONAL") && n.getEstado().name().equals("BORRADOR_EN_PROCESO"))
+                .count();
+
+        long nacDerogada = listaDashboard.stream()
+                .filter(n -> n.getAlcance() != null && n.getEstado() != null)
+                .filter(n -> n.getAlcance().name().equals("NACIONAL") && n.getEstado().name().equals("DEROGADA"))
+                .count();
+
+        long intVigente = listaDashboard.stream()
+                .filter(n -> n.getAlcance() != null && n.getEstado() != null)
+                .filter(n -> n.getAlcance().name().equals("INTERNACIONAL") && n.getEstado().name().equals("VIGENTE"))
+                .count();
+
+        long intPublicada = listaDashboard.stream()
+                .filter(n -> n.getAlcance() != null && n.getEstado() != null)
+                .filter(n -> n.getAlcance().name().equals("INTERNACIONAL") && n.getEstado().name().equals("PUBLICADA"))
+                .count();
+
+        long intConsulta = listaDashboard.stream()
+                .filter(n -> n.getAlcance() != null && n.getEstado() != null)
+                .filter(n -> n.getAlcance().name().equals("INTERNACIONAL") && n.getEstado().name().equals("CONSULTA_PUBLICA"))
+                .count();
+
+        long intBorrador = listaDashboard.stream()
+                .filter(n -> n.getAlcance() != null && n.getEstado() != null)
+                .filter(n -> n.getAlcance().name().equals("INTERNACIONAL") && n.getEstado().name().equals("BORRADOR_EN_PROCESO"))
+                .count();
+
+        long intDerogada = listaDashboard.stream()
+                .filter(n -> n.getAlcance() != null && n.getEstado() != null)
+                .filter(n -> n.getAlcance().name().equals("INTERNACIONAL") && n.getEstado().name().equals("DEROGADA"))
+                .count();
 
         model.addAttribute("nacTotal", nacTotal);
         model.addAttribute("intTotal", intTotal);
@@ -375,18 +462,37 @@ public class AdminEstudiosController {
         model.addAttribute("intBorrador", intBorrador);
         model.addAttribute("intDerogada", intDerogada);
 
-// =====================
-// 🟠 ACCESO
-// =====================
+        // =====================
+        // ACCESO
+        // =====================
 
-        long gratisTotal = lista.stream().filter(n -> n.getAcceso().name().equals("GRATIS")).count();
-        long pagoTotal = lista.stream().filter(n -> n.getAcceso().name().equals("PAGO")).count();
+        long gratisTotal = listaDashboard.stream()
+                .filter(n -> n.getAcceso() != null && n.getAcceso().name().equals("GRATIS"))
+                .count();
 
-        long gratisNac = lista.stream().filter(n -> n.getAcceso().name().equals("GRATIS") && n.getAlcance().name().equals("NACIONAL")).count();
-        long gratisInt = lista.stream().filter(n -> n.getAcceso().name().equals("GRATIS") && n.getAlcance().name().equals("INTERNACIONAL")).count();
+        long pagoTotal = listaDashboard.stream()
+                .filter(n -> n.getAcceso() != null && n.getAcceso().name().equals("PAGO"))
+                .count();
 
-        long pagoNac = lista.stream().filter(n -> n.getAcceso().name().equals("PAGO") && n.getAlcance().name().equals("NACIONAL")).count();
-        long pagoInt = lista.stream().filter(n -> n.getAcceso().name().equals("PAGO") && n.getAlcance().name().equals("INTERNACIONAL")).count();
+        long gratisNac = listaDashboard.stream()
+                .filter(n -> n.getAcceso() != null && n.getAlcance() != null)
+                .filter(n -> n.getAcceso().name().equals("GRATIS") && n.getAlcance().name().equals("NACIONAL"))
+                .count();
+
+        long gratisInt = listaDashboard.stream()
+                .filter(n -> n.getAcceso() != null && n.getAlcance() != null)
+                .filter(n -> n.getAcceso().name().equals("GRATIS") && n.getAlcance().name().equals("INTERNACIONAL"))
+                .count();
+
+        long pagoNac = listaDashboard.stream()
+                .filter(n -> n.getAcceso() != null && n.getAlcance() != null)
+                .filter(n -> n.getAcceso().name().equals("PAGO") && n.getAlcance().name().equals("NACIONAL"))
+                .count();
+
+        long pagoInt = listaDashboard.stream()
+                .filter(n -> n.getAcceso() != null && n.getAlcance() != null)
+                .filter(n -> n.getAcceso().name().equals("PAGO") && n.getAlcance().name().equals("INTERNACIONAL"))
+                .count();
 
         model.addAttribute("gratisTotal", gratisTotal);
         model.addAttribute("pagoTotal", pagoTotal);
