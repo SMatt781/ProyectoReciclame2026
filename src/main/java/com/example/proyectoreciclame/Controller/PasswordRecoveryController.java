@@ -3,6 +3,8 @@ package com.example.proyectoreciclame.Controller;
 import com.example.proyectoreciclame.Dto.NuevaPasswordForm;
 import com.example.proyectoreciclame.Dto.RecuperarPasswordForm;
 import com.example.proyectoreciclame.Dto.VerificarCodigoRecuperacionForm;
+import com.example.proyectoreciclame.Entity.PoliticaContrasena;
+import com.example.proyectoreciclame.Repository.PoliticaContrasenaRepository;
 import com.example.proyectoreciclame.Service.RecuperacionPasswordService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -15,9 +17,12 @@ import org.springframework.web.bind.annotation.*;
 public class PasswordRecoveryController {
 
     private final RecuperacionPasswordService recuperacionPasswordService;
+    private final PoliticaContrasenaRepository politicaContrasenaRepository;
 
-    public PasswordRecoveryController(RecuperacionPasswordService recuperacionPasswordService) {
+    public PasswordRecoveryController(RecuperacionPasswordService recuperacionPasswordService,
+                                      PoliticaContrasenaRepository politicaContrasenaRepository) {
         this.recuperacionPasswordService = recuperacionPasswordService;
+        this.politicaContrasenaRepository = politicaContrasenaRepository;
     }
 
     @GetMapping("/recuperar")
@@ -73,6 +78,7 @@ public class PasswordRecoveryController {
         nuevaForm.setCodigo(form.getCodigo().trim());
 
         model.addAttribute("form", nuevaForm);
+        cargarPoliticaEnModelo(model);
         return "auth/NuevaContraseña";
     }
 
@@ -85,6 +91,14 @@ public class PasswordRecoveryController {
         }
 
         if (br.hasErrors()) {
+            cargarPoliticaEnModelo(model);
+            return "auth/NuevaContraseña";
+        }
+
+        String errorPolitica = validarPolitica(form.getPassword());
+        if (errorPolitica != null) {
+            model.addAttribute("error", errorPolitica);
+            cargarPoliticaEnModelo(model);
             return "auth/NuevaContraseña";
         }
 
@@ -96,9 +110,34 @@ public class PasswordRecoveryController {
 
         if (!ok) {
             model.addAttribute("error", "No se pudo actualizar la contraseña. El código puede haber expirado.");
+            cargarPoliticaEnModelo(model);
             return "auth/NuevaContraseña";
         }
 
         return "auth/NuevaContraseñaExitosa";
+    }
+
+    private void cargarPoliticaEnModelo(Model model) {
+        PoliticaContrasena p = politicaContrasenaRepository.findById(1).orElse(null);
+        model.addAttribute("pwdMinLen",    p != null && p.getLongitudMinima() != null ? p.getLongitudMinima() : 8);
+        model.addAttribute("pwdMayuscula", p == null || Boolean.TRUE.equals(p.getRequiereMayuscula()));
+        model.addAttribute("pwdNumero",    p == null || Boolean.TRUE.equals(p.getRequiereNumero()));
+        model.addAttribute("pwdSimbolo",   p == null || Boolean.TRUE.equals(p.getRequiereSimbolo()));
+    }
+
+    private String validarPolitica(String password) {
+        PoliticaContrasena p = politicaContrasenaRepository.findById(1).orElse(null);
+        if (p == null) return null;
+
+        if (p.getLongitudMinima() != null && password.length() < p.getLongitudMinima())
+            return "La contraseña debe tener mínimo " + p.getLongitudMinima() + " caracteres.";
+        if (Boolean.TRUE.equals(p.getRequiereMayuscula()) && !password.matches(".*[A-ZÁÉÍÓÚÑ].*"))
+            return "La contraseña debe tener al menos una mayúscula.";
+        if (Boolean.TRUE.equals(p.getRequiereNumero()) && !password.matches(".*\\d.*"))
+            return "La contraseña debe tener al menos un número.";
+        if (Boolean.TRUE.equals(p.getRequiereSimbolo()) && !password.matches(".*[^A-Za-zÁÉÍÓÚáéíóúÑñ0-9].*"))
+            return "La contraseña debe tener al menos un símbolo.";
+
+        return null;
     }
 }
