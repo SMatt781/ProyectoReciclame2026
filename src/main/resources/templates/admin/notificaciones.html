@@ -101,23 +101,23 @@
 
             <!-- Tabs -->
             <div class="flex flex-wrap gap-6 px-6 pt-5 pb-0 border-b border-slate-100" id="notifTabs">
-                <button data-filter="ALL"
-                        class="pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px">
+                <a th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(tipo='ALL')}"
+                   th:class="${tipoFiltro == 'ALL' or tipoFiltro == null} ? 'pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px' : 'pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px'">
                     Todas
-                </button>
-                <button data-filter="ESTUDIO"
-                        class="pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px">
+                </a>
+                <a th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(tipo='ESTUDIO')}"
+                   th:class="${tipoFiltro == 'ESTUDIO'} ? 'pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px' : 'pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px'">
                     Estudios
-                </button>
-                <button data-filter="NORMATIVA"
-                        class="pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px">
+                </a>
+                <a th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(tipo='NORMATIVA')}"
+                   th:class="${tipoFiltro == 'NORMATIVA'} ? 'pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px' : 'pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px'">
                     Normativas
-                </button>
-                <button data-filter="SOLICITUD"
-                        th:if="${sessionUser.rol == 'ADMIN'}"
-                        class="pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px">
+                </a>
+                <a th:if="${sessionUser.rol == 'ADMIN'}"
+                   th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(tipo='SOLICITUD')}"
+                   th:class="${tipoFiltro == 'SOLICITUD'} ? 'pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px' : 'pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px'">
                     Solicitudes
-                </button>
+                </a>
             </div>
 
             <!-- Cards -->
@@ -209,49 +209,77 @@
                 </div>
 
             </div>
+
+            <!-- Controles de Paginación -->
+            <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8" th:if="${totalPages > 1}">
+
+                <!-- Botón anterior -->
+                <a th:if="${hasPrevious}"
+                   th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(page=${currentPage - 1})}"
+                   class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M15 19l-7-7 7-7" />
+                    </svg>
+                </a>
+
+                <span th:if="${!hasPrevious}"
+                      class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M15 19l-7-7 7-7" />
+                    </svg>
+                </span>
+
+                <!-- Números -->
+                <div id="pageNumbers" class="flex gap-2">
+                    <span th:each="p : ${pageNumbers}">
+
+                        <!-- Puntos suspensivos -->
+                        <span th:if="${p == '...'}"
+                              class="w-10 h-10 flex items-center justify-center text-sm font-bold text-on-surface-variant">
+                            ...
+                        </span>
+
+                        <!-- Número de página -->
+                        <a th:if="${p != '...'}"
+                           th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(page=${p})}"
+                           th:text="${p + 1}"
+                           th:class="${p == currentPage} ?
+                           'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
+                           :
+                           'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container transition'">
+                        </a>
+
+                    </span>
+                </div>
+
+                <!-- Botón siguiente -->
+                <a th:if="${hasNext}"
+                   th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(page=${currentPage + 1})}"
+                   class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+
+                <span th:if="${!hasNext}"
+                      class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant opacity-40 cursor-not-allowed">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 5l7 7-7 7" />
+                    </svg>
+                </span>
+
+            </div>
+
         </div>
 
     </main>
 </div>
 
 <script>
-    (function () {
-        const tabs  = document.querySelectorAll('#notifTabs button[data-filter]');
-        const cards = document.querySelectorAll('[data-tipo]');
-        const emptyFilter = document.getElementById('emptyFilter');
-
-        function setActive(tab) {
-            tabs.forEach(t => {
-                t.classList.remove('text-secondary', 'font-bold', 'border-b-2', 'border-secondary');
-                t.classList.add('text-on-surface-variant', 'font-semibold');
-            });
-            tab.classList.add('text-secondary', 'font-bold', 'border-b-2', 'border-secondary');
-            tab.classList.remove('text-on-surface-variant', 'font-semibold');
-        }
-
-        function applyFilter(filter) {
-            let visible = 0;
-            cards.forEach(card => {
-                const tipo = (card.getAttribute('data-tipo') || '').toUpperCase();
-                const match = filter === 'ALL' || tipo.startsWith(filter);
-                card.classList.toggle('hidden', !match);
-                if (match) visible++;
-            });
-            if (emptyFilter) {
-                emptyFilter.classList.toggle('hidden', visible > 0);
-            }
-        }
-
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                setActive(tab);
-                applyFilter(tab.getAttribute('data-filter') || 'ALL');
-            });
-        });
-
-        applyFilter('ALL');
-    })();
-
     document.addEventListener('DOMContentLoaded', function() {
         const flashes = document.querySelectorAll('[data-flash-success], [data-flash-error], .flash-message');
         flashes.forEach(function(el) {

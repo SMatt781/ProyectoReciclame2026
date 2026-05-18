@@ -104,7 +104,7 @@ CREATE TABLE usuarios (
     apellido_paterno   VARCHAR(100)    NOT NULL,
     apellido_materno   VARCHAR(100)    NULL,
 
-    dni                CHAR(8)         NOT NULL,
+    dni                CHAR(8)         NULL,
     correo             VARCHAR(150)    NOT NULL,
     telefono           VARCHAR(20)     NULL,
     contrasena_hash    VARCHAR(255)    NOT NULL COMMENT 'Hash bcrypt',
@@ -122,7 +122,6 @@ CREATE TABLE usuarios (
     eliminado_en       DATETIME        NULL COMMENT 'Soft delete',
 
     PRIMARY KEY (id_usuario),
-    UNIQUE KEY uq_usuarios_dni    (dni),
     UNIQUE KEY uq_usuarios_correo (correo),
 
     CONSTRAINT fk_usuarios_rol
@@ -140,7 +139,7 @@ COMMENT='Tabla central de usuarios del sistema.';
 CREATE TABLE usuario_empresa (
     id_usuario_empresa BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_usuario         BIGINT UNSIGNED NOT NULL,
-    ruc                CHAR(11)        NOT NULL,
+    ruc                CHAR(11)        NULL,
     razon_social       VARCHAR(200)    NOT NULL,
     cargo              VARCHAR(100)    NULL,
 
@@ -165,7 +164,7 @@ CREATE TABLE solicitud_registro (
     nombres           VARCHAR(100)    NOT NULL,
     apellido_paterno  VARCHAR(100)    NOT NULL,
     apellido_materno  VARCHAR(100)    NULL,
-    dni               CHAR(8)         NOT NULL,
+    dni               CHAR(8)         NULL,
     correo            VARCHAR(150)    NOT NULL,
     telefono          VARCHAR(20)     NULL,
     ruc               CHAR(11)        NULL,
