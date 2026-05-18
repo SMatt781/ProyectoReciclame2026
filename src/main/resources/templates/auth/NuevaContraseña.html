@@ -100,10 +100,7 @@
                             placeholder="••••••••"
                             required
                             type="password"
-                            data-min-length="8"
-                            data-require-upper="true"
-                            data-require-number="true"
-                            data-require-symbol="true"
+                            th:attr="data-min-length=${pwdMinLen},data-require-upper=${pwdMayuscula},data-require-number=${pwdNumero},data-require-symbol=${pwdSimbolo}"
                             oninput="evaluarPassword(this.value, 'Recuperar')"
                     />
                     <button type="button" class="absolute right-4 text-on-surface-variant hover:text-on-surface transition-colors" onclick="togglePassword('passwordRecuperar')">
@@ -158,16 +155,20 @@
 
                 <!-- Requisitos de seguridad -->
                 <ul class="text-[10px] text-on-surface-variant space-y-0.5">
-                    <li id="ruleRecuperarLength" class="text-on-surface-variant">
+                    <li id="ruleRecuperarLength" class="text-on-surface-variant"
+                        th:text="'• Mínimo ' + ${pwdMinLen} + ' caracteres'">
                         • Mínimo 8 caracteres
                     </li>
-                    <li id="ruleRecuperarUpper" class="text-on-surface-variant">
+                    <li id="ruleRecuperarUpper" class="text-on-surface-variant"
+                        th:if="${pwdMayuscula}">
                         • Al menos una mayúscula
                     </li>
-                    <li id="ruleRecuperarNumber" class="text-on-surface-variant">
+                    <li id="ruleRecuperarNumber" class="text-on-surface-variant"
+                        th:if="${pwdNumero}">
                         • Al menos un número
                     </li>
-                    <li id="ruleRecuperarSymbol" class="text-on-surface-variant">
+                    <li id="ruleRecuperarSymbol" class="text-on-surface-variant"
+                        th:if="${pwdSimbolo}">
                         • Al menos un símbolo
                     </li>
                 </ul>
