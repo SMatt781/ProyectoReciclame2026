@@ -2,6 +2,8 @@ package com.example.proyectoreciclame.Repository;
 
 import com.example.proyectoreciclame.Entity.Notificacion;
 import com.example.proyectoreciclame.Entity.Usuario;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,6 +26,12 @@ public interface NotificacionRepository extends JpaRepository<Notificacion, Long
 
     @Query("SELECT n FROM Notificacion n WHERE n.usuario.idUsuario = :idUsuario ORDER BY n.fecha DESC")
     List<Notificacion> findByUsuarioIdOrderByFechaDesc(@Param("idUsuario") Long idUsuario);
+
+    @Query("SELECT n FROM Notificacion n WHERE n.usuario.idUsuario = :idUsuario ORDER BY n.fecha DESC")
+    Page<Notificacion> findByUsuarioIdPaginado(@Param("idUsuario") Long idUsuario, Pageable pageable);
+
+    @Query("SELECT n FROM Notificacion n WHERE n.usuario.idUsuario = :idUsuario AND UPPER(n.tipo) LIKE CONCAT(UPPER(:tipo), '%') ORDER BY n.fecha DESC")
+    Page<Notificacion> findByUsuarioIdAndTipoPaginado(@Param("idUsuario") Long idUsuario, @Param("tipo") String tipo, Pageable pageable);
 
     @Query("SELECT COUNT(n) FROM Notificacion n WHERE n.usuario.idUsuario = :idUsuario AND n.leido = false")
     long countNoLeidasByUsuario(@Param("idUsuario") Long idUsuario);
