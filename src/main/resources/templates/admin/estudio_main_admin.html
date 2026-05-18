@@ -172,8 +172,8 @@
                 </div> -->
             </div>
 
-        <!-- Search Bar and Filter Button -->
-        <!-- <div class="mb-8 flex flex-col sm:flex-row gap-4 w-full">
+            <!-- Search Bar and Filter Button -->
+            <!-- <div class="mb-8 flex flex-col sm:flex-row gap-4 w-full">
             <div class="flex-1 focus-within:ring-2 focus-within:ring-[#2ECC71]/30 rounded-xl transition-shadow">
                 <div
                     class="relative flex items-center w-full h-12 rounded-xl bg-surface-container-lowest border border-outline-variant/30 overflow-hidden group ambient-shadow">
@@ -208,126 +208,125 @@
             </div>
         </div> -->
 
-        <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
-            <!-- Search Bar -->
-            <form action="/admin/estudios"  method="GET" class="flex flex-col sm:flex-row gap-4 mb-6 w-full flex-wrap">
-                <div class="flex-1 relative">
-                    <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
-                         viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    <input type="text" name="search" th:value="${search}" placeholder="Buscar en el repositorio..."
-                           class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
-                </div>
-                <a href="/admin/estudios"
-                   class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
-                   title="Limpiar filtros">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                    <span class="text-sm font-medium">Limpiar</span>
-                </a>
-                <button type="button" id="openFiltersModal"
+            <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
+                <!-- Search Bar -->
+                <form action="/admin/estudios" method="GET"
+                    class="flex flex-col sm:flex-row gap-4 mb-6 w-full flex-wrap">
+                    <div class="flex-1 relative">
+                        <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input type="text" name="search" th:value="${search}" placeholder="Buscar en el repositorio..."
+                            class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
+                    </div>
+                    <a href="/admin/estudios"
+                        class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
+                        title="Limpiar filtros">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <span class="text-sm font-medium">Limpiar</span>
+                    </a>
+                    <button type="button" id="openFiltersModal"
                         class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                    <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
-                    <span class="text-sm font-medium">Filtros avanzados</span>
-                </button>
-                <button type="button" id="toggleViewBtn"
+                        <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
+                        <span class="text-sm font-medium">Filtros avanzados</span>
+                    </button>
+                    <button type="button" id="toggleViewBtn"
                         class="h-12 w-12 flex items-center justify-center bg-white text-slate-700 rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors"
                         title="Cambiar vista">
-                    <svg id="icon-list" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                    <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
-                         viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                    </svg>
-                </button>
-                <button type="button"
-                        onclick="window.location.href='/admin/estudios/exportar'"
+                        <svg id="icon-list" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                        </svg>
+                    </button>
+                    <button type="button" onclick="window.location.href='/admin/estudios/exportar'"
                         class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                    <div th:replace="~{fragments/icons.html :: icon-exportar-excel}"></div>
-                    Exportar
-                </button>
+                        <div th:replace="~{fragments/icons.html :: icon-exportar-excel}"></div>
+                        Exportar
+                    </button>
 
-            </form>
-
-
+                </form>
 
 
-            <!-- Mensaje No hay documentos -->
-            <div th:if="${#lists.isEmpty(estudios)}" class="text-center py-10">
-                <p class="text-lg font-bold text-on-surface-variant">No hay documentos disponibles</p>
-            </div>
 
-            <!-- Cards Grid -->
-            <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                 th:if="${not #lists.isEmpty(estudios)}">
-                <!-- Card 1: Dynamic -->
-                <article th:each="estudio, stat : ${estudios}"
-                         class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden"
-                         th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'bg-opacity-80' : ''}">
-                    <div th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'bg-gradient-to-r from-secondary to-secondary-container' : (estudio.estado.name() == 'BORRADOR' ? 'bg-gradient-to-r from-outline to-surface-variant' : 'bg-gradient-to-r from-error to-error-container')}"
-                         class="absolute top-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    </div>
-                    <div class="flex justify-between items-start mb-5"
-                         th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'opacity-70' : ''}">
-                        <div class="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm"
-                             th:classappend="${estudio.formato.name() == 'PDF' ? 'bg-error-container text-on-error-container' :
+
+                <!-- Mensaje No hay documentos -->
+                <div th:if="${#lists.isEmpty(estudios)}" class="text-center py-10">
+                    <p class="text-lg font-bold text-on-surface-variant">No hay documentos disponibles</p>
+                </div>
+
+                <!-- Cards Grid -->
+                <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    th:if="${not #lists.isEmpty(estudios)}">
+                    <!-- Card 1: Dynamic -->
+                    <article th:each="estudio, stat : ${estudios}"
+                        class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden"
+                        th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'bg-opacity-80' : ''}">
+                        <div th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'bg-gradient-to-r from-secondary to-secondary-container' : (estudio.estado.name() == 'BORRADOR' ? 'bg-gradient-to-r from-outline to-surface-variant' : 'bg-gradient-to-r from-error to-error-container')}"
+                            class="absolute top-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        </div>
+                        <div class="flex justify-between items-start mb-5"
+                            th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'opacity-70' : ''}">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm" th:classappend="${estudio.formato.name() == 'PDF' ? 'bg-error-container text-on-error-container' :
                                                     (estudio.formato.name() == 'PPTX' ? 'bg-orange-100 text-orange-600' :
                                                     (estudio.formato.name() == 'XLSX' ? 'bg-emerald-100 text-emerald-700' :
                                                     'bg-surface-container-high text-outline'))}">
-                            <th:block th:switch="${estudio.formato.name()}">
-                                <th:block th:case="'PDF'">
-                                    <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
+                                <th:block th:switch="${estudio.formato.name()}">
+                                    <th:block th:case="'PDF'">
+                                        <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
+                                    </th:block>
+                                    <th:block th:case="'PPTX'">
+                                        <div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div>
+                                    </th:block>
+                                    <th:block th:case="'XLSX'">
+                                        <div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div>
+                                    </th:block>
+                                    <th:block th:case="*">
+                                        <div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div>
+                                    </th:block>
                                 </th:block>
-                                <th:block th:case="'PPTX'">
-                                    <div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div>
-                                </th:block>
-                                <th:block th:case="'XLSX'">
-                                    <div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div>
-                                </th:block>
-                                <th:block th:case="*">
-                                    <div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div>
-                                </th:block>
-                            </th:block>
-                        </div>
-                        <div
+                            </div>
+                            <div
                                 class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
-                            <span th:text="${estudio.anio}">2024</span>
-                            <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                            <span th:text="${estudio.formato.name()}">PDF</span>
+                                <span th:text="${estudio.anio}">2024</span>
+                                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                                <span th:text="${estudio.formato.name()}">PDF</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex-1" th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'opacity-70' : ''}">
-                        <h4 th:text="${estudio.titulo}"
-                            th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}"
-                            class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
-                            Análisis de Ciclo de Vida de Envases PET en Perú</h4>
-                        <p th:text="${estudio.descripcion}"
-                           class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
-                            Estudio exhaustivo...</p>
-                    </div>
-                    <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
+                        <div class="flex-1" th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'opacity-70' : ''}">
+                            <h4 th:text="${estudio.titulo}"
+                                th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}"
+                                class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
+                                Análisis de Ciclo de Vida de Envases PET en Perú</h4>
+                            <p th:text="${estudio.descripcion}"
+                                class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
+                                Estudio exhaustivo...</p>
+                        </div>
+                        <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
 
-                        <!-- Estado -->
-                        <div class="flex items-center gap-1.5"
-                             th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'text-secondary' : (estudio.estado.name() == 'BORRADOR' ? 'text-outline' : 'text-error')}">
-                            <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                <path th:if="${estudio.estado.name() == 'VIGENTE'}"
-                                      d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
-                                <path th:if="${estudio.estado.name() == 'BORRADOR'}"
-                                      d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
-                                <path th:if="${estudio.estado.name() == 'DEROGADO'}"
-                                      d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
-                            </svg>
-                            <span th:text="${estudio.estado.name()}"
-                                  class="font-label text-xs font-bold uppercase tracking-wide"></span>
-                        </div>
+                            <!-- Estado -->
+                            <div class="flex items-center gap-1.5"
+                                th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'text-secondary' : (estudio.estado.name() == 'BORRADOR' ? 'text-outline' : 'text-error')}">
+                                <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                    <path th:if="${estudio.estado.name() == 'VIGENTE'}"
+                                        d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                    <path th:if="${estudio.estado.name() == 'BORRADOR'}"
+                                        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                    <path th:if="${estudio.estado.name() == 'DEROGADO'}"
+                                        d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                </svg>
+                                <span th:text="${estudio.estado.name()}"
+                                    class="font-label text-xs font-bold uppercase tracking-wide"></span>
+                            </div>
 
 
 
@@ -441,8 +440,8 @@
                hover:bg-green-100 hover:text-green-700
                border border-transparent hover:border-green-200
                transition-colors">
-                            Editar
-                        </button>
+                                Editar
+                            </button>
 
                             <!-- Eliminar -->
                             <a th:href="@{/admin/estudios/eliminar/{id}(id=${estudio.idEstudio})}" class="flex items-center gap-1.5 px-3 py-1.5
@@ -451,8 +450,8 @@
               hover:bg-red-100 hover:text-red-700
               border border-transparent hover:border-red-200
               transition-colors">
-                            Eliminar
-                        </a>
+                                Eliminar
+                            </a>
 
                             <!-- Ver -->
                             <a th:href="@{/admin/estudios/{id}(id=${estudio.idEstudio})}"
@@ -464,9 +463,9 @@
                                 </svg>
                             </a>
 
+                        </div>
                     </div>
                 </div>
-            </div>
 
                 <!-- Controles de Paginación -->
                 <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8 hidden"
@@ -485,29 +484,27 @@
                         </svg>
                     </button>
                 </div>
-            <!-- Controles de Paginación -->
-            <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8 hidden"
-                 th:if="${not #lists.isEmpty(estudios)}">
-                <button id="prevPageBtn"
+                <!-- Controles de Paginación -->
+                <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8 hidden"
+                    th:if="${not #lists.isEmpty(estudios)}">
+                    <button id="prevPageBtn"
                         class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M15 19l-7-7 7-7" />
-                    </svg>
-                </button>
-                <div id="pageNumbers" class="flex gap-2"></div>
-                <button id="nextPageBtn"
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <div id="pageNumbers" class="flex gap-2"></div>
+                    <button id="nextPageBtn"
                         class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+
+
+
             </div>
-
-
-
-        </div>
 
 
     </div>
@@ -529,28 +526,28 @@
 
             <h2 class="text-2xl font-headline font-bold text-on-primary-fixed mb-6">Filtros Avanzados</h2>
 
-        <form id="filtersForm" action="/admin/estudios" method="GET" class="space-y-6" novalidate>
-            <!-- Campos ocultos: el usuario elige fechas, pero el backend filtra por anio -->
-            <input type="hidden" id="anioInicio" name="anioInicio">
-            <input type="hidden" id="anioFin" name="anioFin">
-            <!-- Fecha -->
-            <section>
-                <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Fecha</h3>
-                <div class="space-y-4">
-                    <div class="flex gap-4">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="dateType" value="year"
-                                   th:checked="${(dateStart == null or #strings.isEmpty(dateStart)) and (dateEnd == null or #strings.isEmpty(dateEnd))}"
-                                   class="text-secondary focus:ring-secondary form-radio">
-                            <span class="text-sm font-semibold">Año</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="dateType" value="range"
-                                   th:checked="${(dateStart != null and !#strings.isEmpty(dateStart)) or (dateEnd != null and !#strings.isEmpty(dateEnd))}"
-                                   class="text-secondary focus:ring-secondary form-radio">
-                            <span class="text-sm font-semibold">Rango de fechas</span>
-                        </label>
-                    </div>
+            <form id="filtersForm" action="/admin/estudios" method="GET" class="space-y-6" novalidate>
+                <!-- Campos ocultos: el usuario elige fechas, pero el backend filtra por anio -->
+                <input type="hidden" id="anioInicio" name="anioInicio">
+                <input type="hidden" id="anioFin" name="anioFin">
+                <!-- Fecha -->
+                <section>
+                    <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Fecha</h3>
+                    <div class="space-y-4">
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="dateType" value="year"
+                                    th:checked="${(dateStart == null or #strings.isEmpty(dateStart)) and (dateEnd == null or #strings.isEmpty(dateEnd))}"
+                                    class="text-secondary focus:ring-secondary form-radio">
+                                <span class="text-sm font-semibold">Año</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="dateType" value="range"
+                                    th:checked="${(dateStart != null and !#strings.isEmpty(dateStart)) or (dateEnd != null and !#strings.isEmpty(dateEnd))}"
+                                    class="text-secondary focus:ring-secondary form-radio">
+                                <span class="text-sm font-semibold">Rango de fechas</span>
+                            </label>
+                        </div>
 
                         <!-- Año Select -->
                         <div id="yearContainer"
@@ -618,18 +615,7 @@
                                 class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
                             <span class="text-sm font-body">PPTX</span>
                         </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="format" value="DOC"
-                                th:checked="${formatosSeleccionados != null and formatosSeleccionados.contains('DOC')}"
-                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
-                            <span class="text-sm font-body">DOCX</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="format" value="XLSX"
-                                th:checked="${formatosSeleccionados != null and formatosSeleccionados.contains('XLSX')}"
-                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
-                            <span class="text-sm font-body">.XLSX</span>
-                        </label>
+
                     </div>
                 </section>
 
@@ -762,19 +748,19 @@
                 });
             });
 
-        // Validation
-        const dateStart = document.getElementById('dateStart');
-        const dateEnd = document.getElementById('dateEnd');
-        const filtersForm = document.getElementById('filtersForm');
-        const anioInicioInput = document.getElementById('anioInicio');
-        const anioFinInput = document.getElementById('anioFin');
+            // Validation
+            const dateStart = document.getElementById('dateStart');
+            const dateEnd = document.getElementById('dateEnd');
+            const filtersForm = document.getElementById('filtersForm');
+            const anioInicioInput = document.getElementById('anioInicio');
+            const anioFinInput = document.getElementById('anioFin');
 
             const today = new Date().toISOString().split('T')[0];
 
-        function validateDateRange() {
-            dateError.classList.add('hidden');
+            function validateDateRange() {
+                dateError.classList.add('hidden');
 
-            if (!dateStart || !dateEnd) return true;
+                if (!dateStart || !dateEnd) return true;
 
                 const startValue = dateStart.value;
                 const endValue = dateEnd.value;
@@ -809,46 +795,46 @@
                 const checkedDateType = document.querySelector('input[name="dateType"]:checked');
                 const isRange = checkedDateType && checkedDateType.value === 'range';
 
-            // Limpieza inicial para que no se mezclen filtros de año y rango
-            if (anioInicioInput) anioInicioInput.value = '';
-            if (anioFinInput) anioFinInput.value = '';
+                // Limpieza inicial para que no se mezclen filtros de año y rango
+                if (anioInicioInput) anioInicioInput.value = '';
+                if (anioFinInput) anioFinInput.value = '';
 
-            if (isRange) {
-                // El usuario ve fechas, pero el backend solo necesita años.
-                yearSelect.name = '';
-                dateStart.name = '';
-                dateEnd.name = '';
+                if (isRange) {
+                    // El usuario ve fechas, pero el backend solo necesita años.
+                    yearSelect.name = '';
+                    dateStart.name = '';
+                    dateEnd.name = '';
 
                     if (!validateDateRange()) {
                         e.preventDefault();
                         return;
                     }
 
-                const startYear = dateStart.value ? new Date(dateStart.value).getFullYear() : '';
-                const endYear = dateEnd.value ? new Date(dateEnd.value).getFullYear() : '';
+                    const startYear = dateStart.value ? new Date(dateStart.value).getFullYear() : '';
+                    const endYear = dateEnd.value ? new Date(dateEnd.value).getFullYear() : '';
 
-                if (anioInicioInput) anioInicioInput.value = startYear;
-                if (anioFinInput) anioFinInput.value = endYear;
+                    if (anioInicioInput) anioInicioInput.value = startYear;
+                    if (anioFinInput) anioFinInput.value = endYear;
 
-                if (!startYear && !endYear) {
-                    if (checkedDateType) checkedDateType.name = '';
+                    if (!startYear && !endYear) {
+                        if (checkedDateType) checkedDateType.name = '';
+                        if (anioInicioInput) anioInicioInput.name = '';
+                        if (anioFinInput) anioFinInput.name = '';
+                    }
+                } else {
+                    // Si filtra por año específico, no enviamos rango.
+                    dateStart.name = '';
+                    dateEnd.name = '';
+
                     if (anioInicioInput) anioInicioInput.name = '';
                     if (anioFinInput) anioFinInput.name = '';
-                }
-            } else {
-                // Si filtra por año específico, no enviamos rango.
-                dateStart.name = '';
-                dateEnd.name = '';
 
-                if (anioInicioInput) anioInicioInput.name = '';
-                if (anioFinInput) anioFinInput.name = '';
-
-                if (!yearSelect.value) {
-                    if (checkedDateType) checkedDateType.name = '';
-                    yearSelect.name = '';
+                    if (!yearSelect.value) {
+                        if (checkedDateType) checkedDateType.name = '';
+                        yearSelect.name = '';
+                    }
                 }
-            }
-        });
+            });
 
             // Toggle View & Pagination Logic
             const toggleViewBtn = document.getElementById('toggleViewBtn');
