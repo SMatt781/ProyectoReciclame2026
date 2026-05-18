@@ -180,136 +180,70 @@
                     </div>
 
                     <!-- Viewer Canvas -->
-                    <div class="flex-1 bg-surface-container flex flex-col p-4 sm:p-8 overflow-hidden relative"
+                    <input type="hidden" id="estudioFormato" th:value="${estudio.formato.name()}" />
+                    <div class="flex-1 bg-surface-container overflow-hidden relative"
                         id="viewer-container">
-                        <div
-                            class="w-full h-full bg-surface-container-lowest shadow-sm rounded-sm relative overflow-hidden flex flex-col min-h-[500px]">
-                            <!-- PDF Canvas Container -->
-                            <div th:if="${estudio.archivoUrl != null}"
-                                id="pdfCanvasContainer"
-                                class="flex-1 overflow-auto bg-[#efefef] flex items-start justify-center p-4 select-none">
-                                <div id="pdfLoading" class="flex flex-col items-center justify-center py-16 text-on-surface-variant">
-                                    <div class="w-8 h-8 border-2 border-secondary border-t-transparent rounded-full animate-spin mb-3"></div>
-                                    <span class="text-sm font-body">Cargando documento...</span>
-                                </div>
-                            </div>
-                            <!-- Page Navigation + Zoom Bar -->
-                            <div id="pdfNavBar" class="hidden items-center justify-between px-3 py-2 border-t border-surface-container/50 bg-surface-container-lowest flex-shrink-0 gap-2">
-                                <button id="prevPage" class="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-                                    Anterior
-                                </button>
-                                <div class="flex items-center gap-2">
-                                    <button id="zoomOut" title="Alejar" class="w-7 h-7 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-bold text-base leading-none">−</button>
-                                    <span id="pageInfo" class="font-body text-xs text-on-surface-variant font-medium whitespace-nowrap min-w-[90px] text-center">Pág. 1 / 1</span>
-                                    <button id="zoomIn" title="Acercar" class="w-7 h-7 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-bold text-base leading-none">+</button>
-                                </div>
-                                <button id="nextPage" class="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
-                                    Siguiente
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-                                </button>
-                            </div>
+                        <!-- PDF iframe viewer -->
+                        <th:block th:if="${estudio.archivoUrl != null and estudio.formato.name() != 'PPTX'}">
+                            <iframe id="pdfViewer" class="w-full h-full border-0" allowfullscreen></iframe>
+                        </th:block>
+                        <!-- PPTX FORMAT: Maintenance view -->
+                        <div th:if="${estudio.formato.name() == 'PPTX'}" class="w-full h-full flex flex-col items-center justify-center text-center p-6 bg-surface-container select-none overflow-y-auto">
+                            <span class="px-4 py-1.5 bg-[#e2f0d9] text-[#006d37] border border-[#006d37]/20 rounded-full font-label text-xs font-bold uppercase tracking-wider mb-4 animate-pulse">
+                                Optimizando Experiencia
+                            </span>
+                            <img src="/images/maintenance.png" alt="Mantenimiento" class="w-64 max-w-full h-auto mb-4 drop-shadow-lg transform hover:scale-105 transition-transform duration-300" />
+                            <h2 class="font-headline font-bold text-2xl text-on-primary-fixed mb-2 max-w-md leading-snug">¡Ups! Nos atrapaste en mantenimiento</h2>
+                            <p class="font-body text-sm text-on-surface-variant max-w-sm leading-relaxed mb-6">
+                                Estamos haciendo algunos mantenimientos para esta vista de diapositivas. Cuando esté lista, te lo notificaremos de inmediato.
+                            </p>
+                            <a th:href="@{/visualizador/estudios}" class="bg-[#006d37] hover:bg-[#00522a] text-white font-headline font-bold text-xs px-6 py-3 rounded-full transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+                                Volver a Estudios
+                            </a>
+                        </div>
 
-                            <div th:if="${estudio.archivoUrl == null}"
-                                class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
-                                <svg class="icon-xl opacity-50 mb-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
-                                </svg>
-                                <span>No hay documento disponible</span>
-                            </div>
+                        <div th:if="${estudio.archivoUrl == null}"
+                            class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
+                            <svg class="icon-xl opacity-50 mb-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                            </svg>
+                            <span>No hay documento disponible</span>
+                        </div>
 
-                            <!-- Watermark Overlay -->
-                            <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]"
-                                style="z-index: 50;">
-                                <div
-                                    class="transform -rotate-45 text-4xl sm:text-5xl font-bold text-gray-800 whitespace-nowrap p-10 flex flex-col gap-24 text-center">
-                                    <span
-                                        th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
-                                        - CONFIDENCIAL</span>
-                                    <span
-                                        th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
-                                        - CONFIDENCIAL</span>
-                                    <span
-                                        th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
-                                        - CONFIDENCIAL</span>
-                                </div>
+                        <!-- Watermark Overlay -->
+                        <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]"
+                            style="z-index: 50;">
+                            <div
+                                class="transform -rotate-45 text-4xl sm:text-5xl font-bold text-gray-800 whitespace-nowrap p-10 flex flex-col gap-24 text-center">
+                                <span
+                                    th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
+                                    - CONFIDENCIAL</span>
+                                <span
+                                    th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
+                                    - CONFIDENCIAL</span>
+                                <span
+                                    th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
+                                    - CONFIDENCIAL</span>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- PDF.js Viewer Script -->
+                <!-- Viewer Script -->
                 <script>
                     document.addEventListener('DOMContentLoaded', async function () {
-                        const canvasContainer = document.getElementById('pdfCanvasContainer');
+                        const formato = document.getElementById('estudioFormato').value;
                         const viewerContainer = document.getElementById('viewer-container');
+                        const estudioId = window.location.pathname.split('/').pop();
 
-                        if (canvasContainer) {
-                            const estudioId = window.location.pathname.split('/').pop();
-                            pdfjsLib.GlobalWorkerOptions.workerSrc =
-                                'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-                            let pdfDoc = null;
-                            let currentPage = 1;
-                            let zoomLevel = 1.0;
-                            const ZOOM_STEP = 0.25;
-                            const ZOOM_MIN = 0.5;
-                            const ZOOM_MAX = 3.0;
-
-                            async function renderPage(num) {
-                                const page = await pdfDoc.getPage(num);
-                                const containerWidth = canvasContainer.clientWidth - 32;
-                                const baseViewport = page.getViewport({ scale: 1 });
-                                const scale = (containerWidth / baseViewport.width) * zoomLevel;
-                                const viewport = page.getViewport({ scale });
-
-                                let canvas = canvasContainer.querySelector('canvas');
-                                if (!canvas) {
-                                    canvas = document.createElement('canvas');
-                                    canvas.style.borderRadius = '2px';
-                                    canvas.style.boxShadow = '0 1px 4px rgba(0,0,0,0.18)';
-                                    canvasContainer.appendChild(canvas);
-                                }
-                                canvas.height = viewport.height;
-                                canvas.width = viewport.width;
-                                await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-
-                                document.getElementById('pageInfo').textContent = 'Pág. ' + num + ' / ' + pdfDoc.numPages;
-                                document.getElementById('prevPage').disabled = num <= 1;
-                                document.getElementById('nextPage').disabled = num >= pdfDoc.numPages;
-                                document.getElementById('zoomOut').disabled = zoomLevel <= ZOOM_MIN;
-                                document.getElementById('zoomIn').disabled = zoomLevel >= ZOOM_MAX;
-                                canvasContainer.scrollTop = 0;
+                        if (formato !== 'PPTX') {
+                            const iframeEl = document.getElementById('pdfViewer');
+                            if (iframeEl) {
+                                const resp = await fetch('/documentos/estudio/' + estudioId + '/presigned-url');
+                                const data = await resp.json();
+                                iframeEl.src = data.url + '#toolbar=0&navpanes=0&scrollbar=0';
                             }
-
-                            try {
-                                pdfDoc = await pdfjsLib.getDocument('/documentos/estudio/' + estudioId + '/stream').promise;
-                                const loadingEl = document.getElementById('pdfLoading');
-                                if (loadingEl) loadingEl.remove();
-                                await renderPage(currentPage);
-                                const navBar = document.getElementById('pdfNavBar');
-                                if (navBar) { navBar.classList.remove('hidden'); navBar.classList.add('flex'); }
-                            } catch (err) {
-                                console.error('Error cargando PDF:', err);
-                                canvasContainer.innerHTML =
-                                    '<div class="flex flex-col items-center justify-center py-16 text-on-surface-variant gap-2">' +
-                                    '<svg class="w-12 h-12 opacity-40" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>' +
-                                    '<span class="text-sm">No se pudo cargar el documento</span></div>';
-                            }
-
-                            document.getElementById('prevPage').addEventListener('click', async function () {
-                                if (pdfDoc && currentPage > 1) { currentPage--; await renderPage(currentPage); }
-                            });
-                            document.getElementById('nextPage').addEventListener('click', async function () {
-                                if (pdfDoc && currentPage < pdfDoc.numPages) { currentPage++; await renderPage(currentPage); }
-                            });
-                            document.getElementById('zoomIn').addEventListener('click', async function () {
-                                if (pdfDoc && zoomLevel < ZOOM_MAX) { zoomLevel = Math.min(ZOOM_MAX, +(zoomLevel + ZOOM_STEP).toFixed(2)); await renderPage(currentPage); }
-                            });
-                            document.getElementById('zoomOut').addEventListener('click', async function () {
-                                if (pdfDoc && zoomLevel > ZOOM_MIN) { zoomLevel = Math.max(ZOOM_MIN, +(zoomLevel - ZOOM_STEP).toFixed(2)); await renderPage(currentPage); }
-                            });
                         }
 
                         document.addEventListener('contextmenu', event => event.preventDefault());

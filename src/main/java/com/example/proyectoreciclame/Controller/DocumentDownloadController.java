@@ -6,6 +6,7 @@ import com.example.proyectoreciclame.Entity.Usuario;
 import com.example.proyectoreciclame.Repository.EstudioRepository;
 import com.example.proyectoreciclame.Repository.NormativaRepository;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
+import com.example.proyectoreciclame.Service.DocumentConverterService;
 import com.example.proyectoreciclame.Service.S3StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,6 +43,9 @@ public class DocumentDownloadController {
     @Autowired
     private S3StorageService s3StorageService;
 
+    @Autowired
+    private DocumentConverterService documentConverterService;
+
     /**
      * GET /documentos/estudio/{id}/stream
      * Descarga el archivo desde S3 y lo sirve inline con Content-Type correcto.
@@ -64,15 +68,27 @@ public class DocumentDownloadController {
 
         try {
             String clave = estudio.getArchivoUrl().replace("/uploads/estudios/", "estudios/");
-            byte[] data = s3StorageService.downloadFile(clave);
-            String filename = estudio.getArchivoNombre() != null ? estudio.getArchivoNombre() : "documento.pdf";
+            byte[] fileData = s3StorageService.downloadFile(clave);
+
+            byte[] pdfData;
+            String filename;
+            if (estudio.getFormato() == Estudio.FormatoEstudio.PPTX) {
+                pdfData = documentConverterService.convertPptxToPdf(fileData);
+                String base = estudio.getArchivoNombre() != null
+                        ? estudio.getArchivoNombre().replaceAll("\\.[^.]+$", "")
+                        : "presentacion";
+                filename = base + ".pdf";
+            } else {
+                pdfData = fileData;
+                filename = estudio.getArchivoNombre() != null ? estudio.getArchivoNombre() : "documento.pdf";
+            }
 
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "inline; filename=\"" + filename + "\"");
             response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
             response.setHeader("X-Content-Type-Options", "nosniff");
-            response.setContentLength(data.length);
-            response.getOutputStream().write(data);
+            response.setContentLength(pdfData.length);
+            response.getOutputStream().write(pdfData);
             response.getOutputStream().flush();
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -131,6 +147,127 @@ public class DocumentDownloadController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error al generar URL: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * GET /documentos/estudio/{id}/download
+     * Redirige al navegador a una presigned URL con Content-Disposition: attachment.
+     * El navegador muestra la barra de descarga nativa inmediatamente.
+     */
+    @GetMapping("/estudio/{id}/download")
+    public void downloadEstudio(@PathVariable Long id, HttpServletResponse response,
+                                Authentication authentication) throws IOException {
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getName())) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        Estudio estudio = estudioRepository.findById(id).orElse(null);
+        if (estudio == null || estudio.getArchivoUrl() == null || estudio.getArchivoUrl().isBlank()) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        String email = authentication.getName();
+        Usuario usuario = usuarioRepository.findByCorreoAndEliminadoEnIsNull(email).orElse(null);
+        int duration = 300;
+        if (usuario != null) {
+            String rol = usuario.getRol().getNombre().toUpperCase();
+            if (rol.equals("ADMIN") || rol.equals("SUPERADMIN")) duration = 3600;
+            else if (rol.equals("SOCIO")) duration = 1800;
+            else if (rol.equals("VISUALIZADOR")) duration = 900;
+        }
+
+        String clave = estudio.getArchivoUrl().replace("/uploads/estudios/", "estudios/");
+        String filename = estudio.getArchivoNombre() != null ? estudio.getArchivoNombre() : "documento";
+        String downloadUrl = s3StorageService.generatePresignedDownloadUrl(clave, filename, duration);
+        response.sendRedirect(downloadUrl);
+    }
+
+    /**
+     * GET /documentos/normativa/{id}/download
+     * Redirige al navegador a una presigned URL con Content-Disposition: attachment.
+     */
+    @GetMapping("/normativa/{id}/download")
+    public void downloadNormativa(@PathVariable Long id, HttpServletResponse response,
+                                  Authentication authentication) throws IOException {
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getName())) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        Normativa normativa = normativaRepository.findById(id).orElse(null);
+        if (normativa == null || normativa.getArchivoUrl() == null || normativa.getArchivoUrl().isBlank()) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        String email = authentication.getName();
+        Usuario usuario = usuarioRepository.findByCorreoAndEliminadoEnIsNull(email).orElse(null);
+        int duration = 300;
+        if (usuario != null) {
+            String rol = usuario.getRol().getNombre().toUpperCase();
+            if (rol.equals("ADMIN") || rol.equals("SUPERADMIN")) duration = 3600;
+            else if (rol.equals("SOCIO")) duration = 1800;
+            else if (rol.equals("VISUALIZADOR")) duration = 900;
+        }
+
+        String clave = normativa.getArchivoUrl().replace("/uploads/normativas/", "normativas/");
+        String filename = normativa.getArchivoNombre() != null ? normativa.getArchivoNombre() : "normativa";
+        String downloadUrl = s3StorageService.generatePresignedDownloadUrl(clave, filename, duration);
+        response.sendRedirect(downloadUrl);
+    }
+
+    /**
+     * GET /documentos/estudio/{id}/view-pdf
+     * Descarga el PPTX desde S3, lo convierte a PDF con DocumentConverterService y lo sirve inline.
+     * Evita depender de Microsoft Office Online (que no puede acceder a URLs presignadas privadas).
+     */
+    @GetMapping("/estudio/{id}/view-pdf")
+    public void viewEstudioAsPdf(@PathVariable Long id, HttpServletResponse response,
+                                 Authentication authentication) throws IOException {
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getName())) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        Estudio estudio = estudioRepository.findById(id).orElse(null);
+        if (estudio == null || estudio.getArchivoUrl() == null || estudio.getArchivoUrl().isBlank()) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        try {
+            String clave = estudio.getArchivoUrl().replace("/uploads/estudios/", "estudios/");
+            byte[] fileData = s3StorageService.downloadFile(clave);
+
+            byte[] pdfData;
+            String filename;
+            if (estudio.getFormato() == Estudio.FormatoEstudio.PPTX) {
+                pdfData = documentConverterService.convertPptxToPdf(fileData);
+                String base = estudio.getArchivoNombre() != null
+                        ? estudio.getArchivoNombre().replaceAll("\\.[^.]+$", "")
+                        : "presentacion";
+                filename = base + ".pdf";
+            } else {
+                pdfData = fileData;
+                filename = estudio.getArchivoNombre() != null ? estudio.getArchivoNombre() : "documento.pdf";
+            }
+
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition", "inline; filename=\"" + filename + "\"");
+            response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+            response.setHeader("X-Content-Type-Options", "nosniff");
+            response.setContentLength(pdfData.length);
+            response.getOutputStream().write(pdfData);
+            response.getOutputStream().flush();
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Error al cargar el documento: " + e.getMessage());
         }
     }
 

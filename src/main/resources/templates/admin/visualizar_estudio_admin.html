@@ -216,30 +216,19 @@
                             </div>
                         </div>
 
-                        <!-- PPTX FORMAT: Microsoft Office Online Viewer -->
-                        <div th:if="${estudio.formato.name() == 'PPTX'}" class="w-full h-full relative">
-                            <iframe th:if="${estudio.archivoUrl != null}" id="pptxViewer"
-                                class="w-full h-full border-0" oncontextmenu="return false;" allowfullscreen></iframe>
-                            <div th:if="${estudio.archivoUrl == null}"
-                                class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
-                                <svg class="icon-xl opacity-50 mb-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
-                                </svg>
-                                <span>No hay documento disponible</span>
-                            </div>
-                            <!-- Loading overlay (hidden once iframe loads) -->
-                            <div id="pptxLoading" class="absolute inset-0 flex flex-col items-center justify-center bg-surface-container z-10">
-                                <div class="w-8 h-8 border-2 border-secondary border-t-transparent rounded-full animate-spin mb-3"></div>
-                                <span class="text-sm font-body text-on-surface-variant">Cargando presentación...</span>
-                            </div>
-                            <!-- Watermark Overlay -->
-                            <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]" style="z-index: 50;">
-                                <div class="transform -rotate-45 text-4xl sm:text-5xl font-bold text-gray-800 whitespace-nowrap p-10 flex flex-col gap-24 text-center">
-                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
-                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
-                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
-                                </div>
-                            </div>
+                        <!-- PPTX FORMAT: Maintenance view -->
+                        <div th:if="${estudio.formato.name() == 'PPTX'}" class="w-full h-full flex flex-col items-center justify-center text-center p-6 bg-surface-container select-none overflow-y-auto">
+                            <span class="px-4 py-1.5 bg-[#e2f0d9] text-[#006d37] border border-[#006d37]/20 rounded-full font-label text-xs font-bold uppercase tracking-wider mb-4 animate-pulse">
+                                Optimizando Experiencia
+                            </span>
+                            <img src="/images/maintenance.png" alt="Mantenimiento" class="w-64 max-w-full h-auto mb-4 drop-shadow-lg transform hover:scale-105 transition-transform duration-300" />
+                            <h2 class="font-headline font-bold text-2xl text-on-primary-fixed mb-2 max-w-md leading-snug">¡Ups! Nos atrapaste en mantenimiento</h2>
+                            <p class="font-body text-sm text-on-surface-variant max-w-sm leading-relaxed mb-6">
+                                Estamos haciendo algunos mantenimientos para esta vista de diapositivas. Cuando esté lista, te lo notificaremos de inmediato.
+                            </p>
+                            <a th:href="@{/admin/estudios}" class="bg-[#006d37] hover:bg-[#00522a] text-white font-headline font-bold text-xs px-6 py-3 rounded-full transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+                                Volver a Estudios
+                            </a>
                         </div>
                     </div>
                 </section>
@@ -351,20 +340,6 @@
                         iframeEl.src = data.url + '#toolbar=0&navpanes=0&scrollbar=0';
                     } catch (err) {
                         console.error('Error cargando PDF:', err);
-                    }
-                }
-            } else if (formato === 'PPTX') {
-                const iframeEl = document.getElementById('pptxViewer');
-                const loadingEl = document.getElementById('pptxLoading');
-                if (iframeEl) {
-                    try {
-                        const resp = await fetch('/documentos/estudio/' + estudioId + '/presigned-url');
-                        const data = await resp.json();
-                        iframeEl.src = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(data.url);
-                        if (loadingEl) loadingEl.style.display = 'none';
-                    } catch (err) {
-                        console.error('Error cargando PPTX:', err);
-                        if (loadingEl) loadingEl.style.display = 'none';
                     }
                 }
             }

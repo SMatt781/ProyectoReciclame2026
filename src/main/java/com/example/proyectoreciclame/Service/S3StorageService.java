@@ -172,6 +172,38 @@ public class S3StorageService {
     }
 
     /**
+     * Genera una URL pre-firmada con Content-Disposition: attachment para forzar descarga en el navegador.
+     * @param clave Clave del archivo en S3
+     * @param filename Nombre de archivo que verá el usuario al descargar
+     * @param durationSeconds Duración de validez en segundos
+     * @return URL pre-firmada con disposición de descarga
+     */
+    public String generatePresignedDownloadUrl(String clave, String filename, int durationSeconds) {
+        try {
+            S3Presigner presigner = getS3Presigner();
+
+            String safeFilename = (filename != null && !filename.isBlank()) ? filename : "documento";
+            String disposition = "attachment; filename=\"" + safeFilename + "\"";
+
+            GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+                    .signatureDuration(Duration.ofSeconds(durationSeconds))
+                    .getObjectRequest(builder -> builder
+                            .bucket(s3Config.getBucketName())
+                            .key(clave)
+                            .responseContentDisposition(disposition)
+                            .build())
+                    .build();
+
+            PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(presignRequest);
+            String presignedUrl = presignedRequest.url().toString();
+            presigner.close();
+            return presignedUrl;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al generar URL de descarga: " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * Genera una URL pre-firmada (temporal) para descargar/ver un archivo
      * La URL expira después del tiempo especificado
      * @param clave Clave del archivo en S3 (ej: "estudios/timestamp_nombre.pdf")

@@ -244,7 +244,6 @@
                                     <select id="estudioFormato" name="formato" required onchange="actualizarAcceptArchivoEstudio()" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
                                         <option value="PDF">Reporte Técnico (PDF)</option>
                                         <option value="PPTX">Presentación (PPT)</option>
-                                        <option value="XLSX">Planilla de Datos (XLSX)</option>
                                     </select>
                                 </div>
                                 <div class="col-span-12 md:col-span-3 space-y-2">
@@ -469,8 +468,8 @@
             var input = document.getElementById('archivoInputSidebar');
             var texto = document.getElementById('dropFormatoTextoSidebar');
             if (!sel || !input) return;
-            var map = { 'PDF': '.pdf', 'PPTX': '.pptx', 'XLSX': '.xlsx' };
-            var nombres = { 'PDF': 'PDF', 'PPTX': 'PPTX', 'XLSX': 'XLSX' };
+            var map = { 'PDF': '.pdf', 'PPTX': '.pptx' };
+            var nombres = { 'PDF': 'PDF', 'PPTX': 'PPTX' };
             var ext = map[sel.value] || '.pdf';
             input.setAttribute('accept', ext);
             if (texto) texto.textContent = (nombres[sel.value] || 'PDF') + ' · máximo 50 MB';
@@ -493,8 +492,8 @@
                 return false;
             }
             var sel = document.getElementById('estudioFormato');
-            var map = { 'PDF': '.pdf', 'PPTX': '.pptx', 'XLSX': '.xlsx' };
-            var nombres = { 'PDF': 'PDF', 'PPTX': 'PPT', 'XLSX': 'XLSX' };
+            var map = { 'PDF': '.pdf', 'PPTX': '.pptx' };
+            var nombres = { 'PDF': 'PDF', 'PPTX': 'PPT' };
             var formato = sel ? sel.value : 'PDF';
             var ext = map[formato] || '.pdf';
             var nombre = file.name.toLowerCase();

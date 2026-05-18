@@ -146,13 +146,16 @@
                 <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
                     <article
                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container">
+                        <div
+                            class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container">
                         </div>
                         <div class="flex justify-between items-start mb-3">
                             <div
                                 class="bg-emerald-50 text-secondary rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
-                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M3 6a2 2 0 012-2h8l2 2h4a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V6zm2 0v11h14V8h-4.5L12.5 6H5z" />
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24"
+                                    aria-hidden="true">
+                                    <path
+                                        d="M3 6a2 2 0 012-2h8l2 2h4a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V6zm2 0v11h14V8h-4.5L12.5 6H5z" />
                                 </svg>
                             </div>
                             <span
@@ -163,8 +166,7 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Total estudios
                         </h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed"
-                            th:text="${totalEstudios}">0</div>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalEstudios}">0</div>
                     </article>
 
                     <article
@@ -173,8 +175,10 @@
                         <div class="flex justify-between items-start mb-3">
                             <div
                                 class="bg-blue-100 text-blue-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
-                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M12 3a1 1 0 011 1v8.59l2.3-2.3a1 1 0 111.4 1.42l-4 4a1 1 0 01-1.4 0l-4-4a1 1 0 111.4-1.42L11 12.59V4a1 1 0 011-1zm-7 14a1 1 0 011 1v1h12v-1a1 1 0 112 0v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2a1 1 0 011-1z" />
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24"
+                                    aria-hidden="true">
+                                    <path
+                                        d="M12 3a1 1 0 011 1v8.59l2.3-2.3a1 1 0 111.4 1.42l-4 4a1 1 0 01-1.4 0l-4-4a1 1 0 111.4-1.42L11 12.59V4a1 1 0 011-1zm-7 14a1 1 0 011 1v1h12v-1a1 1 0 112 0v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2a1 1 0 011-1z" />
                                 </svg>
                             </div>
                             <span
@@ -185,18 +189,21 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Descargas de estudios
                         </h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed"
-                            th:text="${totalDescargasEstudios}">0</div>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalDescargasEstudios}">0
+                        </div>
                     </article>
 
                     <article
                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200"></div>
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200">
+                        </div>
                         <div class="flex justify-between items-start mb-3">
                             <div
                                 class="bg-orange-100 text-orange-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
-                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M12 7a1 1 0 011 1v4.17l2.24 1.3a1 1 0 11-1 1.74l-2.7-1.56A1 1 0 0111 12V8a1 1 0 011-1zm0-5a10 10 0 100 20 10 10 0 000-20zm0 2a8 8 0 110 16 8 8 0 010-16z" />
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24"
+                                    aria-hidden="true">
+                                    <path
+                                        d="M12 7a1 1 0 011 1v4.17l2.24 1.3a1 1 0 11-1 1.74l-2.7-1.56A1 1 0 0111 12V8a1 1 0 011-1zm0-5a10 10 0 100 20 10 10 0 000-20zm0 2a8 8 0 110 16 8 8 0 010-16z" />
                                 </svg>
                             </div>
                             <span
@@ -207,18 +214,21 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Añadidos en 30 días
                         </h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed"
-                            th:text="${estudiosRecientes}">0</div>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${estudiosRecientes}">0
+                        </div>
                     </article>
 
                     <article
                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container"></div>
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container">
+                        </div>
                         <div class="flex justify-between items-start mb-3">
                             <div
                                 class="bg-error-container text-error rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
-                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M7 2a1 1 0 011 1v1h8V3a1 1 0 112 0v1h1a2 2 0 012 2v2H3V6a2 2 0 012-2h1V3a1 1 0 011-1zm14 8H3v9a2 2 0 002 2h14a2 2 0 002-2v-9z" />
+                                <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24"
+                                    aria-hidden="true">
+                                    <path
+                                        d="M7 2a1 1 0 011 1v1h8V3a1 1 0 112 0v1h1a2 2 0 012 2v2H3V6a2 2 0 012-2h1V3a1 1 0 011-1zm14 8H3v9a2 2 0 002 2h14a2 2 0 002-2v-9z" />
                                 </svg>
                             </div>
                             <span
@@ -229,14 +239,13 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Año más activo
                         </h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed"
-                            th:text="${anioMasActivo}">-</div>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${anioMasActivo}">-</div>
                     </article>
                 </section>
 
                 <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6 flex flex-col">
                     <!-- Search Bar -->
-                    <form action="/estudios"  method="GET" class="flex flex-col sm:flex-row gap-4 mb-6 w-full flex-wrap">
+                    <form action="/estudios" method="GET" class="flex flex-col sm:flex-row gap-4 mb-6 w-full flex-wrap">
                         <div class="flex-1 relative">
                             <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -284,18 +293,18 @@
 
                     <!-- Cards Grid -->
                     <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                         th:if="${not #lists.isEmpty(estudios)}">
+                        th:if="${not #lists.isEmpty(estudios)}">
                         <!-- Card 1: Dynamic -->
                         <article th:each="estudio, stat : ${estudios}"
-                                 class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden"
-                                 th:classappend="${estudio.estado == 'DEROGADO' ? 'bg-opacity-80' : ''}">
+                            class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden"
+                            th:classappend="${estudio.estado == 'DEROGADO' ? 'bg-opacity-80' : ''}">
                             <div th:classappend="${estudio.estado == 'VIGENTE' ? 'bg-gradient-to-r from-secondary to-secondary-container' : (estudio.estado == 'BORRADOR' ? 'bg-gradient-to-r from-outline to-surface-variant' : 'bg-gradient-to-r from-error to-error-container')}"
-                                 class="absolute top-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                class="absolute top-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             </div>
                             <div class="flex justify-between items-start mb-5"
-                                 th:classappend="${estudio.estado == 'DEROGADO' ? 'opacity-70' : ''}">
+                                th:classappend="${estudio.estado == 'DEROGADO' ? 'opacity-70' : ''}">
                                 <div class="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm"
-                                     th:classappend="${estudio.formato == 'PDF' ? 'bg-error-container text-on-error-container' :
+                                    th:classappend="${estudio.formato == 'PDF' ? 'bg-error-container text-on-error-container' :
                                                     (estudio.formato == 'PPTX' ? 'bg-orange-100 text-orange-600' :
                                                     (estudio.formato == 'XLSX' ? 'bg-emerald-100 text-emerald-700' :
                                                     'bg-surface-container-high text-outline'))}">
@@ -315,7 +324,7 @@
                                     </th:block>
                                 </div>
                                 <div
-                                        class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
+                                    class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
                                     <span th:text="${estudio.anio}">2024</span>
                                     <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
                                     <span th:text="${estudio.formato}">PDF</span>
@@ -327,28 +336,28 @@
                                     class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
                                     Análisis de Ciclo de Vida de Envases PET en Perú</h4>
                                 <p th:text="${estudio.descripcion}"
-                                   class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
+                                    class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
                                     Estudio exhaustivo...</p>
                             </div>
                             <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
                                 <div class="flex items-center gap-1.5"
-                                     th:classappend="${estudio.estado == 'VIGENTE' ? 'text-secondary' : (estudio.estado == 'BORRADOR' ? 'text-outline' : 'text-error')}">
+                                    th:classappend="${estudio.estado == 'VIGENTE' ? 'text-secondary' : (estudio.estado == 'BORRADOR' ? 'text-outline' : 'text-error')}">
                                     <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
                                         <path th:if="${estudio.estado == 'VIGENTE'}"
-                                              d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                            d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
                                         <path th:if="${estudio.estado == 'BORRADOR'}"
-                                              d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
                                         <path th:if="${estudio.estado == 'DEROGADO'}"
-                                              d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
                                     </svg>
                                     <span th:text="${estudio.estado}"
-                                          class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
+                                        class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
                                 </div>
                                 <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link"
-                                   th:href="@{/estudios/{id}(id=${estudio.id})}">
+                                    th:href="@{/estudios/{id}(id=${estudio.id})}">
                                     Ver Estudio
                                     <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
-                                         fill="currentColor" viewBox="0 0 24 24">
+                                        fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
                                     </svg>
                                 </a>
@@ -361,7 +370,7 @@
                     <div id="listView" class="hidden flex-col gap-4" th:if="${not #lists.isEmpty(estudios)}">
                         <!-- Header -->
                         <div
-                                class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                            class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
                             <div class="col-span-6 lg:col-span-5">Nombre</div>
                             <div class="col-span-2 text-center">Estado</div>
                             <div class="col-span-1 text-center">Formato</div>
@@ -370,7 +379,7 @@
                         </div>
 
                         <div th:each="estudio, stat : ${estudios}"
-                             class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                            class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
                             <div class="col-span-6 lg:col-span-5 flex items-center gap-4 w-full">
                                 <h4 th:text="${estudio.titulo}"
                                     class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors line-clamp-2"
@@ -379,23 +388,23 @@
                             </div>
                             <div class="col-span-2 flex justify-center w-full md:w-auto">
                                 <div class="flex items-center gap-1.5"
-                                     th:classappend="${estudio.estado == 'VIGENTE' ? 'text-secondary' : (estudio.estado == 'BORRADOR' ? 'text-outline' : 'text-error')}">
+                                    th:classappend="${estudio.estado == 'VIGENTE' ? 'text-secondary' : (estudio.estado == 'BORRADOR' ? 'text-outline' : 'text-error')}">
                                     <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
                                         <path th:if="${estudio.estado == 'VIGENTE'}"
-                                              d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                            d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
                                         <path th:if="${estudio.estado == 'BORRADOR'}"
-                                              d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
                                         <path th:if="${estudio.estado == 'DEROGADO'}"
-                                              d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                                            d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
                                     </svg>
                                     <span th:text="${estudio.estado}"
-                                          class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
+                                        class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
                                 </div>
                             </div>
                             <div class="col-span-1 flex justify-center w-full md:w-auto">
                                 <div class="flex items-center gap-2">
                                     <div class="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm shrink-0"
-                                         th:classappend="${estudio.formato == 'PDF' ? 'bg-error-container text-on-error-container' :
+                                        th:classappend="${estudio.formato == 'PDF' ? 'bg-error-container text-on-error-container' :
                                                         (estudio.formato == 'PPTX' ? 'bg-orange-100 text-orange-600' :
                                                         (estudio.formato == 'XLSX' ? 'bg-emerald-100 text-emerald-700' :
                                                         'bg-surface-container-high text-outline'))}">
@@ -415,21 +424,21 @@
                                         </th:block>
                                     </div>
                                     <span th:text="${estudio.formato}"
-                                          class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">PDF</span>
+                                        class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">PDF</span>
                                 </div>
                             </div>
                             <div class="col-span-1 flex justify-center w-full md:w-auto">
-                            <span th:text="${estudio.anio}"
-                                  class="text-sm font-body text-on-surface-variant font-medium">2024</span>
+                                <span th:text="${estudio.anio}"
+                                    class="text-sm font-body text-on-surface-variant font-medium">2024</span>
                             </div>
                             <div class="col-span-2 lg:col-span-3 flex justify-end w-full md:w-auto">
                                 <a class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link"
-                                   th:href="@{/estudios/{id}(id=${estudio.id})}">
+                                    th:href="@{/estudios/{id}(id=${estudio.id})}">
                                     Ver Estudio <svg
                                         class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
                                         fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
-                                </svg>
+                                        <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
+                                    </svg>
                                 </a>
                             </div>
                         </div>
@@ -500,45 +509,43 @@
 
                         <!-- Año Select -->
                         <div id="yearContainer"
-                             th:classappend="${(dateStart != null and !#strings.isEmpty(dateStart)) or (dateEnd != null and !#strings.isEmpty(dateEnd))} ? 'hidden' : ''">
+                            th:classappend="${(dateStart != null and !#strings.isEmpty(dateStart)) or (dateEnd != null and !#strings.isEmpty(dateEnd))} ? 'hidden' : ''">
                             <div class="relative w-full sm:w-1/2">
-                                <input type="hidden" id="yearSelect" name="yearSelect"
-                                       th:value="${anioSeleccionado}"
-                                       th:attr="data-selected-year=${anioSeleccionado}">
+                                <input type="hidden" id="yearSelect" name="yearSelect" th:value="${anioSeleccionado}"
+                                    th:attr="data-selected-year=${anioSeleccionado}">
 
                                 <button type="button" id="yearDropdownBtn"
-                                        class="w-full bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30 flex items-center justify-between">
+                                    class="w-full bg-surface-container-low text-on-surface font-body text-sm rounded-lg px-4 py-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all cursor-pointer border border-outline-variant/30 flex items-center justify-between">
                                     <span id="yearDropdownLabel">Seleccione un año</span>
-                                    <svg class="w-4 h-4 text-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 text-on-surface-variant" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M19 9l-7 7-7-7" />
+                                            d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </button>
 
                                 <div id="yearDropdownMenu"
-                                     class="hidden absolute left-0 top-full z-50 mt-1 w-full bg-white border border-outline-variant/30 rounded-lg shadow-lg max-h-40 overflow-y-auto">
+                                    class="hidden absolute left-0 top-full z-50 mt-1 w-full bg-white border border-outline-variant/30 rounded-lg shadow-lg max-h-40 overflow-y-auto">
                                 </div>
                             </div>
                         </div>
 
                         <!-- Rango Input -->
                         <div id="rangeContainer"
-                             th:classappend="${(dateStart != null and !#strings.isEmpty(dateStart)) or (dateEnd != null and !#strings.isEmpty(dateEnd))} ? '' : 'hidden'"
-                             class="hidden flex flex-col sm:flex-row gap-4">
+                            th:classappend="${(dateStart != null and !#strings.isEmpty(dateStart)) or (dateEnd != null and !#strings.isEmpty(dateEnd))} ? '' : 'hidden'"
+                            class="hidden flex flex-col sm:flex-row gap-4">
                             <div class="flex-1">
                                 <label
                                     class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
                                     Inicio</label>
-                                <input type="date" id="dateStart" name="dateStart"
-                                    th:value="${dateStart}"
+                                <input type="date" id="dateStart" name="dateStart" th:value="${dateStart}"
                                     class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
                             </div>
                             <div class="flex-1">
                                 <label
                                     class="block text-xs font-bold text-on-surface-variant uppercase mb-1 drop-shadow-sm">Fecha
                                     Fin</label>
-                                <input type="date" id="dateEnd" name="dateEnd"
-                                    th:value="${dateEnd}"
+                                <input type="date" id="dateEnd" name="dateEnd" th:value="${dateEnd}"
                                     class="w-full bg-surface-container-low border border-outline-variant/30 text-on-surface font-body text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-1 focus:ring-secondary transition-all">
                             </div>
                         </div>
@@ -566,18 +573,7 @@
                                 class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
                             <span class="text-sm font-body">PPTX</span>
                         </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="format" value="DOCX"
-                                th:checked="${formatosSeleccionados != null and #lists.contains(formatosSeleccionados, 'DOCX')}"
-                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
-                            <span class="text-sm font-body">DOCX</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="format" value="XLSX"
-                                th:checked="${formatosSeleccionados != null and #lists.contains(formatosSeleccionados, 'XLSX')}"
-                                class="rounded border-outline-variant text-secondary focus:ring-secondary h-4 w-4">
-                            <span class="text-sm font-body">.XLSX</span>
-                        </label>
+
                     </div>
                 </section>
 
@@ -918,6 +914,3 @@
 </body>
 
 </html>
-
-
-
