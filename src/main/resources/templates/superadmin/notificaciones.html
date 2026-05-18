@@ -215,7 +215,7 @@
 
                 <!-- Botón anterior -->
                 <a th:if="${hasPrevious}"
-                   th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(page=${currentPage - 1})}"
+                   th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(page=${currentPage - 1},tipo=${tipoFiltro})}"
                    class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -243,7 +243,7 @@
 
                         <!-- Número de página -->
                         <a th:if="${p != '...'}"
-                           th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(page=${p})}"
+                           th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(page=${p},tipo=${tipoFiltro})}"
                            th:text="${p + 1}"
                            th:class="${p == currentPage} ?
                            'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
@@ -256,7 +256,7 @@
 
                 <!-- Botón siguiente -->
                 <a th:if="${hasNext}"
-                   th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(page=${currentPage + 1})}"
+                   th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(page=${currentPage + 1},tipo=${tipoFiltro})}"
                    class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

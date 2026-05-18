@@ -1097,6 +1097,7 @@ public class SuperadminController {
 
     @GetMapping("/notificaciones")
     public String showNotificaciones(Model model,
+                                     @RequestParam(required = false, defaultValue = "ALL") String tipo,
                                      org.springframework.security.core.Authentication authentication) {
         Usuario superadmin = usuarioRepository
                 .findByCorreoWithRol(authentication.getName()).orElse(null);
@@ -1108,6 +1109,16 @@ public class SuperadminController {
         // Formatear tiempo relativo
         LocalDateTime now = LocalDateTime.now();
         List<java.util.Map<String, Object>> notificacionesVm = notificaciones.stream()
+                .filter(n -> {
+                    if ("ALL".equals(tipo)) return true;
+                    String t = n.getTipo() != null ? n.getTipo() : "";
+                    return switch (tipo) {
+                        case "ADMIN"   -> t.startsWith("ADMIN");
+                        case "DOMINIO" -> t.startsWith("DOMINIO");
+                        case "SISTEMA" -> t.startsWith("SISTEMA");
+                        default        -> true;
+                    };
+                })
                 .map(n -> {
                     java.util.Map<String, Object> vm = new java.util.HashMap<>();
                     vm.put("titulo", n.getTitulo());
@@ -1126,10 +1137,10 @@ public class SuperadminController {
                         case "DOMINIO_CREADO"     -> "Dominio añadido";
                         case "DOMINIO_DESACTIVADO"-> "Dominio desactivado";
                         case "SOLICITUD"          -> "Solicitud pendiente";
-                        case "ADMIN_EDITADO"          -> "Admin editado";
-                        case "DOMINIO_ELIMINADO"      -> "Dominio eliminado";
-                        case "SISTEMA_ALERTA" -> "Alerta del sistema";
-                        default                  -> "Sistema";
+                        case "ADMIN_EDITADO"      -> "Admin editado";
+                        case "DOMINIO_ELIMINADO"  -> "Dominio eliminado";
+                        case "SISTEMA_ALERTA"     -> "Alerta del sistema";
+                        default                   -> "Sistema";
                     };
                     vm.put("etiqueta", etiqueta);
                     return vm;
@@ -1137,6 +1148,7 @@ public class SuperadminController {
                 .toList();
 
         model.addAttribute("notificaciones", notificacionesVm);
+        model.addAttribute("tipoFiltro", tipo);
         model.addAttribute("totalNoLeidas",
                 notificacionRepository.countNoLeidasByUsuario(superadmin.getIdUsuario()));
         model.addAttribute("titulo", "Notificaciones");
