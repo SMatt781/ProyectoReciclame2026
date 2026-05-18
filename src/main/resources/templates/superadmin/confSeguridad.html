@@ -555,6 +555,35 @@
 </div>
 
 <!-- ══════════════════════════════════════════════
+     MODAL — Descartar Cambios
+     ══════════════════════════════════════════════ -->
+<div id="modalDescartarCambios" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+    <div class="relative w-full max-w-sm bg-surface rounded-xl shadow-xl overflow-hidden border border-outline-variant/30">
+        <div class="px-6 pt-6 pb-4">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-9 h-9 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                    </svg>
+                </div>
+                <h2 class="text-lg font-bold text-on-primary-fixed">Descartar cambios</h2>
+            </div>
+            <p class="text-sm text-on-surface-variant">¿Deseas descartar todos los cambios no guardados? Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="flex gap-3 px-6 pb-6">
+            <button type="button" onclick="cancelarDescartar()"
+                    class="flex-1 px-4 py-2.5 font-semibold text-on-surface-variant hover:bg-surface-container rounded-lg border border-outline-variant/30 transition-colors">
+                Cancelar
+            </button>
+            <button type="button" onclick="confirmarDescartar()"
+                    class="flex-1 px-4 py-2.5 font-bold bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition-colors">
+                Descartar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
      MODAL — Crear Dominio
      ══════════════════════════════════════════════ -->
 <div id="modalCrearDominio" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center px-4">
@@ -770,11 +799,15 @@
         modal.classList.remove('flex');
     }
 
-    // ── Descartar cambios → recargar la página ────────────────────────────────
+    // ── Descartar cambios → modal de confirmación ────────────────────────────
     function descartarCambios() {
-        if (confirm('¿Deseas descartar todos los cambios no guardados?')) {
-            window.location.reload();
-        }
+        document.getElementById('modalDescartarCambios').classList.remove('hidden');
+    }
+    function confirmarDescartar() {
+        window.location.reload();
+    }
+    function cancelarDescartar() {
+        document.getElementById('modalDescartarCambios').classList.add('hidden');
     }
 
     // ── Cerrar modal al hacer clic fuera ──────────────────────────────────────
