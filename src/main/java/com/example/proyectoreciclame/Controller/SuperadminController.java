@@ -101,6 +101,12 @@ public class SuperadminController {
         model.addAttribute("ultimosAdmins",
                 usuarioRepository.findByRol_IdInAndEliminadoEnIsNull(ROL_ADMIN_IDS, ultimos));
 
+        // Actividad reciente
+        model.addAttribute("actividadAdminCreado",
+                historialRolesRepository.findTopByEstadoAnteriorIsNullOrderByFechaCambioDesc().orElse(null));
+        model.addAttribute("actividadDominio",
+                dominioAutorizadoRepository.findTopByOrderByFechaRegistroDesc().orElse(null));
+
         return "superadmin/dashboard";
     }
 
@@ -586,7 +592,7 @@ public class SuperadminController {
         // ── Sesiones y seguridad ──────────────────────────────────────────
         LocalDateTime inicioDia = LocalDate.now().atStartOfDay();
         model.addAttribute("sesionesActivas",
-                registroSesionRepository.countSesionesActivas());
+                registroSesionRepository.countSesionesActivas(LocalDateTime.now().minusHours(8)));
         model.addAttribute("sesionesHoy",
                 registroSesionRepository.countByFechaInicioAfter(inicioDia));
         model.addAttribute("intentosFallidosHoy",
@@ -594,7 +600,7 @@ public class SuperadminController {
         model.addAttribute("recuperacionesActivas",
                 recuperacionPasswordRepository.countByUsadoFalse());
         model.addAttribute("solicitudesPendientes",
-                solicitudRegistroRepository.countByEstado("PENDIENTE"));
+                usuarioRepository.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE"));
 
         // ── Latencia BD ───────────────────────────────────────────────────
         long t0 = System.currentTimeMillis();
@@ -949,6 +955,7 @@ public class SuperadminController {
         Usuario actualizador = usuarioRepository
                 .findByCorreoWithRol(authentication.getName()).orElse(null);
         politica.setActualizadoPor(actualizador);
+        politica.setActualizadoEn(LocalDateTime.now());
 
         politicaContrasenaRepository.save(politica);
 

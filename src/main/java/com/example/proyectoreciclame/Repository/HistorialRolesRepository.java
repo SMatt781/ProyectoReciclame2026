@@ -12,4 +12,7 @@ public interface HistorialRolesRepository extends JpaRepository<HistorialRoles, 
 
     // Trae todos los cambios de un usuario ordenados del más reciente al más antiguo
     List<HistorialRoles> findByUsuarioAfectadoOrderByFechaCambioDesc(Usuario usuario);
+
+    // Último admin creado (estadoAnterior null = creación, no modificación)
+    java.util.Optional<HistorialRoles> findTopByEstadoAnteriorIsNullOrderByFechaCambioDesc();
 }

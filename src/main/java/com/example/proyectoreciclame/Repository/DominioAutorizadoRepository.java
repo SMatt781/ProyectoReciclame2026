@@ -19,4 +19,7 @@ public interface DominioAutorizadoRepository extends JpaRepository<DominioAutori
 
     Page<DominioAutorizado> findByNombreDominioContainingIgnoreCaseAndEstado(
             String nombre, Boolean estado, Pageable pageable);
+
+    // Último dominio añadido
+    java.util.Optional<DominioAutorizado> findTopByOrderByFechaRegistroDesc();
 }
