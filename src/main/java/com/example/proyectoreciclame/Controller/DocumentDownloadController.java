@@ -68,15 +68,27 @@ public class DocumentDownloadController {
 
         try {
             String clave = estudio.getArchivoUrl().replace("/uploads/estudios/", "estudios/");
-            byte[] data = s3StorageService.downloadFile(clave);
-            String filename = estudio.getArchivoNombre() != null ? estudio.getArchivoNombre() : "documento.pdf";
+            byte[] fileData = s3StorageService.downloadFile(clave);
+
+            byte[] pdfData;
+            String filename;
+            if (estudio.getFormato() == Estudio.FormatoEstudio.PPTX) {
+                pdfData = documentConverterService.convertPptxToPdf(fileData);
+                String base = estudio.getArchivoNombre() != null
+                        ? estudio.getArchivoNombre().replaceAll("\\.[^.]+$", "")
+                        : "presentacion";
+                filename = base + ".pdf";
+            } else {
+                pdfData = fileData;
+                filename = estudio.getArchivoNombre() != null ? estudio.getArchivoNombre() : "documento.pdf";
+            }
 
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "inline; filename=\"" + filename + "\"");
             response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
             response.setHeader("X-Content-Type-Options", "nosniff");
-            response.setContentLength(data.length);
-            response.getOutputStream().write(data);
+            response.setContentLength(pdfData.length);
+            response.getOutputStream().write(pdfData);
             response.getOutputStream().flush();
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
