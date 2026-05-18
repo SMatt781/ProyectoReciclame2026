@@ -98,4 +98,9 @@ public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, 
     List<Object[]> contarSesionesPorDia(LocalDateTime desde);
 
     List<RegistroSesion> findTop2ByUsuarioIdUsuarioOrderByFechaInicioDesc(Long idUsuario);
+
+    // Marcar como EXPIRADAS todas las sesiones VIGENTE que sean más antiguas que cierta fecha
+    @Modifying
+    @Query("UPDATE RegistroSesion r SET r.estado = 'EXPIRADA' WHERE r.estado = 'VIGENTE' AND r.fechaInicio < :antes")
+    int expirarSesionesAntiguas(@Param("antes") java.time.LocalDateTime antes);
 }

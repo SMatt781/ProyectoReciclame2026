@@ -248,7 +248,7 @@
                         <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest block">Correo Electrónico *</label>
                         <div class="flex items-center bg-surface-container-low border border-slate-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[#059669]/30">
                             <input name="usuarioCorreo" required type="text" placeholder="usuario"
-                                   oninput="this.value = this.value.replace(/[^a-zA-Z0-9.]/g, '')"
+                                   oninput="this.value = this.value.replace(/[^a-zA-Z0-9._]/g, '')"
                                    class="flex-1 h-12 px-4 bg-transparent border-none text-sm focus:outline-none focus:ring-0"/>
                             <span class="text-slate-300 text-lg select-none">|</span>
                             <select name="dominioCorreo" required
@@ -266,7 +266,7 @@
                         <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest block">Contraseña *</label>
                         <div class="relative">
                             <input id="inputPassword" name="contrasenaHash" required type="password"
-                                   placeholder="Mínimo 8 caracteres"
+                                   placeholder="Ingresa tu contraseña"
                                    oninput="validarPasswordEnTiempoReal()"
                                    class="w-full h-12 px-4 pr-12 bg-surface-container-low border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20"/>
                             <button type="button" onclick="togglePassword()"
@@ -286,7 +286,7 @@
                                 <span class="material-symbols-outlined text-[14px]">circle</span> Al menos un número
                             </p>
                             <p id="req-simbolo"   class="text-xs flex items-center gap-1.5 text-slate-400 hidden">
-                                <span class="material-symbols-outlined text-[14px]">circle</span> Al menos un símbolo (@#$!|*%&)
+                                <span class="material-symbols-outlined text-[14px]">circle</span> Al menos un símbolo (@#$!|*%&_)
                             </p>
                         </div>
                     </div>
@@ -433,7 +433,7 @@
                 actualizarReq('req-longitud',  val.length >= p.longitud);
                 actualizarReq('req-mayuscula', /[A-Z]/.test(val));
                 actualizarReq('req-numero',    /[0-9]/.test(val));
-                actualizarReq('req-simbolo',   /[@#$!|*%&]/.test(val));
+                actualizarReq('req-simbolo',   /[@#$!|*%&_]/.test(val));
             }
 
             function actualizarReq(id, cumple) {
@@ -468,13 +468,13 @@
                 let ok = true;
 
                 const dniInput = form.querySelector('[name="dni"]');
-                if (dniInput && !/^[0-9]{8}$/.test(dniInput.value.trim())) {
+                if (dniInput && dniInput.value.trim() !== '' && !/^[0-9]{8}$/.test(dniInput.value.trim())) {
                     mostrarErrorCampo(dniInput, 'El DNI debe tener exactamente 8 dígitos.');
                     ok = false;
                 }
 
                 const telInput = form.querySelector('[name="telefono"]');
-                if (telInput && !/^9[0-9]{8}$/.test(telInput.value.trim())) {
+                if (telInput && telInput.value.trim() !== '' && !/^9[0-9]{8}$/.test(telInput.value.trim())) {
                     mostrarErrorCampo(telInput, 'El teléfono debe tener 9 dígitos y comenzar con 9.');
                     ok = false;
                 }
@@ -490,6 +490,9 @@
                         ok = false;
                     } else if (/^\./.test(v) || /\.$/.test(v)) {
                         mostrarErrorCampo(emailInput, 'El usuario no puede comenzar ni terminar con punto.');
+                        ok = false;
+                    } else if (/^_/.test(v) || /_$/.test(v)) {
+                        mostrarErrorCampo(emailInput, 'El usuario no puede comenzar ni terminar con guión bajo.');
                         ok = false;
                     }
                 }
@@ -521,7 +524,7 @@
                 if (val.length < p.longitud)          errores.push('mínimo ' + p.longitud + ' caracteres');
                 if (p.mayuscula && !/[A-Z]/.test(val)) errores.push('al menos una mayúscula');
                 if (p.numero    && !/[0-9]/.test(val)) errores.push('al menos un número');
-                if (p.simbolo   && !/[@#$!|*%&]/.test(val)) errores.push('al menos un símbolo');
+                if (p.simbolo   && !/[@#$!|*%&_]/.test(val)) errores.push('al menos un símbolo');
 
                 if (errores.length > 0) {
                     e.preventDefault();
@@ -530,14 +533,17 @@
             });
 
             // ── Submit del form editar con validación ─────────────────────────────────
-            const _formEditar = document.getElementById('formEditarAdmin');
-            if (_formEditar) {
-                _formEditar.onsubmit = null;
-                _formEditar.addEventListener('submit', function(e) {
-                    if (!validarCamposAdmin(this)) { e.preventDefault(); return; }
-                    guardarDatosEditar();
-                });
-            }
+            // (se registra en DOMContentLoaded porque el modal está fuera del <main>)
+            document.addEventListener('DOMContentLoaded', function() {
+                const _formEditar = document.getElementById('formEditarAdmin');
+                if (_formEditar) {
+                    _formEditar.onsubmit = null;
+                    _formEditar.addEventListener('submit', function(e) {
+                        if (!validarCamposAdmin(this)) { e.preventDefault(); return; }
+                        guardarDatosEditar();
+                    });
+                }
+            });
 
             function mostrarErrorModal(msg) {
                 // Reutilizar el div de flash si existe, si no crearlo inline
@@ -1143,7 +1149,7 @@
                    ? #strings.substringBefore(adminEditar.correo, '@')
                    : ''}"
                            placeholder="usuario"
-                           oninput="this.value = this.value.replace(/[^a-zA-Z0-9.]/g, '')"
+                           oninput="this.value = this.value.replace(/[^a-zA-Z0-9._]/g, '')"
                            class="flex-1 h-12 px-4 bg-transparent border-none text-sm focus:outline-none focus:ring-0"/>
                     <span class="text-slate-300 text-lg select-none">|</span>
                     <select id="editDominioCorreo" name="dominioCorreo" required

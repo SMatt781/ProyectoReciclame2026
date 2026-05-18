@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -51,6 +52,21 @@ public class LoginAuditoriaService {
         if (usuario != null) {
             usuario.setUltimoAcceso(LocalDateTime.now());
             usuarioRepository.save(usuario);
+
+            // Cerrar cualquier sesión VIGENTE anterior del mismo usuario
+            // (ocurre si el browser se cerró sin logout, o si el usuario inicia desde otro dispositivo)
+            List<RegistroSesion> sesionesAbiertas =
+                    registroSesionRepository.findByUsuarioAndEstado(usuario, "VIGENTE");
+            LocalDateTime ahora = LocalDateTime.now();
+            for (RegistroSesion s : sesionesAbiertas) {
+                s.setEstado("EXPIRADA");
+                s.setFechaFin(ahora);
+                if (s.getFechaInicio() != null) {
+                    long min = Duration.between(s.getFechaInicio(), ahora).toMinutes();
+                    s.setDuracionMinutos((int) Math.max(min, 0));
+                }
+                registroSesionRepository.save(s);
+            }
 
             RegistroSesion sesion = new RegistroSesion();
             sesion.setUsuario(usuario);
