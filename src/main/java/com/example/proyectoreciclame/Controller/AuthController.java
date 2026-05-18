@@ -173,12 +173,16 @@ public class AuthController {
 
         usuarioRepository.save(usuario);
 
-        UsuarioEmpresa ue = new UsuarioEmpresa();
-        ue.setUsuario(usuario);
-        ue.setRuc(form.getRuc().trim());
-        ue.setRazonSocial("Pendiente de completar");
-        ue.setCargo(null);
-        usuarioEmpresaRepository.save(ue);
+        String rucTrimmed = form.getRuc() != null ? form.getRuc().trim() : "";
+
+        if (!rucTrimmed.isEmpty()) {
+            UsuarioEmpresa ue = new UsuarioEmpresa();
+            ue.setUsuario(usuario);
+            ue.setRuc(rucTrimmed);
+            ue.setRazonSocial("Pendiente de completar");
+            ue.setCargo(null);
+            usuarioEmpresaRepository.save(ue);
+        }
 
         SolicitudRegistro solicitud = new SolicitudRegistro();
         solicitud.setNombres(usuario.getNombres());
@@ -187,11 +191,7 @@ public class AuthController {
         solicitud.setDni(usuario.getDni()); // Será NULL si el usuario no tiene DNI
         solicitud.setCorreo(usuario.getCorreo());
         solicitud.setTelefono(usuario.getTelefono());
-        solicitud.setRuc(
-                form.getRuc() != null
-                        ? form.getRuc().trim()
-                        : null
-        );
+        solicitud.setRuc(rucTrimmed.isEmpty() ? null : rucTrimmed);
         solicitud.setRolSolicitado("SOCIO");
         solicitud.setEstado("PENDIENTE");
         solicitud.setMotivoRechazo(null);
