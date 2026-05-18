@@ -102,7 +102,7 @@ public class Estudio {
     private List<Categoria> categorias;
 
     public enum FormatoEstudio {
-        PDF, PPTX
+        PDF, PPTX, XLSX
     }
 
     public enum EstadoEstudio {

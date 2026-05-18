@@ -97,6 +97,27 @@ public class AdminRegistroController {
         String textoLimpio = limpiar(texto);
         String tipoLimpio = limpiar(tipo);
 
+        // Validar que la fecha inicio no sea mayor que la fecha fin
+        if (fechaInicio != null && fechaFin != null && fechaInicio.isAfter(fechaFin)) {
+            model.addAttribute("errorFechas", "La fecha de inicio no puede ser mayor que la fecha de fin.");
+            model.addAttribute("texto", texto);
+            model.addAttribute("tipo", tipo);
+            model.addAttribute("fechaInicio", fechaInicio);
+            model.addAttribute("fechaFin", fechaFin);
+            model.addAttribute("currentSection", "admin-registros-descargas");
+            model.addAttribute("descargas", java.util.Collections.emptyList());
+            model.addAttribute("currentPage", 0);
+            model.addAttribute("totalPages", 0);
+            model.addAttribute("hasPrevious", false);
+            model.addAttribute("hasNext", false);
+            model.addAttribute("pageNumbers", java.util.Collections.emptyList());
+            model.addAttribute("today", LocalDate.now().format(java.time.format.DateTimeFormatter.ISO_DATE));
+            model.addAttribute("totalDescargas", registroDescargaRepository.count());
+            model.addAttribute("totalNormativas", registroDescargaRepository.countByTipoDocumento("NORMATIVA"));
+            model.addAttribute("totalEstudios", registroDescargaRepository.countByTipoDocumento("ESTUDIO"));
+            return "admin/registros-descargas";
+        }
+
         LocalDateTime inicio = fechaInicio != null ? fechaInicio.atStartOfDay() : null;
         LocalDateTime fin = fechaFin != null ? fechaFin.atTime(23, 59, 59) : null;
 
