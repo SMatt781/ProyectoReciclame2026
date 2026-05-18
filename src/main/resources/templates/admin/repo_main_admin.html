@@ -637,7 +637,7 @@
                                         <h5
                                                 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">
                                             Tipo de Norma</h5>
-                                        <p th:text="${normativa.tipoNorma}"
+                                        <p th:text="${#strings.replace(normativa.tipoNorma.name(), '_', ' ')}"
                                            class="text-sm font-body text-on-surface font-medium">Ley Nacional</p>
                                     </div>
 

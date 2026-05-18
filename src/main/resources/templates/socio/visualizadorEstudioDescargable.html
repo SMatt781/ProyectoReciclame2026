@@ -182,32 +182,26 @@
                     </div>
 
                     <!-- Viewer Canvas -->
+                    <input type="hidden" id="estudioFormato" th:value="${estudio.formato.name()}" />
                     <div id="viewerContainer"
                         class="flex-1 bg-surface-container relative overflow-hidden transition-all duration-300 flex flex-col">
-                        <!-- PDF Canvas Container -->
-                        <div th:if="${estudio.archivoUrl != null}"
-                            id="pdfCanvasContainer"
-                            class="flex-1 overflow-auto bg-[#efefef] flex items-start justify-center p-4 select-none">
-                            <div id="pdfLoading" class="flex flex-col items-center justify-center py-16 text-on-surface-variant">
-                                <div class="w-8 h-8 border-2 border-secondary border-t-transparent rounded-full animate-spin mb-3"></div>
-                                <span class="text-sm font-body">Cargando documento...</span>
-                            </div>
-                        </div>
-                        <!-- Page Navigation + Zoom Bar -->
-                        <div id="pdfNavBar" class="hidden items-center justify-between px-3 py-2 border-t border-surface-container/50 bg-surface-container-lowest flex-shrink-0 gap-2">
-                            <button id="prevPage" class="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-                                Anterior
-                            </button>
-                            <div class="flex items-center gap-2">
-                                <button id="zoomOut" title="Alejar" class="w-7 h-7 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-bold text-base leading-none">−</button>
-                                <span id="pageInfo" class="font-body text-xs text-on-surface-variant font-medium whitespace-nowrap min-w-[90px] text-center">Pág. 1 / 1</span>
-                                <button id="zoomIn" title="Acercar" class="w-7 h-7 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-bold text-base leading-none">+</button>
-                            </div>
-                            <button id="nextPage" class="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
-                                Siguiente
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-                            </button>
+                        <!-- PDF iframe viewer -->
+                        <th:block th:if="${estudio.archivoUrl != null and estudio.formato.name() != 'PPTX'}">
+                            <iframe id="pdfViewer" class="flex-1 w-full border-0" style="min-height:500px;" allowfullscreen></iframe>
+                        </th:block>
+                        <!-- PPTX FORMAT: Maintenance view -->
+                        <div th:if="${estudio.formato.name() == 'PPTX'}" class="w-full h-full flex flex-col items-center justify-center text-center p-6 bg-surface-container select-none overflow-y-auto">
+                            <span class="px-4 py-1.5 bg-[#e2f0d9] text-[#006d37] border border-[#006d37]/20 rounded-full font-label text-xs font-bold uppercase tracking-wider mb-4 animate-pulse">
+                                Optimizando Experiencia
+                            </span>
+                            <img src="/images/maintenance.png" alt="Mantenimiento" class="w-64 max-w-full h-auto mb-4 drop-shadow-lg transform hover:scale-105 transition-transform duration-300" />
+                            <h2 class="font-headline font-bold text-2xl text-on-primary-fixed mb-2 max-w-md leading-snug">¡Ups! Nos atrapaste en mantenimiento</h2>
+                            <p class="font-body text-sm text-on-surface-variant max-w-sm leading-relaxed mb-6">
+                                Estamos haciendo algunos mantenimientos para esta vista de diapositivas. Cuando esté lista, te lo notificaremos de inmediato.
+                            </p>
+                            <a th:href="@{/estudios}" class="bg-[#006d37] hover:bg-[#00522a] text-white font-headline font-bold text-xs px-6 py-3 rounded-full transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+                                Volver a Estudios
+                            </a>
                         </div>
 
                         <div th:if="${estudio.archivoUrl == null}"
@@ -319,7 +313,7 @@
                                     </svg>
                                     Guardado
                                 </a>
-                                <button id="downloadBtn"
+                                <a th:href="@{/documentos/estudio/{id}/download(id=${estudio.idEstudio})}"
                                     class="flex-1 bg-[#041533] hover:bg-[#00743a] text-white font-bold text-sm py-3 px-4 rounded-[14px] flex items-center justify-center gap-3 transition-colors shadow-sm">
                                     <svg class="w-5 h-5 shrink-0" width="24" height="24" fill="none"
                                         stroke="currentColor" viewBox="0 0 24 24">
@@ -327,7 +321,7 @@
                                             d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                                     </svg>
                                     Descargar
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </section>
@@ -354,95 +348,17 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', async function () {
-            const canvasContainer = document.getElementById('pdfCanvasContainer');
-            const downloadBtn = document.getElementById('downloadBtn');
+            const formato = document.getElementById('estudioFormato').value;
             const viewerContainer = document.getElementById('viewerContainer');
             const estudioId = window.location.pathname.split('/').pop();
 
-            if (canvasContainer) {
-                pdfjsLib.GlobalWorkerOptions.workerSrc =
-                    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-                let pdfDoc = null;
-                let currentPage = 1;
-                let zoomLevel = 1.0;
-                const ZOOM_STEP = 0.25;
-                const ZOOM_MIN = 0.5;
-                const ZOOM_MAX = 3.0;
-
-                async function renderPage(num) {
-                    const page = await pdfDoc.getPage(num);
-                    const containerWidth = canvasContainer.clientWidth - 32;
-                    const baseViewport = page.getViewport({ scale: 1 });
-                    const scale = (containerWidth / baseViewport.width) * zoomLevel;
-                    const viewport = page.getViewport({ scale });
-
-                    let canvas = canvasContainer.querySelector('canvas');
-                    if (!canvas) {
-                        canvas = document.createElement('canvas');
-                        canvas.style.borderRadius = '2px';
-                        canvas.style.boxShadow = '0 1px 4px rgba(0,0,0,0.18)';
-                        canvasContainer.appendChild(canvas);
-                    }
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-                    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-
-                    document.getElementById('pageInfo').textContent = 'Pág. ' + num + ' / ' + pdfDoc.numPages;
-                    document.getElementById('prevPage').disabled = num <= 1;
-                    document.getElementById('nextPage').disabled = num >= pdfDoc.numPages;
-                    document.getElementById('zoomOut').disabled = zoomLevel <= ZOOM_MIN;
-                    document.getElementById('zoomIn').disabled = zoomLevel >= ZOOM_MAX;
-                    canvasContainer.scrollTop = 0;
+            if (formato !== 'PPTX') {
+                const iframeEl = document.getElementById('pdfViewer');
+                if (iframeEl) {
+                    const resp = await fetch('/documentos/estudio/' + estudioId + '/presigned-url');
+                    const data = await resp.json();
+                    iframeEl.src = data.url + '#toolbar=0&navpanes=0&scrollbar=0';
                 }
-
-                try {
-                    pdfDoc = await pdfjsLib.getDocument('/documentos/estudio/' + estudioId + '/stream').promise;
-                    const loadingEl = document.getElementById('pdfLoading');
-                    if (loadingEl) loadingEl.remove();
-                    await renderPage(currentPage);
-                    const navBar = document.getElementById('pdfNavBar');
-                    if (navBar) { navBar.classList.remove('hidden'); navBar.classList.add('flex'); }
-                } catch (err) {
-                    console.error('Error cargando PDF:', err);
-                    canvasContainer.innerHTML =
-                        '<div class="flex flex-col items-center justify-center py-16 text-on-surface-variant gap-2">' +
-                        '<svg class="w-12 h-12 opacity-40" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>' +
-                        '<span class="text-sm">No se pudo cargar el documento</span></div>';
-                }
-
-                document.getElementById('prevPage').addEventListener('click', async function () {
-                    if (pdfDoc && currentPage > 1) { currentPage--; await renderPage(currentPage); }
-                });
-                document.getElementById('nextPage').addEventListener('click', async function () {
-                    if (pdfDoc && currentPage < pdfDoc.numPages) { currentPage++; await renderPage(currentPage); }
-                });
-                document.getElementById('zoomIn').addEventListener('click', async function () {
-                    if (pdfDoc && zoomLevel < ZOOM_MAX) { zoomLevel = Math.min(ZOOM_MAX, +(zoomLevel + ZOOM_STEP).toFixed(2)); await renderPage(currentPage); }
-                });
-                document.getElementById('zoomOut').addEventListener('click', async function () {
-                    if (pdfDoc && zoomLevel > ZOOM_MIN) { zoomLevel = Math.max(ZOOM_MIN, +(zoomLevel - ZOOM_STEP).toFixed(2)); await renderPage(currentPage); }
-                });
-            }
-
-            // Botón de descarga usa presigned URL para descarga real del archivo
-            if (downloadBtn) {
-                downloadBtn.addEventListener('click', async function (e) {
-                    e.preventDefault();
-                    try {
-                        const resp = await fetch('/documentos/estudio/' + estudioId + '/presigned-url');
-                        if (!resp.ok) throw new Error('No se pudo obtener URL de descarga');
-                        const data = await resp.json();
-                        const link = document.createElement('a');
-                        link.href = data.url;
-                        link.download = data.nombreArchivo || 'documento.pdf';
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    } catch (err) {
-                        console.error('Error al descargar:', err);
-                    }
-                });
             }
 
             document.addEventListener('contextmenu', event => event.preventDefault());
