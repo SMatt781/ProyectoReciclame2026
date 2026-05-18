@@ -958,7 +958,7 @@
                             <div class="flex items-center gap-3 w-full px-3">
 
                                 <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#00743a]/10 text-sm font-bold text-[#00743a]"
-                                     th:text="${(admin.nombres != null and !admin.nombres.empty) ? admin.nombres.substring(0,1).toUpperCase() : '?'}">
+                                     th:text="${!#strings.isEmpty(admin.nombres) ? #strings.substring(admin.nombres, 0, 1).toUpperCase() : '?'}">
                                 </div>
 
                                 <div>

@@ -165,127 +165,254 @@
                     Nuevo Estudio
                 </button>
             </div>
-                <!-- <div class="flex gap-3">
-                    <button
-                        class="px-4 py-2 bg-surface-container rounded-lg font-label text-sm font-semibold text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-2">
+            <!-- <div class="flex gap-3">
+                <button
+                    class="px-4 py-2 bg-surface-container rounded-lg font-label text-sm font-semibold text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-2">
+                    <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2z M11 3L5.5 8.5l1.42 1.41L11 5.83V15h2V5.83l4.08 4.08L18.5 8.5 12 3z" />
+                    </svg>
+                    Exportar
+                </button>
+            </div> -->
+        </div>
+
+        <!-- Search Bar and Filter Button -->
+        <!-- <div class="mb-8 flex flex-col sm:flex-row gap-4 w-full">
+            <div class="flex-1 focus-within:ring-2 focus-within:ring-[#2ECC71]/30 rounded-xl transition-shadow">
+                <div
+                    class="relative flex items-center w-full h-12 rounded-xl bg-surface-container-lowest border border-outline-variant/30 overflow-hidden group ambient-shadow">
+                    <div
+                        class="grid place-items-center h-full w-14 text-outline group-focus-within:text-secondary transition-colors">
                         <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
                             <path
-                                d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2z M11 3L5.5 8.5l1.42 1.41L11 5.83V15h2V5.83l4.08 4.08L18.5 8.5 12 3z" />
+                                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
                         </svg>
-                        Exportar
-                    </button>
-                </div> -->
-            </div>
-
-            <!-- Search Bar and Filter Button -->
-            <!-- <div class="mb-8 flex flex-col sm:flex-row gap-4 w-full">
-                <div class="flex-1 focus-within:ring-2 focus-within:ring-[#2ECC71]/30 rounded-xl transition-shadow">
-                    <div
-                        class="relative flex items-center w-full h-12 rounded-xl bg-surface-container-lowest border border-outline-variant/30 overflow-hidden group ambient-shadow">
-                        <div
-                            class="grid place-items-center h-full w-14 text-outline group-focus-within:text-secondary transition-colors">
-                            <svg class="icon-sm text-current" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-                            </svg>
-                        </div>
-                        <input
-                            class="peer h-full w-full outline-none text-base text-on-surface bg-transparent pr-4 font-body placeholder-outline-variant"
-                            id="search" placeholder="Buscar en el repositorio..." type="text" />
                     </div>
+                    <input
+                        class="peer h-full w-full outline-none text-base text-on-surface bg-transparent pr-4 font-body placeholder-outline-variant"
+                        id="search" placeholder="Buscar en el repositorio..." type="text" />
                 </div>
-                <div class="flex gap-2 shrink-0">
-                    <button id="openFiltersModal"
-                        class="h-12 px-6 flex items-center justify-center gap-2 bg-white text-slate-700 font-bold rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors">
-                        <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
-                        Filtros Avanzados
-                    </button>
-                    <button id="toggleViewBtn"
+            </div>
+            <div class="flex gap-2 shrink-0">
+                <button id="openFiltersModal"
+                    class="h-12 px-6 flex items-center justify-center gap-2 bg-white text-slate-700 font-bold rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors">
+                    <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
+                    Filtros Avanzados
+                </button>
+                <button id="toggleViewBtn"
+                    class="h-12 w-12 flex items-center justify-center bg-white text-slate-700 rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors"
+                    title="Cambiar vista">
+                    <svg id="icon-list" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                    <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                </button>
+            </div>
+        </div> -->
+
+        <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
+            <!-- Search Bar -->
+            <form action="/admin/estudios"  method="GET" class="flex flex-col sm:flex-row gap-4 mb-6 w-full flex-wrap">
+                <div class="flex-1 relative">
+                    <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input type="text" name="search" th:value="${search}" placeholder="Buscar en el repositorio..."
+                           class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
+                </div>
+                <a href="/admin/estudios"
+                   class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
+                   title="Limpiar filtros">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    <span class="text-sm font-medium">Limpiar</span>
+                </a>
+                <button type="button" id="openFiltersModal"
+                        class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                    <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
+                    <span class="text-sm font-medium">Filtros avanzados</span>
+                </button>
+                <button type="button" id="toggleViewBtn"
                         class="h-12 w-12 flex items-center justify-center bg-white text-slate-700 rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors"
                         title="Cambiar vista">
-                        <svg id="icon-list" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                        <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                        </svg>
-                    </button>
-                </div>
-            </div> -->
+                    <svg id="icon-list" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                    <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                </button>
+                <button type="button"
+                        onclick="window.location.href='/admin/estudios/exportar'"
+                        class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
+                    <div th:replace="~{fragments/icons.html :: icon-exportar-excel}"></div>
+                    Exportar
+                </button>
 
-            <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
-                <!-- Search Bar -->
-                <form action="/admin/estudios"  method="GET" class="flex flex-col sm:flex-row gap-4 mb-6 w-full flex-wrap">
-                    <div class="flex-1 relative">
-                        <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
-                             viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <input type="text" name="search" th:value="${search}" placeholder="Buscar en el repositorio..."
-                               class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
+            </form>
+
+
+
+
+            <!-- Mensaje No hay documentos -->
+            <div th:if="${#lists.isEmpty(estudios)}" class="text-center py-10">
+                <p class="text-lg font-bold text-on-surface-variant">No hay documentos disponibles</p>
+            </div>
+
+            <!-- Cards Grid -->
+            <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                 th:if="${not #lists.isEmpty(estudios)}">
+                <!-- Card 1: Dynamic -->
+                <article th:each="estudio, stat : ${estudios}"
+                         class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden"
+                         th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'bg-opacity-80' : ''}">
+                    <div th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'bg-gradient-to-r from-secondary to-secondary-container' : (estudio.estado.name() == 'BORRADOR' ? 'bg-gradient-to-r from-outline to-surface-variant' : 'bg-gradient-to-r from-error to-error-container')}"
+                         class="absolute top-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     </div>
-                    <a href="/admin/estudios"
-                       class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
-                       title="Limpiar filtros">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        <span class="text-sm font-medium">Limpiar</span>
-                    </a>
-                    <button type="button" id="openFiltersModal"
-                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                        <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
-                        <span class="text-sm font-medium">Filtros avanzados</span>
-                    </button>
-                    <button type="button" id="toggleViewBtn"
-                            class="h-12 w-12 flex items-center justify-center bg-white text-slate-700 rounded-xl border border-outline-variant/30 ambient-shadow hover:bg-surface-container transition-colors"
-                            title="Cambiar vista">
-                        <svg id="icon-list" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                        <svg id="icon-grid" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
-                             viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                        </svg>
-                    </button>
-                    <button type="button"
-                            onclick="window.location.href='/admin/estudios/exportar'"
-                            class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
-                        <div th:replace="~{fragments/icons.html :: icon-exportar-excel}"></div>
-                        Exportar
-                    </button>
-
-                </form>
-
-
-
-
-                <!-- Mensaje No hay documentos -->
-                <div th:if="${#lists.isEmpty(estudios)}" class="text-center py-10">
-                    <p class="text-lg font-bold text-on-surface-variant">No hay documentos disponibles</p>
-                </div>
-
-                <!-- Cards Grid -->
-                <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                     th:if="${not #lists.isEmpty(estudios)}">
-                    <!-- Card 1: Dynamic -->
-                    <article th:each="estudio, stat : ${estudios}"
-                             class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden"
-                             th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'bg-opacity-80' : ''}">
-                        <div th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'bg-gradient-to-r from-secondary to-secondary-container' : (estudio.estado.name() == 'BORRADOR' ? 'bg-gradient-to-r from-outline to-surface-variant' : 'bg-gradient-to-r from-error to-error-container')}"
-                             class="absolute top-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        </div>
-                        <div class="flex justify-between items-start mb-5"
-                             th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'opacity-70' : ''}">
-                            <div class="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm"
-                                 th:classappend="${estudio.formato.name() == 'PDF' ? 'bg-error-container text-on-error-container' :
+                    <div class="flex justify-between items-start mb-5"
+                         th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'opacity-70' : ''}">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center shadow-sm"
+                             th:classappend="${estudio.formato.name() == 'PDF' ? 'bg-error-container text-on-error-container' :
                                                     (estudio.formato.name() == 'PPTX' ? 'bg-orange-100 text-orange-600' :
                                                     (estudio.formato.name() == 'XLSX' ? 'bg-emerald-100 text-emerald-700' :
                                                     'bg-surface-container-high text-outline'))}">
+                            <th:block th:switch="${estudio.formato.name()}">
+                                <th:block th:case="'PDF'">
+                                    <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
+                                </th:block>
+                                <th:block th:case="'PPTX'">
+                                    <div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div>
+                                </th:block>
+                                <th:block th:case="'XLSX'">
+                                    <div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div>
+                                </th:block>
+                                <th:block th:case="*">
+                                    <div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div>
+                                </th:block>
+                            </th:block>
+                        </div>
+                        <div
+                                class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
+                            <span th:text="${estudio.anio}">2024</span>
+                            <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                            <span th:text="${estudio.formato.name()}">PDF</span>
+                        </div>
+                    </div>
+                    <div class="flex-1" th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'opacity-70' : ''}">
+                        <h4 th:text="${estudio.titulo}"
+                            th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}"
+                            class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
+                            Análisis de Ciclo de Vida de Envases PET en Perú</h4>
+                        <p th:text="${estudio.descripcion}"
+                           class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
+                            Estudio exhaustivo...</p>
+                    </div>
+                    <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
+
+                        <!-- Estado -->
+                        <div class="flex items-center gap-1.5"
+                             th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'text-secondary' : (estudio.estado.name() == 'BORRADOR' ? 'text-outline' : 'text-error')}">
+                            <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                <path th:if="${estudio.estado.name() == 'VIGENTE'}"
+                                      d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                <path th:if="${estudio.estado.name() == 'BORRADOR'}"
+                                      d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                <path th:if="${estudio.estado.name() == 'DEROGADO'}"
+                                      d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                            </svg>
+                            <span th:text="${estudio.estado.name()}"
+                                  class="font-label text-xs font-bold uppercase tracking-wide"></span>
+                        </div>
+
+
+
+                        <div class="flex gap-2">
+
+                            <!-- Editar -->
+                            <button type="button"
+                                    th:data-id="${estudio.idEstudio}"
+                                    th:data-nombre="${estudio.titulo}"
+                                    th:data-descripcion="${estudio.descripcion}"
+                                    th:data-anio="${estudio.anio}"
+                                    th:data-formato="${estudio.formato.name()}"
+                                    th:data-estado="${estudio.estado.name()}"
+                                    th:data-tipoacceso="${estudio.tipoAcceso.name()}"
+                                    th:data-archivo="${estudio.archivoNombre}"
+                                    onclick="abrirModalEditarEstudio(this)"
+                                    class="px-2.5 py-1 text-sm font-semibold rounded-lg text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition">
+                                Editar
+                            </button>
+
+                            <!-- Eliminar -->
+                            <a th:href="@{/admin/estudios/eliminar/{id}(id=${estudio.idEstudio})}"
+                               class="px-2.5 py-1 text-sm font-semibold rounded-lg text-on-surface-variant hover:bg-error-container hover:text-error transition">
+                                Eliminar
+                            </a>
+
+                            <!-- Ver -->
+                            <a th:href="@{/admin/estudios/{id}(id=${estudio.idEstudio})}"
+                               class="px-2.5 py-1 text-sm font-semibold rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-secondary transition">
+                                Ver
+                            </a>
+
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- List View (Hidden by Default) -->
+            <!-- List View (Hidden by Default) -->
+            <div id="listView" class="hidden flex-col gap-4" th:if="${not #lists.isEmpty(estudios)}">
+                <!-- Header -->
+                <div
+                        class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
+                    <div class="col-span-6 lg:col-span-5">Nombre</div>
+                    <div class="col-span-2 text-center">Estado</div>
+                    <div class="col-span-1 text-center">Formato</div>
+                    <div class="col-span-1 text-center">Año</div>
+                    <div class="col-span-2 lg:col-span-3 text-center">ACCIONES</div>
+                </div>
+
+                <div th:each="estudio, stat : ${estudios}"
+                     class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                    <div class="col-span-6 lg:col-span-5 flex items-center gap-4 w-full">
+                        <h4 th:text="${estudio.titulo}"
+                            class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors line-clamp-2"
+                            th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}">
+                            Análisis de Ciclo de Vida de Envases PET en Perú</h4>
+                    </div>
+                    <div class="col-span-2 flex justify-center w-full md:w-auto">
+                        <div class="flex items-center gap-1.5"
+                             th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'text-secondary' : (estudio.estado.name() == 'BORRADOR' ? 'text-outline' : 'text-error')}">
+                            <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
+                                <path th:if="${estudio.estado.name() == 'VIGENTE'}"
+                                      d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                <path th:if="${estudio.estado.name() == 'BORRADOR'}"
+                                      d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                <path th:if="${estudio.estado.name() == 'DEROGADO'}"
+                                      d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                            </svg>
+                            <span th:text="${estudio.estado.name()}"
+                                  class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
+                        </div>
+                    </div>
+                    <div class="col-span-1 flex justify-center w-full md:w-auto">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm shrink-0"
+                                 th:classappend="${estudio.formato.name() == 'PDF' ? 'bg-error-container text-on-error-container' :
+                                                        (estudio.formato.name() == 'PPTX' ? 'bg-orange-100 text-orange-600' :
+                                                        (estudio.formato.name() == 'XLSX' ? 'bg-emerald-100 text-emerald-700' :
+                                                        'bg-surface-container-high text-outline'))}">
                                 <th:block th:switch="${estudio.formato.name()}">
                                     <th:block th:case="'PDF'">
                                         <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
@@ -301,214 +428,85 @@
                                     </th:block>
                                 </th:block>
                             </div>
-                            <div
-                                    class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5">
-                                <span th:text="${estudio.anio}">2024</span>
-                                <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-                                <span th:text="${estudio.formato.name()}">PDF</span>
-                            </div>
+                            <span th:text="${estudio.formato.name()}"
+                                  class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">PDF</span>
                         </div>
-                        <div class="flex-1" th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'opacity-70' : ''}">
-                            <h4 th:text="${estudio.titulo}"
-                                th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}"
-                                class="font-headline text-lg font-bold text-on-primary-fixed mb-3 leading-tight group-hover:text-secondary transition-colors">
-                                Análisis de Ciclo de Vida de Envases PET en Perú</h4>
-                            <p th:text="${estudio.descripcion}"
-                               class="font-body text-sm text-on-surface-variant leading-relaxed line-clamp-3">
-                                Estudio exhaustivo...</p>
-                        </div>
-                        <div class="mt-6 pt-5 border-t border-surface-variant flex justify-between items-center">
-
-                            <!-- Estado -->
-                            <div class="flex items-center gap-1.5"
-                                 th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'text-secondary' : (estudio.estado.name() == 'BORRADOR' ? 'text-outline' : 'text-error')}">
-                                <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                    <path th:if="${estudio.estado.name() == 'VIGENTE'}"
-                                          d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
-                                    <path th:if="${estudio.estado.name() == 'BORRADOR'}"
-                                          d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
-                                    <path th:if="${estudio.estado.name() == 'DEROGADO'}"
-                                          d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
-                                </svg>
-                                <span th:text="${estudio.estado.name()}"
-                                      class="font-label text-xs font-bold uppercase tracking-wide"></span>
-                            </div>
-
-
-
-                            <div class="flex gap-2">
-
-                                <!-- Editar -->
-                                <button type="button"
-                                        th:data-id="${estudio.idEstudio}"
-                                        th:data-nombre="${estudio.titulo}"
-                                        th:data-descripcion="${estudio.descripcion}"
-                                        th:data-anio="${estudio.anio}"
-                                        th:data-formato="${estudio.formato.name()}"
-                                        th:data-estado="${estudio.estado.name()}"
-                                        th:data-tipoacceso="${estudio.tipoAcceso.name()}"
-                                        th:data-archivo="${estudio.archivoNombre}"
-                                        onclick="abrirModalEditarEstudio(this)"
-                                        class="px-2.5 py-1 text-sm font-semibold rounded-lg text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition">
-                                    Editar
-                                </button>
-
-                                <!-- Eliminar -->
-                                <a th:href="@{/admin/estudios/eliminar/{id}(id=${estudio.idEstudio})}"
-                                   class="px-2.5 py-1 text-sm font-semibold rounded-lg text-on-surface-variant hover:bg-error-container hover:text-error transition">
-                                    Eliminar
-                                </a>
-
-                                <!-- Ver -->
-                                <a th:href="@{/admin/estudios/{id}(id=${estudio.idEstudio})}"
-                                   class="px-2.5 py-1 text-sm font-semibold rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-secondary transition">
-                                    Ver
-                                </a>
-
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <!-- List View (Hidden by Default) -->
-                <!-- List View (Hidden by Default) -->
-                <div id="listView" class="hidden flex-col gap-4" th:if="${not #lists.isEmpty(estudios)}">
-                    <!-- Header -->
-                    <div
-                            class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
-                        <div class="col-span-6 lg:col-span-5">Nombre</div>
-                        <div class="col-span-2 text-center">Estado</div>
-                        <div class="col-span-1 text-center">Formato</div>
-                        <div class="col-span-1 text-center">Año</div>
-                        <div class="col-span-2 lg:col-span-3 text-center">ACCIONES</div>
                     </div>
-
-                    <div th:each="estudio, stat : ${estudios}"
-                         class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
-                        <div class="col-span-6 lg:col-span-5 flex items-center gap-4 w-full">
-                            <h4 th:text="${estudio.titulo}"
-                                class="font-headline text-sm font-bold text-on-primary-fixed group-hover:text-secondary transition-colors line-clamp-2"
-                                th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'line-through decoration-outline-variant' : ''}">
-                                Análisis de Ciclo de Vida de Envases PET en Perú</h4>
-                        </div>
-                        <div class="col-span-2 flex justify-center w-full md:w-auto">
-                            <div class="flex items-center gap-1.5"
-                                 th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'text-secondary' : (estudio.estado.name() == 'BORRADOR' ? 'text-outline' : 'text-error')}">
-                                <svg class="icon-md text-current" fill="currentColor" viewBox="0 0 24 24">
-                                    <path th:if="${estudio.estado.name() == 'VIGENTE'}"
-                                          d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
-                                    <path th:if="${estudio.estado.name() == 'BORRADOR'}"
-                                          d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
-                                    <path th:if="${estudio.estado.name() == 'DEROGADO'}"
-                                          d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
-                                </svg>
-                                <span th:text="${estudio.estado.name()}"
-                                      class="font-label text-xs font-bold uppercase tracking-wide">Vigente</span>
-                            </div>
-                        </div>
-                        <div class="col-span-1 flex justify-center w-full md:w-auto">
-                            <div class="flex items-center gap-2">
-                                <div class="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm shrink-0"
-                                     th:classappend="${estudio.formato.name() == 'PDF' ? 'bg-error-container text-on-error-container' :
-                                                        (estudio.formato.name() == 'PPTX' ? 'bg-orange-100 text-orange-600' :
-                                                        (estudio.formato.name() == 'XLSX' ? 'bg-emerald-100 text-emerald-700' :
-                                                        'bg-surface-container-high text-outline'))}">
-                                    <th:block th:switch="${estudio.formato.name()}">
-                                        <th:block th:case="'PDF'">
-                                            <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
-                                        </th:block>
-                                        <th:block th:case="'PPTX'">
-                                            <div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div>
-                                        </th:block>
-                                        <th:block th:case="'XLSX'">
-                                            <div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div>
-                                        </th:block>
-                                        <th:block th:case="*">
-                                            <div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div>
-                                        </th:block>
-                                    </th:block>
-                                </div>
-                                <span th:text="${estudio.formato.name()}"
-                                      class="bg-surface-container text-on-surface-variant font-label text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md">PDF</span>
-                            </div>
-                        </div>
-                        <div class="col-span-1 flex justify-center w-full md:w-auto">
+                    <div class="col-span-1 flex justify-center w-full md:w-auto">
                                 <span th:text="${estudio.anio}"
                                       class="text-sm font-body text-on-surface-variant font-medium">2024</span>
-                        </div>
-                        <div class="col-span-2 lg:col-span-3 flex justify-center items-center gap-2 whitespace-nowrap">
+                    </div>
+                    <div class="col-span-2 lg:col-span-3 flex justify-center items-center gap-2 whitespace-nowrap">
 
-                            <!-- Editar -->
-                            <button type="button"
-                                    th:data-id="${estudio.idEstudio}"
-                                    th:data-nombre="${estudio.titulo}"
-                                    th:data-descripcion="${estudio.descripcion}"
-                                    th:data-anio="${estudio.anio}"
-                                    th:data-formato="${estudio.formato.name()}"
-                                    th:data-estado="${estudio.estado.name()}"
-                                    th:data-tipoacceso="${estudio.tipoAcceso.name()}"
-                                    th:data-archivo="${estudio.archivoNombre}"
-                                    onclick="abrirModalEditarEstudio(this)"
-                                    class="flex items-center gap-1.5 px-3 py-1.5
+                        <!-- Editar -->
+                        <button type="button"
+                                th:data-id="${estudio.idEstudio}"
+                                th:data-nombre="${estudio.titulo}"
+                                th:data-descripcion="${estudio.descripcion}"
+                                th:data-anio="${estudio.anio}"
+                                th:data-formato="${estudio.formato.name()}"
+                                th:data-estado="${estudio.estado.name()}"
+                                th:data-tipoacceso="${estudio.tipoAcceso.name()}"
+                                th:data-archivo="${estudio.archivoNombre}"
+                                onclick="abrirModalEditarEstudio(this)"
+                                class="flex items-center gap-1.5 px-3 py-1.5
                bg-transparent text-[#666]
                rounded-lg text-xs font-bold
                hover:bg-green-100 hover:text-green-700
                border border-transparent hover:border-green-200
                transition-colors">
-                                Editar
-                            </button>
+                            Editar
+                        </button>
 
-                            <!-- Eliminar -->
-                            <a th:href="@{/admin/estudios/eliminar/{id}(id=${estudio.idEstudio})}"
-                               class="flex items-center gap-1.5 px-3 py-1.5
+                        <!-- Eliminar -->
+                        <a th:href="@{/admin/estudios/eliminar/{id}(id=${estudio.idEstudio})}"
+                           class="flex items-center gap-1.5 px-3 py-1.5
               bg-transparent text-[#666]
               rounded-lg text-xs font-bold
               hover:bg-red-100 hover:text-red-700
               border border-transparent hover:border-red-200
               transition-colors">
-                                Eliminar
-                            </a>
+                            Eliminar
+                        </a>
 
-                            <!-- Ver -->
-                            <a th:href="@{/admin/estudios/{id}(id=${estudio.idEstudio})}"
-                               class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link">
-                                Ver Estudio
-                                <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
-                                     fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
-                                </svg>
-                            </a>
+                        <!-- Ver -->
+                        <a th:href="@{/admin/estudios/{id}(id=${estudio.idEstudio})}"
+                           class="font-label text-sm font-semibold text-primary-container hover:text-secondary transition-colors flex items-center gap-1 group/link">
+                            Ver Estudio
+                            <svg class="icon-sm text-current group-hover/link:translate-x-1 transition-transform"
+                                 fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
+                            </svg>
+                        </a>
 
-                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Controles de Paginación -->
-                <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8 hidden"
-                     th:if="${not #lists.isEmpty(estudios)}">
-                    <button id="prevPageBtn"
-                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M15 19l-7-7 7-7" />
-                        </svg>
-                    </button>
-                    <div id="pageNumbers" class="flex gap-2"></div>
-                    <button id="nextPageBtn"
-                            class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M9 5l7 7-7 7" />
-                        </svg>
-                    </button>
-                </div>
-
-
-
+            <!-- Controles de Paginación -->
+            <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8 hidden"
+                 th:if="${not #lists.isEmpty(estudios)}">
+                <button id="prevPageBtn"
+                        class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <div id="pageNumbers" class="flex gap-2"></div>
+                <button id="nextPageBtn"
+                        class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
             </div>
 
 
+
         </div>
+
     </main>
 </div>
 <!-- Filtros Avanzados Modal -->
@@ -527,7 +525,10 @@
 
         <h2 class="text-2xl font-headline font-bold text-on-primary-fixed mb-6">Filtros Avanzados</h2>
 
-        <form id="filtersForm" action="/admin/estudios" method="GET" class="space-y-6">
+        <form id="filtersForm" action="/admin/estudios" method="GET" class="space-y-6" novalidate>
+            <!-- Campos ocultos: el usuario elige fechas, pero el backend filtra por anio -->
+            <input type="hidden" id="anioInicio" name="anioInicio">
+            <input type="hidden" id="anioFin" name="anioFin">
             <!-- Fecha -->
             <section>
                 <h3 class="font-label text-sm font-bold uppercase tracking-widest text-[#1a1a1a] mb-4">Fecha</h3>
@@ -763,16 +764,10 @@
         const dateStart = document.getElementById('dateStart');
         const dateEnd = document.getElementById('dateEnd');
         const filtersForm = document.getElementById('filtersForm');
+        const anioInicioInput = document.getElementById('anioInicio');
+        const anioFinInput = document.getElementById('anioFin');
 
         const today = new Date().toISOString().split('T')[0];
-
-        if (dateStart) {
-            dateStart.setAttribute('max', today);
-        }
-
-        if (dateEnd) {
-            dateEnd.setAttribute('max', today);
-        }
 
         function validateDateRange() {
             dateError.classList.add('hidden');
@@ -812,38 +807,46 @@
             const checkedDateType = document.querySelector('input[name="dateType"]:checked');
             const isRange = checkedDateType && checkedDateType.value === 'range';
 
+            // Limpieza inicial para que no se mezclen filtros de año y rango
+            if (anioInicioInput) anioInicioInput.value = '';
+            if (anioFinInput) anioFinInput.value = '';
+
             if (isRange) {
+                // El usuario ve fechas, pero el backend solo necesita años.
                 yearSelect.name = '';
+                dateStart.name = '';
+                dateEnd.name = '';
 
                 if (!validateDateRange()) {
                     e.preventDefault();
                     return;
                 }
 
-                if (!dateStart.value && !dateEnd.value) {
-                    checkedDateType.name = '';
+                const startYear = dateStart.value ? new Date(dateStart.value).getFullYear() : '';
+                const endYear = dateEnd.value ? new Date(dateEnd.value).getFullYear() : '';
+
+                if (anioInicioInput) anioInicioInput.value = startYear;
+                if (anioFinInput) anioFinInput.value = endYear;
+
+                if (!startYear && !endYear) {
+                    if (checkedDateType) checkedDateType.name = '';
+                    if (anioInicioInput) anioInicioInput.name = '';
+                    if (anioFinInput) anioFinInput.name = '';
                 }
             } else {
+                // Si filtra por año específico, no enviamos rango.
                 dateStart.name = '';
                 dateEnd.name = '';
+
+                if (anioInicioInput) anioInicioInput.name = '';
+                if (anioFinInput) anioFinInput.name = '';
 
                 if (!yearSelect.value) {
                     if (checkedDateType) checkedDateType.name = '';
                     yearSelect.name = '';
                 }
             }
-
-            if (isRange && dateStart.value && dateEnd.value) {
-                if (new Date(dateStart.value) > new Date(dateEnd.value)) {
-                    e.preventDefault(); // Bloqueamos el envío porque hay error
-                    dateError.classList.remove('hidden');
-                    return;
-                } else {
-                    dateError.classList.add('hidden');
-                }
-            }
         });
-
 
         // Toggle View & Pagination Logic
         const toggleViewBtn = document.getElementById('toggleViewBtn');
@@ -1479,5 +1482,4 @@
 </script>
 
 </body>
-
 </html>
