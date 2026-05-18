@@ -29,7 +29,13 @@ public class AdminEstudiosController {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
+    private com.example.proyectoreciclame.Service.AuthenticatedUserService authenticatedUserService;
+
+    @Autowired
     private com.example.proyectoreciclame.Service.S3StorageService s3StorageService;
+
+    @Autowired
+    private com.example.proyectoreciclame.Service.DocumentConverterService documentConverterService;
 
     @Autowired
     private AdminNotificacionController adminNotificacionController;
@@ -122,31 +128,56 @@ public class AdminEstudiosController {
             estudio.setFechaPublicacion(java.time.LocalDate.now());
             estudio.setIndiceRelevancia(Integer.valueOf(1));
 
-            // 🔴 CRÍTICO: usuario creador
-            com.example.proyectoreciclame.Entity.Usuario usuario =
-                    usuarioRepository.findById(Long.valueOf(1))
-                            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            // 🔴 CRÍTICO: usuario creador robusto
+            com.example.proyectoreciclame.Entity.Usuario usuario = null;
+            com.example.proyectoreciclame.Dto.SessionUserDto sessionUser = authenticatedUserService.obtenerUsuarioSesion();
+            if (sessionUser != null) {
+                usuario = usuarioRepository.findByCorreoWithRol(sessionUser.getCorreo()).orElse(null);
+            }
+            if (usuario == null) {
+                usuario = usuarioRepository.findById(1L).orElse(null);
+            }
+            if (usuario == null) {
+                usuario = usuarioRepository.findAll().stream().findFirst().orElseThrow(() -> new RuntimeException("Usuario no encontrado en el sistema"));
+            }
 
             estudio.setUsuarioCreador(usuario);
 
-            // 🔹 archivo
-            // 🔹 archivo real PDF / PPTX / XLSX - Subir a AWS S3
-            if (archivo != null && !archivo.isEmpty()) {
+             // 🔹 archivo
+             // 🔹 archivo real PDF / PPTX / XLSX - Subir a AWS S3
+             if (archivo != null && !archivo.isEmpty()) {
+ 
+                 String nombreOriginal = archivo.getOriginalFilename();
+                 String extension = nombreOriginal.substring(nombreOriginal.lastIndexOf(".")).toLowerCase();
+ 
+                 if (!extension.equals(".pdf") && !extension.equals(".pptx") && !extension.equals(".xlsx")) {
+                     throw new RuntimeException("Solo se permiten archivos PDF, PPTX o XLSX");
+                 }
+ 
+                 String clave;
+                 String nombreDestino;
+                 int tamanioKb;
+ 
+                 if (extension.equals(".pptx")) {
+                     // Upload original PPTX — Office Online renders it natively, no conversion needed
+                     clave = s3StorageService.uploadFile(archivo, "estudios");
+                     nombreDestino = s3StorageService.getFileName(clave);
+                     tamanioKb = (int) (archivo.getSize() / 1024);
+                 } else if (extension.equals(".xlsx")) {
+                     byte[] convertedPdf = documentConverterService.convertXlsxToPdf(archivo.getBytes());
+                     nombreDestino = nombreOriginal.substring(0, nombreOriginal.lastIndexOf(".")) + ".pdf";
+                     clave = s3StorageService.uploadFile(convertedPdf, nombreDestino, "application/pdf", "estudios");
+                     tamanioKb = convertedPdf.length / 1024;
+                 } else {
+                     clave = s3StorageService.uploadFile(archivo, "estudios");
+                     nombreDestino = s3StorageService.getFileName(clave);
+                     tamanioKb = (int) (archivo.getSize() / 1024);
+                 }
 
-                String nombreOriginal = archivo.getOriginalFilename();
-                String extension = nombreOriginal.substring(nombreOriginal.lastIndexOf(".")).toLowerCase();
-
-                if (!extension.equals(".pdf") && !extension.equals(".pptx") && !extension.equals(".xlsx")) {
-                    throw new RuntimeException("Solo se permiten archivos PDF, PPTX o XLSX");
-                }
-
-                // ✅ Subir a S3 y guardar la clave S3 real (no ruta local)
-                String clave = s3StorageService.uploadFile(archivo, "estudios");
-
-                estudio.setArchivoNombre(s3StorageService.getFileName(clave));
-                estudio.setArchivoTamanioKb(Integer.valueOf((int) (archivo.getSize() / 1024)));
-                estudio.setArchivoUrl(clave);
-            }
+                 estudio.setArchivoNombre(nombreDestino);
+                 estudio.setArchivoTamanioKb(tamanioKb);
+                 estudio.setArchivoUrl(clave);
+             }
             java.time.LocalDateTime ahora = java.time.LocalDateTime.now();
 
             estudio.setFechaCreacion(ahora);
@@ -462,6 +493,7 @@ public class AdminEstudiosController {
     @PostMapping("/admin/repo_new")
     public String guardarNormativa(
             @RequestParam(value = "titulo", required = false) String titulo,
+            @RequestParam(value = "descripcion", required = false) String descripcion,
             @RequestParam(value = "organismoEmisor", required = false) String organismoEmisor,
             @RequestParam(value = "codigo", required = false) String codigo,
             @RequestParam(value = "anio", required = false) Integer anio,
@@ -494,6 +526,7 @@ public class AdminEstudiosController {
                     new com.example.proyectoreciclame.Entity.Normativa();
 
             n.setTitulo(titulo);
+            n.setDescripcion(descripcion);
             n.setOrganismoEmisor(organismoEmisor);
             n.setCodigo(codigo);
             n.setAnio(anio);
@@ -520,9 +553,17 @@ public class AdminEstudiosController {
                 n.setCategorias(categoriaRepository.findAllById(categorias));
             }
 
-            com.example.proyectoreciclame.Entity.Usuario usuario =
-                    usuarioRepository.findById(1L)
-                            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            com.example.proyectoreciclame.Entity.Usuario usuario = null;
+            com.example.proyectoreciclame.Dto.SessionUserDto sessionUser = authenticatedUserService.obtenerUsuarioSesion();
+            if (sessionUser != null) {
+                usuario = usuarioRepository.findByCorreoWithRol(sessionUser.getCorreo()).orElse(null);
+            }
+            if (usuario == null) {
+                usuario = usuarioRepository.findById(1L).orElse(null);
+            }
+            if (usuario == null) {
+                usuario = usuarioRepository.findAll().stream().findFirst().orElseThrow(() -> new RuntimeException("Usuario no encontrado en el sistema"));
+            }
 
             n.setUsuarioCreador(usuario);
 
@@ -703,6 +744,7 @@ public class AdminEstudiosController {
     public String actualizarNormativa(
             @PathVariable Long id,
             @RequestParam String titulo,
+            @RequestParam(required = false) String descripcion,
             @RequestParam String organismoEmisor,
             @RequestParam(required = false) String codigo,
             @RequestParam Integer anio,
@@ -723,6 +765,7 @@ public class AdminEstudiosController {
         Normativa.EstadoNormativa estadoAnterior = n.getEstado();
 
         n.setTitulo(titulo);
+        n.setDescripcion(descripcion);
         n.setOrganismoEmisor(organismoEmisor);
         n.setCodigo(codigo);
         n.setAnio(anio);
@@ -841,22 +884,39 @@ public class AdminEstudiosController {
                 estudio.setTipoAcceso(Estudio.TipoAcceso.valueOf(tipoAcceso));
             }
 
-            // 🔹 Manejar archivo si se proporciona uno nuevo
-            if (archivo != null && !archivo.isEmpty()) {
-                String nombreOriginal = archivo.getOriginalFilename();
-                String extension = nombreOriginal.substring(nombreOriginal.lastIndexOf(".")).toLowerCase();
+             // 🔹 Manejar archivo si se proporciona uno nuevo
+             if (archivo != null && !archivo.isEmpty()) {
+                 String nombreOriginal = archivo.getOriginalFilename();
+                 String extension = nombreOriginal.substring(nombreOriginal.lastIndexOf(".")).toLowerCase();
+ 
+                 if (!extension.equals(".pdf") && !extension.equals(".pptx") && !extension.equals(".xlsx")) {
+                     throw new RuntimeException("Solo se permiten archivos PDF, PPTX o XLSX");
+                 }
+ 
+                 String clave;
+                 String nombreDestino;
+                 int tamanioKb;
+ 
+                 if (extension.equals(".pptx")) {
+                     // Upload original PPTX — Office Online renders it natively, no conversion needed
+                     clave = s3StorageService.uploadFile(archivo, "estudios");
+                     nombreDestino = s3StorageService.getFileName(clave);
+                     tamanioKb = (int) (archivo.getSize() / 1024);
+                 } else if (extension.equals(".xlsx")) {
+                     byte[] convertedPdf = documentConverterService.convertXlsxToPdf(archivo.getBytes());
+                     nombreDestino = nombreOriginal.substring(0, nombreOriginal.lastIndexOf(".")) + ".pdf";
+                     clave = s3StorageService.uploadFile(convertedPdf, nombreDestino, "application/pdf", "estudios");
+                     tamanioKb = convertedPdf.length / 1024;
+                 } else {
+                     clave = s3StorageService.uploadFile(archivo, "estudios");
+                     nombreDestino = s3StorageService.getFileName(clave);
+                     tamanioKb = (int) (archivo.getSize() / 1024);
+                 }
 
-                if (!extension.equals(".pdf") && !extension.equals(".pptx") && !extension.equals(".xlsx")) {
-                    throw new RuntimeException("Solo se permiten archivos PDF, PPTX o XLSX");
-                }
-
-                // Subir a S3 y guardar la clave S3
-                String clave = s3StorageService.uploadFile(archivo, "estudios");
-
-                estudio.setArchivoNombre(s3StorageService.getFileName(clave));
-                estudio.setArchivoTamanioKb(Integer.valueOf((int) (archivo.getSize() / 1024)));
-                estudio.setArchivoUrl(clave);
-            }
+                 estudio.setArchivoNombre(nombreDestino);
+                 estudio.setArchivoTamanioKb(tamanioKb);
+                 estudio.setArchivoUrl(clave);
+             }
 
             estudio.setFechaActualizacion(java.time.LocalDateTime.now());
 

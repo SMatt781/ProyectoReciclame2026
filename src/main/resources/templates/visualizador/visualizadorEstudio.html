@@ -108,7 +108,7 @@
         }
     </style>
     <div th:replace="~{fragments/responsive}"></div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 
 <body
@@ -150,11 +150,7 @@
                             class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold uppercase">
                             VIGENTE
                         </span>
-                        <span class="inline-flex items-center gap-1.5 justify-center bg-[#e2e8f8] text-[#00210c] px-4 py-1.5
-                            rounded-full font-label text-xs font-bold tracking-wide uppercase">
-                            <div th:replace="~{fragments/icons.html :: icon-solo-lectura}"></div>
-                            <span th:text="${estudio.tipoAcceso}">SOLO LECTURA</span>
-                        </span>
+
                     </div>
                 </header>
             </div>
@@ -176,90 +172,162 @@
                                 class="font-body text-sm text-on-surface-variant w-40 truncate sm:w-auto"></span>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <span class="font-label text-xs font-medium text-error uppercase px-2 py-1 bg-error-container rounded-md">
+                            <span
+                                class="font-label text-xs font-medium text-error uppercase px-2 py-1 bg-error-container rounded-md">
                                 Vista Protegida
                             </span>
                         </div>
                     </div>
 
                     <!-- Viewer Canvas -->
-                    <div class="flex-1 bg-surface-container flex flex-col p-4 sm:p-8 overflow-hidden relative" id="viewer-container">
-                        <div class="w-full h-full bg-surface-container-lowest shadow-sm rounded-sm relative overflow-hidden flex flex-col min-h-[500px]">
+                    <div class="flex-1 bg-surface-container flex flex-col p-4 sm:p-8 overflow-hidden relative"
+                        id="viewer-container">
+                        <div
+                            class="w-full h-full bg-surface-container-lowest shadow-sm rounded-sm relative overflow-hidden flex flex-col min-h-[500px]">
+                            <!-- PDF Canvas Container -->
+                            <div th:if="${estudio.archivoUrl != null}"
+                                id="pdfCanvasContainer"
+                                class="flex-1 overflow-auto bg-[#efefef] flex items-start justify-center p-4 select-none">
+                                <div id="pdfLoading" class="flex flex-col items-center justify-center py-16 text-on-surface-variant">
+                                    <div class="w-8 h-8 border-2 border-secondary border-t-transparent rounded-full animate-spin mb-3"></div>
+                                    <span class="text-sm font-body">Cargando documento...</span>
+                                </div>
+                            </div>
+                            <!-- Page Navigation + Zoom Bar -->
+                            <div id="pdfNavBar" class="hidden items-center justify-between px-3 py-2 border-t border-surface-container/50 bg-surface-container-lowest flex-shrink-0 gap-2">
+                                <button id="prevPage" class="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                                    Anterior
+                                </button>
+                                <div class="flex items-center gap-2">
+                                    <button id="zoomOut" title="Alejar" class="w-7 h-7 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-bold text-base leading-none">−</button>
+                                    <span id="pageInfo" class="font-body text-xs text-on-surface-variant font-medium whitespace-nowrap min-w-[90px] text-center">Pág. 1 / 1</span>
+                                    <button id="zoomIn" title="Acercar" class="w-7 h-7 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-bold text-base leading-none">+</button>
+                                </div>
+                                <button id="nextPage" class="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                                    Siguiente
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                                </button>
+                            </div>
 
-                            <!-- PDF Iframe - src set via JS with presigned URL -->
-                            <iframe id="pdfViewer"
-                                    th:if="${estudio.archivoUrl != null}"
-                                    class="w-full h-full border-0 flex-1"
-                                    oncontextmenu="return false;"></iframe>
-
-                            <div th:if="${estudio.archivoUrl == null}" class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
+                            <div th:if="${estudio.archivoUrl == null}"
+                                class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
                                 <svg class="icon-xl opacity-50 mb-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                                    <path
+                                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
                                 </svg>
                                 <span>No hay documento disponible</span>
                             </div>
 
                             <!-- Watermark Overlay -->
-                            <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]" style="z-index: 50;">
-                                <div class="transform -rotate-45 text-4xl sm:text-5xl font-bold text-gray-800 whitespace-nowrap p-10 flex flex-col gap-24 text-center">
-                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
-                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
-                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
+                            <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]"
+                                style="z-index: 50;">
+                                <div
+                                    class="transform -rotate-45 text-4xl sm:text-5xl font-bold text-gray-800 whitespace-nowrap p-10 flex flex-col gap-24 text-center">
+                                    <span
+                                        th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
+                                        - CONFIDENCIAL</span>
+                                    <span
+                                        th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
+                                        - CONFIDENCIAL</span>
+                                    <span
+                                        th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
+                                        - CONFIDENCIAL</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- Security Scripts -->
+                <!-- PDF.js Viewer Script -->
                 <script>
-                    document.addEventListener('DOMContentLoaded', async function() {
-                        // Load presigned URL for PDF viewer
-                        const estudioId = window.location.pathname.split('/').pop();
-                        const pdfViewer = document.getElementById('pdfViewer');
-                        if (pdfViewer) {
-                            try {
-                                const response = await fetch(`/documentos/estudio/${estudioId}/presigned-url`);
-                                if (response.ok) {
-                                    const data = await response.json();
-                                    pdfViewer.src = data.url + '#toolbar=0&navpanes=0';
+                    document.addEventListener('DOMContentLoaded', async function () {
+                        const canvasContainer = document.getElementById('pdfCanvasContainer');
+                        const viewerContainer = document.getElementById('viewer-container');
+
+                        if (canvasContainer) {
+                            const estudioId = window.location.pathname.split('/').pop();
+                            pdfjsLib.GlobalWorkerOptions.workerSrc =
+                                'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+                            let pdfDoc = null;
+                            let currentPage = 1;
+                            let zoomLevel = 1.0;
+                            const ZOOM_STEP = 0.25;
+                            const ZOOM_MIN = 0.5;
+                            const ZOOM_MAX = 3.0;
+
+                            async function renderPage(num) {
+                                const page = await pdfDoc.getPage(num);
+                                const containerWidth = canvasContainer.clientWidth - 32;
+                                const baseViewport = page.getViewport({ scale: 1 });
+                                const scale = (containerWidth / baseViewport.width) * zoomLevel;
+                                const viewport = page.getViewport({ scale });
+
+                                let canvas = canvasContainer.querySelector('canvas');
+                                if (!canvas) {
+                                    canvas = document.createElement('canvas');
+                                    canvas.style.borderRadius = '2px';
+                                    canvas.style.boxShadow = '0 1px 4px rgba(0,0,0,0.18)';
+                                    canvasContainer.appendChild(canvas);
                                 }
-                            } catch (e) {
-                                console.error('Error cargando documento:', e);
+                                canvas.height = viewport.height;
+                                canvas.width = viewport.width;
+                                await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+
+                                document.getElementById('pageInfo').textContent = 'Pág. ' + num + ' / ' + pdfDoc.numPages;
+                                document.getElementById('prevPage').disabled = num <= 1;
+                                document.getElementById('nextPage').disabled = num >= pdfDoc.numPages;
+                                document.getElementById('zoomOut').disabled = zoomLevel <= ZOOM_MIN;
+                                document.getElementById('zoomIn').disabled = zoomLevel >= ZOOM_MAX;
+                                canvasContainer.scrollTop = 0;
                             }
+
+                            try {
+                                pdfDoc = await pdfjsLib.getDocument('/documentos/estudio/' + estudioId + '/stream').promise;
+                                const loadingEl = document.getElementById('pdfLoading');
+                                if (loadingEl) loadingEl.remove();
+                                await renderPage(currentPage);
+                                const navBar = document.getElementById('pdfNavBar');
+                                if (navBar) { navBar.classList.remove('hidden'); navBar.classList.add('flex'); }
+                            } catch (err) {
+                                console.error('Error cargando PDF:', err);
+                                canvasContainer.innerHTML =
+                                    '<div class="flex flex-col items-center justify-center py-16 text-on-surface-variant gap-2">' +
+                                    '<svg class="w-12 h-12 opacity-40" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>' +
+                                    '<span class="text-sm">No se pudo cargar el documento</span></div>';
+                            }
+
+                            document.getElementById('prevPage').addEventListener('click', async function () {
+                                if (pdfDoc && currentPage > 1) { currentPage--; await renderPage(currentPage); }
+                            });
+                            document.getElementById('nextPage').addEventListener('click', async function () {
+                                if (pdfDoc && currentPage < pdfDoc.numPages) { currentPage++; await renderPage(currentPage); }
+                            });
+                            document.getElementById('zoomIn').addEventListener('click', async function () {
+                                if (pdfDoc && zoomLevel < ZOOM_MAX) { zoomLevel = Math.min(ZOOM_MAX, +(zoomLevel + ZOOM_STEP).toFixed(2)); await renderPage(currentPage); }
+                            });
+                            document.getElementById('zoomOut').addEventListener('click', async function () {
+                                if (pdfDoc && zoomLevel > ZOOM_MIN) { zoomLevel = Math.max(ZOOM_MIN, +(zoomLevel - ZOOM_STEP).toFixed(2)); await renderPage(currentPage); }
+                            });
                         }
 
-                        // Disable right click globally
                         document.addEventListener('contextmenu', event => event.preventDefault());
-
-                        // Block common shortcuts
-                        document.addEventListener('keydown', function(e) {
-                            // Ctrl+P (Print), Ctrl+S (Save), Ctrl+C (Copy), F12 (DevTools)
-                            if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' ||
-                                               e.key === 's' || e.key === 'S' ||
-                                               e.key === 'c' || e.key === 'C')) ||
-                                e.key === 'F12' ||
-                                e.key === 'PrintScreen') {
+                        document.addEventListener('keydown', function (e) {
+                            if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S')) ||
+                                e.key === 'F12' || e.key === 'PrintScreen') {
                                 e.preventDefault();
                                 return false;
                             }
                         });
-
-                        // Attempt to block PrintScreen key specifically
-                        document.addEventListener('keyup', function(e) {
-                            if (e.key == 'PrintScreen') {
-                                navigator.clipboard.writeText(''); // Clear clipboard
-                                alert('Por seguridad, las capturas de pantalla de este documento están deshabilitadas.');
-                            }
+                        window.addEventListener('keyup', function (e) {
+                            if (e.key === 'PrintScreen') navigator.clipboard.writeText('');
                         });
-
-                        // Obscure content when window loses focus (e.g. Snipping tool)
-                        window.addEventListener('blur', function() {
-                            document.getElementById('viewer-container').style.filter = 'blur(10px)';
+                        window.addEventListener('blur', function () {
+                            if (viewerContainer) viewerContainer.style.filter = 'blur(10px)';
                         });
-
-                        window.addEventListener('focus', function() {
-                            document.getElementById('viewer-container').style.filter = 'none';
+                        window.addEventListener('focus', function () {
+                            if (viewerContainer) viewerContainer.style.filter = 'none';
                         });
                     });
                 </script>
@@ -324,9 +392,11 @@
                             </div>
                             <div class="col-span-2 pt-2" th:if="${citas != null}">
                                 <button onclick="document.getElementById('citaModal').classList.remove('hidden')"
-                                        class="w-full bg-[#006d37] hover:bg-[#00522a] text-white font-bold text-sm py-3 px-4 rounded-[14px] flex items-center justify-center gap-2 transition-colors shadow-sm">
-                                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+                                    class="w-full bg-[#006d37] hover:bg-[#00522a] text-white font-bold text-sm py-3 px-4 rounded-[14px] flex items-center justify-center gap-2 transition-colors shadow-sm">
+                                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                                     </svg>
                                     Exportar Cita Académica
                                 </button>
@@ -355,44 +425,49 @@
     </div>
 
     <!-- Modal: Exportar Cita -->
-    <div id="citaModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-         onclick="if(event.target===this)closeCitaModal()">
+    <div id="citaModal"
+        class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+        onclick="if(event.target===this)closeCitaModal()">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh] overflow-hidden">
             <!-- Modal Header -->
             <div class="flex items-center justify-between px-6 py-5 border-b border-surface-variant/50">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-[#f0fdf4] rounded-xl flex items-center justify-center">
                         <svg class="w-5 h-5 text-[#006d37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                         </svg>
                     </div>
                     <div>
                         <h2 class="font-headline font-bold text-on-primary-fixed text-base">Exportar Cita Académica</h2>
-                        <p class="font-body text-xs text-on-surface-variant">Copia la referencia en el formato de tu preferencia</p>
+                        <p class="font-body text-xs text-on-surface-variant">Copia la referencia en el formato de tu
+                            preferencia</p>
                     </div>
                 </div>
-                <button onclick="closeCitaModal()" class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+                <button onclick="closeCitaModal()"
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
             <!-- Tab Bar -->
             <div class="flex gap-1 px-6 pt-3 border-b border-surface-variant/50">
                 <button id="tab-APA" onclick="switchCitaTab('APA')"
-                        class="px-4 py-2.5 font-label text-sm font-semibold rounded-t-lg border-b-2 border-[#006d37] text-[#006d37] bg-[#f0fdf4] transition-all">
+                    class="px-4 py-2.5 font-label text-sm font-semibold rounded-t-lg border-b-2 border-[#006d37] text-[#006d37] bg-[#f0fdf4] transition-all">
                     APA
                 </button>
                 <button id="tab-MLA" onclick="switchCitaTab('MLA')"
-                        class="px-4 py-2.5 font-label text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-on-surface-variant hover:text-on-primary-fixed hover:bg-surface-container/50 transition-all">
+                    class="px-4 py-2.5 font-label text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-on-surface-variant hover:text-on-primary-fixed hover:bg-surface-container/50 transition-all">
                     MLA
                 </button>
                 <button id="tab-Chicago" onclick="switchCitaTab('Chicago')"
-                        class="px-4 py-2.5 font-label text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-on-surface-variant hover:text-on-primary-fixed hover:bg-surface-container/50 transition-all">
+                    class="px-4 py-2.5 font-label text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-on-surface-variant hover:text-on-primary-fixed hover:bg-surface-container/50 transition-all">
                     Chicago
                 </button>
                 <button id="tab-Harvard" onclick="switchCitaTab('Harvard')"
-                        class="px-4 py-2.5 font-label text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-on-surface-variant hover:text-on-primary-fixed hover:bg-surface-container/50 transition-all">
+                    class="px-4 py-2.5 font-label text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-on-surface-variant hover:text-on-primary-fixed hover:bg-surface-container/50 transition-all">
                     Harvard
                 </button>
             </div>
@@ -401,81 +476,100 @@
                 <!-- APA -->
                 <div id="content-APA" class="space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">Formato APA (7ª edición)</span>
+                        <span
+                            class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">Formato
+                            APA (7ª edición)</span>
                         <button id="copy-btn-APA" onclick="copyCita('APA')"
-                                class="flex items-center gap-1.5 text-xs font-semibold text-[#006d37] hover:text-[#004d27] bg-[#f0fdf4] hover:bg-[#dcfce7] px-3 py-1.5 rounded-lg transition-all border border-[#86efac]">
+                            class="flex items-center gap-1.5 text-xs font-semibold text-[#006d37] hover:text-[#004d27] bg-[#f0fdf4] hover:bg-[#dcfce7] px-3 py-1.5 rounded-lg transition-all border border-[#86efac]">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                             </svg>
                             Copiar
                         </button>
                     </div>
                     <div class="bg-[#f8fafc] border border-outline-variant/30 rounded-xl p-5">
-                        <p id="cita-text-APA" th:text="${citas['APA']}" class="font-body text-sm text-on-primary-fixed leading-relaxed"></p>
+                        <p id="cita-text-APA" th:text="${citas['APA']}"
+                            class="font-body text-sm text-on-primary-fixed leading-relaxed"></p>
                     </div>
                 </div>
                 <!-- MLA -->
                 <div id="content-MLA" class="hidden space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">Formato MLA (9ª edición)</span>
+                        <span
+                            class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">Formato
+                            MLA (9ª edición)</span>
                         <button id="copy-btn-MLA" onclick="copyCita('MLA')"
-                                class="flex items-center gap-1.5 text-xs font-semibold text-[#006d37] hover:text-[#004d27] bg-[#f0fdf4] hover:bg-[#dcfce7] px-3 py-1.5 rounded-lg transition-all border border-[#86efac]">
+                            class="flex items-center gap-1.5 text-xs font-semibold text-[#006d37] hover:text-[#004d27] bg-[#f0fdf4] hover:bg-[#dcfce7] px-3 py-1.5 rounded-lg transition-all border border-[#86efac]">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                             </svg>
                             Copiar
                         </button>
                     </div>
                     <div class="bg-[#f8fafc] border border-outline-variant/30 rounded-xl p-5">
-                        <p id="cita-text-MLA" th:text="${citas['MLA']}" class="font-body text-sm text-on-primary-fixed leading-relaxed"></p>
+                        <p id="cita-text-MLA" th:text="${citas['MLA']}"
+                            class="font-body text-sm text-on-primary-fixed leading-relaxed"></p>
                     </div>
                 </div>
                 <!-- Chicago -->
                 <div id="content-Chicago" class="hidden space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">Formato Chicago (17ª edición)</span>
+                        <span
+                            class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">Formato
+                            Chicago (17ª edición)</span>
                         <button id="copy-btn-Chicago" onclick="copyCita('Chicago')"
-                                class="flex items-center gap-1.5 text-xs font-semibold text-[#006d37] hover:text-[#004d27] bg-[#f0fdf4] hover:bg-[#dcfce7] px-3 py-1.5 rounded-lg transition-all border border-[#86efac]">
+                            class="flex items-center gap-1.5 text-xs font-semibold text-[#006d37] hover:text-[#004d27] bg-[#f0fdf4] hover:bg-[#dcfce7] px-3 py-1.5 rounded-lg transition-all border border-[#86efac]">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                             </svg>
                             Copiar
                         </button>
                     </div>
                     <div class="bg-[#f8fafc] border border-outline-variant/30 rounded-xl p-5">
-                        <p id="cita-text-Chicago" th:text="${citas['Chicago']}" class="font-body text-sm text-on-primary-fixed leading-relaxed"></p>
+                        <p id="cita-text-Chicago" th:text="${citas['Chicago']}"
+                            class="font-body text-sm text-on-primary-fixed leading-relaxed"></p>
                     </div>
                 </div>
                 <!-- Harvard -->
                 <div id="content-Harvard" class="hidden space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">Formato Harvard</span>
+                        <span
+                            class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">Formato
+                            Harvard</span>
                         <button id="copy-btn-Harvard" onclick="copyCita('Harvard')"
-                                class="flex items-center gap-1.5 text-xs font-semibold text-[#006d37] hover:text-[#004d27] bg-[#f0fdf4] hover:bg-[#dcfce7] px-3 py-1.5 rounded-lg transition-all border border-[#86efac]">
+                            class="flex items-center gap-1.5 text-xs font-semibold text-[#006d37] hover:text-[#004d27] bg-[#f0fdf4] hover:bg-[#dcfce7] px-3 py-1.5 rounded-lg transition-all border border-[#86efac]">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                             </svg>
                             Copiar
                         </button>
                     </div>
                     <div class="bg-[#f8fafc] border border-outline-variant/30 rounded-xl p-5">
-                        <p id="cita-text-Harvard" th:text="${citas['Harvard']}" class="font-body text-sm text-on-primary-fixed leading-relaxed"></p>
+                        <p id="cita-text-Harvard" th:text="${citas['Harvard']}"
+                            class="font-body text-sm text-on-primary-fixed leading-relaxed"></p>
                     </div>
                 </div>
             </div>
             <!-- Footer -->
             <div class="px-6 py-4 bg-surface-container/40 border-t border-surface-variant/50 flex items-center gap-2">
-                <svg class="w-4 h-4 text-on-surface-variant flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                <svg class="w-4 h-4 text-on-surface-variant flex-shrink-0" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <p class="text-xs text-on-surface-variant">Cita generada automáticamente a partir de los metadatos del documento. Verifica los datos antes de publicar.</p>
+                <p class="text-xs text-on-surface-variant">Cita generada automáticamente a partir de los metadatos del
+                    documento. Verifica los datos antes de publicar.</p>
             </div>
         </div>
     </div>
 
     <script>
         function switchCitaTab(format) {
-            ['APA', 'MLA', 'Chicago', 'Harvard'].forEach(function(f) {
+            ['APA', 'MLA', 'Chicago', 'Harvard'].forEach(function (f) {
                 var content = document.getElementById('content-' + f);
                 var tab = document.getElementById('tab-' + f);
                 if (f === format) {
@@ -497,11 +591,11 @@
         function copyCita(format) {
             var text = document.getElementById('cita-text-' + format).textContent.trim();
             var btn = document.getElementById('copy-btn-' + format);
-            navigator.clipboard.writeText(text).then(function() {
+            navigator.clipboard.writeText(text).then(function () {
                 var checkSvg = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
                 btn.innerHTML = checkSvg + ' ¡Copiado!';
                 btn.classList.add('bg-[#dcfce7]', 'text-[#004d27]');
-                setTimeout(function() {
+                setTimeout(function () {
                     var copySvg = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>';
                     btn.innerHTML = copySvg + ' Copiar';
                     btn.classList.remove('bg-[#dcfce7]', 'text-[#004d27]');
@@ -509,7 +603,7 @@
             });
         }
 
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') closeCitaModal();
         });
     </script>

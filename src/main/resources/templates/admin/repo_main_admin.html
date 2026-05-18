@@ -721,6 +721,7 @@
                                         <button type="button"
                                                 th:data-id="${normativa.idNormativa}"
                                                 th:data-titulo="${normativa.titulo}"
+                                                th:data-descripcion="${normativa.descripcion}"
                                                 th:data-codigo="${normativa.codigo}"
                                                 th:data-organismo="${normativa.organismoEmisor}"
                                                 th:data-anio="${normativa.anio}"
@@ -1334,6 +1335,7 @@
         document.getElementById('formNormativa').action = '/admin/normativas/' + id + '/actualizar';
 
         document.getElementById('normativaTitulo').value = btn.dataset.titulo || '';
+        document.getElementById('normativaDescripcion').value = btn.dataset.descripcion || '';
         document.getElementById('normativaOrganismo').value = btn.dataset.organismo || '';
         document.getElementById('normativaCodigo').value = btn.dataset.codigo || '';
 

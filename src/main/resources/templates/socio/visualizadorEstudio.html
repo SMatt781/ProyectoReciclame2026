@@ -108,7 +108,7 @@
         }
     </style>
     <div th:replace="~{fragments/responsive}"></div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 
 <body
@@ -188,10 +188,31 @@
                         id="viewer-container">
                         <div
                             class="w-full h-full bg-surface-container-lowest shadow-sm rounded-sm relative overflow-hidden flex flex-col min-h-[500px]">
-
-                            <!-- PDF Iframe -->
-                            <iframe id="pdfViewer" th:if="${estudio.archivoUrl != null}"
-                                class="w-full h-full border-0 flex-1" oncontextmenu="return false;"></iframe>
+                            <!-- PDF Canvas Container -->
+                            <div th:if="${estudio.archivoUrl != null}"
+                                id="pdfCanvasContainer"
+                                class="flex-1 overflow-auto bg-[#efefef] flex items-start justify-center p-4 select-none">
+                                <div id="pdfLoading" class="flex flex-col items-center justify-center py-16 text-on-surface-variant">
+                                    <div class="w-8 h-8 border-2 border-secondary border-t-transparent rounded-full animate-spin mb-3"></div>
+                                    <span class="text-sm font-body">Cargando documento...</span>
+                                </div>
+                            </div>
+                            <!-- Page Navigation + Zoom Bar -->
+                            <div id="pdfNavBar" class="hidden items-center justify-between px-3 py-2 border-t border-surface-container/50 bg-surface-container-lowest flex-shrink-0 gap-2">
+                                <button id="prevPage" class="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                                    Anterior
+                                </button>
+                                <div class="flex items-center gap-2">
+                                    <button id="zoomOut" title="Alejar" class="w-7 h-7 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-bold text-base leading-none">−</button>
+                                    <span id="pageInfo" class="font-body text-xs text-on-surface-variant font-medium whitespace-nowrap min-w-[90px] text-center">Pág. 1 / 1</span>
+                                    <button id="zoomIn" title="Acercar" class="w-7 h-7 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-bold text-base leading-none">+</button>
+                                </div>
+                                <button id="nextPage" class="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                                    Siguiente
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                                </button>
+                            </div>
 
                             <div th:if="${estudio.archivoUrl == null}"
                                 class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
@@ -222,63 +243,95 @@
                     </div>
                 </section>
 
-                <!-- Security Scripts -->
+                <!-- PDF.js Viewer Script -->
                 <script>
                     document.addEventListener('DOMContentLoaded', async function () {
-                        const estudiotId = window.location.pathname.split('/').pop();
-                        const pdfViewer = document.getElementById('pdfViewer');
+                        const canvasContainer = document.getElementById('pdfCanvasContainer');
+                        const viewerContainer = document.getElementById('viewer-container');
 
-                        try {
-                            // Fetch pre-signed URL from backend
-                            const response = await fetch(`/documentos/estudio/${estudiotId}/presigned-url`);
-                            if (!response.ok) {
-                                throw new Error('Failed to get presigned URL');
-                            }
-                            const data = await response.json();
-                            const presignedUrl = data.url;
+                        if (canvasContainer) {
+                            const estudioId = window.location.pathname.split('/').pop();
+                            pdfjsLib.GlobalWorkerOptions.workerSrc =
+                                'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-                            // Set iframe src with presigned URL
-                            if (pdfViewer) {
-                                pdfViewer.src = presignedUrl + '#toolbar=0&navpanes=0';
+                            let pdfDoc = null;
+                            let currentPage = 1;
+                            let zoomLevel = 1.0;
+                            const ZOOM_STEP = 0.25;
+                            const ZOOM_MIN = 0.5;
+                            const ZOOM_MAX = 3.0;
+
+                            async function renderPage(num) {
+                                const page = await pdfDoc.getPage(num);
+                                const containerWidth = canvasContainer.clientWidth - 32;
+                                const baseViewport = page.getViewport({ scale: 1 });
+                                const scale = (containerWidth / baseViewport.width) * zoomLevel;
+                                const viewport = page.getViewport({ scale });
+
+                                let canvas = canvasContainer.querySelector('canvas');
+                                if (!canvas) {
+                                    canvas = document.createElement('canvas');
+                                    canvas.style.borderRadius = '2px';
+                                    canvas.style.boxShadow = '0 1px 4px rgba(0,0,0,0.18)';
+                                    canvasContainer.appendChild(canvas);
+                                }
+                                canvas.height = viewport.height;
+                                canvas.width = viewport.width;
+                                await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+
+                                document.getElementById('pageInfo').textContent = 'Pág. ' + num + ' / ' + pdfDoc.numPages;
+                                document.getElementById('prevPage').disabled = num <= 1;
+                                document.getElementById('nextPage').disabled = num >= pdfDoc.numPages;
+                                document.getElementById('zoomOut').disabled = zoomLevel <= ZOOM_MIN;
+                                document.getElementById('zoomIn').disabled = zoomLevel >= ZOOM_MAX;
+                                canvasContainer.scrollTop = 0;
                             }
-                        } catch (error) {
-                            console.error('Error loading document:', error);
-                            if (pdfViewer) {
-                                pdfViewer.style.display = 'none';
+
+                            try {
+                                pdfDoc = await pdfjsLib.getDocument('/documentos/estudio/' + estudioId + '/stream').promise;
+                                const loadingEl = document.getElementById('pdfLoading');
+                                if (loadingEl) loadingEl.remove();
+                                await renderPage(currentPage);
+                                const navBar = document.getElementById('pdfNavBar');
+                                if (navBar) { navBar.classList.remove('hidden'); navBar.classList.add('flex'); }
+                            } catch (err) {
+                                console.error('Error cargando PDF:', err);
+                                canvasContainer.innerHTML =
+                                    '<div class="flex flex-col items-center justify-center py-16 text-on-surface-variant gap-2">' +
+                                    '<svg class="w-12 h-12 opacity-40" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>' +
+                                    '<span class="text-sm">No se pudo cargar el documento</span></div>';
                             }
+
+                            document.getElementById('prevPage').addEventListener('click', async function () {
+                                if (pdfDoc && currentPage > 1) { currentPage--; await renderPage(currentPage); }
+                            });
+                            document.getElementById('nextPage').addEventListener('click', async function () {
+                                if (pdfDoc && currentPage < pdfDoc.numPages) { currentPage++; await renderPage(currentPage); }
+                            });
+                            document.getElementById('zoomIn').addEventListener('click', async function () {
+                                if (pdfDoc && zoomLevel < ZOOM_MAX) { zoomLevel = Math.min(ZOOM_MAX, +(zoomLevel + ZOOM_STEP).toFixed(2)); await renderPage(currentPage); }
+                            });
+                            document.getElementById('zoomOut').addEventListener('click', async function () {
+                                if (pdfDoc && zoomLevel > ZOOM_MIN) { zoomLevel = Math.max(ZOOM_MIN, +(zoomLevel - ZOOM_STEP).toFixed(2)); await renderPage(currentPage); }
+                            });
                         }
 
-                        // Disable right click globally
                         document.addEventListener('contextmenu', event => event.preventDefault());
-
-                        // Block common shortcuts
                         document.addEventListener('keydown', function (e) {
-                            // Ctrl+P (Print), Ctrl+S (Save), Ctrl+C (Copy), F12 (DevTools)
-                            if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' ||
-                                e.key === 's' || e.key === 'S' ||
-                                e.key === 'c' || e.key === 'C')) ||
-                                e.key === 'F12' ||
-                                e.key === 'PrintScreen') {
+                            if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S')) ||
+                                e.key === 'F12' || e.key === 'PrintScreen') {
                                 e.preventDefault();
                                 return false;
                             }
                         });
-
-                        // Attempt to block PrintScreen key specifically
-                        document.addEventListener('keyup', function (e) {
-                            if (e.key == 'PrintScreen') {
-                                navigator.clipboard.writeText(''); // Clear clipboard
-                                alert('Por seguridad, las capturas de pantalla de este documento están deshabilitadas.');
-                            }
+                        window.addEventListener('keyup', function (e) {
+                            if (e.key === 'PrintScreen') navigator.clipboard.writeText('');
                         });
-
-                        // Obscure content when window loses focus (e.g. Snipping tool)
                         window.addEventListener('blur', function () {
-                            document.getElementById('viewer-container').style.filter = 'blur(10px)';
+                            if (viewerContainer) viewerContainer.style.filter = 'blur(10px)';
                         });
-
                         window.addEventListener('focus', function () {
-                            document.getElementById('viewer-container').style.filter = 'none';
+                            if (viewerContainer) viewerContainer.style.filter = 'none';
                         });
                     });
                 </script>

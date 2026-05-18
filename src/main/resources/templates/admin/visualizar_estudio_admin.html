@@ -191,37 +191,53 @@
                     </div>
 
                     <!-- Viewer Canvas -->
-                    <div class="flex-1 bg-surface-container flex flex-col p-4 sm:p-8 overflow-hidden relative"
-                        id="viewer-container">
-                        <div
-                            class="w-full h-full bg-surface-container-lowest shadow-sm rounded-sm relative overflow-hidden flex flex-col min-h-[500px]">
-                            <!-- PDF Iframe -->
-                            <iframe id="pdfViewer" th:if="${estudio.archivoUrl != null}" th:src="${archivoPresignedUrl}"
-                                class="w-full h-full border-0 flex-1" oncontextmenu="return false;"></iframe>
+                    <div class="flex-1 bg-surface-container overflow-hidden relative" id="viewer-container">
+                        <input type="hidden" id="estudioFormato" th:value="${estudio.formato.name()}" />
 
+                        <!-- PDF FORMAT: full iframe viewer (native browser PDF, like normativa) -->
+                        <div th:if="${estudio.formato.name() == 'PDF'}" class="w-full h-full relative">
+                            <iframe id="pdfViewer" th:if="${estudio.archivoUrl != null}"
+                                class="w-full h-full border-0"
+                                oncontextmenu="return false;"></iframe>
                             <div th:if="${estudio.archivoUrl == null}"
                                 class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
                                 <svg class="icon-xl opacity-50 mb-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
                                 </svg>
                                 <span>No hay documento disponible</span>
                             </div>
-
                             <!-- Watermark Overlay -->
-                            <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]"
-                                style="z-index: 50;">
-                                <div
-                                    class="transform -rotate-45 text-4xl sm:text-5xl font-bold text-gray-800 whitespace-nowrap p-10 flex flex-col gap-24 text-center">
-                                    <span
-                                        th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
-                                        - CONFIDENCIAL</span>
-                                    <span
-                                        th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
-                                        - CONFIDENCIAL</span>
-                                    <span
-                                        th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario
-                                        - CONFIDENCIAL</span>
+                            <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]" style="z-index: 50;">
+                                <div class="transform -rotate-45 text-4xl sm:text-5xl font-bold text-gray-800 whitespace-nowrap p-10 flex flex-col gap-24 text-center">
+                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
+                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
+                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PPTX FORMAT: Microsoft Office Online Viewer -->
+                        <div th:if="${estudio.formato.name() == 'PPTX'}" class="w-full h-full relative">
+                            <iframe th:if="${estudio.archivoUrl != null}" id="pptxViewer"
+                                class="w-full h-full border-0" oncontextmenu="return false;" allowfullscreen></iframe>
+                            <div th:if="${estudio.archivoUrl == null}"
+                                class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
+                                <svg class="icon-xl opacity-50 mb-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                                </svg>
+                                <span>No hay documento disponible</span>
+                            </div>
+                            <!-- Loading overlay (hidden once iframe loads) -->
+                            <div id="pptxLoading" class="absolute inset-0 flex flex-col items-center justify-center bg-surface-container z-10">
+                                <div class="w-8 h-8 border-2 border-secondary border-t-transparent rounded-full animate-spin mb-3"></div>
+                                <span class="text-sm font-body text-on-surface-variant">Cargando presentación...</span>
+                            </div>
+                            <!-- Watermark Overlay -->
+                            <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]" style="z-index: 50;">
+                                <div class="transform -rotate-45 text-4xl sm:text-5xl font-bold text-gray-800 whitespace-nowrap p-10 flex flex-col gap-24 text-center">
+                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
+                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
+                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
                                 </div>
                             </div>
                         </div>
@@ -320,24 +336,55 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', async function () {
             const viewerContainer = document.getElementById('viewer-container');
+            const formatoInput = document.getElementById('estudioFormato');
+            const formato = formatoInput ? formatoInput.value : '';
+            const estudioId = window.location.pathname.split('/').pop();
+
+            if (formato === 'PDF') {
+                const iframeEl = document.getElementById('pdfViewer');
+                if (iframeEl) {
+                    try {
+                        const resp = await fetch('/documentos/estudio/' + estudioId + '/presigned-url');
+                        const data = await resp.json();
+                        iframeEl.src = data.url + '#toolbar=0&navpanes=0&scrollbar=0';
+                    } catch (err) {
+                        console.error('Error cargando PDF:', err);
+                    }
+                }
+            } else if (formato === 'PPTX') {
+                const iframeEl = document.getElementById('pptxViewer');
+                const loadingEl = document.getElementById('pptxLoading');
+                if (iframeEl) {
+                    try {
+                        const resp = await fetch('/documentos/estudio/' + estudioId + '/presigned-url');
+                        const data = await resp.json();
+                        iframeEl.src = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(data.url);
+                        if (loadingEl) loadingEl.style.display = 'none';
+                    } catch (err) {
+                        console.error('Error cargando PPTX:', err);
+                        if (loadingEl) loadingEl.style.display = 'none';
+                    }
+                }
+            }
+
             document.addEventListener('contextmenu', event => event.preventDefault());
             document.addEventListener('keydown', function (e) {
-                if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'c' || e.key === 'C')) ||
+                if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S')) ||
                     e.key === 'PrintScreen' || e.key === 'F12') {
                     e.preventDefault();
                     return false;
                 }
             });
             window.addEventListener('keyup', function (e) {
-                if (e.key == 'PrintScreen') { navigator.clipboard.writeText(''); }
+                if (e.key === 'PrintScreen') navigator.clipboard.writeText('');
             });
             window.addEventListener('blur', function () {
-                if (viewerContainer) { viewerContainer.style.filter = 'blur(10px)'; }
+                if (viewerContainer) viewerContainer.style.filter = 'blur(10px)';
             });
             window.addEventListener('focus', function () {
-                if (viewerContainer) { viewerContainer.style.filter = 'none'; }
+                if (viewerContainer) viewerContainer.style.filter = 'none';
             });
         });
     </script>
