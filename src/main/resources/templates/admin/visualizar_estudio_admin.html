@@ -357,15 +357,15 @@
                 const iframeEl = document.getElementById('pptxViewer');
                 const loadingEl = document.getElementById('pptxLoading');
                 if (iframeEl) {
-                    try {
-                        const resp = await fetch('/documentos/estudio/' + estudioId + '/presigned-url');
-                        const data = await resp.json();
-                        iframeEl.src = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(data.url);
+                    iframeEl.onload = function() {
                         if (loadingEl) loadingEl.style.display = 'none';
-                    } catch (err) {
-                        console.error('Error cargando PPTX:', err);
+                    };
+                    iframeEl.onerror = function() {
                         if (loadingEl) loadingEl.style.display = 'none';
-                    }
+                    };
+                    iframeEl.src = '/documentos/estudio/' + estudioId + '/view-pdf';
+                } else {
+                    if (loadingEl) loadingEl.style.display = 'none';
                 }
             }
 

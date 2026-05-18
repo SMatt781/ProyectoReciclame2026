@@ -6,6 +6,7 @@ import com.example.proyectoreciclame.Entity.Usuario;
 import com.example.proyectoreciclame.Repository.EstudioRepository;
 import com.example.proyectoreciclame.Repository.NormativaRepository;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
+import com.example.proyectoreciclame.Service.DocumentConverterService;
 import com.example.proyectoreciclame.Service.S3StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,6 +42,9 @@ public class DocumentDownloadController {
 
     @Autowired
     private S3StorageService s3StorageService;
+
+    @Autowired
+    private DocumentConverterService documentConverterService;
 
     /**
      * GET /documentos/estudio/{id}/stream
@@ -203,6 +207,56 @@ public class DocumentDownloadController {
         String filename = normativa.getArchivoNombre() != null ? normativa.getArchivoNombre() : "normativa";
         String downloadUrl = s3StorageService.generatePresignedDownloadUrl(clave, filename, duration);
         response.sendRedirect(downloadUrl);
+    }
+
+    /**
+     * GET /documentos/estudio/{id}/view-pdf
+     * Descarga el PPTX desde S3, lo convierte a PDF con DocumentConverterService y lo sirve inline.
+     * Evita depender de Microsoft Office Online (que no puede acceder a URLs presignadas privadas).
+     */
+    @GetMapping("/estudio/{id}/view-pdf")
+    public void viewEstudioAsPdf(@PathVariable Long id, HttpServletResponse response,
+                                 Authentication authentication) throws IOException {
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getName())) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        Estudio estudio = estudioRepository.findById(id).orElse(null);
+        if (estudio == null || estudio.getArchivoUrl() == null || estudio.getArchivoUrl().isBlank()) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        try {
+            String clave = estudio.getArchivoUrl().replace("/uploads/estudios/", "estudios/");
+            byte[] fileData = s3StorageService.downloadFile(clave);
+
+            byte[] pdfData;
+            String filename;
+            if (estudio.getFormato() == Estudio.FormatoEstudio.PPTX) {
+                pdfData = documentConverterService.convertPptxToPdf(fileData);
+                String base = estudio.getArchivoNombre() != null
+                        ? estudio.getArchivoNombre().replaceAll("\\.[^.]+$", "")
+                        : "presentacion";
+                filename = base + ".pdf";
+            } else {
+                pdfData = fileData;
+                filename = estudio.getArchivoNombre() != null ? estudio.getArchivoNombre() : "documento.pdf";
+            }
+
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition", "inline; filename=\"" + filename + "\"");
+            response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+            response.setHeader("X-Content-Type-Options", "nosniff");
+            response.setContentLength(pdfData.length);
+            response.getOutputStream().write(pdfData);
+            response.getOutputStream().flush();
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Error al cargar el documento: " + e.getMessage());
+        }
     }
 
     /**
