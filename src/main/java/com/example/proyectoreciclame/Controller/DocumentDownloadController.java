@@ -8,6 +8,7 @@ import com.example.proyectoreciclame.Repository.NormativaRepository;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
 import com.example.proyectoreciclame.Service.S3StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +41,44 @@ public class DocumentDownloadController {
 
     @Autowired
     private S3StorageService s3StorageService;
+
+    /**
+     * GET /documentos/estudio/{id}/stream
+     * Descarga el archivo desde S3 y lo sirve inline con Content-Type correcto.
+     * Evita exponer presigned URLs al cliente y elimina problemas de CORS.
+     */
+    @GetMapping("/estudio/{id}/stream")
+    public void streamEstudio(@PathVariable Long id, HttpServletResponse response,
+                              Authentication authentication) throws IOException {
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getName())) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        Estudio estudio = estudioRepository.findById(id).orElse(null);
+        if (estudio == null || estudio.getArchivoUrl() == null || estudio.getArchivoUrl().isBlank()) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        try {
+            String clave = estudio.getArchivoUrl().replace("/uploads/estudios/", "estudios/");
+            byte[] data = s3StorageService.downloadFile(clave);
+            String filename = estudio.getArchivoNombre() != null ? estudio.getArchivoNombre() : "documento.pdf";
+
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition", "inline; filename=\"" + filename + "\"");
+            response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+            response.setHeader("X-Content-Type-Options", "nosniff");
+            response.setContentLength(data.length);
+            response.getOutputStream().write(data);
+            response.getOutputStream().flush();
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Error al cargar el documento: " + e.getMessage());
+        }
+    }
 
     /**
      * GET /documentos/estudio/{id}/presigned-url

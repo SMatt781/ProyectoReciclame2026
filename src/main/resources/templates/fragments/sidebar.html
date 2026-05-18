@@ -207,7 +207,7 @@
                 </button>
             </header>
 
-            <form id="formEstudio" th:action="@{/admin/estudio_new}" method="post" enctype="multipart/form-data" class="flex flex-col max-h-[90vh] overflow-hidden text-left">
+            <form id="formEstudio" th:action="@{/admin/estudio_new}" method="post" enctype="multipart/form-data" onsubmit="return validarEstudioForm()" novalidate class="flex flex-col max-h-[90vh] overflow-hidden text-left">
                 <div class="overflow-y-auto px-6 py-8 flex flex-col gap-10">
 
                     <section class="space-y-4">
@@ -219,29 +219,32 @@
                         <div class="space-y-6">
                             <div class="space-y-2">
                                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Nombre del Estudio</label>
-                                <input id="estudioNombre" name="nombre" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300" placeholder="Ej. Análisis de Ciclo de Vida Textil" type="text"/>
+                                <input id="estudioNombre" name="nombre" required minlength="3" maxlength="200" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300" placeholder="Ej. Análisis de Ciclo de Vida Textil" type="text"/>
+                                <span id="errorEstudioNombre" class="hidden text-xs text-red-600 dark:text-red-400 font-medium mt-1">El nombre del estudio es obligatorio y debe tener al menos 3 caracteres.</span>
                             </div>
 
                             <div class="space-y-2">
                                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Objetivo / Descripción</label>
-                                <textarea id="estudioDescripcion" name="descripcion" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all resize-none placeholder:text-gray-300" placeholder="Define el propósito y alcance de este nuevo estudio..." rows="3"></textarea>
+                                <textarea id="estudioDescripcion" name="descripcion" required minlength="5" maxlength="2000" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all resize-none placeholder:text-gray-300" placeholder="Define el propósito y alcance de este nuevo estudio..." rows="3"></textarea>
+                                <span id="errorEstudioDescripcion" class="hidden text-xs text-red-600 dark:text-red-400 font-medium mt-1">El objetivo o descripción es obligatorio y debe tener al menos 5 caracteres.</span>
                             </div>
 
                             <div class="grid grid-cols-12 gap-4">
                                 <div class="col-span-12 md:col-span-2 space-y-2">
-                                    <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Año</label>
-                                    <select id="estudioAnio" name="anio" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
-                                        <option>2024</option>
-                                        <option>2023</option>
-                                        <option>2022</option>
-                                    </select>
+                                    <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Año</label>
+                                    <div class="max-w-[120px]">
+                                        <select id="estudioAnio" name="anio" required class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                            <option th:each="y : ${#numbers.sequence(2026, 1990, -1)}" th:value="${y}" th:text="${y}"></option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <div class="col-span-12 md:col-span-4 space-y-2">
                                     <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Formato</label>
-                                    <select id="estudioFormato" name="formato" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
-                                        <option>Reporte Técnico (PDF)</option>
-                                        <option>Planilla de Datos (XLSX)</option>
+                                    <select id="estudioFormato" name="formato" required onchange="actualizarAcceptArchivoEstudio()" class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                        <option value="PDF">Reporte Técnico (PDF)</option>
+                                        <option value="PPTX">Presentación (PPT)</option>
+                                        <option value="XLSX">Planilla de Datos (XLSX)</option>
                                     </select>
                                 </div>
                                 <div class="col-span-12 md:col-span-3 space-y-2">
@@ -298,7 +301,7 @@
                         <!-- Subir archivo (nuevo, o reemplazo al editar) -->
                         <div id="dropZoneWrapper">
                         <!-- Input oculto — activado solo por el label -->
-                        <input id="archivoInputSidebar" name="archivo" type="file" accept=".pdf,.pptx" style="display:none;">
+                        <input id="archivoInputSidebar" name="archivo" type="file" accept=".pdf" style="display:none;">
 
                         <!-- Zona de drop -->
                         <div id="dropZoneSidebar"
@@ -315,7 +318,7 @@
                                     </svg>
                                 </div>
                                 <p class="text-base font-bold text-gray-700 mb-1">Arrastra tu archivo aquí</p>
-                                <p class="text-sm text-gray-400 mb-5">PDF o PPTX · máximo 50 MB</p>
+                                <p id="dropFormatoTextoSidebar" class="text-sm text-gray-400 mb-5">PDF · máximo 50 MB</p>
                                 <label for="archivoInputSidebar"
                                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold text-white cursor-pointer"
                                        style="background:#059669;"
@@ -349,6 +352,7 @@
                             </div>
                         </div>
                         </div><!-- /dropZoneWrapper -->
+                        <span id="errorEstudioArchivo" class="hidden text-xs text-red-600 dark:text-red-400 font-medium mt-1">Debes seleccionar un archivo para crear un nuevo estudio.</span>
                     </section>
                 </div>
 
@@ -393,6 +397,12 @@
                 dropSelected.style.display = 'flex';
                 dropZone.style.borderColor = '#059669';
                 dropZone.style.background  = '#f0fdf4';
+                if (dropZone) {
+                    dropZone.classList.remove('border-red-500');
+                    dropZone.classList.add('border-gray-200');
+                }
+                var err = document.getElementById('errorEstudioArchivo');
+                if (err) err.classList.add('hidden');
             }
 
             function mostrarDefault() {
@@ -410,7 +420,13 @@
             if (fileInput) {
                 fileInput.addEventListener('change', function () {
                     if (this.files && this.files.length > 0) {
-                        mostrarSeleccionado(this.files[0]);
+                        var f = this.files[0];
+                        if (!validarArchivoEstudio(f)) {
+                            this.value = '';
+                            mostrarDefault();
+                            return;
+                        }
+                        mostrarSeleccionado(f);
                     } else {
                         mostrarDefault();
                     }
@@ -435,12 +451,290 @@
                     e.preventDefault();
                     var dt = e.dataTransfer;
                     if (dt && dt.files && dt.files.length > 0) {
+                        var f = dt.files[0];
+                        if (!validarArchivoEstudio(f)) {
+                            fileInput.value = '';
+                            mostrarDefault();
+                            return;
+                        }
                         fileInput.files = dt.files;
-                        mostrarSeleccionado(dt.files[0]);
+                        mostrarSeleccionado(f);
                     }
                 });
             }
         })();
+
+        function actualizarAcceptArchivoEstudio() {
+            var sel = document.getElementById('estudioFormato');
+            var input = document.getElementById('archivoInputSidebar');
+            var texto = document.getElementById('dropFormatoTextoSidebar');
+            if (!sel || !input) return;
+            var map = { 'PDF': '.pdf', 'PPTX': '.pptx', 'XLSX': '.xlsx' };
+            var nombres = { 'PDF': 'PDF', 'PPTX': 'PPTX', 'XLSX': 'XLSX' };
+            var ext = map[sel.value] || '.pdf';
+            input.setAttribute('accept', ext);
+            if (texto) texto.textContent = (nombres[sel.value] || 'PDF') + ' · máximo 50 MB';
+            if (input.files && input.files.length > 0) {
+                var nombreActual = input.files[0].name.toLowerCase();
+                if (!nombreActual.endsWith(ext)) {
+                    input.value = '';
+                    if (typeof window.resetearArchivoSidebar === 'function') {
+                        window.resetearArchivoSidebar();
+                    }
+                }
+            }
+        }
+
+        function validarArchivoEstudio(file) {
+            if (!file) return false;
+            var maxBytes = 50 * 1024 * 1024;
+            if (file.size > maxBytes) {
+                alert('El archivo no puede superar los 50 MB.');
+                return false;
+            }
+            var sel = document.getElementById('estudioFormato');
+            var map = { 'PDF': '.pdf', 'PPTX': '.pptx', 'XLSX': '.xlsx' };
+            var nombres = { 'PDF': 'PDF', 'PPTX': 'PPT', 'XLSX': 'XLSX' };
+            var formato = sel ? sel.value : 'PDF';
+            var ext = map[formato] || '.pdf';
+            var nombre = file.name.toLowerCase();
+            if (!nombre.endsWith(ext)) {
+                alert('El archivo debe ser de tipo ' + (nombres[formato] || 'PDF') + ' (' + ext + ') para el formato seleccionado.');
+                return false;
+            }
+            return true;
+        }
+
+        // IIFE for Live Validation
+        (function() {
+            var nombreInput = document.getElementById('estudioNombre');
+            var descInput = document.getElementById('estudioDescripcion');
+
+            function validarNombre() {
+                var errorNombre = document.getElementById('errorEstudioNombre');
+                var nVal = nombreInput ? nombreInput.value.trim() : '';
+                if (nVal.length < 3) {
+                    if (errorNombre) {
+                        if (nVal.length === 0) {
+                            errorNombre.textContent = 'El nombre del estudio es obligatorio.';
+                        } else {
+                            errorNombre.textContent = 'El nombre debe tener al menos 3 caracteres.';
+                        }
+                        errorNombre.classList.remove('hidden');
+                    }
+                    if (nombreInput) {
+                        nombreInput.classList.add('border-red-500', 'focus:ring-red-500/20');
+                        nombreInput.classList.remove('border-gray-200', 'focus:ring-[#059669]/20');
+                    }
+                    return false;
+                } else {
+                    if (errorNombre) errorNombre.classList.add('hidden');
+                    if (nombreInput) {
+                        nombreInput.classList.remove('border-red-500', 'focus:ring-red-500/20');
+                        nombreInput.classList.add('border-gray-200', 'focus:ring-[#059669]/20');
+                    }
+                    return true;
+                }
+            }
+
+            function validarDescripcion() {
+                var errorDesc = document.getElementById('errorEstudioDescripcion');
+                var dVal = descInput ? descInput.value.trim() : '';
+                if (dVal.length < 5) {
+                    if (errorDesc) {
+                        if (dVal.length === 0) {
+                            errorDesc.textContent = 'El objetivo / descripción es obligatorio.';
+                        } else {
+                            errorDesc.textContent = 'La descripción debe tener al menos 5 caracteres.';
+                        }
+                        errorDesc.classList.remove('hidden');
+                    }
+                    if (descInput) {
+                        descInput.classList.add('border-red-500', 'focus:ring-red-500/20');
+                        descInput.classList.remove('border-gray-200', 'focus:ring-[#059669]/20');
+                    }
+                    return false;
+                } else {
+                    if (errorDesc) errorDesc.classList.add('hidden');
+                    if (descInput) {
+                        descInput.classList.remove('border-red-500', 'focus:ring-red-500/20');
+                        descInput.classList.add('border-gray-200', 'focus:ring-[#059669]/20');
+                    }
+                    return true;
+                }
+            }
+
+            if (nombreInput) {
+                nombreInput.addEventListener('input', validarNombre);
+                nombreInput.addEventListener('blur', validarNombre);
+            }
+            if (descInput) {
+                descInput.addEventListener('input', validarDescripcion);
+                descInput.addEventListener('blur', validarDescripcion);
+            }
+
+            window.limpiarValidacionEstudio = function() {
+                var errorNombre = document.getElementById('errorEstudioNombre');
+                var errorDesc = document.getElementById('errorEstudioDescripcion');
+                var errorArchivo = document.getElementById('errorEstudioArchivo');
+                if (errorNombre) errorNombre.classList.add('hidden');
+                if (errorDesc) errorDesc.classList.add('hidden');
+                if (errorArchivo) errorArchivo.classList.add('hidden');
+                if (nombreInput) {
+                    nombreInput.classList.remove('border-red-500', 'focus:ring-red-500/20');
+                    nombreInput.classList.add('border-gray-200', 'focus:ring-[#059669]/20');
+                }
+                if (descInput) {
+                    descInput.classList.remove('border-red-500', 'focus:ring-red-500/20');
+                    descInput.classList.add('border-gray-200', 'focus:ring-[#059669]/20');
+                }
+                var dropZone = document.getElementById('dropZoneSidebar');
+                if (dropZone) {
+                    dropZone.classList.remove('border-red-500');
+                    dropZone.classList.add('border-gray-200');
+                }
+            };
+        })();
+
+        function validarEstudioForm() {
+            var nombreInput = document.getElementById('estudioNombre');
+            var descInput = document.getElementById('estudioDescripcion');
+            
+            var nVal = nombreInput ? nombreInput.value.trim() : '';
+            var dVal = descInput ? descInput.value.trim() : '';
+            
+            var esValido = true;
+            
+            // Validar Nombre
+            var errorNombre = document.getElementById('errorEstudioNombre');
+            if (nVal.length < 3) {
+                esValido = false;
+                if (errorNombre) {
+                    if (nVal.length === 0) {
+                        errorNombre.textContent = 'El nombre del estudio es obligatorio.';
+                    } else {
+                        errorNombre.textContent = 'El nombre debe tener al menos 3 caracteres.';
+                    }
+                    errorNombre.classList.remove('hidden');
+                }
+                if (nombreInput) {
+                    nombreInput.classList.add('border-red-500', 'focus:ring-red-500/20');
+                    nombreInput.classList.remove('border-gray-200', 'focus:ring-[#059669]/20');
+                }
+            } else {
+                if (errorNombre) errorNombre.classList.add('hidden');
+                if (nombreInput) {
+                    nombreInput.classList.remove('border-red-500', 'focus:ring-red-500/20');
+                    nombreInput.classList.add('border-gray-200', 'focus:ring-[#059669]/20');
+                }
+            }
+            
+            // Validar Descripción
+            var errorDesc = document.getElementById('errorEstudioDescripcion');
+            if (dVal.length < 5) {
+                esValido = false;
+                if (errorDesc) {
+                    if (dVal.length === 0) {
+                        errorDesc.textContent = 'El objetivo / descripción es obligatorio.';
+                    } else {
+                        errorDesc.textContent = 'La descripción debe tener al menos 5 caracteres.';
+                    }
+                    errorDesc.classList.remove('hidden');
+                }
+                if (descInput) {
+                    descInput.classList.add('border-red-500', 'focus:ring-red-500/20');
+                    descInput.classList.remove('border-gray-200', 'focus:ring-[#059669]/20');
+                }
+            } else {
+                if (errorDesc) errorDesc.classList.add('hidden');
+                if (descInput) {
+                    descInput.classList.remove('border-red-500', 'focus:ring-red-500/20');
+                    descInput.classList.add('border-gray-200', 'focus:ring-[#059669]/20');
+                }
+            }
+            
+            // Validar archivo (si corresponde)
+            var fileInput = document.getElementById('archivoInputSidebar');
+            var errorArchivo = document.getElementById('errorEstudioArchivo');
+            var dropZone = document.getElementById('dropZoneSidebar');
+            
+            if (fileInput && fileInput.hasAttribute('name')) {
+                // Modo crear
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    esValido = false;
+                    if (errorArchivo) {
+                        errorArchivo.textContent = 'Debes seleccionar un archivo para crear un nuevo estudio.';
+                        errorArchivo.classList.remove('hidden');
+                    }
+                    if (dropZone) {
+                        dropZone.classList.add('border-red-500');
+                        dropZone.classList.remove('border-gray-200');
+                    }
+                } else {
+                    if (!validarArchivoEstudio(fileInput.files[0])) {
+                        esValido = false;
+                        if (errorArchivo) {
+                            var sel = document.getElementById('estudioFormato');
+                            var formato = sel ? sel.value : 'PDF';
+                            errorArchivo.textContent = 'El archivo seleccionado no coincide con el formato ' + formato + ' o supera el límite de tamaño.';
+                            errorArchivo.classList.remove('hidden');
+                        }
+                        if (dropZone) {
+                            dropZone.classList.add('border-red-500');
+                            dropZone.classList.remove('border-gray-200');
+                        }
+                    } else {
+                        if (errorArchivo) errorArchivo.classList.add('hidden');
+                        if (dropZone) {
+                            dropZone.classList.remove('border-red-500');
+                            dropZone.classList.add('border-gray-200');
+                        }
+                    }
+                }
+            } else {
+                // Modo edición (si ha seleccionado un nuevo archivo)
+                if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                    if (!validarArchivoEstudio(fileInput.files[0])) {
+                        esValido = false;
+                        if (errorArchivo) {
+                            var sel = document.getElementById('estudioFormato');
+                            var formato = sel ? sel.value : 'PDF';
+                            errorArchivo.textContent = 'El archivo seleccionado no coincide con el formato ' + formato + ' o supera el límite de tamaño.';
+                            errorArchivo.classList.remove('hidden');
+                        }
+                        if (dropZone) {
+                            dropZone.classList.add('border-red-500');
+                            dropZone.classList.remove('border-gray-200');
+                        }
+                    } else {
+                        if (errorArchivo) errorArchivo.classList.add('hidden');
+                        if (dropZone) {
+                            dropZone.classList.remove('border-red-500');
+                            dropZone.classList.add('border-gray-200');
+                        }
+                    }
+                } else {
+                    if (errorArchivo) errorArchivo.classList.add('hidden');
+                    if (dropZone) {
+                        dropZone.classList.remove('border-red-500');
+                        dropZone.classList.add('border-gray-200');
+                    }
+                }
+            }
+            
+            if (!esValido) {
+                // Hacer scroll suave al primer elemento inválido
+                var firstInvalid = document.querySelector('#formEstudio .border-red-500');
+                if (firstInvalid) {
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(function() {
+                        firstInvalid.focus();
+                    }, 500);
+                }
+            }
+            
+            return esValido;
+        }
 
         function mostrarSustituirArchivo() {
             var wrapper = document.getElementById('dropZoneWrapper');
@@ -455,7 +749,24 @@
             abrirModalEstudio('nuevo');
         }
 
+        window.abrirModalEditarEstudio = function(btn) {
+            if (!btn) return;
+            abrirModalEstudio('editar', {
+                id:          btn.dataset.id,
+                nombre:      btn.dataset.nombre,
+                descripcion: btn.dataset.descripcion,
+                anio:        btn.dataset.anio,
+                estado:      btn.dataset.estado,
+                tipoacceso:  btn.dataset.tipoacceso,
+                formato:     btn.dataset.formato,
+                archivo:     btn.dataset.archivo
+            });
+        };
+
         function abrirModalEstudio(modo, data) {
+            if (typeof window.limpiarValidacionEstudio === 'function') {
+                window.limpiarValidacionEstudio();
+            }
             var titulo = document.getElementById('modalEstudioTitulo');
             var form = document.getElementById('formEstudio');
             var archivoActualSection = document.getElementById('archivoActualSection');
@@ -471,11 +782,8 @@
                 document.getElementById('estudioEstado').value = data.estado || 'BORRADOR';
                 document.getElementById('estudioTipoAcceso').value = data.tipoacceso || 'DESCARGA';
                 var formato = data.formato || 'PDF';
-                if (formato === 'PDF') {
-                    document.getElementById('estudioFormato').value = 'Reporte Técnico (PDF)';
-                } else {
-                    document.getElementById('estudioFormato').value = 'Planilla de Datos (XLSX)';
-                }
+                document.getElementById('estudioFormato').value = formato;
+                if (typeof actualizarAcceptArchivoEstudio === 'function') actualizarAcceptArchivoEstudio();
                 // Mostrar archivo actual y ocultar drop zone
                 if (archivoActualSection) archivoActualSection.style.display = 'block';
                 if (dropZoneWrapper) dropZoneWrapper.style.display = 'none';
@@ -498,6 +806,7 @@
                 if (archivoActualSection) archivoActualSection.style.display = 'none';
                 if (dropZoneWrapper) dropZoneWrapper.style.display = '';
                 if (archivoInput) archivoInput.setAttribute('name', 'archivo');
+                if (typeof actualizarAcceptArchivoEstudio === 'function') actualizarAcceptArchivoEstudio();
             }
 
             document.getElementById('modalNuevoEstudio').classList.remove('hidden');
@@ -540,29 +849,77 @@
                         <div class="space-y-4">
                             <div class="space-y-2">
                                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Nombre de la Normativa</label>
-                                <input id="normativaTitulo" name="titulo" type="text" required minlength="5"
+                                <input id="normativaTitulo" name="titulo" type="text"
                                        placeholder="Ej: Ley de Fomento a la Economía Circular"
                                        class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300"/>
+                                <span id="errorNormativaTitulo" class="text-xs font-bold text-red-500 mt-1 hidden block text-left"></span>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Descripción / Objetivo</label>
+                                <textarea id="normativaDescripcion" name="descripcion" rows="3"
+                                          placeholder="Define el propósito y alcance de esta normativa..."
+                                          class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all resize-none placeholder:text-gray-300"></textarea>
+                                <span id="errorNormativaDescripcion" class="text-xs font-bold text-red-500 mt-1 hidden block text-left"></span>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
                                 <div class="md:col-span-6 space-y-2">
                                     <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Organismo / Ministerio</label>
-                                    <input id="normativaOrganismo" name="organismoEmisor" type="text" required minlength="3" placeholder="Ej. Ministerio de Ambiente"
+                                    <input id="normativaOrganismo" name="organismoEmisor" type="text" placeholder="Ej. Ministerio de Ambiente"
                                            class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300"/>
+                                    <span id="errorNormativaOrganismo" class="text-xs font-bold text-red-500 mt-1 hidden block text-left"></span>
                                 </div>
                                 <div class="md:col-span-3 space-y-2">
                                     <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Código</label>
-                                    <input id="normativaCodigo" name="codigo" type="text" required minlength="2" placeholder="N° 21.325"
+                                    <input id="normativaCodigo" name="codigo" type="text" placeholder="N° 21.325"
                                            class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300"/>
+                                    <span id="errorNormativaCodigo" class="text-xs font-bold text-red-500 mt-1 hidden block text-left"></span>
                                 </div>
                                 <div class="md:col-span-3 space-y-2">
-                                    <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Año</label>
-                                    <select id="normativaAnio" name="anio" required
-                                            class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
-                                        <option>2024</option>
-                                        <option>2023</option>
-                                        <option>2022</option>
-                                    </select>
+                                    <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Año</label>
+                                    <div class="max-w-[120px]">
+                                        <select id="normativaAnio" name="anio"
+                                                class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                            <option value="">Seleccione...</option>
+                                            <option value="2026">2026</option>
+                                            <option value="2025">2025</option>
+                                            <option value="2024">2024</option>
+                                            <option value="2023">2023</option>
+                                            <option value="2022">2022</option>
+                                            <option value="2021">2021</option>
+                                            <option value="2020">2020</option>
+                                            <option value="2019">2019</option>
+                                            <option value="2018">2018</option>
+                                            <option value="2017">2017</option>
+                                            <option value="2016">2016</option>
+                                            <option value="2015">2015</option>
+                                            <option value="2014">2014</option>
+                                            <option value="2013">2013</option>
+                                            <option value="2012">2012</option>
+                                            <option value="2011">2011</option>
+                                            <option value="2010">2010</option>
+                                            <option value="2009">2009</option>
+                                            <option value="2008">2008</option>
+                                            <option value="2007">2007</option>
+                                            <option value="2006">2006</option>
+                                            <option value="2005">2005</option>
+                                            <option value="2004">2004</option>
+                                            <option value="2003">2003</option>
+                                            <option value="2002">2002</option>
+                                            <option value="2001">2001</option>
+                                            <option value="2000">2000</option>
+                                            <option value="1999">1999</option>
+                                            <option value="1998">1998</option>
+                                            <option value="1997">1997</option>
+                                            <option value="1996">1996</option>
+                                            <option value="1995">1995</option>
+                                            <option value="1994">1994</option>
+                                            <option value="1993">1993</option>
+                                            <option value="1992">1992</option>
+                                            <option value="1991">1991</option>
+                                            <option value="1990">1990</option>
+                                        </select>
+                                    </div>
+                                    <span id="errorNormativaAnio" class="text-xs font-bold text-red-500 mt-1 hidden block text-left"></span>
                                 </div>
                             </div>
                         </div>
@@ -615,14 +972,16 @@
                                     </div>
                                 </label>
                             </div>
+                            <span id="errorNormativaCategorias" class="text-xs font-bold text-red-500 mt-1 hidden block text-left"></span>
                         </div>
 
                         <!-- TIPO Y ESTADO -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="space-y-2">
                                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Tipo de Norma</label>
-                                <select id="normativaTipo" name="tipoNorma" required
+                                <select id="normativaTipo" name="tipoNorma"
                                         class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                    <option value="">Seleccione...</option>
                                     <option value="DECRETO_LEY">Decreto Ley</option>
                                     <option value="LEY_NACIONAL">Ley Nacional</option>
                                     <option value="DECRETO_SUPREMO">Decreto Supremo</option>
@@ -631,17 +990,20 @@
                                     <option value="HOJA_DE_RUTA">Hoja de Ruta</option>
                                     <option value="OTRO">Otro</option>
                                 </select>
+                                <span id="errorNormativaTipo" class="text-xs font-bold text-red-500 mt-1 hidden block text-left"></span>
                             </div>
                             <div class="space-y-2">
                                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Estado Actual</label>
-                                <select id="normativaEstado" name="estado" required
+                                <select id="normativaEstado" name="estado"
                                         class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                    <option value="">Seleccione...</option>
                                     <option value="VIGENTE">Vigente</option>
                                     <option value="DEROGADA">Derogada</option>
                                     <option value="PUBLICADA">Publicada</option>
                                     <option value="CONSULTA_PUBLICA">Consulta Pública</option>
                                     <option value="BORRADOR_EN_PROCESO">Borrador en Proceso</option>
                                 </select>
+                                <span id="errorNormativaEstado" class="text-xs font-bold text-red-500 mt-1 hidden block text-left"></span>
                             </div>
                         </div>
 
@@ -670,6 +1032,7 @@
                                     </div>
                                 </label>
                             </div>
+                            <span id="errorNormativaAlcance" class="text-xs font-bold text-red-500 mt-1 hidden block text-left"></span>
                         </div>
 
                         <!-- TIPO DE ACCESO - cards sin cambios -->
@@ -772,6 +1135,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <span id="errorNormativaArchivo" class="text-xs font-bold text-red-500 mt-1 hidden block text-left"></span>
                         </div>
 
                         <!-- Enlace oficial (siempre visible) -->
@@ -779,6 +1143,7 @@
                             <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Enlace oficial de descarga</label>
                             <input id="normativaEnlace" name="enlace" type="url" placeholder="https://bibliotecadelcongreso.cl/..."
                                    class="w-full bg-[#f8faff] border border-gray-200 rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 transition-all placeholder:text-gray-300"/>
+                            <span id="errorNormativaEnlace" class="text-xs font-bold text-red-500 mt-1 hidden block text-left"></span>
                         </div>
                     </section>
 
@@ -899,12 +1264,61 @@
         if (btn)     btn.style.display = 'none';
     }
 
+    function limpiarErroresNormativa() {
+        const inputs = [
+            'normativaTitulo',
+            'normativaDescripcion',
+            'normativaOrganismo',
+            'normativaCodigo',
+            'normativaAnio',
+            'normativaTipo',
+            'normativaEstado',
+            'normativaEnlace'
+        ];
+        inputs.forEach(id => {
+            const input = document.getElementById(id);
+            if (input) {
+                input.classList.remove('border-red-500', 'focus:ring-red-500/20');
+                input.classList.add('border-gray-200', 'focus:ring-[#059669]/20');
+            }
+        });
+
+        const errorSpans = [
+            'errorNormativaTitulo',
+            'errorNormativaDescripcion',
+            'errorNormativaOrganismo',
+            'errorNormativaCodigo',
+            'errorNormativaAnio',
+            'errorNormativaCategorias',
+            'errorNormativaTipo',
+            'errorNormativaEstado',
+            'errorNormativaAlcance',
+            'errorNormativaAcceso',
+            'errorNormativaArchivo',
+            'errorNormativaEnlace'
+        ];
+        errorSpans.forEach(id => {
+            const span = document.getElementById(id);
+            if (span) {
+                span.textContent = '';
+                span.classList.add('hidden');
+            }
+        });
+
+        const dropZone = document.getElementById('dropZoneNormSidebar');
+        if (dropZone) {
+            dropZone.classList.remove('border-red-500');
+            dropZone.classList.add('border-gray-200');
+        }
+    }
+
     function abrirModalNuevaNormativa() {
         var form = document.getElementById('formNormativa');
         if (form) {
             form.action = '/admin/repo_new';
             form.reset();
         }
+        limpiarErroresNormativa();
         document.getElementById('tituloModalNormativa').textContent = 'Nueva Normativa';
         document.getElementById('btnGuardarNormativa').textContent = 'Guardar Normativa';
         // Sin pre-selección de radios — usuario debe elegir explícitamente
@@ -923,27 +1337,162 @@
     }
 
     function validarNormativaForm() {
-        const titulo = document.getElementById('normativaTitulo').value.trim();
-        const organismo = document.getElementById('normativaOrganismo').value.trim();
-        const codigo = document.getElementById('normativaCodigo').value.trim();
-        const categorias = document.querySelectorAll('input[name="categorias"]:checked');
+        limpiarErroresNormativa();
 
-        if (titulo.length < 5) {
-            alert('El nombre de la normativa debe tener al menos 5 caracteres.');
+        var esValido = true;
+        var primerElementoInvalido = null;
+
+        function reportarError(inputId, spanId, mensaje) {
+            esValido = false;
+            const span = document.getElementById(spanId);
+            if (span) {
+                span.textContent = mensaje;
+                span.classList.remove('hidden');
+            }
+            if (inputId) {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.classList.add('border-red-500', 'focus:ring-red-500/20');
+                    input.classList.remove('border-gray-200', 'focus:ring-[#059669]/20');
+                    if (!primerElementoInvalido) primerElementoInvalido = input;
+                }
+            } else {
+                if (!primerElementoInvalido) {
+                    const spanEl = document.getElementById(spanId);
+                    if (spanEl) primerElementoInvalido = spanEl;
+                }
+            }
+        }
+
+        // 1. Título
+        const tituloInput = document.getElementById('normativaTitulo');
+        const tituloVal = tituloInput ? tituloInput.value.trim() : '';
+        if (!tituloVal) {
+            reportarError('normativaTitulo', 'errorNormativaTitulo', 'El nombre de la normativa es obligatorio.');
+        } else if (tituloVal.length < 5) {
+            reportarError('normativaTitulo', 'errorNormativaTitulo', 'El nombre de la normativa debe tener al menos 5 caracteres.');
+        }
+
+        // 1.b. Descripción
+        const descInput = document.getElementById('normativaDescripcion');
+        const descVal = descInput ? descInput.value.trim() : '';
+        if (!descVal) {
+            reportarError('normativaDescripcion', 'errorNormativaDescripcion', 'La descripción o el objetivo de la normativa es obligatorio.');
+        } else if (descVal.length < 5) {
+            reportarError('normativaDescripcion', 'errorNormativaDescripcion', 'La descripción debe tener al menos 5 caracteres.');
+        }
+
+        // 2. Organismo / Ministerio
+        const organismoInput = document.getElementById('normativaOrganismo');
+        const organismoVal = organismoInput ? organismoInput.value.trim() : '';
+        if (!organismoVal) {
+            reportarError('normativaOrganismo', 'errorNormativaOrganismo', 'El organismo o ministerio emisor es obligatorio.');
+        } else if (organismoVal.length < 3) {
+            reportarError('normativaOrganismo', 'errorNormativaOrganismo', 'Debe ingresar un organismo o ministerio de al menos 3 caracteres.');
+        }
+
+        // 3. Código
+        const codigoInput = document.getElementById('normativaCodigo');
+        const codigoVal = codigoInput ? codigoInput.value.trim() : '';
+        if (!codigoVal) {
+            reportarError('normativaCodigo', 'errorNormativaCodigo', 'El código de la normativa es obligatorio.');
+        } else if (codigoVal.length < 2) {
+            reportarError('normativaCodigo', 'errorNormativaCodigo', 'Debe ingresar un código válido de al menos 2 caracteres.');
+        }
+
+        // 4. Año (debe ir de 1990 hasta 2026)
+        const anioInput = document.getElementById('normativaAnio');
+        const anioVal = anioInput ? anioInput.value : '';
+        if (!anioVal) {
+            reportarError('normativaAnio', 'errorNormativaAnio', 'Debe seleccionar un año.');
+        } else {
+            const anioNum = parseInt(anioVal, 10);
+            if (isNaN(anioNum) || anioNum < 1990 || anioNum > 2026) {
+                reportarError('normativaAnio', 'errorNormativaAnio', 'El año seleccionado debe estar entre 1990 y 2026.');
+            }
+        }
+
+        // 5. Temática Principal (Categorías)
+        const categoriasChecked = document.querySelectorAll('#modalNuevaNormativa input[name="categorias"]:checked');
+        if (categoriasChecked.length === 0) {
+            reportarError(null, 'errorNormativaCategorias', 'Debe seleccionar al menos una temática principal.');
+        }
+
+        // 6. Tipo de Norma
+        const tipoInput = document.getElementById('normativaTipo');
+        if (tipoInput && !tipoInput.value) {
+            reportarError('normativaTipo', 'errorNormativaTipo', 'Debe seleccionar un tipo de norma.');
+        }
+
+        // 7. Estado Actual
+        const estadoInput = document.getElementById('normativaEstado');
+        if (estadoInput && !estadoInput.value) {
+            reportarError('normativaEstado', 'errorNormativaEstado', 'Debe seleccionar el estado actual.');
+        }
+
+        // 8. Alcance Geográfico
+        const alcanceChecked = document.querySelector('#modalNuevaNormativa input[name="alcance"]:checked');
+        if (!alcanceChecked) {
+            reportarError(null, 'errorNormativaAlcance', 'Debe seleccionar el alcance geográfico.');
+        }
+
+        // 9. Tipo de Acceso
+        const accesoChecked = document.querySelector('#modalNuevaNormativa input[name="acceso"]:checked');
+        if (!accesoChecked) {
+            reportarError(null, 'errorNormativaAcceso', 'Debe seleccionar el tipo de acceso.');
+        }
+
+        // 10. Acceso al Documento (Archivo PDF)
+        if (accesoChecked && accesoChecked.value === 'GRATIS') {
+            const fileInput = document.getElementById('archivoInputNormSidebar');
+            const hasExistingFile = document.getElementById('archivoActualSectionNorm') && document.getElementById('archivoActualSectionNorm').style.display !== 'none';
+
+            if (fileInput && fileInput.hasAttribute('name')) {
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    if (!hasExistingFile) {
+                        reportarError(null, 'errorNormativaArchivo', 'Debes seleccionar un archivo PDF.');
+                        const dropZone = document.getElementById('dropZoneNormSidebar');
+                        if (dropZone) {
+                            dropZone.classList.add('border-red-500');
+                            dropZone.classList.remove('border-gray-200');
+                        }
+                    }
+                } else {
+                    const file = fileInput.files[0];
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    if (ext !== 'pdf') {
+                        reportarError(null, 'errorNormativaArchivo', 'Solo se pueden seleccionar archivos PDF.');
+                        const dropZone = document.getElementById('dropZoneNormSidebar');
+                        if (dropZone) {
+                            dropZone.classList.add('border-red-500');
+                            dropZone.classList.remove('border-gray-200');
+                        }
+                    }
+                }
+            }
+        }
+
+        // 11. Enlace Oficial de Descarga
+        const enlaceInput = document.getElementById('normativaEnlace');
+        const enlaceVal = enlaceInput ? enlaceInput.value.trim() : '';
+        if (!enlaceVal) {
+            reportarError('normativaEnlace', 'errorNormativaEnlace', 'El enlace oficial de descarga es obligatorio.');
+        } else {
+            try {
+                new URL(enlaceVal);
+            } catch (e) {
+                reportarError('normativaEnlace', 'errorNormativaEnlace', 'Debe ingresar una URL válida (ej. https://example.com).');
+            }
+        }
+
+        if (!esValido) {
+            if (primerElementoInvalido) {
+                primerElementoInvalido.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                primerElementoInvalido.focus();
+            }
             return false;
         }
-        if (organismo.length < 3) {
-            alert('Debe ingresar un organismo o ministerio válido.');
-            return false;
-        }
-        if (codigo.length < 2) {
-            alert('Debe ingresar un código válido.');
-            return false;
-        }
-        if (categorias.length === 0) {
-            alert('Debe seleccionar al menos una temática principal.');
-            return false;
-        }
+
         return true;
     }
 </script>

@@ -7,9 +7,12 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
@@ -143,6 +146,32 @@ public class S3StorageService {
     }
 
     /**
+     * Sube un archivo a S3 desde un arreglo de bytes (ej: archivo convertido a PDF)
+     */
+    public String uploadFile(byte[] data, String filename, String contentType, String carpeta) {
+        try {
+            String nombreArchivo = System.currentTimeMillis() + "_" + filename;
+            String clave = carpeta + "/" + nombreArchivo;
+
+            S3Client s3Client = getS3Client();
+
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(s3Config.getBucketName())
+                    .key(clave)
+                    .contentType(contentType)
+                    .contentLength((long) data.length)
+                    .build();
+
+            s3Client.putObject(putObjectRequest, software.amazon.awssdk.core.sync.RequestBody.fromBytes(data));
+            s3Client.close();
+
+            return clave;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al subir archivo binario a S3: " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * Genera una URL pre-firmada (temporal) para descargar/ver un archivo
      * La URL expira después del tiempo especificado
      * @param clave Clave del archivo en S3 (ej: "estudios/timestamp_nombre.pdf")
@@ -221,6 +250,26 @@ public class S3StorageService {
 
         } catch (Exception e) {
             throw new RuntimeException("Error al eliminar archivo de S3: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Descarga un archivo de S3 y retorna sus bytes
+     * @param clave Clave del archivo en S3
+     * @return Bytes del archivo
+     */
+    public byte[] downloadFile(String clave) {
+        try {
+            S3Client s3Client = getS3Client();
+            GetObjectRequest request = GetObjectRequest.builder()
+                    .bucket(s3Config.getBucketName())
+                    .key(clave)
+                    .build();
+            ResponseBytes<GetObjectResponse> objectBytes = s3Client.getObjectAsBytes(request);
+            s3Client.close();
+            return objectBytes.asByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Error al descargar archivo de S3: " + e.getMessage(), e);
         }
     }
 
