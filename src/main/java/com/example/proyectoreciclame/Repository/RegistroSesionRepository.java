@@ -84,8 +84,8 @@ public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, 
             "ORDER BY COUNT(rs.id_sesion) DESC LIMIT 1", nativeQuery = true)
     String getUsuarioMasFrecuente();
 
-    @Query("SELECT COUNT(r) FROM RegistroSesion r WHERE r.estado = 'ACTIVA'")
-    long countSesionesActivas();
+    @Query("SELECT COUNT(r) FROM RegistroSesion r WHERE r.estado = 'VIGENTE' AND r.fechaInicio >= :desde")
+    long countSesionesActivas(@Param("desde") java.time.LocalDateTime desde);
 
     long countByFechaInicioAfter(LocalDateTime fecha);
 

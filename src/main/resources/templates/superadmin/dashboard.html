@@ -167,7 +167,7 @@
                     <div th:each="admin : ${ultimosAdmins}"
                          class="flex items-center gap-2 px-4 py-2.5 hover:bg-slate-50 transition-colors">
                         <div class="w-7 h-7 rounded-full bg-secondary-container/40 text-secondary flex items-center justify-center text-xs font-bold flex-shrink-0"
-                             th:text="${(admin.nombres != null and !admin.nombres.empty) ? admin.nombres.substring(0,1).toUpperCase() : '?'}">?</div>
+                             th:text="${!#strings.isEmpty(admin.nombres) ? #strings.substring(admin.nombres, 0, 1).toUpperCase() : '?'}">?</div>
                         <div class="min-w-0">
                             <p class="text-xs font-bold text-slate-800 truncate"
                                th:text="${admin.nombres + ' ' + admin.apellidoPaterno}">Nombre</p>
@@ -246,31 +246,58 @@
                     </h3>
                 </div>
                 <div class="divide-y divide-slate-50">
+                    <!-- Admin creado -->
                     <div class="flex items-start gap-2.5 px-4 py-2.5">
                         <div class="mt-0.5 w-6 h-6 rounded-full bg-secondary-container/40 text-secondary flex items-center justify-center flex-shrink-0">
                             <span class="material-symbols-outlined text-[12px]">person_add</span>
                         </div>
-                        <div>
+                        <div th:if="${actividadAdminCreado != null}">
+                            <p class="text-xs text-black font-medium"
+                               th:text="${actividadAdminCreado.usuarioAfectado?.nombres + ' ' + actividadAdminCreado.usuarioAfectado?.apellidoPaterno}">
+                                Admin creado
+                            </p>
+                            <p class="text-[10px] text-slate-400"
+                               th:text="${#temporals.format(actividadAdminCreado.fechaCambio, 'dd MMM yyyy HH:mm')}">
+                            </p>
+                        </div>
+                        <div th:if="${actividadAdminCreado == null}">
                             <p class="text-xs text-black font-medium">Admin creado</p>
-                            <p class="text-[10px] text-slate-400">Pendiente de logs</p>
+                            <p class="text-[10px] text-slate-400">Sin registros aún</p>
                         </div>
                     </div>
+                    <!-- Dominio añadido -->
                     <div class="flex items-start gap-2.5 px-4 py-2.5">
                         <div class="mt-0.5 w-6 h-6 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center flex-shrink-0">
                             <span class="material-symbols-outlined text-[12px]">domain_add</span>
                         </div>
-                        <div>
+                        <div th:if="${actividadDominio != null}">
+                            <p class="text-xs text-black font-medium"
+                               th:text="${actividadDominio.nombreDominio}">
+                                Dominio añadido
+                            </p>
+                            <p class="text-[10px] text-slate-400"
+                               th:text="${#temporals.format(actividadDominio.fechaRegistro, 'dd MMM yyyy HH:mm')}">
+                            </p>
+                        </div>
+                        <div th:if="${actividadDominio == null}">
                             <p class="text-xs text-black font-medium">Dominio añadido</p>
-                            <p class="text-[10px] text-slate-400">Pendiente de logs</p>
+                            <p class="text-[10px] text-slate-400">Sin registros aún</p>
                         </div>
                     </div>
+                    <!-- Políticas actualizadas -->
                     <div class="flex items-start gap-2.5 px-4 py-2.5">
                         <div class="mt-0.5 w-6 h-6 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center flex-shrink-0">
                             <span class="material-symbols-outlined text-[12px]">policy</span>
                         </div>
-                        <div>
+                        <div th:if="${politica != null and politica.actualizadoEn != null}">
                             <p class="text-xs text-black font-medium">Políticas actualizadas</p>
-                            <p class="text-[10px] text-slate-400">Pendiente de logs</p>
+                            <p class="text-[10px] text-slate-400"
+                               th:text="${#temporals.format(politica.actualizadoEn, 'dd MMM yyyy HH:mm')}">
+                            </p>
+                        </div>
+                        <div th:if="${politica == null or politica.actualizadoEn == null}">
+                            <p class="text-xs text-black font-medium">Políticas actualizadas</p>
+                            <p class="text-[10px] text-slate-400">Sin registros aún</p>
                         </div>
                     </div>
                 </div>
@@ -344,11 +371,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none">
-                <svg class="w-full h-full" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M47.5,-62.4C60.1,-52.1,68,-36.5,73.4,-20.1C78.8,-3.7,81.7,13.5,75.9,28.2C70.1,42.8,55.5,54.9,39.9,64.3C24.3,73.7,7.7,80.5,-9.4,78.8C-26.6,77,-44.3,66.8,-57,52.9C-69.6,39.1,-77.3,21.6,-78.9,3.8C-80.4,-14,-75.8,-32.1,-65.4,-46.8C-55,-61.5,-38.7,-72.8,-22.8,-76.3C-6.9,-79.8,8.6,-75.6,24.8,-71.4C41,-67.2,57.9,-63,47.5,-62.4Z" fill="#ffffff" transform="translate(100 100)"/>
-                </svg>
             </div>
         </div>
 
