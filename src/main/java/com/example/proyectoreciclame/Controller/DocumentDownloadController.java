@@ -135,6 +135,77 @@ public class DocumentDownloadController {
     }
 
     /**
+     * GET /documentos/estudio/{id}/download
+     * Redirige al navegador a una presigned URL con Content-Disposition: attachment.
+     * El navegador muestra la barra de descarga nativa inmediatamente.
+     */
+    @GetMapping("/estudio/{id}/download")
+    public void downloadEstudio(@PathVariable Long id, HttpServletResponse response,
+                                Authentication authentication) throws IOException {
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getName())) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        Estudio estudio = estudioRepository.findById(id).orElse(null);
+        if (estudio == null || estudio.getArchivoUrl() == null || estudio.getArchivoUrl().isBlank()) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        String email = authentication.getName();
+        Usuario usuario = usuarioRepository.findByCorreoAndEliminadoEnIsNull(email).orElse(null);
+        int duration = 300;
+        if (usuario != null) {
+            String rol = usuario.getRol().getNombre().toUpperCase();
+            if (rol.equals("ADMIN") || rol.equals("SUPERADMIN")) duration = 3600;
+            else if (rol.equals("SOCIO")) duration = 1800;
+            else if (rol.equals("VISUALIZADOR")) duration = 900;
+        }
+
+        String clave = estudio.getArchivoUrl().replace("/uploads/estudios/", "estudios/");
+        String filename = estudio.getArchivoNombre() != null ? estudio.getArchivoNombre() : "documento";
+        String downloadUrl = s3StorageService.generatePresignedDownloadUrl(clave, filename, duration);
+        response.sendRedirect(downloadUrl);
+    }
+
+    /**
+     * GET /documentos/normativa/{id}/download
+     * Redirige al navegador a una presigned URL con Content-Disposition: attachment.
+     */
+    @GetMapping("/normativa/{id}/download")
+    public void downloadNormativa(@PathVariable Long id, HttpServletResponse response,
+                                  Authentication authentication) throws IOException {
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getName())) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        Normativa normativa = normativaRepository.findById(id).orElse(null);
+        if (normativa == null || normativa.getArchivoUrl() == null || normativa.getArchivoUrl().isBlank()) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        String email = authentication.getName();
+        Usuario usuario = usuarioRepository.findByCorreoAndEliminadoEnIsNull(email).orElse(null);
+        int duration = 300;
+        if (usuario != null) {
+            String rol = usuario.getRol().getNombre().toUpperCase();
+            if (rol.equals("ADMIN") || rol.equals("SUPERADMIN")) duration = 3600;
+            else if (rol.equals("SOCIO")) duration = 1800;
+            else if (rol.equals("VISUALIZADOR")) duration = 900;
+        }
+
+        String clave = normativa.getArchivoUrl().replace("/uploads/normativas/", "normativas/");
+        String filename = normativa.getArchivoNombre() != null ? normativa.getArchivoNombre() : "normativa";
+        String downloadUrl = s3StorageService.generatePresignedDownloadUrl(clave, filename, duration);
+        response.sendRedirect(downloadUrl);
+    }
+
+    /**
      * GET /documentos/normativa/{id}/presigned-url
      * Genera una URL pre-firmada temporal para descargar una normativa
      * La duración depende del rol del usuario

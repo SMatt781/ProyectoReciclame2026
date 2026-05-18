@@ -797,7 +797,9 @@ public class AdminEstudiosController {
             return ResponseEntity.notFound().build();
         }
 
-        String presignedUrl = s3StorageService.generatePresignedUrl(estudio.getArchivoUrl(), 60);
+        String clave = estudio.getArchivoUrl().replace("/uploads/estudios/", "estudios/");
+        String filename = estudio.getArchivoNombre() != null ? estudio.getArchivoNombre() : "documento";
+        String presignedUrl = s3StorageService.generatePresignedDownloadUrl(clave, filename, 300);
 
         return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
                 .header(HttpHeaders.LOCATION, presignedUrl)

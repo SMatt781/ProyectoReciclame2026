@@ -325,7 +325,7 @@
                                         Ver fuente original
                                     </a>
                                     <a th:unless="${normativa.archivoUrl == null}"
-                                       th:href="${normativa.archivoUrl}" target="_blank"
+                                       th:href="@{/documentos/normativa/{id}/download(id=${normativa.idNormativa})}"
                                        class="flex-1 inline-flex items-center justify-center gap-2 bg-[#041533] hover:bg-[#00743a] text-white font-bold text-sm py-3 px-4 rounded-[14px] transition-colors shadow-sm">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"

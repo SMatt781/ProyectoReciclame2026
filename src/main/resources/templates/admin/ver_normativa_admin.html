@@ -202,8 +202,7 @@
                             class="flex-1 bg-surface-container relative overflow-hidden transition-all duration-300">
                             <div class="absolute inset-0 bg-white/50 z-10 pointer-events-none"></div>
                             <div class="relative w-full h-full" style="z-index: 20;">
-                                <iframe th:if="${normativa.archivoUrl != null}"
-                                    th:src="${normativa.archivoUrl} + '#toolbar=0&navpanes=0&scrollbar=0'"
+                                <iframe id="pdfViewer" th:if="${normativa.archivoUrl != null}"
                                     class="w-full h-full border-0 flex-1" oncontextmenu="return false;"></iframe>
                                 <div th:if="${normativa.archivoUrl == null}"
                                     class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
@@ -418,8 +417,8 @@
                                                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                         </svg>
                                     </a>
-                                    <a th:if="${normativa.archivoUrl != null}" th:href="${normativa.archivoUrl}"
-                                        target="_blank"
+                                    <a th:if="${normativa.archivoUrl != null}"
+                                        th:href="@{/documentos/normativa/{id}/download(id=${normativa.idNormativa})}"
                                         class="flex-1 inline-flex items-center justify-center gap-2 bg-[#041533] hover:bg-[#00743a] text-white px-4 py-2.5 rounded-lg font-bold text-sm transition">
                                         Descargar
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -576,8 +575,23 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', async function () {
             const viewerContainer = document.getElementById('viewerContainer');
+            const pdfViewer = document.getElementById('pdfViewer');
+
+            if (pdfViewer) {
+                const normativaId = window.location.pathname.split('/').pop();
+                try {
+                    const resp = await fetch('/documentos/normativa/' + normativaId + '/presigned-url');
+                    if (!resp.ok) throw new Error('Error al obtener URL');
+                    const data = await resp.json();
+                    if (data.url) pdfViewer.src = data.url + '#toolbar=0&navpanes=0&scrollbar=0';
+                } catch (e) {
+                    console.error('Error al cargar documento:', e);
+                    pdfViewer.style.display = 'none';
+                }
+            }
+
             document.addEventListener('contextmenu', event => event.preventDefault());
             document.addEventListener('keydown', function (e) {
                 if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'c' || e.key === 'C')) ||
