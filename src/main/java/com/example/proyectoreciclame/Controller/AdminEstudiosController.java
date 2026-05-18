@@ -101,10 +101,15 @@ public class AdminEstudiosController {
             estudio.setAnio(anio);
 
             // 🔹 formato (ENUM)
-            if (formato.toUpperCase().contains("PDF")) {
+            String formatoUpper = formato.toUpperCase();
+            if (formatoUpper.contains("PDF")) {
                 estudio.setFormato(com.example.proyectoreciclame.Entity.Estudio.FormatoEstudio.PDF);
-            } else {
+            } else if (formatoUpper.contains("PPTX")) {
                 estudio.setFormato(com.example.proyectoreciclame.Entity.Estudio.FormatoEstudio.PPTX);
+            } else if (formatoUpper.contains("XLSX")) {
+                estudio.setFormato(com.example.proyectoreciclame.Entity.Estudio.FormatoEstudio.XLSX);
+            } else {
+                estudio.setFormato(com.example.proyectoreciclame.Entity.Estudio.FormatoEstudio.PDF);
             }
 
             // 🔹 valores por defecto
@@ -125,14 +130,14 @@ public class AdminEstudiosController {
             estudio.setUsuarioCreador(usuario);
 
             // 🔹 archivo
-            // 🔹 archivo real PDF / PPTX - Subir a AWS S3
+            // 🔹 archivo real PDF / PPTX / XLSX - Subir a AWS S3
             if (archivo != null && !archivo.isEmpty()) {
 
                 String nombreOriginal = archivo.getOriginalFilename();
                 String extension = nombreOriginal.substring(nombreOriginal.lastIndexOf(".")).toLowerCase();
 
-                if (!extension.equals(".pdf") && !extension.equals(".pptx")) {
-                    throw new RuntimeException("Solo se permiten archivos PDF o PPTX");
+                if (!extension.equals(".pdf") && !extension.equals(".pptx") && !extension.equals(".xlsx")) {
+                    throw new RuntimeException("Solo se permiten archivos PDF, PPTX o XLSX");
                 }
 
                 // ✅ Subir a S3 y guardar la clave S3 real (no ruta local)
@@ -755,6 +760,7 @@ public class AdminEstudiosController {
         String enlaceNormativa = "/normativas/" + n.getIdNormativa();
         String tituloNotif = "Normativa actualizada";
         String mensajeNotif = "La normativa \"" + n.getTitulo() + "\" fue actualizada. " + accion + ".";
+        adminNotificacionController.crearNotificacionAdmin(tituloNotif, mensajeNotif, "NORMATIVA", enlaceNormativa);
         adminNotificacionController.crearNotificacionSocio(tituloNotif, mensajeNotif, "NORMATIVA", enlaceNormativa);
         adminNotificacionController.crearNotificacionVisualizador(tituloNotif, mensajeNotif, "NORMATIVA", enlaceNormativa);
 
@@ -776,6 +782,7 @@ public class AdminEstudiosController {
         String enlaceEstudio = "/estudios/" + estudio.getIdEstudio();
         String tituloNotif = "Estudio actualizado";
         String mensajeNotif = "El estudio \"" + estudio.getTitulo() + "\" cambio de estado a DEROGADO.";
+        adminNotificacionController.crearNotificacionAdmin(tituloNotif, mensajeNotif, "ESTUDIO", enlaceEstudio);
         adminNotificacionController.crearNotificacionSocio(tituloNotif, mensajeNotif, "ESTUDIO", enlaceEstudio);
         adminNotificacionController.crearNotificacionVisualizador(tituloNotif, mensajeNotif, "ESTUDIO", enlaceEstudio);
 
@@ -816,17 +823,39 @@ public class AdminEstudiosController {
             estudio.setDescripcion(descripcion);
             estudio.setAnio(anio);
 
-            if (formato.toUpperCase().contains("PDF")) {
+            // Actualizar formato según el valor seleccionado
+            String formatoUpper = formato.toUpperCase();
+            if (formatoUpper.contains("PDF")) {
                 estudio.setFormato(Estudio.FormatoEstudio.PDF);
-            } else {
+            } else if (formatoUpper.contains("PPTX")) {
                 estudio.setFormato(Estudio.FormatoEstudio.PPTX);
+            } else if (formatoUpper.contains("XLSX")) {
+                estudio.setFormato(Estudio.FormatoEstudio.XLSX);
             }
+
             if (estado != null && !estado.isBlank()) {
                 estudio.setEstado(Estudio.EstadoEstudio.valueOf(estado));
             }
 
             if (tipoAcceso != null && !tipoAcceso.isBlank()) {
                 estudio.setTipoAcceso(Estudio.TipoAcceso.valueOf(tipoAcceso));
+            }
+
+            // 🔹 Manejar archivo si se proporciona uno nuevo
+            if (archivo != null && !archivo.isEmpty()) {
+                String nombreOriginal = archivo.getOriginalFilename();
+                String extension = nombreOriginal.substring(nombreOriginal.lastIndexOf(".")).toLowerCase();
+
+                if (!extension.equals(".pdf") && !extension.equals(".pptx") && !extension.equals(".xlsx")) {
+                    throw new RuntimeException("Solo se permiten archivos PDF, PPTX o XLSX");
+                }
+
+                // Subir a S3 y guardar la clave S3
+                String clave = s3StorageService.uploadFile(archivo, "estudios");
+
+                estudio.setArchivoNombre(s3StorageService.getFileName(clave));
+                estudio.setArchivoTamanioKb(Integer.valueOf((int) (archivo.getSize() / 1024)));
+                estudio.setArchivoUrl(clave);
             }
 
             estudio.setFechaActualizacion(java.time.LocalDateTime.now());
@@ -840,6 +869,7 @@ public class AdminEstudiosController {
             String enlaceEstudio = "/estudios/" + estudio.getIdEstudio();
             String tituloNotif = "Estudio actualizado";
             String mensajeNotif = "El estudio \"" + estudio.getTitulo() + "\" fue actualizado. " + accion + ".";
+            adminNotificacionController.crearNotificacionAdmin(tituloNotif, mensajeNotif, "ESTUDIO", enlaceEstudio);
             adminNotificacionController.crearNotificacionSocio(tituloNotif, mensajeNotif, "ESTUDIO", enlaceEstudio);
             adminNotificacionController.crearNotificacionVisualizador(tituloNotif, mensajeNotif, "ESTUDIO", enlaceEstudio);
 

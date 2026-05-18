@@ -146,7 +146,7 @@
     <main class="flex-1 overflow-y-auto px-8 py-3">
         <div class="w-full">
             <!-- Page Header -->
-            <div class="mb-5">
+            <div class="mb-5 flex items-start justify-between">
                 <div>
                     <h2
                             class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
@@ -156,6 +156,15 @@
                         circular y gestión de residuos.
                     </p>
                 </div>
+                <button type="button"
+                        onclick="abrirModalEstudio('crear', {})"
+                        class="flex items-center gap-2 px-6 py-3 bg-secondary text-on-secondary font-bold text-sm rounded-xl hover:bg-[#00210c] transition-colors shadow-md whitespace-nowrap">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Nuevo Estudio
+                </button>
+            </div>
                 <!-- <div class="flex gap-3">
                     <button
                         class="px-4 py-2 bg-surface-container rounded-lg font-label text-sm font-semibold text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-2">
@@ -913,20 +922,6 @@
     });
 </script>
 
-<script>
-    function abrirModalEditarEstudio(btn) {
-        abrirModalEstudio('editar', {
-            id:          btn.dataset.id,
-            nombre:      btn.dataset.nombre,
-            descripcion: btn.dataset.descripcion,
-            anio:        btn.dataset.anio,
-            estado:      btn.dataset.estado,
-            tipoacceso:  btn.dataset.tipoacceso,
-            formato:     btn.dataset.formato,
-            archivo:     btn.dataset.archivo
-        });
-    }
-</script>
 
 <!-- Modal para Nuevo/Editar Estudio -->
 <div id="modalNuevoEstudio" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
@@ -955,6 +950,24 @@
         </header>
 
         <form id="formEstudio" th:action="@{/admin/estudio_new}" method="post" enctype="multipart/form-data" class="flex flex-col max-h-[90vh] overflow-hidden">
+
+            <!-- Hidden field para rastrear modo editar -->
+            <input type="hidden" id="modoEditar" value="false">
+            <input type="hidden" id="idEstudioEditar" name="idEstudioEditar" value="">
+
+            <!-- Contenedor de errores inline -->
+            <div id="errorContainer" class="hidden bg-red-50 border-l-4 border-red-500 p-4 mx-6 mt-6">
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                    </svg>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-red-800 mb-2">Por favor corrige los siguientes errores:</h3>
+                        <ul id="errorList" class="text-sm text-red-700 space-y-1 list-disc list-inside"></ul>
+                    </div>
+                </div>
+            </div>
+
             <div class="overflow-y-auto px-6 py-8 flex flex-col gap-10">
 
                 <section class="space-y-4">
@@ -983,15 +996,27 @@
                                     <option>2024</option>
                                     <option>2023</option>
                                     <option>2022</option>
+                                    <option>2021</option>
+                                    <option>2020</option>
+                                    <option>2019</option>
+                                    <option>2018</option>
+                                    <option>2017</option>
+                                    <option>2016</option>
+                                    <option>2015</option>
+                                    <option>2014</option>
+                                    <option>2013</option>
+                                    <option>2012</option>
+                                    <option>2011</option>
+                                    <option>2010</option>
                                 </select>
                             </div>
 
                             <div class="space-y-2">
                                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Formato</label>
-                                <select id="estudioFormato" name="formato" class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
-                                    <option>Reporte Técnico (PDF)</option>
-                                    <option>Presentación (PPTX)</option>
-                                    <option>Planilla de Datos (XLSX)</option>
+                                <select id="estudioFormato" name="formato" onchange="actualizarAcceptoArchivo()" class="w-full bg-[#f8faff] border-none rounded-xl text-sm px-4 py-3.5 focus:ring-2 focus:ring-[#059669]/20 appearance-none cursor-pointer">
+                                    <option value="PDF">Reporte Técnico (PDF)</option>
+                                    <option value="PPTX">Presentación (PPTX)</option>
+                                    <option value="XLSX">Planilla de Datos (XLSX)</option>
                                 </select>
                             </div>
 
@@ -1017,11 +1042,14 @@
                 <section class="space-y-4 pt-2">
                     <div class="flex items-center gap-3">
                         <div class="w-1 h-5 bg-[#059669] rounded-full"></div>
-                        <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Archivo</h2>
+                        <div class="flex-1">
+                            <h2 class="text-sm font-black text-gray-800 uppercase tracking-wider">Archivo</h2>
+                            <p id="archivoSubtitulo" class="text-xs text-gray-500 mt-1">Requerido para crear nuevo estudio</p>
+                        </div>
                     </div>
 
                     <!-- Input real oculto — activado solo por el label -->
-                    <input id="archivoInput" name="archivo" type="file" accept=".pdf,.pptx" style="display:none;">
+                    <input id="archivoInput" name="archivo" type="file" accept=".pdf" style="display:none;">
 
                     <!-- Zona de drop -->
                     <div id="dropZone"
@@ -1038,7 +1066,7 @@
                                 </svg>
                             </div>
                             <p class="text-base font-bold text-gray-700 mb-1">Arrastra tu archivo aquí</p>
-                            <p class="text-sm text-gray-400 mb-5">PDF o PPTX · máximo 50 MB</p>
+                            <p id="dropDefaultText" class="text-sm text-gray-400 mb-5">PDF, PPTX o XLSX · máximo 50 MB</p>
                             <label for="archivoInput"
                                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold text-white cursor-pointer transition-colors"
                                    style="background:#059669;"
@@ -1142,7 +1170,7 @@
                 </button>
 
                 <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-                    <span class="hidden sm:block text-[9px] font-bold text-gray-400 uppercase tracking-widest text-right leading-tight">
+                    <span id="footerInfo" class="hidden sm:block text-[9px] font-bold text-gray-400 uppercase tracking-widest text-right leading-tight">
                         Todos los campos<br/>son obligatorios
                     </span>
 
@@ -1158,6 +1186,188 @@
         </form>
     </div>
 </div>
+
+<script>
+    // Función para actualizar el accept del input según el formato seleccionado
+    function actualizarAcceptoArchivo() {
+        const formatoSelect = document.getElementById('estudioFormato');
+        const archivoInput = document.getElementById('archivoInput');
+        const formato = formatoSelect.value;
+
+        if (formato === 'PDF') {
+            archivoInput.accept = '.pdf';
+        } else if (formato === 'PPTX') {
+            archivoInput.accept = '.pptx';
+        } else if (formato === 'XLSX') {
+            archivoInput.accept = '.xlsx';
+        }
+
+        // Limpiar el archivo actual si existe
+        archivoInput.value = '';
+        document.getElementById('dropDefault').style.display = 'flex';
+        document.getElementById('dropSelected').style.display = 'none';
+    }
+
+    // Función para mostrar errores inline
+    function mostrarErrores(errores) {
+        const errorContainer = document.getElementById('errorContainer');
+        const errorList = document.getElementById('errorList');
+
+        errorList.innerHTML = '';
+
+        if (errores.length > 0) {
+            errores.forEach(error => {
+                const li = document.createElement('li');
+                li.textContent = error;
+                errorList.appendChild(li);
+            });
+            errorContainer.classList.remove('hidden');
+            // Scroll al contenedor de errores
+            errorContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            errorContainer.classList.add('hidden');
+        }
+    }
+
+    // Función para abrir modal editando estudio
+    function abrirModalEstudio(modo, datos) {
+        const modal = document.getElementById('modalNuevoEstudio');
+        const modalTitulo = document.getElementById('modalEstudioTituloMain');
+        const formEstudio = document.getElementById('formEstudio');
+        const modoEditar = document.getElementById('modoEditar');
+        const idEstudioEditar = document.getElementById('idEstudioEditar');
+        const archivoSubtitulo = document.getElementById('archivoSubtitulo');
+        const footerInfo = document.getElementById('footerInfo');
+
+        // Limpiar errores previos
+        mostrarErrores([]);
+
+        if (modo === 'editar') {
+            // Modo editar
+            modoEditar.value = 'true';
+            idEstudioEditar.value = datos.id;
+            modalTitulo.textContent = 'Editar Estudio';
+            formEstudio.action = '/admin/estudios/' + datos.id + '/actualizar';
+            formEstudio.method = 'post';
+            archivoSubtitulo.textContent = 'Opcional - Déjalo vacío para mantener el archivo actual';
+            footerInfo.innerHTML = 'El archivo es<br/>opcional en edición';
+
+            // Llenar los campos
+            document.getElementById('estudioNombre').value = datos.nombre || '';
+            document.getElementById('estudioDescripcion').value = datos.descripcion || '';
+            document.getElementById('estudioAnio').value = datos.anio || '2026';
+            document.getElementById('estudioFormato').value = datos.formato || 'PDF';
+            document.getElementById('estudioEstado').value = datos.estado || 'BORRADOR';
+            document.getElementById('estudioTipoAcceso').value = datos.tipoacceso || 'DESCARGA';
+
+            // Actualizar accept del archivo según formato
+            actualizarAcceptoArchivo();
+
+            // Si hay archivo actual, mostrar su nombre
+            if (datos.archivo) {
+                const dropFileName = document.getElementById('dropFileName');
+                dropFileName.textContent = 'Archivo actual: ' + datos.archivo;
+            }
+        } else {
+            // Modo crear
+            modoEditar.value = 'false';
+            idEstudioEditar.value = '';
+            modalTitulo.textContent = 'Nuevo Estudio';
+            formEstudio.action = '/admin/estudio_new';
+            formEstudio.method = 'post';
+            archivoSubtitulo.textContent = 'Requerido para crear nuevo estudio';
+            footerInfo.innerHTML = 'Todos los campos<br/>son obligatorios';
+
+            // Limpiar el formulario
+            formEstudio.reset();
+            actualizarAcceptoArchivo();
+        }
+
+        // Mostrar modal
+        modal.classList.remove('hidden');
+    }
+
+    // Función para abrir el modal en modo editar
+    function abrirModalEditarEstudio(btn) {
+        abrirModalEstudio('editar', {
+            id:          btn.dataset.id,
+            nombre:      btn.dataset.nombre,
+            descripcion: btn.dataset.descripcion,
+            anio:        btn.dataset.anio,
+            estado:      btn.dataset.estado,
+            tipoacceso:  btn.dataset.tipoacceso,
+            formato:     btn.dataset.formato,
+            archivo:     btn.dataset.archivo
+        });
+    }
+
+    // Validación del formulario antes de enviar
+    const formEstudio = document.getElementById('formEstudio');
+    if (formEstudio) {
+        formEstudio.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const errores = [];
+            const nombre = document.getElementById('estudioNombre').value.trim();
+            const descripcion = document.getElementById('estudioDescripcion').value.trim();
+            const archivoInput = document.getElementById('archivoInput');
+            const archivo = archivoInput && archivoInput.files.length > 0 ? archivoInput.files[0] : null;
+            const formato = document.getElementById('estudioFormato').value;
+            const modoEditar = document.getElementById('modoEditar').value === 'true';
+
+            // Validar campos obligatorios
+            if (!nombre) {
+                errores.push('El nombre del estudio es obligatorio.');
+            }
+
+            if (!descripcion) {
+                errores.push('La descripción del estudio es obligatoria.');
+            }
+
+            // El archivo es obligatorio solo en modo crear
+            if (!modoEditar && !archivo) {
+                errores.push('Debes seleccionar un archivo para crear un nuevo estudio.');
+            }
+
+            // Si hay archivo, validar que coincida con el formato
+            if (archivo) {
+                const archivoNombre = archivo.name.toLowerCase();
+                let esValido = false;
+
+                if (formato === 'PDF' && archivoNombre.endsWith('.pdf')) {
+                    esValido = true;
+                } else if (formato === 'PPTX' && archivoNombre.endsWith('.pptx')) {
+                    esValido = true;
+                } else if (formato === 'XLSX' && archivoNombre.endsWith('.xlsx')) {
+                    esValido = true;
+                }
+
+                if (!esValido) {
+                    errores.push('El archivo debe ser de tipo ' + formato + ' (' +
+                        (formato === 'PDF' ? '.pdf' : (formato === 'PPTX' ? '.pptx' : '.xlsx')) + ').');
+                }
+
+                // Validar tamaño del archivo (máximo 50 MB)
+                const maxSize = 50 * 1024 * 1024;
+                if (archivo.size > maxSize) {
+                    errores.push('El archivo es demasiado grande. Máximo 50 MB.');
+                }
+            }
+
+            // Si hay errores, mostrarlos e impedir envío
+            if (errores.length > 0) {
+                mostrarErrores(errores);
+                return false;
+            }
+
+            // Si todo está bien, limpiar el contenedor de errores y enviar
+            mostrarErrores([]);
+            formEstudio.submit();
+        });
+    } else {
+        console.error('El formulario con ID "formEstudio" no se encontró');
+    }
+</script>
 
 </body>
 

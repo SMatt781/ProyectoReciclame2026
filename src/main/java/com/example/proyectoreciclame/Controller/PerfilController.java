@@ -64,6 +64,7 @@ public class PerfilController {
             @RequestParam(required = false) String ruc,
             @RequestParam(required = false) String cargo,
             Principal principal,
+            Model model,
             RedirectAttributes redirectAttributes) {
 
         if (principal == null) return "redirect:/login";
@@ -72,20 +73,50 @@ public class PerfilController {
         Usuario usuarioBD = usuarioRepository.findByCorreoIgnoreCase(correo)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        if (nombres != null) usuarioBD.setNombres(nombres);
-        if (apellidoPaterno != null) usuarioBD.setApellidoPaterno(apellidoPaterno);
-        if (apellidoMaterno != null) usuarioBD.setApellidoMaterno(apellidoMaterno);
-        if (telefono != null) usuarioBD.setTelefono(telefono);
+        // Validar y crear mapa de errores
+        java.util.Map<String, String> errores = new java.util.HashMap<>();
+
+        if (nombres == null || nombres.isBlank()) {
+            errores.put("nombres", "El nombre es obligatorio.");
+        }
+        if (apellidoPaterno == null || apellidoPaterno.isBlank()) {
+            errores.put("apellidoPaterno", "El apellido paterno es obligatorio.");
+        }
+        if (apellidoMaterno == null || apellidoMaterno.isBlank()) {
+            errores.put("apellidoMaterno", "El apellido materno es obligatorio.");
+        }
+
+        // Si hay errores, retornar la página con los errores
+        if (!errores.isEmpty()) {
+            model.addAttribute("usuario", usuarioBD);
+            usuarioEmpresaRepository.findByUsuario(usuarioBD)
+                    .ifPresent(empresa -> model.addAttribute("usuarioEmpresa", empresa));
+            model.addAttribute("fieldErrors", errores);
+            cargarPoliticaEnModelo(model);
+            return "perfilUsuario";
+        }
+
+        // Guardar datos del usuario - solo si no están vacíos
+        usuarioBD.setNombres(nombres.trim());
+        usuarioBD.setApellidoPaterno(apellidoPaterno.trim());
+        usuarioBD.setApellidoMaterno(apellidoMaterno != null && !apellidoMaterno.isBlank() ? apellidoMaterno.trim() : null);
+        usuarioBD.setTelefono(telefono != null && !telefono.isBlank() ? telefono.trim() : null);
+        usuarioBD.setActualizadoEn(LocalDateTime.now());
 
         usuarioRepository.save(usuarioBD);
 
-        if (razonSocial != null || ruc != null || cargo != null) {
+        // Guardar datos de empresa solo si hay datos válidos
+        String razonSocialTrimmed = razonSocial != null && !razonSocial.isBlank() ? razonSocial.trim() : null;
+        String rucTrimmed = ruc != null && !ruc.isBlank() ? ruc.trim() : null;
+        String cargoTrimmed = cargo != null && !cargo.isBlank() ? cargo.trim() : null;
+
+        if (razonSocialTrimmed != null || rucTrimmed != null || cargoTrimmed != null) {
             UsuarioEmpresa empresa = usuarioEmpresaRepository.findByUsuario(usuarioBD)
                     .orElse(new UsuarioEmpresa());
             empresa.setUsuario(usuarioBD);
-            if (ruc != null) empresa.setRuc(ruc);
-            if (razonSocial != null) empresa.setRazonSocial(razonSocial);
-            if (cargo != null) empresa.setCargo(cargo);
+            empresa.setRazonSocial(razonSocialTrimmed);
+            empresa.setRuc(rucTrimmed);
+            empresa.setCargo(cargoTrimmed);
             usuarioEmpresaRepository.save(empresa);
         }
 
