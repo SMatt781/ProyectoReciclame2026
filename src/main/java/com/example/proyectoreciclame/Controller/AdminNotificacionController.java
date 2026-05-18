@@ -37,7 +37,7 @@ public class AdminNotificacionController {
         this.notificacionRepository = notificacionRepository;
     }
 
-    @GetMapping({"/admin/notificaciones", "/socio/notificaciones", "/visualizador/notificaciones", "/superadmin/notificaciones"})
+    @GetMapping({"/admin/notificaciones", "/socio/notificaciones", "/visualizador/notificaciones"})
     public String verNotificaciones(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "ALL") String tipo,
@@ -81,7 +81,7 @@ public class AdminNotificacionController {
         return "admin/notificaciones";
     }
 
-    @PostMapping({"/admin/notificaciones/marcar-leidas", "/socio/notificaciones/marcar-leidas", "/visualizador/notificaciones/marcar-leidas", "/superadmin/notificaciones/marcar-leidas"})
+    @PostMapping({"/admin/notificaciones/marcar-leidas", "/socio/notificaciones/marcar-leidas", "/visualizador/notificaciones/marcar-leidas"})
     @Transactional
     public String marcarTodasLeidas(RedirectAttributes redirectAttributes) {
         SessionUserDto sessionUser = authenticatedUserService.obtenerUsuarioSesion();
@@ -102,7 +102,7 @@ public class AdminNotificacionController {
         return "redirect:/" + sessionUser.getRol().toLowerCase() + "/notificaciones";
     }
 
-    @PostMapping({"/admin/notificaciones/marcar-leida/{id}", "/socio/notificaciones/marcar-leida/{id}", "/visualizador/notificaciones/marcar-leida/{id}", "/superadmin/notificaciones/marcar-leida/{id}"})
+    @PostMapping({"/admin/notificaciones/marcar-leida/{id}", "/socio/notificaciones/marcar-leida/{id}", "/visualizador/notificaciones/marcar-leida/{id}"})
     public String marcarLeida(@PathVariable Long id,
                               RedirectAttributes redirectAttributes) {
         SessionUserDto sessionUser = authenticatedUserService.obtenerUsuarioSesion();
