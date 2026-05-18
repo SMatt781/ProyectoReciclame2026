@@ -193,6 +193,13 @@ public class SuperadminController {
         String correoCompleto = usuarioCorreo.trim() + dominioCorreo.trim();
         usuario.setCorreo(correoCompleto);
 
+        // 0. Validar campos obligatorios
+        if (usuario.getNombres() == null || usuario.getNombres().isBlank()
+                || usuario.getApellidoPaterno() == null || usuario.getApellidoPaterno().isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "El nombre y apellido paterno son obligatorios.");
+            return "redirect:/superadmin/administradores";
+        }
+
         // 1. Validar unicidad de correo
         if (usuarioRepository.existsByCorreo(correoCompleto)) {
             redirectAttributes.addFlashAttribute("error",
@@ -355,6 +362,13 @@ public class SuperadminController {
     ) {
         // Construir correo completo
         String correo = usuarioCorreo.trim() + dominioCorreo.trim();
+
+        // Validar campos obligatorios
+        if (nombres.isBlank() || apellidoPaterno.isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "El nombre y apellido paterno son obligatorios.");
+            return "redirect:/superadmin/administradores/editar/" + idUsuario
+                    + "?page=" + page + (texto != null ? "&texto=" + texto : "");
+        }
 
         Usuario admin = usuarioRepository.findById(idUsuario).orElse(null);
         if (admin == null) {

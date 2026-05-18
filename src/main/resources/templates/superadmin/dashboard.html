@@ -167,7 +167,7 @@
                     <div th:each="admin : ${ultimosAdmins}"
                          class="flex items-center gap-2 px-4 py-2.5 hover:bg-slate-50 transition-colors">
                         <div class="w-7 h-7 rounded-full bg-secondary-container/40 text-secondary flex items-center justify-center text-xs font-bold flex-shrink-0"
-                             th:text="${admin.nombres != null ? admin.nombres.substring(0,1).toUpperCase() : 'A'}">A</div>
+                             th:text="${(admin.nombres != null and !admin.nombres.empty) ? admin.nombres.substring(0,1).toUpperCase() : '?'}">?</div>
                         <div class="min-w-0">
                             <p class="text-xs font-bold text-slate-800 truncate"
                                th:text="${admin.nombres + ' ' + admin.apellidoPaterno}">Nombre</p>
