@@ -5,21 +5,22 @@ public class SolicitudRegistroDto {
     private Long idUsuario;
     private String nombreCompleto;
     private String correo;
-    private String dni;
-    private String ruc;
+    private String tipoIdentificacion;
+    private String numeroIdentificacion;
     private String rolSolicitado;
     private String estado;
     private String fechaSolicitud;
     private String iniciales;
 
     public SolicitudRegistroDto(Long idUsuario, String nombreCompleto, String correo,
-                                String dni, String ruc, String rolSolicitado, String estado,
+                                String tipoIdentificacion, String numeroIdentificacion,
+                                String rolSolicitado, String estado,
                                 String fechaSolicitud, String iniciales) {
         this.idUsuario = idUsuario;
         this.nombreCompleto = nombreCompleto;
         this.correo = correo;
-        this.dni = dni;
-        this.ruc = ruc;
+        this.tipoIdentificacion = tipoIdentificacion;
+        this.numeroIdentificacion = numeroIdentificacion;
         this.rolSolicitado = rolSolicitado;
         this.estado = estado;
         this.fechaSolicitud = fechaSolicitud;
@@ -38,12 +39,12 @@ public class SolicitudRegistroDto {
         return correo;
     }
 
-    public String getDni() {
-        return dni;
+    public String getTipoIdentificacion() {
+        return tipoIdentificacion;
     }
 
-    public String getRuc() {
-        return ruc;
+    public String getNumeroIdentificacion() {
+        return numeroIdentificacion;
     }
 
     public String getRolSolicitado() {

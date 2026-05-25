@@ -6,8 +6,8 @@ public class UsuarioEditForm {
     private String nombres;
     private String apellidoPaterno;
     private String apellidoMaterno;
-    private String dni;
-    private String ruc;
+    private String tipoIdentificacion;
+    private String numeroIdentificacion;
     private String correo;
     private String telefono;
     private Integer idRol;
@@ -49,20 +49,20 @@ public class UsuarioEditForm {
         this.apellidoMaterno = apellidoMaterno;
     }
 
-    public String getDni() {
-        return dni;
+    public String getTipoIdentificacion() {
+        return tipoIdentificacion;
     }
 
-    public void setDni(String dni) {
-        this.dni = dni;
+    public void setTipoIdentificacion(String tipoIdentificacion) {
+        this.tipoIdentificacion = tipoIdentificacion;
     }
 
-    public String getRuc() {
-        return ruc;
+    public String getNumeroIdentificacion() {
+        return numeroIdentificacion;
     }
 
-    public void setRuc(String ruc) {
-        this.ruc = ruc;
+    public void setNumeroIdentificacion(String numeroIdentificacion) {
+        this.numeroIdentificacion = numeroIdentificacion;
     }
 
     public String getCorreo() {

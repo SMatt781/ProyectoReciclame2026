@@ -234,10 +234,10 @@
                         <label class="flex-1 flex items-center gap-2 py-2.5 px-4 rounded-xl bg-surface-container-low border-2 border-transparent cursor-pointer transition hover:bg-surface-container-high"
                                id="labelDNI">
                             <input type="radio"
-                                   name="tipoDocumento"
+                                   name="tipoIdentificacion"
                                    id="radioDNI"
                                    value="DNI"
-                                   checked
+                                   th:checked="${registroForm.tipoIdentificacion == null or registroForm.tipoIdentificacion == 'DNI'}"
                                    class="w-4 h-4 border-0 text-primary-container focus:ring-primary-container"
                                    onchange="toggleDocumento('DNI')"/>
                             <span class="text-sm font-semibold text-secondary">DNI</span>
@@ -246,9 +246,10 @@
                         <label class="flex-1 flex items-center gap-2 py-2.5 px-4 rounded-xl bg-surface-container-low border-2 border-transparent cursor-pointer transition hover:bg-surface-container-high"
                                id="labelRUC">
                             <input type="radio"
-                                   name="tipoDocumento"
+                                   name="tipoIdentificacion"
                                    id="radioRUC"
                                    value="RUC"
+                                   th:checked="${registroForm.tipoIdentificacion == 'RUC'}"
                                    class="w-4 h-4 border-0 text-primary-container focus:ring-primary-container"
                                    onchange="toggleDocumento('RUC')"/>
                             <span class="text-sm font-semibold text-secondary">RUC</span>
@@ -256,41 +257,21 @@
                     </div>
                 </div>
 
-                <!-- Campo DNI (visible por defecto) -->
-                <div class="space-y-1" id="campoDNI">
-                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                <!-- Campo número de identificación (DNI u RUC) -->
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1" id="labelNumeroId">
                         DNI
                     </label>
-                    <input th:field="*{dni}"
-                           id="inputDNI"
+                    <input th:field="*{numeroIdentificacion}"
                            class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
                            placeholder="12345678"
                            type="text"
                            inputmode="numeric"
                            maxlength="8"
-                           oninput="validarDNI(this)"/>
-                    <p id="errorDNI" class="text-xs text-red-600 ml-1 hidden">DNI debe tener 8 dígitos</p>
-                    <p th:if="${#fields.hasErrors('dni')}"
-                       th:errors="*{dni}"
-                       class="text-xs text-red-600 ml-1"></p>
-                </div>
-
-                <!-- Campo RUC (oculto por defecto) -->
-                <div class="space-y-1 hidden" id="campoRUC">
-                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
-                        RUC
-                    </label>
-                    <input th:field="*{ruc}"
-                           id="inputRUC"
-                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
-                           placeholder="12345678901"
-                           type="text"
-                           inputmode="numeric"
-                           maxlength="11"
-                           oninput="validarRUC(this)"/>
-                    <p id="errorRUC" class="text-xs text-red-600 ml-1 hidden">RUC debe tener 11 dígitos</p>
-                    <p th:if="${#fields.hasErrors('ruc')}"
-                       th:errors="*{ruc}"
+                           oninput="validarNumeroId(this)"/>
+                    <p id="errorNumeroId" class="text-xs text-red-600 ml-1 hidden"></p>
+                    <p th:if="${#fields.hasErrors('numeroIdentificacionValido')}"
+                       th:errors="*{numeroIdentificacionValido}"
                        class="text-xs text-red-600 ml-1"></p>
                 </div>
 
@@ -455,73 +436,68 @@
         if (passwordSocio && passwordSocio.value) {
             evaluarPassword(passwordSocio.value, "Socio");
         }
+
+        // Inicializar selector según el valor actual del formulario (soporte a errores de validación)
+        const radioRUC = document.getElementById("radioRUC");
+        if (radioRUC && radioRUC.checked) {
+            toggleDocumento('RUC');
+        } else {
+            toggleDocumento('DNI');
+        }
     });
 
     // ========== SELECTOR DNI/RUC ==========
     function toggleDocumento(tipo) {
-        const campoDNI = document.getElementById("campoDNI");
-        const campoRUC = document.getElementById("campoRUC");
         const labelDNI = document.getElementById("labelDNI");
         const labelRUC = document.getElementById("labelRUC");
-        const inputDNI = document.getElementById("inputDNI");
-        const inputRUC = document.getElementById("inputRUC");
+        const inputNumeroId = document.getElementById("numeroIdentificacion");
+        const labelNumeroId = document.getElementById("labelNumeroId");
+        const errorNumeroId = document.getElementById("errorNumeroId");
+
+        // Limpiar error al cambiar tipo
+        if (errorNumeroId) errorNumeroId.classList.add("hidden");
+        if (inputNumeroId) inputNumeroId.classList.remove("ring-2", "ring-red-400");
 
         if (tipo === "DNI") {
-            campoDNI.classList.remove("hidden");
-            campoRUC.classList.add("hidden");
             labelDNI.classList.add("border-primary-container", "bg-primary-container/10");
             labelRUC.classList.remove("border-primary-container", "bg-primary-container/10");
-            // Limpiar RUC cuando se selecciona DNI
-            if (inputRUC) inputRUC.value = "";
-            document.getElementById("errorRUC").classList.add("hidden");
+            if (inputNumeroId) {
+                inputNumeroId.maxLength = 8;
+                inputNumeroId.placeholder = "12345678";
+            }
+            if (labelNumeroId) labelNumeroId.textContent = "DNI";
         } else {
-            campoDNI.classList.add("hidden");
-            campoRUC.classList.remove("hidden");
             labelRUC.classList.add("border-primary-container", "bg-primary-container/10");
             labelDNI.classList.remove("border-primary-container", "bg-primary-container/10");
-            // Limpiar DNI cuando se selecciona RUC
-            if (inputDNI) inputDNI.value = "";
-            document.getElementById("errorDNI").classList.add("hidden");
+            if (inputNumeroId) {
+                inputNumeroId.maxLength = 11;
+                inputNumeroId.placeholder = "12345678901";
+            }
+            if (labelNumeroId) labelNumeroId.textContent = "RUC";
         }
     }
 
-    // ========== VALIDACIÓN DNI (8 dígitos) ==========
-    function validarDNI(input) {
+    // ========== VALIDACIÓN NÚMERO DE IDENTIFICACIÓN (DNI u RUC) ==========
+    function validarNumeroId(input) {
         // Solo permitir números
         input.value = input.value.replace(/[^0-9]/g, "");
 
-        const errorMsg = document.getElementById("errorDNI");
-        if (input.value.length === 8 && /^\d{8}$/.test(input.value)) {
+        const errorMsg = document.getElementById("errorNumeroId");
+        const radioRUC = document.getElementById("radioRUC");
+        const esRUC = radioRUC && radioRUC.checked;
+        const longitud = esRUC ? 11 : 8;
+        const nombre = esRUC ? "RUC" : "DNI";
+
+        if (input.value.length === longitud) {
             errorMsg.classList.add("hidden");
             input.classList.remove("ring-2", "ring-red-400");
-        } else if (input.value.length > 0 && input.value.length < 8) {
+        } else if (input.value.length > 0 && input.value.length < longitud) {
             errorMsg.classList.remove("hidden");
-            errorMsg.textContent = `DNI debe tener 8 dígitos (${input.value.length}/8)`;
+            errorMsg.textContent = `${nombre} debe tener ${longitud} dígitos (${input.value.length}/${longitud})`;
             input.classList.add("ring-2", "ring-red-400");
-        } else if (input.value.length === 8 && !/^\d{8}$/.test(input.value)) {
-            errorMsg.classList.remove("hidden");
-            errorMsg.textContent = "DNI solo debe contener números";
-            input.classList.add("ring-2", "ring-red-400");
-        }
-    }
-
-    // ========== VALIDACIÓN RUC (11 dígitos) ==========
-    function validarRUC(input) {
-        // Solo permitir números
-        input.value = input.value.replace(/[^0-9]/g, "");
-
-        const errorMsg = document.getElementById("errorRUC");
-        if (input.value.length === 11 && /^\d{11}$/.test(input.value)) {
+        } else {
             errorMsg.classList.add("hidden");
             input.classList.remove("ring-2", "ring-red-400");
-        } else if (input.value.length > 0 && input.value.length < 11) {
-            errorMsg.classList.remove("hidden");
-            errorMsg.textContent = `RUC debe tener 11 dígitos (${input.value.length}/11)`;
-            input.classList.add("ring-2", "ring-red-400");
-        } else if (input.value.length === 11 && !/^\d{11}$/.test(input.value)) {
-            errorMsg.classList.remove("hidden");
-            errorMsg.textContent = "RUC solo debe contener números";
-            input.classList.add("ring-2", "ring-red-400");
         }
     }
 

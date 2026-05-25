@@ -17,12 +17,12 @@ public class RegistroSocioForm {
     @NotBlank(message = "Campo apellido materno obligatorio")
     private String apellidoMaterno;
 
-    // DNI y RUC son opcionales individualmente, pero se valida que al menos uno esté presente
-    @Pattern(regexp = "^$|\\d{8}", message = "El DNI debe tener 8 dígitos")
-    private String dni;
+    // tipoIdentificacion: "DNI" o "RUC"
+    @NotBlank(message = "Debe seleccionar tipo de identificación")
+    private String tipoIdentificacion;
 
-    @Pattern(regexp = "^$|\\d{11}", message = "El RUC debe tener 11 dígitos")
-    private String ruc;
+    @NotBlank(message = "Debe ingresar el número de identificación")
+    private String numeroIdentificacion;
 
     @NotBlank(message = "Campo teléfono obligatorio")
     private String telefono;
@@ -40,11 +40,12 @@ public class RegistroSocioForm {
     @AssertTrue(message = "Debe aceptar los términos")
     private boolean aceptaTerminos;
 
-    // Validación personalizada: al menos uno de DNI o RUC debe estar presente
-    @AssertTrue(message = "Debe proporcionar DNI (8 dígitos) o RUC (11 dígitos)")
-    public boolean isDniOrRucPresent() {
-        boolean dniPresent = dni != null && dni.matches("\\d{8}");
-        boolean rucPresent = ruc != null && ruc.matches("\\d{11}");
-        return dniPresent || rucPresent;
+    // Validación personalizada: formato según tipo seleccionado
+    @AssertTrue(message = "El número de identificación no es válido (DNI: 8 dígitos, RUC: 11 dígitos)")
+    public boolean isNumeroIdentificacionValido() {
+        if (tipoIdentificacion == null || numeroIdentificacion == null) return false;
+        if ("DNI".equals(tipoIdentificacion))  return numeroIdentificacion.matches("\\d{8}");
+        if ("RUC".equals(tipoIdentificacion))  return numeroIdentificacion.matches("\\d{11}");
+        return false;
     }
 }

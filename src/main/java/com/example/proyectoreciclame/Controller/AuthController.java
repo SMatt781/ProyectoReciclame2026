@@ -3,12 +3,14 @@ package com.example.proyectoreciclame.Controller;
 import com.example.proyectoreciclame.Dto.RegistroSocioForm;
 import com.example.proyectoreciclame.Dto.RegistroVisualizadorForm;
 import com.example.proyectoreciclame.Entity.DominioAutorizado;
+import com.example.proyectoreciclame.Entity.Identificacion;
 import com.example.proyectoreciclame.Entity.PoliticaContrasena;
 import com.example.proyectoreciclame.Entity.Rol;
 import com.example.proyectoreciclame.Entity.SolicitudRegistro;
 import com.example.proyectoreciclame.Entity.Usuario;
 import com.example.proyectoreciclame.Entity.UsuarioEmpresa;
 import com.example.proyectoreciclame.Repository.DominioAutorizadoRepository;
+import com.example.proyectoreciclame.Repository.IdentificacionRepository;
 import com.example.proyectoreciclame.Repository.PoliticaContrasenaRepository;
 import com.example.proyectoreciclame.Repository.RolRepository;
 import com.example.proyectoreciclame.Repository.SolicitudRegistroRepository;
@@ -46,6 +48,7 @@ public class AuthController {
     private final PoliticaContrasenaRepository politicaContrasenaRepository;
     private final RegistroSesionRepository registroSesionRepository;
     private final AdminNotificacionController adminNotificacionController;
+    private final IdentificacionRepository identificacionRepository;
 
     public AuthController(UsuarioRepository usuarioRepository,
                           RolRepository rolRepository,
@@ -56,7 +59,8 @@ public class AuthController {
                           DominioAutorizadoRepository dominioAutorizadoRepository,
                           PoliticaContrasenaRepository politicaContrasenaRepository,
                           RegistroSesionRepository registroSesionRepository,
-                          AdminNotificacionController adminNotificacionController) {
+                          AdminNotificacionController adminNotificacionController,
+                          IdentificacionRepository identificacionRepository) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.usuarioEmpresaRepository = usuarioEmpresaRepository;
@@ -67,6 +71,7 @@ public class AuthController {
         this.politicaContrasenaRepository = politicaContrasenaRepository;
         this.registroSesionRepository = registroSesionRepository;
         this.adminNotificacionController = adminNotificacionController;
+        this.identificacionRepository = identificacionRepository;
     }
 
     @Value("${google.recaptcha.site-key}")
@@ -158,9 +163,6 @@ public class AuthController {
         usuario.setNombres(form.getNombres().trim());
         usuario.setApellidoPaterno(form.getApellidoPaterno().trim());
         usuario.setApellidoMaterno(form.getApellidoMaterno().trim());
-        // Guardar NULL si DNI está vacío, para evitar conflictos de uniqueness con otros usuarios sin DNI
-        String dniTrimmed = form.getDni() != null ? form.getDni().trim() : "";
-        usuario.setDni(dniTrimmed.isEmpty() ? null : dniTrimmed);
         usuario.setCorreo(form.getCorreo().trim().toLowerCase());
         usuario.setTelefono(form.getTelefono().trim());
         usuario.setContrasenaHash(passwordEncoder.encode(form.getPassword()));
@@ -173,12 +175,17 @@ public class AuthController {
 
         usuarioRepository.save(usuario);
 
-        String rucTrimmed = form.getRuc() != null ? form.getRuc().trim() : "";
+        // Guardar identificacion (DNI o RUC)
+        Identificacion identificacion = new Identificacion();
+        identificacion.setUsuario(usuario);
+        identificacion.setTipo(Identificacion.TipoIdentificacion.valueOf(form.getTipoIdentificacion().toUpperCase()));
+        identificacion.setNumero(form.getNumeroIdentificacion().trim());
+        identificacionRepository.save(identificacion);
 
-        if (!rucTrimmed.isEmpty()) {
+        // Si es RUC crear también usuario_empresa
+        if ("RUC".equalsIgnoreCase(form.getTipoIdentificacion())) {
             UsuarioEmpresa ue = new UsuarioEmpresa();
             ue.setUsuario(usuario);
-            ue.setRuc(rucTrimmed);
             ue.setRazonSocial("Pendiente de completar");
             ue.setCargo(null);
             usuarioEmpresaRepository.save(ue);
@@ -188,10 +195,10 @@ public class AuthController {
         solicitud.setNombres(usuario.getNombres());
         solicitud.setApellidoPaterno(usuario.getApellidoPaterno());
         solicitud.setApellidoMaterno(usuario.getApellidoMaterno());
-        solicitud.setDni(usuario.getDni()); // Será NULL si el usuario no tiene DNI
+        solicitud.setTipoIdentificacion(form.getTipoIdentificacion().toUpperCase());
+        solicitud.setNumeroIdentificacion(form.getNumeroIdentificacion().trim());
         solicitud.setCorreo(usuario.getCorreo());
         solicitud.setTelefono(usuario.getTelefono());
-        solicitud.setRuc(rucTrimmed.isEmpty() ? null : rucTrimmed);
         solicitud.setRolSolicitado("SOCIO");
         solicitud.setEstado("PENDIENTE");
         solicitud.setMotivoRechazo(null);
@@ -246,7 +253,6 @@ public class AuthController {
         usuario.setNombres(form.getNombres().trim());
         usuario.setApellidoPaterno(form.getApellidoPaterno().trim());
         usuario.setApellidoMaterno(form.getApellidoMaterno().trim());
-        usuario.setDni(form.getDni().trim());
         usuario.setCorreo(form.getCorreo().trim().toLowerCase());
         usuario.setTelefono(form.getTelefono().trim());
         usuario.setContrasenaHash(passwordEncoder.encode(form.getPassword()));
@@ -259,14 +265,21 @@ public class AuthController {
 
         usuarioRepository.save(usuario);
 
+        // Visualizador solo puede tener DNI
+        Identificacion identificacion = new Identificacion();
+        identificacion.setUsuario(usuario);
+        identificacion.setTipo(Identificacion.TipoIdentificacion.DNI);
+        identificacion.setNumero(form.getNumeroIdentificacion().trim());
+        identificacionRepository.save(identificacion);
+
         SolicitudRegistro solicitud = new SolicitudRegistro();
         solicitud.setNombres(usuario.getNombres());
         solicitud.setApellidoPaterno(usuario.getApellidoPaterno());
         solicitud.setApellidoMaterno(usuario.getApellidoMaterno());
-        solicitud.setDni(usuario.getDni());
+        solicitud.setTipoIdentificacion("DNI");
+        solicitud.setNumeroIdentificacion(form.getNumeroIdentificacion().trim());
         solicitud.setCorreo(usuario.getCorreo());
         solicitud.setTelefono(usuario.getTelefono());
-        solicitud.setRuc(null);
         solicitud.setRolSolicitado("VISUALIZADOR");
         solicitud.setEstado("PENDIENTE");
         solicitud.setMotivoRechazo(null);
@@ -310,9 +323,9 @@ public class AuthController {
             br.rejectValue("correo", "correo.exists", "El correo ya está registrado");
         }
 
-        if (form.getDni() != null && !form.getDni().isBlank()
-                && usuarioRepository.existsByDni(form.getDni().trim())) {
-            br.rejectValue("dni", "dni.exists", "El DNI ya está registrado");
+        if (form.getNumeroIdentificacion() != null && !form.getNumeroIdentificacion().isBlank()
+                && identificacionRepository.existsByNumero(form.getNumeroIdentificacion().trim())) {
+            br.rejectValue("numeroIdentificacion", "identificacion.exists", "El número de identificación ya está registrado");
         }
 
         if (form.getPassword() != null && form.getConfirmPassword() != null
@@ -330,9 +343,9 @@ public class AuthController {
             br.rejectValue("correo", "correo.exists", "El correo ya está registrado");
         }
 
-        if (form.getDni() != null && !form.getDni().isBlank()
-                && usuarioRepository.existsByDni(form.getDni().trim())) {
-            br.rejectValue("dni", "dni.exists", "El DNI ya está registrado");
+        if (form.getNumeroIdentificacion() != null && !form.getNumeroIdentificacion().isBlank()
+                && identificacionRepository.existsByNumero(form.getNumeroIdentificacion().trim())) {
+            br.rejectValue("numeroIdentificacion", "identificacion.exists", "El DNI ya está registrado");
         }
 
         if (form.getPassword() != null && form.getConfirmPassword() != null

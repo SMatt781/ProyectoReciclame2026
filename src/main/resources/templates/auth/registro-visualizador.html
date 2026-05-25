@@ -231,8 +231,7 @@
                     <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
                         DNI
                     </label>
-                    <input th:field="*{dni}"
-                           id="inputDNIVis"
+                    <input th:field="*{numeroIdentificacion}"
                            type="text"
                            placeholder="12345678"
                            maxlength="8"
@@ -240,8 +239,8 @@
                            class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
                            oninput="validarDNI(this)"/>
                     <p id="errorDNIVis" class="text-xs text-red-600 ml-1 hidden">DNI debe tener 8 dígitos</p>
-                    <p th:if="${#fields.hasErrors('dni')}"
-                       th:errors="*{dni}"
+                    <p th:if="${#fields.hasErrors('numeroIdentificacion')}"
+                       th:errors="*{numeroIdentificacion}"
                        class="text-xs text-red-600 ml-1"></p>
                 </div>
 
