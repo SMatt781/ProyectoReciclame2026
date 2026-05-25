@@ -107,15 +107,13 @@ public class PerfilController {
 
         // Guardar datos de empresa solo si hay datos válidos
         String razonSocialTrimmed = razonSocial != null && !razonSocial.isBlank() ? razonSocial.trim() : null;
-        String rucTrimmed = ruc != null && !ruc.isBlank() ? ruc.trim() : null;
         String cargoTrimmed = cargo != null && !cargo.isBlank() ? cargo.trim() : null;
 
-        if (razonSocialTrimmed != null || rucTrimmed != null || cargoTrimmed != null) {
+        if (razonSocialTrimmed != null || cargoTrimmed != null) {
             UsuarioEmpresa empresa = usuarioEmpresaRepository.findByUsuario(usuarioBD)
                     .orElse(new UsuarioEmpresa());
             empresa.setUsuario(usuarioBD);
             empresa.setRazonSocial(razonSocialTrimmed);
-            empresa.setRuc(rucTrimmed);
             empresa.setCargo(cargoTrimmed);
             usuarioEmpresaRepository.save(empresa);
         }

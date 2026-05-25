@@ -345,15 +345,15 @@
                                 <!-- DNI/RUC -->
                                 <div class="flex justify-start min-w-0">
                                     <!-- DNI Badge -->
-                                    <span th:if="${s.dni != null and !s.dni.isEmpty()}"
+                                    <span th:if="${s.tipoIdentificacion == 'DNI'}"
                                           class="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-extrabold uppercase text-blue-600 border border-blue-200">
-                                        <span class="font-bold">DNI</span>: <span th:text="${s.dni}"></span>
+                                        <span class="font-bold">DNI</span>: <span th:text="${s.numeroIdentificacion}"></span>
                                     </span>
 
-                                    <!-- RUC Badge (fallback when DNI is empty) -->
-                                    <span th:if="${s.dni == null or s.dni.isEmpty()}"
+                                    <!-- RUC Badge -->
+                                    <span th:if="${s.tipoIdentificacion == 'RUC'}"
                                           class="rounded-full bg-orange-50 px-3 py-1 text-[10px] font-extrabold uppercase text-orange-600 border border-orange-200">
-                                        <span class="font-bold">RUC</span>: <span th:text="${s.ruc}"></span>
+                                        <span class="font-bold">RUC</span>: <span th:text="${s.numeroIdentificacion}"></span>
                                     </span>
                                 </div>
 

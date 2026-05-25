@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface SolicitudRegistroRepository extends JpaRepository<SolicitudRegistro, Long> {
 
-    Optional<SolicitudRegistro> findTopByDniOrderByFechaSolicitudDesc(String dni);
+    Optional<SolicitudRegistro> findTopByNumeroIdentificacionOrderByFechaSolicitudDesc(String numeroIdentificacion);
 
     Optional<SolicitudRegistro> findTopByCorreoOrderByFechaSolicitudDesc(String correo);
 

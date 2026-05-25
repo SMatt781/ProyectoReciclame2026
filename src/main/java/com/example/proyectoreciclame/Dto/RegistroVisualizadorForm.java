@@ -18,9 +18,10 @@ public class RegistroVisualizadorForm {
     @NotBlank(message = "Campo apellido materno obligatorio")
     private String apellidoMaterno;
 
+    // Visualizadores solo pueden registrarse con DNI
     @NotBlank(message = "Campo DNI obligatorio")
     @Pattern(regexp = "\\d{8}", message = "El DNI debe tener 8 dígitos")
-    private String dni;
+    private String numeroIdentificacion;
 
     @NotBlank(message = "Campo teléfono obligatorio")
     private String telefono;

@@ -15,9 +15,6 @@ public class UsuarioEmpresa {
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 
-    @Column(name = "ruc")
-    private String ruc;
-
     @Column(name = "razon_social")
     private String razonSocial;
 
@@ -38,14 +35,6 @@ public class UsuarioEmpresa {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
-    }
-
-    public String getRuc() {
-        return ruc;
-    }
-
-    public void setRuc(String ruc) {
-        this.ruc = ruc;
     }
 
     public String getRazonSocial() {

@@ -1000,7 +1000,7 @@
                             <div class="flex items-center justify-end gap-2 whitespace-nowrap w-full px-3">
 
                                 <button type="button"
-                                        th:attr="data-id=${admin.idUsuario},data-nombres=${admin.nombres ?: ''},data-apellido-paterno=${admin.apellidoPaterno ?: ''},data-apellido-materno=${admin.apellidoMaterno ?: ''},data-dni=${admin.dni ?: ''},data-telefono=${admin.telefono ?: ''},data-correo=${admin.correo ?: ''},data-estado=${admin.estadoCuenta.name()}"
+                                        th:attr="data-id=${admin.idUsuario},data-nombres=${admin.nombres ?: ''},data-apellido-paterno=${admin.apellidoPaterno ?: ''},data-apellido-materno=${admin.apellidoMaterno ?: ''},data-dni=${admin.identificacion != null ? admin.identificacion.numero : ''},data-telefono=${admin.telefono ?: ''},data-correo=${admin.correo ?: ''},data-estado=${admin.estadoCuenta.name()}"
                                         onclick="abrirModalEditar(this.dataset)"
                                         class="inline-flex items-center justify-center h-9 rounded-lg px-3 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">
                                     Editar
@@ -1127,7 +1127,7 @@
                     <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest block">DNI</label>
                     <input id="editDni" name="dni" type="text" maxlength="8"
                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                           th:value="${adminEditar?.dni}"
+                           th:value="${adminEditar?.identificacion?.numero}"
                            class="w-full h-12 px-4 bg-surface-container-low border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20"/>
                     <span class="campo-error hidden text-xs text-red-500 block"></span>
                 </div>

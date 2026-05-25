@@ -39,6 +39,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     SELECT u FROM Usuario u
     LEFT JOIN FETCH u.rol r
     LEFT JOIN FETCH u.usuarioEmpresa ue
+    LEFT JOIN u.identificacion id
     WHERE u.eliminadoEn IS NULL
       AND UPPER(r.nombre) NOT IN ('ADMIN', 'SUPERADMIN')
       AND (
@@ -46,7 +47,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
         OR LOWER(u.nombres) LIKE LOWER(CONCAT('%', :texto, '%'))
         OR LOWER(u.apellidoPaterno) LIKE LOWER(CONCAT('%', :texto, '%'))
         OR LOWER(COALESCE(u.apellidoMaterno, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
-        OR LOWER(u.dni) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(COALESCE(id.numero, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
         OR LOWER(COALESCE(ue.razonSocial, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
         OR LOWER(u.correo) LIKE LOWER(CONCAT('%', :texto, '%'))
       )
@@ -83,13 +84,14 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     @Query("""
     SELECT u FROM Usuario u
     LEFT JOIN u.rol r
+    LEFT JOIN u.identificacion id
     WHERE u.eliminadoEn IS NULL
       AND r.idRol IN :rolIds
       AND (
         LOWER(u.nombres) LIKE LOWER(CONCAT('%', :texto, '%'))
         OR LOWER(u.apellidoPaterno) LIKE LOWER(CONCAT('%', :texto, '%'))
         OR LOWER(COALESCE(u.apellidoMaterno, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
-        OR LOWER(u.dni) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(COALESCE(id.numero, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
         OR LOWER(u.correo) LIKE LOWER(CONCAT('%', :texto, '%'))
       )
 """)
@@ -109,8 +111,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByCorreoAndEliminadoEnIsNull(String correo);
 
     boolean existsByCorreoIgnoreCase(String correo);
-
-    boolean existsByDni(String dni);
 
 
     @Query("""
@@ -150,13 +150,12 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 """)
     long countBlockedAdminsByRole(@Param("rolIds") List<Integer> rolIds);
     boolean existsByCorreoAndEliminadoEnIsNull(String correo);
-    boolean existsByDniAndEliminadoEnIsNull(String dni);
-
     @Query("""
     SELECT u
     FROM Usuario u
     LEFT JOIN FETCH u.rol r
     LEFT JOIN FETCH u.usuarioEmpresa ue
+    LEFT JOIN u.identificacion id
     WHERE u.estadoAprobacion = 'PENDIENTE'
       AND u.eliminadoEn IS NULL
       AND (
@@ -165,7 +164,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
         OR LOWER(u.apellidoPaterno) LIKE LOWER(CONCAT('%', :search, '%'))
         OR LOWER(COALESCE(u.apellidoMaterno, '')) LIKE LOWER(CONCAT('%', :search, '%'))
         OR LOWER(u.correo) LIKE LOWER(CONCAT('%', :search, '%'))
-        OR LOWER(u.dni) LIKE LOWER(CONCAT('%', :search, '%'))
+        OR LOWER(COALESCE(id.numero, '')) LIKE LOWER(CONCAT('%', :search, '%'))
         OR LOWER(COALESCE(ue.razonSocial, '')) LIKE LOWER(CONCAT('%', :search, '%'))
       )
       AND (

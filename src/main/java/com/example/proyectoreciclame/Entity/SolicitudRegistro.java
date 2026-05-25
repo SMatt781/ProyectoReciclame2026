@@ -21,17 +21,17 @@ public class SolicitudRegistro {
     @Column(name = "apellido_materno")
     private String apellidoMaterno;
 
-    @Column(name = "dni")
-    private String dni;
+    @Column(name = "tipo_identificacion")
+    private String tipoIdentificacion;
+
+    @Column(name = "numero_identificacion")
+    private String numeroIdentificacion;
 
     @Column(name = "correo")
     private String correo;
 
     @Column(name = "telefono")
     private String telefono;
-
-    @Column(name = "ruc")
-    private String ruc;
 
     @Column(name = "rol_solicitado")
     private String rolSolicitado;
@@ -66,17 +66,17 @@ public class SolicitudRegistro {
     public String getApellidoMaterno() { return apellidoMaterno; }
     public void setApellidoMaterno(String apellidoMaterno) { this.apellidoMaterno = apellidoMaterno; }
 
-    public String getDni() { return dni; }
-    public void setDni(String dni) { this.dni = dni; }
+    public String getTipoIdentificacion() { return tipoIdentificacion; }
+    public void setTipoIdentificacion(String tipoIdentificacion) { this.tipoIdentificacion = tipoIdentificacion; }
+
+    public String getNumeroIdentificacion() { return numeroIdentificacion; }
+    public void setNumeroIdentificacion(String numeroIdentificacion) { this.numeroIdentificacion = numeroIdentificacion; }
 
     public String getCorreo() { return correo; }
     public void setCorreo(String correo) { this.correo = correo; }
 
     public String getTelefono() { return telefono; }
     public void setTelefono(String telefono) { this.telefono = telefono; }
-
-    public String getRuc() { return ruc; }
-    public void setRuc(String ruc) { this.ruc = ruc; }
 
     public String getRolSolicitado() { return rolSolicitado; }
     public void setRolSolicitado(String rolSolicitado) { this.rolSolicitado = rolSolicitado; }

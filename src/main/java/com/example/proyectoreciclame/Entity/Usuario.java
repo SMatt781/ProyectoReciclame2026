@@ -26,8 +26,8 @@ public class Usuario {
     @Column(name = "apellido_materno")
     private String apellidoMaterno;
 
-    @Column(name = "dni")
-    private String dni;
+    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Identificacion identificacion;
 
     @Column(name = "correo")
     private String correo;
@@ -103,12 +103,12 @@ public class Usuario {
         this.apellidoMaterno = apellidoMaterno;
     }
 
-    public String getDni() {
-        return dni;
+    public Identificacion getIdentificacion() {
+        return identificacion;
     }
 
-    public void setDni(String dni) {
-        this.dni = dni;
+    public void setIdentificacion(Identificacion identificacion) {
+        this.identificacion = identificacion;
     }
 
     public String getCorreo() {

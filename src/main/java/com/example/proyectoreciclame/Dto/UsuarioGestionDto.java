@@ -5,22 +5,23 @@ public class UsuarioGestionDto {
     private Long idUsuario;
     private String nombreCompleto;
     private String correo;
-    private String dni;
-    private String ruc;
+    private String tipoIdentificacion;
+    private String numeroIdentificacion;
     private String empresa;
     private String rol;
     private String estado;
     private String fechaRegistro;
     private String iniciales;
 
-    public UsuarioGestionDto(Long idUsuario, String nombreCompleto, String correo, String dni, String ruc,
+    public UsuarioGestionDto(Long idUsuario, String nombreCompleto, String correo,
+                             String tipoIdentificacion, String numeroIdentificacion,
                              String empresa, String rol, String estado, String fechaRegistro,
                              String iniciales) {
         this.idUsuario = idUsuario;
         this.nombreCompleto = nombreCompleto;
         this.correo = correo;
-        this.dni = dni;
-        this.ruc = ruc;
+        this.tipoIdentificacion = tipoIdentificacion;
+        this.numeroIdentificacion = numeroIdentificacion;
         this.empresa = empresa;
         this.rol = rol;
         this.estado = estado;
@@ -40,12 +41,12 @@ public class UsuarioGestionDto {
         return correo;
     }
 
-    public String getDni() {
-        return dni;
+    public String getTipoIdentificacion() {
+        return tipoIdentificacion;
     }
 
-    public String getRuc() {
-        return ruc;
+    public String getNumeroIdentificacion() {
+        return numeroIdentificacion;
     }
 
     public String getEmpresa() {

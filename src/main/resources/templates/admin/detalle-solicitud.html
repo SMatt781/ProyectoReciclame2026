@@ -146,8 +146,9 @@
                                 th:text="|${usuario.nombres} ${usuario.apellidoPaterno} ${usuario.apellidoMaterno != null ? usuario.apellidoMaterno : ''}|">
                             </h3>
 
-                            <p class="mt-2 text-sm text-on-surface-variant" th:if="${usuario.dni != null and !usuario.dni.isEmpty()}" th:text="|DNI: ${usuario.dni}|"></p>
-                            <p class="mt-2 text-sm text-on-surface-variant" th:if="${solicitudExtra != null and solicitudExtra.ruc != null and !solicitudExtra.ruc.isEmpty()}" th:text="|RUC: ${solicitudExtra.ruc}|"></p>
+                            <p class="mt-2 text-sm text-on-surface-variant"
+                               th:if="${usuario.identificacion != null}"
+                               th:text="|${usuario.identificacion.tipo}: ${usuario.identificacion.numero}|"></p>
 
                             <div class="mt-6 w-full space-y-4">
                                 <div class="bg-surface-container-low rounded-[1.25rem] p-4">
@@ -195,14 +196,11 @@
                                          th:text="${usuario.apellidoMaterno != null ? usuario.apellidoMaterno : '-'}"></div>
                                 </div>
 
-                                <div th:if="${usuario.dni != null and !usuario.dni.isEmpty()}">
-                                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">DNI</label>
-                                    <div class="rounded-lg bg-surface-container-low px-4 py-3 font-medium text-on-primary-fixed" th:text="${usuario.dni}"></div>
-                                </div>
-
-                                <div th:if="${solicitudExtra != null and solicitudExtra.ruc != null and !solicitudExtra.ruc.isEmpty()}">
-                                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">RUC</label>
-                                    <div class="rounded-lg bg-surface-container-low px-4 py-3 font-medium text-on-primary-fixed" th:text="${solicitudExtra.ruc}"></div>
+                                <div th:if="${usuario.identificacion != null}">
+                                    <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1"
+                                           th:text="${usuario.identificacion.tipo}">Identificación</label>
+                                    <div class="rounded-lg bg-surface-container-low px-4 py-3 font-medium text-on-primary-fixed"
+                                         th:text="${usuario.identificacion.numero}"></div>
                                 </div>
 
                                 <div>

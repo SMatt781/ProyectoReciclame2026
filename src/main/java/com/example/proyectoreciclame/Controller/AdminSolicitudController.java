@@ -93,13 +93,16 @@ public class AdminSolicitudController {
 
             String nombreCompleto = construirNombreCompleto(u.getNombres(), u.getApellidoPaterno(), u.getApellidoMaterno());
 
-            // Obtener RUC de SolicitudRegistro o UsuarioEmpresa
-            String ruc = solicitudOpt.map(SolicitudRegistro::getRuc).orElse(
-                    u.getUsuarioEmpresa() != null ? u.getUsuarioEmpresa().getRuc() : null
-            );
+            String tipoIdentificacion = null;
+            String numeroIdentificacion = null;
+            if (u.getIdentificacion() != null) {
+                tipoIdentificacion = u.getIdentificacion().getTipo().name();
+                numeroIdentificacion = u.getIdentificacion().getNumero();
+            }
 
             solicitudes.add(new SolicitudRegistroDto(
-                    u.getIdUsuario(), nombreCompleto, u.getCorreo(), u.getDni(), ruc,
+                    u.getIdUsuario(), nombreCompleto, u.getCorreo(),
+                    tipoIdentificacion, numeroIdentificacion,
                     rolSolicitado, u.getEstadoAprobacion(), fecha,
                     obtenerIniciales(u.getNombres(), u.getApellidoPaterno())
             ));
@@ -176,7 +179,7 @@ public class AdminSolicitudController {
 
             Row row = sheet.createRow(rowNum++);
             row.createCell(0).setCellValue(nombreCompleto);
-            row.createCell(1).setCellValue(u.getDni() != null ? u.getDni() : "-");
+            row.createCell(1).setCellValue(u.getIdentificacion() != null ? u.getIdentificacion().getNumero() : "-");
             row.createCell(2).setCellValue(u.getCorreo() != null ? u.getCorreo() : "-");
             row.createCell(3).setCellValue(empresa);
             row.createCell(4).setCellValue(rolSolicitado);
@@ -330,9 +333,12 @@ public class AdminSolicitudController {
     // ── Helpers privados ──────────────────────────────────────────────────────
 
     private Optional<SolicitudRegistro> buscarSolicitudRelacionada(Usuario usuario) {
-        Optional<SolicitudRegistro> porDni = solicitudRegistroRepository
-                .findTopByDniOrderByFechaSolicitudDesc(usuario.getDni());
-        if (porDni.isPresent()) return porDni;
+        String numeroId = usuario.getIdentificacion() != null ? usuario.getIdentificacion().getNumero() : null;
+        if (numeroId != null && !numeroId.isBlank()) {
+            Optional<SolicitudRegistro> porNumero = solicitudRegistroRepository
+                    .findTopByNumeroIdentificacionOrderByFechaSolicitudDesc(numeroId);
+            if (porNumero.isPresent()) return porNumero;
+        }
         return solicitudRegistroRepository.findTopByCorreoOrderByFechaSolicitudDesc(usuario.getCorreo());
     }
 

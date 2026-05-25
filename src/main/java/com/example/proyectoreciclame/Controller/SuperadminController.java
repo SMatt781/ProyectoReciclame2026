@@ -45,6 +45,7 @@ public class SuperadminController {
     private final IntentoLoginRepository intentoLoginRepository;
     private final RecuperacionPasswordRepository recuperacionPasswordRepository;
     private final SolicitudRegistroRepository solicitudRegistroRepository;
+    private final IdentificacionRepository identificacionRepository;
     private final org.springframework.core.env.Environment env;
     private final CorreoService correoService;
 
@@ -61,6 +62,7 @@ public class SuperadminController {
                                 RecuperacionPasswordRepository recuperacionPasswordRepository,
                                 SolicitudRegistroRepository solicitudRegistroRepository,
                                 HistorialRolesRepository historialRolesRepository,
+                                IdentificacionRepository identificacionRepository,
                                 CorreoService correoService,
                                 org.springframework.core.env.Environment env) {
         this.historialRolesRepository = historialRolesRepository;
@@ -76,6 +78,7 @@ public class SuperadminController {
         this.intentoLoginRepository = intentoLoginRepository;
         this.recuperacionPasswordRepository = recuperacionPasswordRepository;
         this.solicitudRegistroRepository = solicitudRegistroRepository;
+        this.identificacionRepository = identificacionRepository;
         this.correoService = correoService;
         this.env = env;
     }
@@ -192,6 +195,7 @@ public class SuperadminController {
             @ModelAttribute Usuario usuario,
             @RequestParam String usuarioCorreo,
             @RequestParam String dominioCorreo,
+            @RequestParam(required = false) String dni,
             RedirectAttributes redirectAttributes,
             org.springframework.security.core.Authentication authentication
     ) {
@@ -214,8 +218,8 @@ public class SuperadminController {
         }
 
         // 2. Validar unicidad de DNI
-        if (usuario.getDni() != null && !usuario.getDni().isBlank()
-                && usuarioRepository.existsByDniAndEliminadoEnIsNull(usuario.getDni())) {
+        if (dni != null && !dni.isBlank()
+                && identificacionRepository.existsByNumero(dni.trim())) {
             redirectAttributes.addFlashAttribute("error",
                     "Ya existe un administrador con ese DNI.");
             return "redirect:/superadmin/administradores";
@@ -261,6 +265,15 @@ public class SuperadminController {
         usuario.setEstadoCuenta(Usuario.EstadoCuenta.ACTIVO);
         usuario.setEstadoAprobacion("APROBADO");
         usuarioRepository.save(usuario);
+
+        // 6. Guardar identificación (DNI del administrador)
+        if (dni != null && !dni.isBlank()) {
+            Identificacion identificacion = new Identificacion();
+            identificacion.setUsuario(usuario);
+            identificacion.setTipo(Identificacion.TipoIdentificacion.DNI);
+            identificacion.setNumero(dni.trim());
+            identificacionRepository.save(identificacion);
+        }
 
         Usuario superadmin = usuarioRepository
                 .findByCorreoWithRol(authentication.getName()).orElse(null);
@@ -391,10 +404,10 @@ public class SuperadminController {
         }
 
         // Validar unicidad de DNI (excluyendo el mismo usuario)
+        String dniActual = admin.getIdentificacion() != null ? admin.getIdentificacion().getNumero() : null;
         if (dni != null && !dni.isBlank()
-                && !dni.equals(admin.getDni())
-                && usuarioRepository.existsByDniAndEliminadoEnIsNull(dni)) {
-            // DESPUÉS
+                && !dni.trim().equals(dniActual)
+                && identificacionRepository.existsByNumero(dni.trim())) {
             redirectAttributes.addFlashAttribute("error", "Ya existe un administrador con ese DNI.");
             return "redirect:/superadmin/administradores/editar/" + idUsuario
                     + "?page=" + page + (texto != null ? "&texto=" + texto : "");
@@ -403,7 +416,6 @@ public class SuperadminController {
         admin.setNombres(nombres.trim());
         admin.setApellidoPaterno(apellidoPaterno.trim());
         admin.setApellidoMaterno(apellidoMaterno != null ? apellidoMaterno.trim() : null);
-        admin.setDni(dni != null ? dni.trim() : null);
         admin.setTelefono(telefono != null ? telefono.trim() : null);
         admin.setCorreo(correo);
         admin.setActualizadoEn(LocalDateTime.now());
@@ -412,6 +424,15 @@ public class SuperadminController {
         }
 
         usuarioRepository.save(admin);
+
+        // Guardar identificación (DNI del administrador)
+        if (dni != null && !dni.isBlank()) {
+            Identificacion idEnt = identificacionRepository.findByUsuario_IdUsuario(admin.getIdUsuario())
+                    .orElseGet(() -> { Identificacion n = new Identificacion(); n.setUsuario(admin); return n; });
+            idEnt.setTipo(Identificacion.TipoIdentificacion.DNI);
+            idEnt.setNumero(dni.trim());
+            identificacionRepository.save(idEnt);
+        }
 
 
         redirectAttributes.addFlashAttribute("success", "Administrador actualizado correctamente.");
@@ -1016,7 +1037,7 @@ public class SuperadminController {
                         admin.getApellidoMaterno() != null ? admin.getApellidoMaterno() : "");
                 row.createCell(4).setCellValue(admin.getCorreo());
                 row.createCell(5).setCellValue(
-                        admin.getDni() != null ? admin.getDni() : "");
+                        admin.getIdentificacion() != null ? admin.getIdentificacion().getNumero() : "");
                 row.createCell(6).setCellValue(
                         admin.getTelefono() != null ? admin.getTelefono() : "");
                 row.createCell(7).setCellValue(admin.getEstadoCuenta().name());

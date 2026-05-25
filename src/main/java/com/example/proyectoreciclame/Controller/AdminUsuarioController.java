@@ -6,6 +6,7 @@ import com.example.proyectoreciclame.Dto.UsuarioBloqueoForm;
 import com.example.proyectoreciclame.Dto.UsuarioEditForm;
 
 import com.example.proyectoreciclame.Entity.HistorialRoles;
+import com.example.proyectoreciclame.Entity.Identificacion;
 import com.example.proyectoreciclame.Entity.Usuario;
 import com.example.proyectoreciclame.Entity.Rol;
 import com.example.proyectoreciclame.Entity.UsuarioEmpresa;
@@ -51,6 +52,7 @@ public class AdminUsuarioController {
     private final IntentoLoginRepository intentoLoginRepository;
     private final AdminNotificacionController adminNotificacionController;
     private final SolicitudRegistroRepository solicitudRegistroRepository;
+    private final IdentificacionRepository identificacionRepository;
 
     public AdminUsuarioController(UsuarioRepository usuarioRepository,
                                   RolRepository rolRepository,
@@ -58,7 +60,8 @@ public class AdminUsuarioController {
                                   HistorialRolesRepository historialRolesRepository,
                                   IntentoLoginRepository intentoLoginRepository,
                                   AdminNotificacionController adminNotificacionController,
-                                  SolicitudRegistroRepository solicitudRegistroRepository) {
+                                  SolicitudRegistroRepository solicitudRegistroRepository,
+                                  IdentificacionRepository identificacionRepository) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.usuarioEmpresaRepository = usuarioEmpresaRepository;
@@ -66,6 +69,7 @@ public class AdminUsuarioController {
         this.intentoLoginRepository = intentoLoginRepository;
         this.adminNotificacionController = adminNotificacionController;
         this.solicitudRegistroRepository = solicitudRegistroRepository;
+        this.identificacionRepository = identificacionRepository;
     }
 
     @GetMapping("/gestion")
@@ -122,18 +126,20 @@ public class AdminUsuarioController {
             String fecha = (u.getFechaRegistro() != null) ? u.getFechaRegistro().format(formatter) : "-";
             String iniciales = obtenerIniciales(u.getNombres(), u.getApellidoPaterno());
 
-            // Fetch RUC from SolicitudRegistro or UsuarioEmpresa
-            Optional<SolicitudRegistro> solicitudOpt = solicitudRegistroRepository.findTopByCorreoOrderByFechaSolicitudDesc(u.getCorreo());
-            String ruc = solicitudOpt.map(SolicitudRegistro::getRuc).orElse(
-                    u.getUsuarioEmpresa() != null ? u.getUsuarioEmpresa().getRuc() : null
-            );
+            // Obtener tipo y número de identificacion desde la nueva tabla
+            String tipoIdentificacion = null;
+            String numeroIdentificacion = null;
+            if (u.getIdentificacion() != null) {
+                tipoIdentificacion  = u.getIdentificacion().getTipo().name();
+                numeroIdentificacion = u.getIdentificacion().getNumero();
+            }
 
             lista.add(new UsuarioGestionDto(
                     u.getIdUsuario(),
                     nombreCompleto,
                     u.getCorreo(),
-                    u.getDni(),
-                    ruc,
+                    tipoIdentificacion,
+                    numeroIdentificacion,
                     empresa,
                     rolUsuario,
                     estadoUsuario,
@@ -266,7 +272,7 @@ public class AdminUsuarioController {
             row.createCell(1).setCellValue(u.getNombres() != null ? u.getNombres() : "-");
             row.createCell(2).setCellValue(u.getApellidoPaterno() != null ? u.getApellidoPaterno() : "-");
             row.createCell(3).setCellValue(u.getApellidoMaterno() != null ? u.getApellidoMaterno() : "-");
-            row.createCell(4).setCellValue(u.getDni() != null ? u.getDni() : "-");
+            row.createCell(4).setCellValue(u.getIdentificacion() != null ? u.getIdentificacion().getNumero() : "-");
             row.createCell(5).setCellValue(u.getCorreo() != null ? u.getCorreo() : "-");
             row.createCell(6).setCellValue(u.getTelefono() != null ? u.getTelefono() : "-");
             row.createCell(7).setCellValue(empresa);
@@ -321,9 +327,6 @@ public class AdminUsuarioController {
         usuario.setNombres(form.getNombres().trim());
         usuario.setApellidoPaterno(form.getApellidoPaterno().trim());
         usuario.setApellidoMaterno(form.getApellidoMaterno() != null && !form.getApellidoMaterno().isBlank() ? form.getApellidoMaterno().trim() : null);
-        // Convertir cadena vacía a null para DNI (ya que es opcional)
-        String dniTrimmed = form.getDni() != null ? form.getDni().trim() : null;
-        usuario.setDni(dniTrimmed != null && !dniTrimmed.isEmpty() ? dniTrimmed : null);
         usuario.setCorreo(form.getCorreo().trim());
         usuario.setTelefono(form.getTelefono().trim());
         usuario.setActualizadoEn(LocalDateTime.now());
@@ -371,24 +374,19 @@ public class AdminUsuarioController {
             UsuarioEmpresa ue = usuarioEmpresaOpt.get();
             String razonSocialTrimmed = form.getRazonSocial() != null && !form.getRazonSocial().isBlank() ? form.getRazonSocial().trim() : null;
             String cargoTrimmed = form.getCargo() != null && !form.getCargo().isBlank() ? form.getCargo().trim() : null;
-            String rucTrimmed = form.getRuc() != null ? form.getRuc().trim() : null;
-            rucTrimmed = (rucTrimmed != null && !rucTrimmed.isEmpty()) ? rucTrimmed : null;
-
             ue.setRazonSocial(razonSocialTrimmed);
             ue.setCargo(cargoTrimmed);
-            ue.setRuc(rucTrimmed);
             usuarioEmpresaRepository.save(ue);
         }
 
-        // Update RUC in SolicitudRegistro if user has RUC
-        String rucTrimmedForm = form.getRuc() != null ? form.getRuc().trim() : null;
-        if (rucTrimmedForm != null && !rucTrimmedForm.isEmpty()) {
-            Optional<SolicitudRegistro> solicitudOpt = solicitudRegistroRepository.findTopByCorreoOrderByFechaSolicitudDesc(usuario.getCorreo());
-            if (solicitudOpt.isPresent()) {
-                SolicitudRegistro solicitud = solicitudOpt.get();
-                solicitud.setRuc(rucTrimmedForm);
-                solicitudRegistroRepository.save(solicitud);
-            }
+        // Update identificacion table
+        if (form.getTipoIdentificacion() != null && !form.getTipoIdentificacion().isBlank()
+                && form.getNumeroIdentificacion() != null && !form.getNumeroIdentificacion().isBlank()) {
+            Identificacion id = identificacionRepository.findByUsuario_IdUsuario(usuario.getIdUsuario())
+                    .orElseGet(() -> { Identificacion newId = new Identificacion(); newId.setUsuario(usuario); return newId; });
+            id.setTipo(Identificacion.TipoIdentificacion.valueOf(form.getTipoIdentificacion().toUpperCase()));
+            id.setNumero(form.getNumeroIdentificacion().trim());
+            identificacionRepository.save(id);
         }
 
         // ── Crear notificación para ADMIN cuando se edita un usuario ──────────
@@ -557,7 +555,10 @@ public class AdminUsuarioController {
         form.setNombres(usuario.getNombres());
         form.setApellidoPaterno(usuario.getApellidoPaterno());
         form.setApellidoMaterno(usuario.getApellidoMaterno());
-        form.setDni(usuario.getDni());
+        if (usuario.getIdentificacion() != null) {
+            form.setTipoIdentificacion(usuario.getIdentificacion().getTipo().name());
+            form.setNumeroIdentificacion(usuario.getIdentificacion().getNumero());
+        }
         form.setCorreo(usuario.getCorreo());
         form.setTelefono(usuario.getTelefono());
         form.setIdRol(usuario.getRol() != null ? usuario.getRol().getIdRol() : null);
@@ -566,15 +567,6 @@ public class AdminUsuarioController {
         if (usuario.getUsuarioEmpresa() != null) {
             form.setRazonSocial(usuario.getUsuarioEmpresa().getRazonSocial());
             form.setCargo(usuario.getUsuarioEmpresa().getCargo());
-            form.setRuc(usuario.getUsuarioEmpresa().getRuc());
-        }
-
-        // Fetch RUC from SolicitudRegistro if not already set from UsuarioEmpresa
-        if (form.getRuc() == null || form.getRuc().isEmpty()) {
-            Optional<SolicitudRegistro> solicitudOpt = solicitudRegistroRepository.findTopByCorreoOrderByFechaSolicitudDesc(usuario.getCorreo());
-            if (solicitudOpt.isPresent()) {
-                form.setRuc(solicitudOpt.get().getRuc());
-            }
         }
 
         // ── Filtrar roles: solo mostrar SOCIO y VISUALIZADOR ──────────────────
@@ -650,13 +642,15 @@ public class AdminUsuarioController {
             String fecha = (u.getFechaRegistro() != null) ? u.getFechaRegistro().format(formatter) : "-";
             String iniciales = obtenerIniciales(u.getNombres(), u.getApellidoPaterno());
 
-            // Fetch RUC from SolicitudRegistro or UsuarioEmpresa
-            Optional<SolicitudRegistro> solicitudOpt = solicitudRegistroRepository.findTopByCorreoOrderByFechaSolicitudDesc(u.getCorreo());
-            String ruc = solicitudOpt.map(SolicitudRegistro::getRuc).orElse(
-                    u.getUsuarioEmpresa() != null ? u.getUsuarioEmpresa().getRuc() : null
-            );
+            String tipoIdentificacion = null;
+            String numeroIdentificacion = null;
+            if (u.getIdentificacion() != null) {
+                tipoIdentificacion = u.getIdentificacion().getTipo().name();
+                numeroIdentificacion = u.getIdentificacion().getNumero();
+            }
 
-            lista.add(new UsuarioGestionDto(u.getIdUsuario(), nombreCompleto, u.getCorreo(), u.getDni(), ruc,
+            lista.add(new UsuarioGestionDto(u.getIdUsuario(), nombreCompleto, u.getCorreo(),
+                    tipoIdentificacion, numeroIdentificacion,
                     empresa, rolUsuario, estadoUsuario, fecha, iniciales));
         }
 
@@ -683,14 +677,15 @@ public class AdminUsuarioController {
         if (form.getNombres() == null || form.getNombres().isBlank()) errores.put("nombres", "Campo nombre obligatorio");
         if (form.getApellidoPaterno() == null || form.getApellidoPaterno().isBlank()) errores.put("apellidoPaterno", "Campo apellido paterno obligatorio");
 
-        // DNI es opcional si RUC está presente
-        boolean dniPresente = form.getDni() != null && !form.getDni().isBlank();
-        boolean rucPresente = form.getRuc() != null && !form.getRuc().isBlank();
-
-        if (!dniPresente && !rucPresente) {
-            errores.put("dni", "Debe proporcionar DNI o RUC");
-        } else if (dniPresente && !form.getDni().matches("\\d{8}")) {
-            errores.put("dni", "El DNI debe tener 8 dígitos");
+        // Validar número de identificación
+        String tipo = form.getTipoIdentificacion();
+        String numero = form.getNumeroIdentificacion();
+        if (numero == null || numero.isBlank()) {
+            errores.put("numeroIdentificacion", "Debe proporcionar un número de identificación");
+        } else if ("DNI".equals(tipo) && !numero.matches("\\d{8}")) {
+            errores.put("numeroIdentificacion", "El DNI debe tener 8 dígitos");
+        } else if ("RUC".equals(tipo) && !numero.matches("\\d{11}")) {
+            errores.put("numeroIdentificacion", "El RUC debe tener 11 dígitos");
         }
 
         if (form.getCorreo() == null || form.getCorreo().isBlank()) errores.put("correo", "Campo correo obligatorio");
