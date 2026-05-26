@@ -255,7 +255,7 @@ public class AdminSolicitudController {
                     usuario.getIdUsuario(),
                     "¡Tu solicitud ha sido aprobada!",
                     "Tu cuenta como " + rolSolicitado + " ha sido aprobada. Ahora puedes iniciar sesión.",
-                    "REGISTRO_APROBADO",
+                    "SOLICITUD",
                     "/login"
             );
             // ──────────────────────────────────────────────────────────────────
@@ -317,7 +317,7 @@ public class AdminSolicitudController {
                     usuario.getIdUsuario(),
                     "Tu solicitud de registro ha sido rechazada",
                     mensajeRechazo,
-                    "REGISTRO_RECHAZADO",
+                    "SOLICITUD",
                     null
             );
             // ──────────────────────────────────────────────────────────────────

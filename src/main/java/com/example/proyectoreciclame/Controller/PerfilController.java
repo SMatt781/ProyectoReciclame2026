@@ -64,6 +64,7 @@ public class PerfilController {
                                 @RequestParam(value = "apellidoMaterno", required = false) String apellidoMaterno,
                                 @RequestParam(value = "telefono", required = false) String telefono,
                                 @RequestParam(value = "razonSocial", required = false) String razonSocial,
+                                @RequestParam(value = "cargo", required = false) String cargo,
                                 RedirectAttributes redirectAttributes) {
         try {
             String correo = authentication.getName();
@@ -84,20 +85,43 @@ public class PerfilController {
             usuario.setTelefono(telefono != null ? telefono.trim() : null);
             usuarioRepository.save(usuario);
 
-            if (esRUC) {
-                // RUC: sincronizar usuarioEmpresa.razonSocial con el campo nombres editado
-                String nuevaRazon = nombres != null ? nombres.trim() : "";
-                usuarioEmpresaRepository.findByUsuario(usuario).ifPresent(ue -> {
-                    ue.setRazonSocial(nuevaRazon);
-                    usuarioEmpresaRepository.save(ue);
-                });
-            } else if (razonSocial != null && !razonSocial.isBlank()) {
-                // DNI con empresa (poco común, pero por si acaso)
-                usuarioEmpresaRepository.findByUsuario(usuario).ifPresent(ue -> {
-                    ue.setRazonSocial(razonSocial.trim());
-                    usuarioEmpresaRepository.save(ue);
-                });
-            }
+            // Actualizar información de empresa
+            usuarioEmpresaRepository.findByUsuario(usuario).ifPresentOrElse(
+                    ue -> {
+                        if (esRUC) {
+                            // RUC: sincronizar razonSocial con el campo nombres
+                            String nuevaRazon = nombres != null ? nombres.trim() : "";
+                            ue.setRazonSocial(nuevaRazon);
+                        } else if (razonSocial != null && !razonSocial.isBlank()) {
+                            // DNI: usar razonSocial si se proporciona
+                            ue.setRazonSocial(razonSocial.trim());
+                        }
+
+                        // Actualizar cargo
+                        if (cargo != null && !cargo.isBlank()) {
+                            ue.setCargo(cargo.trim());
+                        }
+                        usuarioEmpresaRepository.save(ue);
+                    },
+                    () -> {
+                        // Crear nuevo registro si no existe y hay datos para guardar
+                        if ((esRUC || (razonSocial != null && !razonSocial.isBlank())) ||
+                            (cargo != null && !cargo.isBlank())) {
+                            com.example.proyectoreciclame.Entity.UsuarioEmpresa ue =
+                                new com.example.proyectoreciclame.Entity.UsuarioEmpresa();
+                            ue.setUsuario(usuario);
+                            if (esRUC) {
+                                ue.setRazonSocial(nombres != null ? nombres.trim() : "");
+                            } else if (razonSocial != null && !razonSocial.isBlank()) {
+                                ue.setRazonSocial(razonSocial.trim());
+                            }
+                            if (cargo != null && !cargo.isBlank()) {
+                                ue.setCargo(cargo.trim());
+                            }
+                            usuarioEmpresaRepository.save(ue);
+                        }
+                    }
+            );
 
             redirectAttributes.addFlashAttribute("mensaje", "Perfil actualizado correctamente.");
         } catch (Exception e) {
@@ -144,7 +168,7 @@ public class PerfilController {
         return "redirect:/perfil";
     }
 
-    /** Actualiza la foto de perfil del usuario autenticado */
+/** Actualiza la foto de perfil del usuario autenticado */
     @PostMapping("/actualizar-foto")
     public String actualizarFoto(@RequestParam("foto") org.springframework.web.multipart.MultipartFile foto,
                                  Authentication authentication,

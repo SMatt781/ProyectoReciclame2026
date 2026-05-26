@@ -191,6 +191,22 @@
                                 <input type="text" name="telefono" th:value="${usuario.telefono}"
                                        class="w-full px-4 py-3 rounded-2xl bg-surface-container-low border-transparent focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-medium">
                             </div>
+
+                            <!-- Empresa (solo SOCIO y VISUALIZADOR) -->
+                            <div class="space-y-2" th:if="${sessionUser.rol == 'SOCIO' or sessionUser.rol == 'VISUALIZADOR'}">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Empresa</label>
+                                <input type="text" name="razonSocial" th:value="${usuarioEmpresa?.razonSocial}"
+                                       placeholder="Nombre de tu empresa"
+                                       class="w-full px-4 py-3 rounded-2xl bg-surface-container-low border-transparent focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-medium">
+                            </div>
+
+                            <!-- Cargo (solo SOCIO y VISUALIZADOR) -->
+                            <div class="space-y-2" th:if="${sessionUser.rol == 'SOCIO' or sessionUser.rol == 'VISUALIZADOR'}">
+                                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Cargo</label>
+                                <input type="text" name="cargo" th:value="${usuarioEmpresa?.cargo}"
+                                       placeholder="Tu cargo en la empresa"
+                                       class="w-full px-4 py-3 rounded-2xl bg-surface-container-low border-transparent focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-medium">
+                            </div>
                         </div>
 
                         <div class="mt-12 pt-8 border-t border-outline-variant/20 flex justify-end items-center gap-4">

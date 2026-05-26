@@ -121,6 +121,11 @@
                    th:class="${tipoFiltro == 'SOLICITUD'} ? 'pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px' : 'pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px'">
                     Solicitudes
                 </a>
+                <a th:if="${sessionUser.rol == 'ADMIN'}"
+                   th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(tipo='EDICION')}"
+                   th:class="${tipoFiltro == 'EDICION'} ? 'pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px' : 'pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px'">
+                    Ediciones
+                </a>
             </div>
 
             <!-- Cards -->
@@ -157,12 +162,14 @@
                          th:classappend="${#strings.startsWith(n.tipo, 'ESTUDIO')} ? 'bg-blue-50 text-blue-600' :
                                     (${#strings.startsWith(n.tipo, 'NORMATIVA')} ? 'bg-amber-50 text-amber-600' :
                                     (${#strings.startsWith(n.tipo, 'SOLICITUD')} ? 'bg-secondary-container/40 text-secondary' :
-                                    'bg-slate-200 text-slate-500'))">
+                                    (${#strings.startsWith(n.tipo, 'EDICION')} ? 'bg-purple-50 text-purple-600' :
+                                    'bg-slate-200 text-slate-500')))">
                     <span class="material-symbols-outlined text-[22px]"
                           th:text="${#strings.startsWith(n.tipo, 'ESTUDIO')} ? 'description' :
                                    (${#strings.startsWith(n.tipo, 'NORMATIVA')} ? 'domain' :
                                    (${#strings.startsWith(n.tipo, 'SOLICITUD')} ? 'assignment' :
-                                   'notifications'))">
+                                   (${#strings.startsWith(n.tipo, 'EDICION')} ? 'edit' :
+                                   'notifications')))">
                         notifications
                     </span>
                     </div>
@@ -175,7 +182,8 @@
                                   th:text="${#strings.startsWith(n.tipo, 'ESTUDIO')} ? 'Estudio' :
                                           (${#strings.startsWith(n.tipo, 'NORMATIVA')} ? 'Normativa' :
                                           (${#strings.startsWith(n.tipo, 'SOLICITUD')} ? 'Solicitud' :
-                                          'Sistema'))">Tipo</span>
+                                          (${#strings.startsWith(n.tipo, 'EDICION')} ? 'Edición' :
+                                          'Sistema')))">Tipo</span>
                                 <span th:if="${n.leido == false}"
                                       class="w-2 h-2 rounded-full bg-red-500 flex-shrink-0"></span>
                             </div>
