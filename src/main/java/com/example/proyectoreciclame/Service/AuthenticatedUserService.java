@@ -46,6 +46,7 @@ public class AuthenticatedUserService {
                 : "";
 
         dto.setIniciales(i1 + i2);
+        dto.setUrlAvatar(usuario.getUrlAvatar());
 
         return dto;
     }

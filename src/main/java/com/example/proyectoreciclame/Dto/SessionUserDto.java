@@ -9,6 +9,7 @@ public class SessionUserDto {
     private String correo;
     private String rol;
     private String iniciales;
+    private String urlAvatar;
 
     public Long getIdUsuario() {
         return idUsuario;
@@ -64,6 +65,14 @@ public class SessionUserDto {
 
     public void setIniciales(String iniciales) {
         this.iniciales = iniciales;
+    }
+
+    public String getUrlAvatar() {
+        return urlAvatar;
+    }
+
+    public void setUrlAvatar(String urlAvatar) {
+        this.urlAvatar = urlAvatar;
     }
 
     public String getNombreCompleto() {

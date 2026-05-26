@@ -214,6 +214,35 @@ public class Usuario {
         actualizadoEn = LocalDateTime.now();
     }
 
+    @Transient
+    public String getNombreCompleto() {
+        StringBuilder sb = new StringBuilder();
+        if (nombres != null && !nombres.isEmpty()) {
+            sb.append(nombres);
+        }
+        if (apellidoPaterno != null && !apellidoPaterno.isEmpty()) {
+            if (sb.length() > 0) sb.append(" ");
+            sb.append(apellidoPaterno);
+        }
+        if (apellidoMaterno != null && !apellidoMaterno.isEmpty()) {
+            if (sb.length() > 0) sb.append(" ");
+            sb.append(apellidoMaterno);
+        }
+        return sb.toString();
+    }
+
+    @Transient
+    public String getIniciales() {
+        StringBuilder sb = new StringBuilder();
+        if (nombres != null && !nombres.isEmpty()) {
+            sb.append(nombres.charAt(0));
+        }
+        if (apellidoPaterno != null && !apellidoPaterno.isEmpty()) {
+            sb.append(apellidoPaterno.charAt(0));
+        }
+        return sb.toString().toUpperCase();
+    }
+
     public enum EstadoCuenta {
         ACTIVO,
         BLOQUEADO

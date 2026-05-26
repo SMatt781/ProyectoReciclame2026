@@ -41,9 +41,13 @@
         <!-- Profile Card -->
         <div class="flex items-center gap-3 p-1 rounded-full hover:bg-surface-container-low transition-colors">
             <a th:href="@{/perfil}" class="flex items-center gap-3 p-1 rounded-full hover:bg-surface-container-low transition-colors">
-                <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm ring-2 ring-surface-container-lowest shadow-sm"
-                     th:text="${sessionUser != null ? sessionUser.iniciales : 'US'}">
-                    US
+                <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm ring-2 ring-surface-container-lowest shadow-sm overflow-hidden">
+                    <img th:if="${sessionUser != null and sessionUser.urlAvatar != null}"
+                         th:src="${sessionUser.urlAvatar}"
+                         alt="Foto de perfil"
+                         class="w-full h-full object-cover" />
+                    <span th:unless="${sessionUser != null and sessionUser.urlAvatar != null}"
+                          th:text="${sessionUser != null ? sessionUser.iniciales : 'US'}">US</span>
                 </div>
             </a>
 
