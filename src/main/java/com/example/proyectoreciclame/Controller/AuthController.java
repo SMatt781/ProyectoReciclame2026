@@ -160,9 +160,6 @@ public class AuthController {
 
         Usuario usuario = new Usuario();
         usuario.setRol(rolSocio);
-        usuario.setNombres(form.getNombres().trim());
-        usuario.setApellidoPaterno(form.getApellidoPaterno().trim());
-        usuario.setApellidoMaterno(form.getApellidoMaterno().trim());
         usuario.setCorreo(form.getCorreo().trim().toLowerCase());
         usuario.setTelefono(form.getTelefono().trim());
         usuario.setContrasenaHash(passwordEncoder.encode(form.getPassword()));
@@ -173,6 +170,19 @@ public class AuthController {
         usuario.setUltimoAcceso(null);
         usuario.setEliminadoEn(null);
 
+        // Manejo diferente según tipo de documento
+        if ("DNI".equalsIgnoreCase(form.getTipoIdentificacion())) {
+            // DNI: completar nombres y apellidos en usuario
+            usuario.setNombres(form.getNombres().trim());
+            usuario.setApellidoPaterno(form.getApellidoPaterno() != null ? form.getApellidoPaterno().trim() : null);
+            usuario.setApellidoMaterno(form.getApellidoMaterno() != null ? form.getApellidoMaterno().trim() : null);
+        } else {
+            // RUC: usar nombres para referencia, dejar apellidos NULL
+            usuario.setNombres(form.getNombres().trim()); // Será la razón social
+            usuario.setApellidoPaterno(null);
+            usuario.setApellidoMaterno(null);
+        }
+
         usuarioRepository.save(usuario);
 
         // Guardar identificacion (DNI o RUC)
@@ -182,13 +192,23 @@ public class AuthController {
         identificacion.setNumero(form.getNumeroIdentificacion().trim());
         identificacionRepository.save(identificacion);
 
-        // Si es RUC crear también usuario_empresa
+        // Si es RUC crear también usuario_empresa con razón social verificada por RENIEC
         if ("RUC".equalsIgnoreCase(form.getTipoIdentificacion())) {
             UsuarioEmpresa ue = new UsuarioEmpresa();
             ue.setUsuario(usuario);
-            ue.setRazonSocial("Pendiente de completar");
+            // form.getNombres() contiene la razón social obtenida de RENIEC/SUNAT
+            ue.setRazonSocial(form.getNombres().trim());
             ue.setCargo(null);
             usuarioEmpresaRepository.save(ue);
+        }
+
+        // Construir nombre completo para la solicitud
+        String nombreCompleto = usuario.getNombres();
+        if (usuario.getApellidoPaterno() != null) {
+            nombreCompleto += " " + usuario.getApellidoPaterno();
+        }
+        if (usuario.getApellidoMaterno() != null) {
+            nombreCompleto += " " + usuario.getApellidoMaterno();
         }
 
         SolicitudRegistro solicitud = new SolicitudRegistro();
@@ -218,7 +238,7 @@ public class AuthController {
         // Crear notificación para los admins
         adminNotificacionController.crearNotificacionAdmin(
                 "Nueva solicitud de registro - Socio",
-                usuario.getNombres() + " " + usuario.getApellidoPaterno() + " ha solicitado registrarse como SOCIO. Correo: " + usuario.getCorreo(),
+                nombreCompleto + " ha solicitado registrarse como SOCIO. Correo: " + usuario.getCorreo(),
                 "REGISTRO",
                 "/admin/usuarios/solicitudes"
         );
@@ -318,6 +338,18 @@ public class AuthController {
     }
 
     private void validarRegistroSocio(RegistroSocioForm form, BindingResult br) {
+        // Validar apellidos según tipo de documento
+        if ("DNI".equalsIgnoreCase(form.getTipoIdentificacion())) {
+            // DNI: apellidos son obligatorios
+            if (form.getApellidoPaterno() == null || form.getApellidoPaterno().isBlank()) {
+                br.rejectValue("apellidoPaterno", "apellidoPaterno.required", "Campo apellido paterno obligatorio");
+            }
+            if (form.getApellidoMaterno() == null || form.getApellidoMaterno().isBlank()) {
+                br.rejectValue("apellidoMaterno", "apellidoMaterno.required", "Campo apellido materno obligatorio");
+            }
+        }
+        // RUC: apellidos son opcionales (NULL), no validar
+
         if (form.getCorreo() != null && !form.getCorreo().isBlank()
                 && usuarioRepository.existsByCorreoIgnoreCase(form.getCorreo().trim())) {
             br.rejectValue("correo", "correo.exists", "El correo ya está registrado");

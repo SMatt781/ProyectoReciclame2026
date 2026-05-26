@@ -11,10 +11,9 @@ public class RegistroSocioForm {
     @NotBlank(message = "Campo nombres obligatorio")
     private String nombres;
 
-    @NotBlank(message = "Campo apellido paterno obligatorio")
+    // Para DNI: apellidos obligatorios. Para RUC: opcionales (son NULL)
     private String apellidoPaterno;
 
-    @NotBlank(message = "Campo apellido materno obligatorio")
     private String apellidoMaterno;
 
     // tipoIdentificacion: "DNI" o "RUC"

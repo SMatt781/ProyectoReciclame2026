@@ -559,26 +559,27 @@
 
             <input type="hidden" th:field="*{idUsuario}">
 
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Nombres</label>
+            <!-- Nombres (label cambia a "Razón Social" si es RUC) -->
+            <div id="campo-nombres-edit">
+                <label id="label-nombres-edit" class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Nombres</label>
                 <input type="text" th:field="*{nombres}"
                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
                 <p th:if="${fieldErrors != null and fieldErrors['nombres'] != null}" th:text="${fieldErrors['nombres']}"
                    class="mt-1 text-xs font-medium text-error"></p>
             </div>
 
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Apellido
-                    paterno</label>
+            <!-- Apellido Paterno: oculto si es RUC -->
+            <div id="campo-ap-paterno-edit">
+                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Apellido paterno</label>
                 <input type="text" th:field="*{apellidoPaterno}"
                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
                 <p th:if="${fieldErrors != null and fieldErrors['apellidoPaterno'] != null}"
                    th:text="${fieldErrors['apellidoPaterno']}" class="mt-1 text-xs font-medium text-error"></p>
             </div>
 
-            <div>
-                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Apellido
-                    materno</label>
+            <!-- Apellido Materno: oculto si es RUC -->
+            <div id="campo-ap-materno-edit">
+                <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Apellido materno</label>
                 <input type="text" th:field="*{apellidoMaterno}"
                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
             </div>
@@ -586,7 +587,8 @@
             <!-- Tipo de Identificación -->
             <div>
                 <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Tipo de identificación</label>
-                <select th:field="*{tipoIdentificacion}" id="selectTipoIdentificacion" onchange="actualizarValidacionNumeroIdentificacion()"
+                <select th:field="*{tipoIdentificacion}" id="selectTipoIdentificacion"
+                        onchange="actualizarValidacionNumeroIdentificacion(); toggleApellidosEdit(this.value)"
                         class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
                     <option value="DNI">DNI</option>
                     <option value="RUC" id="opcionRuc">RUC</option>
@@ -1110,10 +1112,30 @@
         }
     }
 
+    // Mostrar/ocultar apellidos según tipo de identificación en modal de editar
+    function toggleApellidosEdit(tipo) {
+        const apPaterno = document.getElementById('campo-ap-paterno-edit');
+        const apMaterno = document.getElementById('campo-ap-materno-edit');
+        const labelNombres = document.getElementById('label-nombres-edit');
+
+        if (tipo === 'RUC') {
+            if (apPaterno) apPaterno.style.display = 'none';
+            if (apMaterno) apMaterno.style.display = 'none';
+            if (labelNombres) labelNombres.textContent = 'Razón Social';
+        } else {
+            if (apPaterno) apPaterno.style.display = '';
+            if (apMaterno) apMaterno.style.display = '';
+            if (labelNombres) labelNombres.textContent = 'Nombres';
+        }
+    }
+
     // Ejecutar cuando el modal se carga
     document.addEventListener('DOMContentLoaded', function() {
         actualizarOpcionesIdentificacion();
         actualizarValidacionNumeroIdentificacion();
+        // Inicializar visibilidad de apellidos según tipo actual
+        const selectTipo = document.getElementById('selectTipoIdentificacion');
+        if (selectTipo) toggleApellidosEdit(selectTipo.value);
     });
 </script>
 

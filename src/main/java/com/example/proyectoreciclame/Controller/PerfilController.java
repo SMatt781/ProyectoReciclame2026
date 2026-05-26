@@ -60,8 +60,8 @@ public class PerfilController {
     @PostMapping("/guardar")
     public String guardarPerfil(Authentication authentication,
                                 @RequestParam("nombres") String nombres,
-                                @RequestParam("apellidoPaterno") String apellidoPaterno,
-                                @RequestParam("apellidoMaterno") String apellidoMaterno,
+                                @RequestParam(value = "apellidoPaterno", required = false) String apellidoPaterno,
+                                @RequestParam(value = "apellidoMaterno", required = false) String apellidoMaterno,
                                 @RequestParam(value = "telefono", required = false) String telefono,
                                 @RequestParam(value = "razonSocial", required = false) String razonSocial,
                                 RedirectAttributes redirectAttributes) {
@@ -70,13 +70,29 @@ public class PerfilController {
             Usuario usuario = usuarioRepository.findByCorreoIgnoreCase(correo)
                     .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
+            boolean esRUC = usuario.getApellidoPaterno() == null;
+
             usuario.setNombres(nombres != null ? nombres.trim() : "");
-            usuario.setApellidoPaterno(apellidoPaterno != null ? apellidoPaterno.trim() : "");
-            usuario.setApellidoMaterno(apellidoMaterno != null ? apellidoMaterno.trim() : "");
+
+            if (!esRUC) {
+                // DNI: actualizar apellidos normalmente
+                usuario.setApellidoPaterno(apellidoPaterno != null && !apellidoPaterno.isBlank() ? apellidoPaterno.trim() : null);
+                usuario.setApellidoMaterno(apellidoMaterno != null && !apellidoMaterno.isBlank() ? apellidoMaterno.trim() : null);
+            }
+            // RUC: apellidos siguen siendo null, no se tocan
+
             usuario.setTelefono(telefono != null ? telefono.trim() : null);
             usuarioRepository.save(usuario);
 
-            if (razonSocial != null && !razonSocial.isBlank()) {
+            if (esRUC) {
+                // RUC: sincronizar usuarioEmpresa.razonSocial con el campo nombres editado
+                String nuevaRazon = nombres != null ? nombres.trim() : "";
+                usuarioEmpresaRepository.findByUsuario(usuario).ifPresent(ue -> {
+                    ue.setRazonSocial(nuevaRazon);
+                    usuarioEmpresaRepository.save(ue);
+                });
+            } else if (razonSocial != null && !razonSocial.isBlank()) {
+                // DNI con empresa (poco común, pero por si acaso)
                 usuarioEmpresaRepository.findByUsuario(usuario).ifPresent(ue -> {
                     ue.setRazonSocial(razonSocial.trim());
                     usuarioEmpresaRepository.save(ue);

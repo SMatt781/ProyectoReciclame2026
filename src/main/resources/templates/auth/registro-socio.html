@@ -293,7 +293,7 @@
 
                 <!-- 4. Nombres y Apellidos (auto-rellenados desde RENIEC/SUNAT) -->
                 <div class="space-y-1">
-                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1" id="labelNombres">
                         Nombres
                     </label>
                     <input th:field="*{nombres}"
@@ -308,7 +308,7 @@
                        class="text-xs text-red-600 ml-1"></p>
                 </div>
 
-                <div class="space-y-1">
+                <div class="space-y-1" id="containerApPat">
                     <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
                         Apellido paterno
                     </label>
@@ -324,7 +324,7 @@
                        class="text-xs text-red-600 ml-1"></p>
                 </div>
 
-                <div class="space-y-1">
+                <div class="space-y-1" id="containerApMat">
                     <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
                         Apellido materno
                     </label>
@@ -340,8 +340,8 @@
                        class="text-xs text-red-600 ml-1"></p>
                 </div>
 
-                <!-- Spacer para mantener la grilla (apellido materno ocupa col 1, col 2 queda libre) -->
-                <div class="hidden md:block"></div>
+                <!-- Spacer para mantener la grilla -->
+                <div class="hidden md:block" id="spacerCol"></div>
 
                 <div class="space-y-1 md:col-span-2">
                     <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
@@ -504,28 +504,47 @@
 
     // ========== SELECTOR DNI/RUC ==========
     function toggleDocumento(tipo) {
-        const labelDNI      = document.getElementById("labelDNI");
-        const labelRUC      = document.getElementById("labelRUC");
-        const inputNumeroId = document.getElementById("inputNumeroId");
-        const labelNumeroId = document.getElementById("labelNumeroId");
-        const errorNumeroId = document.getElementById("errorNumeroId");
+        const labelDNI         = document.getElementById("labelDNI");
+        const labelRUC         = document.getElementById("labelRUC");
+        const inputNumeroId    = document.getElementById("inputNumeroId");
+        const labelNumeroId    = document.getElementById("labelNumeroId");
+        const labelNombres     = document.getElementById("labelNombres");
+        const containerApPat   = document.getElementById("containerApPat");
+        const containerApMat   = document.getElementById("containerApMat");
+        const spacerCol        = document.getElementById("spacerCol");
+        const errorNumeroId    = document.getElementById("errorNumeroId");
 
         if (errorNumeroId) errorNumeroId.classList.add("hidden");
         if (inputNumeroId) inputNumeroId.classList.remove("ring-2", "ring-red-400");
         resetApiMsg();
         if (inputNumeroId) inputNumeroId.value = "";
-        resetNombres(); // Limpiar y bloquear nombres al cambiar tipo
+        resetNombres();
 
         if (tipo === "DNI") {
+            // ========== MODO DNI ==========
             labelDNI.classList.add("border-primary-container", "bg-primary-container/10");
             labelRUC.classList.remove("border-primary-container", "bg-primary-container/10");
             if (inputNumeroId) { inputNumeroId.maxLength = 8; inputNumeroId.placeholder = "12345678"; }
             if (labelNumeroId) labelNumeroId.textContent = "DNI";
+            if (labelNombres) labelNombres.textContent = "Nombres";
+
+            // Mostrar campos de apellidos
+            if (containerApPat) containerApPat.classList.remove("hidden");
+            if (containerApMat) containerApMat.classList.remove("hidden");
+            if (spacerCol) spacerCol.classList.add("hidden");
+
         } else {
+            // ========== MODO RUC ==========
             labelRUC.classList.add("border-primary-container", "bg-primary-container/10");
             labelDNI.classList.remove("border-primary-container", "bg-primary-container/10");
             if (inputNumeroId) { inputNumeroId.maxLength = 11; inputNumeroId.placeholder = "12345678901"; }
             if (labelNumeroId) labelNumeroId.textContent = "RUC";
+            if (labelNombres) labelNombres.textContent = "Razón Social";
+
+            // Ocultar campos de apellidos para RUC (empresa)
+            if (containerApPat) containerApPat.classList.add("hidden");
+            if (containerApMat) containerApMat.classList.add("hidden");
+            if (spacerCol) spacerCol.classList.remove("hidden"); // Mantener alineación grid
         }
     }
 
