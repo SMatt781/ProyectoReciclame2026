@@ -864,7 +864,7 @@
 
         <form th:if="${modoBloqueo == 'bloquear'}"
               th:action="@{/admin/usuarios/bloquear(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}" th:object="${blockForm}"
-              method="post" class="px-6 py-6">
+              method="post" class="px-6 py-6 spinner-form">
 
             <input type="hidden" th:field="*{idUsuario}" />
 
@@ -897,7 +897,7 @@
 
         <form th:if="${modoBloqueo == 'desbloquear'}"
               th:action="@{/admin/usuarios/desbloquear(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados})}" th:object="${blockForm}"
-              method="post" class="px-6 py-6">
+              method="post" class="px-6 py-6 spinner-form">
 
             <input type="hidden" th:field="*{idUsuario}" />
 
@@ -1188,6 +1188,8 @@
 </script>
 <!-- Contador animado en KPIs -->
 <script th:src="@{/js/animations.js}"></script>
+<!-- Spinner en formularios -->
+<script th:src="@{/js/spinner.js}"></script>
 </body>
 
 </html>
