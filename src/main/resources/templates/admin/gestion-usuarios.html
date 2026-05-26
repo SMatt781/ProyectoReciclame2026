@@ -381,7 +381,7 @@
                                 </div>
 
                                 <!-- Estado -->
-                                <div class="flex items-start lg:items-center min-w-0 text-xs font-body text-on-surface-variant min-w-0">
+                                <div class="flex items-center justify-center min-w-0 text-xs font-body text-on-surface-variant min-w-0">
                                     <div class="flex items-center gap-2" th:if="${u.estado == 'Activo'}">
                                         <div class="h-2 w-2 rounded-full bg-secondary"></div>
                                         <span class="text-sm font-bold text-secondary" th:text="${u.estado}"></span>
@@ -405,7 +405,7 @@
                                      th:text="${u.fechaRegistro}"></div>
 
                                 <!-- Acciones -->
-                                <div class="flex flex-wrap items-start justify-start lg:justify-end gap-x-3 gap-y-2 w-full max-w-full min-w-0">
+                                <div class="flex flex-wrap items-start justify-start lg:justify-center gap-x-3 gap-y-2 w-full max-w-full min-w-0">
 
                                     <!-- EDITAR - Siempre presente -->
                                     <a th:if="${u.estado != 'Bloqueado' && u.estado != 'Pendiente' && u.estado != 'Rechazado'}"
@@ -584,19 +584,24 @@
             <!-- Tipo de Identificación -->
             <div>
                 <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Tipo de identificación</label>
-                <select th:field="*{tipoIdentificacion}"
+                <select th:field="*{tipoIdentificacion}" id="selectTipoIdentificacion" onchange="actualizarValidacionNumeroIdentificacion()"
                         class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
                     <option value="DNI">DNI</option>
-                    <option value="RUC">RUC</option>
+                    <option value="RUC" id="opcionRuc">RUC</option>
                 </select>
             </div>
 
             <!-- Número de Identificación -->
             <div>
                 <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Número de identificación</label>
-                <input type="text" th:field="*{numeroIdentificacion}"
+                <input type="text" th:field="*{numeroIdentificacion}" id="numeroIdentificacion" maxlength="11"
+                       inputmode="numeric"
                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20"
-                       placeholder="DNI: 8 dígitos / RUC: 11 dígitos">
+                       placeholder="DNI: 8 dígitos / RUC: 11 dígitos"
+                       oninput="validarNumeroIdentificacion(this)">
+                <p id="contadorIdentificacion" class="text-xs text-on-surface-variant ml-1 mt-1 hidden">
+                    DNI debe tener 8 dígitos (0/8)
+                </p>
                 <p th:if="${fieldErrors != null and fieldErrors['numeroIdentificacion'] != null}"
                    th:text="${fieldErrors['numeroIdentificacion']}"
                    class="mt-1 text-xs font-medium text-error"></p>
@@ -620,10 +625,10 @@
 
             <div>
                 <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Rol</label>
-                <select th:field="*{idRol}"
+                <select th:field="*{idRol}" id="selectRol" onchange="actualizarOpcionesIdentificacion()"
                         class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
                     <option value="">Seleccione un rol</option>
-                    <option th:each="rol : ${roles}" th:value="${rol.idRol}" th:text="${rol.nombre}"></option>
+                    <option th:each="rol : ${roles}" th:value="${rol.idRol}" th:text="${rol.nombre}" th:data-rol-nombre="${rol.nombre}"></option>
                 </select>
                 <p th:if="${fieldErrors != null and fieldErrors['idRol'] != null}" th:text="${fieldErrors['idRol']}"
                    class="mt-1 text-xs font-medium text-error"></p>
@@ -1014,6 +1019,101 @@
         </form>
     </div>
 </div>
+
+<!-- Script para validación de Tipo y Número de Identificación en Modal Editar -->
+<script>
+    // Función para actualizar opciones de identificación según el rol
+    function actualizarOpcionesIdentificacion() {
+        const selectRol = document.getElementById('selectRol');
+        const opcionRuc = document.getElementById('opcionRuc');
+
+        if (!selectRol || !opcionRuc) return;
+
+        const selectedOption = selectRol.options[selectRol.selectedIndex];
+        const rolNombre = selectedOption.getAttribute('data-rol-nombre');
+
+        // Si es VISUALIZADOR, ocultar RUC; sino, mostrar RUC
+        if (rolNombre === 'VISUALIZADOR') {
+            if (opcionRuc.parentNode) {
+                opcionRuc.style.display = 'none';
+                // Si RUC estaba seleccionado, cambiar a DNI
+                const selectTipo = document.getElementById('selectTipoIdentificacion');
+                if (selectTipo && selectTipo.value === 'RUC') {
+                    selectTipo.value = 'DNI';
+                    actualizarValidacionNumeroIdentificacion();
+                }
+            }
+        } else {
+            opcionRuc.style.display = '';
+        }
+    }
+
+    // Función para actualizar la validación del número de identificación
+    function actualizarValidacionNumeroIdentificacion() {
+        const selectTipo = document.getElementById('selectTipoIdentificacion');
+        const inputNumero = document.getElementById('numeroIdentificacion');
+        const contador = document.getElementById('contadorIdentificacion');
+
+        if (!selectTipo || !inputNumero || !contador) return;
+
+        const tipo = selectTipo.value;
+
+        if (tipo === 'DNI') {
+            inputNumero.maxLength = 8;
+            contador.textContent = `DNI debe tener 8 dígitos (${inputNumero.value.length}/8)`;
+        } else if (tipo === 'RUC') {
+            inputNumero.maxLength = 11;
+            contador.textContent = `RUC debe tener 11 dígitos (${inputNumero.value.length}/11)`;
+        }
+
+        validarNumeroIdentificacion(inputNumero);
+    }
+
+    // Función para validar y mostrar contador en tiempo real
+    function validarNumeroIdentificacion(input) {
+        if (!input) return;
+
+        const selectTipo = document.getElementById('selectTipoIdentificacion');
+        const contador = document.getElementById('contadorIdentificacion');
+
+        if (!selectTipo || !contador) return;
+
+        const tipo = selectTipo.value;
+
+        // Solo permitir dígitos
+        input.value = input.value.replace(/[^0-9]/g, '');
+
+        if (tipo === 'DNI') {
+            const maxLength = 8;
+            contador.classList.remove('hidden');
+            contador.textContent = `DNI debe tener 8 dígitos (${input.value.length}/${maxLength})`;
+
+            // Agregar/quitar ring rojo si no es válido
+            if (input.value.length > 0 && input.value.length < maxLength) {
+                input.classList.add('ring-2', 'ring-red-400');
+            } else if (input.value.length === maxLength) {
+                input.classList.remove('ring-2', 'ring-red-400');
+            }
+        } else if (tipo === 'RUC') {
+            const maxLength = 11;
+            contador.classList.remove('hidden');
+            contador.textContent = `RUC debe tener 11 dígitos (${input.value.length}/${maxLength})`;
+
+            // Agregar/quitar ring rojo si no es válido
+            if (input.value.length > 0 && input.value.length < maxLength) {
+                input.classList.add('ring-2', 'ring-red-400');
+            } else if (input.value.length === maxLength) {
+                input.classList.remove('ring-2', 'ring-red-400');
+            }
+        }
+    }
+
+    // Ejecutar cuando el modal se carga
+    document.addEventListener('DOMContentLoaded', function() {
+        actualizarOpcionesIdentificacion();
+        actualizarValidacionNumeroIdentificacion();
+    });
+</script>
 
 <!-- Script de Lógica para el Modal -->
 <script>
