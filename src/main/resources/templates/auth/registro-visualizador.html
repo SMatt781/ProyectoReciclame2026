@@ -93,6 +93,13 @@
                 transform: translateY(0);
             }
         }
+
+        /* Campo bloqueado (readonly esperando DNI) */
+        .disabled-field[readonly] {
+            opacity: 0.55;
+            cursor: not-allowed;
+            background-color: #e6e8ea;
+        }
     </style>
     <div th:replace="~{fragments/responsive}"></div>
 
@@ -185,14 +192,65 @@
                        th:name="${_csrf.parameterName}"
                        th:value="${_csrf.token}"/>
 
+                <!-- 1. DNI (PRIMERO) — span completo para destacarlo -->
+                <div class="space-y-1 md:col-span-2">
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                        DNI
+                    </label>
+                    <div class="relative">
+                        <input th:field="*{numeroIdentificacion}"
+                               id="inputDNIVis"
+                               type="text"
+                               placeholder="12345678"
+                               maxlength="8"
+                               inputmode="numeric"
+                               class="w-full px-4 py-2.5 pr-10 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
+                               oninput="validarDNI(this); debounceValidarDNIVis(this)"/>
+                        <span id="dniVisApiStatus" class="absolute right-3 top-1/2 -translate-y-1/2 hidden"></span>
+                    </div>
+                    <p id="errorDNIVis" class="text-xs text-red-600 ml-1 hidden">DNI debe tener 8 dígitos</p>
+                    <div id="dniVisApiMsg" class="hidden rounded-lg px-3 py-2 text-xs font-medium mt-1"></div>
+                    <p th:if="${#fields.hasErrors('numeroIdentificacion')}"
+                       th:errors="*{numeroIdentificacion}"
+                       class="text-xs text-red-600 ml-1"></p>
+                </div>
+
+                <!-- 2. Banner de estado de nombres -->
+                <div class="md:col-span-2">
+                    <div id="nombresLockInfoVis"
+                         class="flex items-center gap-2 text-[11px] text-on-surface-variant bg-surface-container-low rounded-lg px-3 py-2">
+                        <svg class="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Ingresa tu <strong>DNI</strong> para autocompletar tus datos personales desde RENIEC.</span>
+                    </div>
+                    <div id="nombresVerificadoInfoVis"
+                         class="hidden flex items-center gap-2 text-[11px] text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414L8.414 15 3.293 9.879a1 1 0 011.414-1.414L8.414 12.172l6.879-6.879a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Datos verificados y obtenidos desde <strong>RENIEC</strong>. Para corregirlos, borra el DNI.</span>
+                    </div>
+                    <div id="nombresManualInfoVis"
+                         class="hidden flex items-center gap-2 text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>No se pudo verificar. Ingresa tus datos manualmente.</span>
+                    </div>
+                </div>
+
+                <!-- 3. Nombres y Apellidos (auto-rellenados desde RENIEC) -->
                 <div class="space-y-1">
                     <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
                         Nombres
                     </label>
                     <input th:field="*{nombres}"
+                           id="inputNombresVis"
                            type="text"
-                           placeholder="Ej. Javier"
-                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
+                           placeholder="Se completará automáticamente"
+                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm disabled-field"
+                           readonly
                            oninput="validarNombres(this)"/>
                     <p th:if="${#fields.hasErrors('nombres')}"
                        th:errors="*{nombres}"
@@ -204,9 +262,11 @@
                         Apellido paterno
                     </label>
                     <input th:field="*{apellidoPaterno}"
+                           id="inputApPatVis"
                            type="text"
-                           placeholder="Ej. Salvador"
-                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
+                           placeholder="Se completará automáticamente"
+                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm disabled-field"
+                           readonly
                            oninput="validarNombres(this)"/>
                     <p th:if="${#fields.hasErrors('apellidoPaterno')}"
                        th:errors="*{apellidoPaterno}"
@@ -218,31 +278,19 @@
                         Apellido materno
                     </label>
                     <input th:field="*{apellidoMaterno}"
+                           id="inputApMatVis"
                            type="text"
-                           placeholder="Ej. Sotelo"
-                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
+                           placeholder="Se completará automáticamente"
+                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm disabled-field"
+                           readonly
                            oninput="validarNombres(this)"/>
                     <p th:if="${#fields.hasErrors('apellidoMaterno')}"
                        th:errors="*{apellidoMaterno}"
                        class="text-xs text-red-600 ml-1"></p>
                 </div>
 
-                <div class="space-y-1">
-                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
-                        DNI
-                    </label>
-                    <input th:field="*{numeroIdentificacion}"
-                           type="text"
-                           placeholder="12345678"
-                           maxlength="8"
-                           inputmode="numeric"
-                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
-                           oninput="validarDNI(this)"/>
-                    <p id="errorDNIVis" class="text-xs text-red-600 ml-1 hidden">DNI debe tener 8 dígitos</p>
-                    <p th:if="${#fields.hasErrors('numeroIdentificacion')}"
-                       th:errors="*{numeroIdentificacion}"
-                       class="text-xs text-red-600 ml-1"></p>
-                </div>
+                <!-- Spacer col -->
+                <div class="hidden md:block"></div>
 
                 <div class="space-y-1">
                     <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
@@ -402,9 +450,14 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const passwordVisualizador = document.getElementById("passwordVisualizador");
-
         if (passwordVisualizador && passwordVisualizador.value) {
             evaluarPassword(passwordVisualizador.value, "Visualizador");
+        }
+
+        // Si los campos de nombre ya tienen valor (recarga tras error de validación), desbloquearlos
+        const inputNombresVis = document.getElementById("inputNombresVis");
+        if (inputNombresVis && inputNombresVis.value.trim() !== "") {
+            desbloquearNombresVis();
         }
     });
 
@@ -424,7 +477,136 @@
             errorMsg.classList.remove("hidden");
             errorMsg.textContent = `DNI debe tener 8 dígitos (${input.value.length}/8)`;
             input.classList.add("ring-2", "ring-red-400");
+            resetDniVisMsg();
+            resetNombresVis();
+        } else {
+            errorMsg.classList.add("hidden");
+            input.classList.remove("ring-2", "ring-red-400");
+            resetDniVisMsg();
+            resetNombresVis();
         }
+    }
+
+    // ========== VALIDACIÓN API RENIEC (Visualizador — solo DNI) ==========
+    let _dniVisTimer = null;
+
+    function debounceValidarDNIVis(input) {
+        clearTimeout(_dniVisTimer);
+        if (input.value.length !== 8) return;
+        _dniVisTimer = setTimeout(() => consultarDNIVis(input.value), 600);
+    }
+
+    function consultarDNIVis(dni) {
+        const statusEl = document.getElementById("dniVisApiStatus");
+        const msgEl    = document.getElementById("dniVisApiMsg");
+
+        statusEl.innerHTML = `<svg class="animate-spin w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>`;
+        statusEl.classList.remove("hidden");
+        msgEl.classList.add("hidden");
+
+        fetch(`/api/validar-documento?tipo=DNI&numero=${dni}`)
+            .then(r => {
+                if (!r.ok) throw new Error("HTTP " + r.status);
+                return r.json();
+            })
+            .then(data => {
+                if (data.valido === true) {
+                    // ✅ Encontrado — rellenar nombres automáticamente
+                    statusEl.innerHTML = `<svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414L8.414 15 3.293 9.879a1 1 0 011.414-1.414L8.414 12.172l6.879-6.879a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>`;
+                    msgEl.className = "rounded-lg px-3 py-2 text-xs font-medium mt-1 bg-green-50 text-green-700 border border-green-200";
+                    msgEl.innerHTML = `<strong>✓ Verificado:</strong> ${data.nombre}`;
+                    msgEl.classList.remove("hidden");
+                    autoFillNombresVis(data);
+
+                } else if (data.valido === false) {
+                    // ❌ No encontrado — habilitar ingreso manual
+                    statusEl.innerHTML = `<svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>`;
+                    msgEl.className = "rounded-lg px-3 py-2 text-xs font-medium mt-1 bg-red-50 text-red-700 border border-red-200";
+                    msgEl.innerHTML = `<strong>✗ ${data.mensaje}</strong>`;
+                    msgEl.classList.remove("hidden");
+                    desbloquearNombresVis();
+
+                } else {
+                    // ⚠️ Timeout / Error — habilitar ingreso manual
+                    statusEl.innerHTML = `<svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>`;
+                    msgEl.className = "rounded-lg px-3 py-2 text-xs font-medium mt-1 bg-yellow-50 text-yellow-700 border border-yellow-200";
+                    msgEl.innerHTML = `<strong>⚠ ${data.mensaje}</strong>`;
+                    msgEl.classList.remove("hidden");
+                    desbloquearNombresVis();
+                }
+            })
+            .catch((err) => {
+                console.error("[ValidarDocumento] Error:", err.message);
+                statusEl.innerHTML = `<svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>`;
+                msgEl.className = "rounded-lg px-3 py-2 text-xs font-medium mt-1 bg-yellow-50 text-yellow-700 border border-yellow-200";
+                msgEl.innerHTML = `<strong>⚠ No se pudo verificar:</strong> ${err.message}`;
+                msgEl.classList.remove("hidden");
+                desbloquearNombresVis();
+            });
+    }
+
+    function resetDniVisMsg() {
+        const statusEl = document.getElementById("dniVisApiStatus");
+        const msgEl    = document.getElementById("dniVisApiMsg");
+        if (statusEl) { statusEl.innerHTML = ""; statusEl.classList.add("hidden"); }
+        if (msgEl)    msgEl.classList.add("hidden");
+    }
+
+    // ========== GESTIÓN DE CAMPOS DE NOMBRES (Visualizador) ==========
+
+    function autoFillNombresVis(data) {
+        const inputNombres = document.getElementById("inputNombresVis");
+        const inputApPat   = document.getElementById("inputApPatVis");
+        const inputApMat   = document.getElementById("inputApMatVis");
+
+        if (inputNombres) inputNombres.value = data.nombres         || "";
+        if (inputApPat)   inputApPat.value   = data.apellidoPaterno || "";
+        if (inputApMat)   inputApMat.value   = data.apellidoMaterno || "";
+
+        [inputNombres, inputApPat, inputApMat].forEach(f => {
+            if (!f) return;
+            f.setAttribute("readonly", "");
+            f.classList.add("disabled-field");
+        });
+        document.getElementById("nombresLockInfoVis")       ?.classList.add("hidden");
+        document.getElementById("nombresManualInfoVis")     ?.classList.add("hidden");
+        document.getElementById("nombresVerificadoInfoVis") ?.classList.remove("hidden");
+    }
+
+    function desbloquearNombresVis() {
+        ["inputNombresVis", "inputApPatVis", "inputApMatVis"].forEach(id => {
+            const f = document.getElementById(id);
+            if (!f) return;
+            f.removeAttribute("readonly");
+            f.classList.remove("disabled-field");
+            f.placeholder = "";
+        });
+        document.getElementById("nombresLockInfoVis")       ?.classList.add("hidden");
+        document.getElementById("nombresVerificadoInfoVis") ?.classList.add("hidden");
+        document.getElementById("nombresManualInfoVis")     ?.classList.remove("hidden");
+    }
+
+    function resetNombresVis() {
+        const inputNombres = document.getElementById("inputNombresVis");
+        const inputApPat   = document.getElementById("inputApPatVis");
+        const inputApMat   = document.getElementById("inputApMatVis");
+
+        [inputNombres, inputApPat, inputApMat].forEach(f => {
+            if (!f) return;
+            f.value = "";
+            f.setAttribute("readonly", "");
+            f.classList.add("disabled-field");
+            f.placeholder = "Se completará automáticamente";
+        });
+        document.getElementById("nombresVerificadoInfoVis") ?.classList.add("hidden");
+        document.getElementById("nombresManualInfoVis")     ?.classList.add("hidden");
+        document.getElementById("nombresLockInfoVis")       ?.classList.remove("hidden");
     }
 
     // ========== VALIDACIÓN EMAIL ==========

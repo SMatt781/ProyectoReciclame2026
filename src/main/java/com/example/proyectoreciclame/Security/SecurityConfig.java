@@ -65,7 +65,8 @@ public class SecurityConfig {
                                 "/js/**",
                                 "/images/**",
                                 "/webjars/**",
-                                "/acceso-denegado"
+                                "/acceso-denegado",
+                                "/api/validar-documento"
                         ).permitAll()
                         .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
