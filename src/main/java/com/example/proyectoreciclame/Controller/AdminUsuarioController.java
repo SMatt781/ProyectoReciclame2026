@@ -13,6 +13,7 @@ import com.example.proyectoreciclame.Entity.UsuarioEmpresa;
 import com.example.proyectoreciclame.Entity.SolicitudRegistro;
 
 import com.example.proyectoreciclame.Repository.*;
+import com.example.proyectoreciclame.Service.CorreoService;
 
 import com.example.proyectoreciclame.util.PaginationUtils;
 import org.springframework.security.core.Authentication;
@@ -53,6 +54,7 @@ public class AdminUsuarioController {
     private final AdminNotificacionController adminNotificacionController;
     private final SolicitudRegistroRepository solicitudRegistroRepository;
     private final IdentificacionRepository identificacionRepository;
+    private final CorreoService correoService;
 
     public AdminUsuarioController(UsuarioRepository usuarioRepository,
                                   RolRepository rolRepository,
@@ -61,7 +63,8 @@ public class AdminUsuarioController {
                                   IntentoLoginRepository intentoLoginRepository,
                                   AdminNotificacionController adminNotificacionController,
                                   SolicitudRegistroRepository solicitudRegistroRepository,
-                                  IdentificacionRepository identificacionRepository) {
+                                  IdentificacionRepository identificacionRepository,
+                                  CorreoService correoService) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.usuarioEmpresaRepository = usuarioEmpresaRepository;
@@ -70,6 +73,7 @@ public class AdminUsuarioController {
         this.adminNotificacionController = adminNotificacionController;
         this.solicitudRegistroRepository = solicitudRegistroRepository;
         this.identificacionRepository = identificacionRepository;
+        this.correoService = correoService;
     }
 
     @GetMapping("/gestion")
@@ -465,7 +469,14 @@ public class AdminUsuarioController {
                 "USUARIO_BLOQUEADO",
                 null
         );
-        // ──────────────────────────────────────────────────────────────────────
+
+        // ── NUEVO: Enviar email al usuario bloqueado ───────────────────────────
+        correoService.enviarCuentaBloqueada(
+                usuario.getCorreo(),
+                usuario.getNombres(),
+                form.getMotivo()
+        );
+        // ──────────────────────────────────────────────────────────────────────────
 
         // ── Flash message ─────────────────────────────────────────────────────
         redirectAttributes.addFlashAttribute("success", "Usuario bloqueado correctamente.");
@@ -533,7 +544,13 @@ public class AdminUsuarioController {
                 "USUARIO_DESBLOQUEADO",
                 "/login"
         );
-        // ──────────────────────────────────────────────────────────────────────
+
+        // ── NUEVO: Enviar email al usuario desbloqueado ──────────────────────
+        correoService.enviarCuentaDesbloqueada(
+                usuario.getCorreo(),
+                usuario.getNombres()
+        );
+        // ──────────────────────────────────────────────────────────────────────────
 
         // ── Flash message ─────────────────────────────────────────────────────
         redirectAttributes.addFlashAttribute("success", "Usuario desbloqueado correctamente.");

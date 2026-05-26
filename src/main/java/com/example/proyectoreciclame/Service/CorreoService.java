@@ -145,6 +145,55 @@ public class CorreoService {
         }
     }
 
+    public void enviarCuentaBloqueada(String destino, String nombres, String motivo) {
+        try {
+            String motivoFinal = (motivo != null && !motivo.isBlank())
+                    ? motivo
+                    : "Tu cuenta ha sido bloqueada. Por favor contacta con el equipo de soporte para más información.";
+
+            String htmlContent = cargarTemplate("templates/emails/cuenta-bloqueada.html");
+            htmlContent = htmlContent.replace("[[NOMBRE]]", obtenerNombreSeguro(nombres));
+            htmlContent = htmlContent.replace("[[CORREO]]", destino);
+            htmlContent = htmlContent.replace("[[MOTIVO]]", motivoFinal);
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.toString());
+            helper.setTo(destino);
+            helper.setSubject("Recíclame - Cuenta bloqueada");
+            helper.setText(htmlContent, true);
+
+            // Embeber logo
+            ClassPathResource logo = new ClassPathResource("static/images/logo-reciclame.png");
+            helper.addInline("logo", logo);
+
+            mailSender.send(message);
+        } catch (MessagingException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void enviarCuentaDesbloqueada(String destino, String nombres) {
+        try {
+            String htmlContent = cargarTemplate("templates/emails/cuenta-desbloqueada.html");
+            htmlContent = htmlContent.replace("[[NOMBRE]]", obtenerNombreSeguro(nombres));
+            htmlContent = htmlContent.replace("[[APP_URL]]", appUrl);
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.toString());
+            helper.setTo(destino);
+            helper.setSubject("Recíclame - Cuenta desbloqueada");
+            helper.setText(htmlContent, true);
+
+            // Embeber logo
+            ClassPathResource logo = new ClassPathResource("static/images/logo-reciclame.png");
+            helper.addInline("logo", logo);
+
+            mailSender.send(message);
+        } catch (MessagingException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Carga un template HTML desde el classpath
      */
