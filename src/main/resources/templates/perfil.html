@@ -54,13 +54,31 @@
 
                         <div class="space-y-4">
                             <div>
-                                <label class="text-sm font-medium text-gray-600">Nombre Completo</label>
-                                <p class="text-lg font-semibold text-gray-900" th:text="${usuario.nombreCompleto}">Matthew Salvad Sotelo</p>
+                                <!-- Nombre Completo para DNI, Razón Social para RUC -->
+                                <label class="text-sm font-medium text-gray-600"
+                                       th:text="${usuario.identificacion.tipo == 'DNI'} ? 'Nombre Completo' : 'Razón Social'">
+                                </label>
+                                <p class="text-lg font-semibold text-gray-900"
+                                   th:if="${usuario.apellidoPaterno != null}"
+                                   th:text="|${usuario.nombres} ${usuario.apellidoPaterno}|">
+                                </p>
+                                <p class="text-lg font-semibold text-gray-900"
+                                   th:if="${usuario.apellidoPaterno == null}"
+                                   th:text="${usuario.nombres}">
+                                </p>
                             </div>
 
                             <div>
                                 <label class="text-sm font-medium text-gray-600">Correo Electrónico</label>
                                 <p class="text-lg font-semibold text-gray-900" th:text="${usuario.correo}">a20222079@pucp.edu.pe</p>
+                            </div>
+
+                            <!-- Apellidos solo para DNI -->
+                            <div th:if="${usuario.apellidoPaterno != null}">
+                                <label class="text-sm font-medium text-gray-600">Apellidos</label>
+                                <p class="text-lg font-semibold text-gray-900"
+                                   th:text="|${usuario.apellidoPaterno} ${usuario.apellidoMaterno != null ? usuario.apellidoMaterno : ''}|">
+                                </p>
                             </div>
 
                             <div>
