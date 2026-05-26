@@ -66,6 +66,8 @@
             height: 1.25rem;
         }
     </style>
+    <!-- AOS - Scroll Reveal -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <div th:replace="~{fragments/responsive}"></div>
 
 </head>
@@ -109,7 +111,8 @@
             </div>
 
             <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-                <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden">
+                <article data-aos="fade-up" data-aos-delay="0"
+                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-cyan-400"></div>
                     <div class="flex justify-between items-start mb-3">
                         <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shadow-sm">
@@ -118,10 +121,11 @@
                         <span class="text-[9px] font-bold uppercase text-on-surface-variant bg-surface-container px-2 py-1 rounded">Minutos</span>
                     </div>
                     <h4 class="text-sm font-bold text-on-primary-fixed">Promedio Duración</h4>
-                    <div class="text-2xl font-extrabold text-on-primary-fixed" th:text="${promedioDuracion + ' min'}">0 min</div>
+                    <div class="text-2xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${promedioDuracion + ' min'}">0 min</div>
                 </article>
 
-                <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden">
+                <article data-aos="fade-up" data-aos-delay="100"
+                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-emerald-400"></div>
                     <div class="flex justify-between items-start mb-3">
                         <div class="w-9 h-9 rounded-lg bg-green-50 text-green-600 flex items-center justify-center shadow-sm">
@@ -132,7 +136,8 @@
                     <div class="text-lg font-extrabold text-on-primary-fixed" th:text="${#temporals.format(ultimaSesion, 'dd/MM/yyyy HH:mm')}">--/--/--</div>
                 </article>
 
-                <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden">
+                <article data-aos="fade-up" data-aos-delay="200"
+                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-orange-400"></div>
                     <div class="flex justify-between items-start mb-3">
                         <div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shadow-sm">
@@ -141,10 +146,11 @@
                         <span class="text-[9px] font-bold uppercase text-amber-600 bg-amber-100 px-2 py-1 rounded">Vigentes</span>
                     </div>
                     <h4 class="text-sm font-bold text-on-primary-fixed">Total Activos</h4>
-                    <div class="text-2xl font-extrabold text-amber-600" th:text="${totalActivos}">0</div>
+                    <div class="text-2xl font-extrabold text-amber-600 kpi-counter" th:text="${totalActivos}">0</div>
                 </article>
 
-                <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden">
+                <article data-aos="fade-up" data-aos-delay="300"
+                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-indigo-400"></div>
                     <div class="flex justify-between items-start mb-3">
                         <div class="w-9 h-9 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shadow-sm">
@@ -387,5 +393,12 @@
     </main>
 </div>
 
+<!-- AOS - Scroll Reveal -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+</script>
+<!-- Contador animado en KPIs -->
+<script th:src="@{/js/animations.js}"></script>
 </body>
 </html>

@@ -98,6 +98,8 @@
             }
         }
     </script>
+    <!-- AOS - Scroll Reveal -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .material-symbols-outlined {
@@ -742,7 +744,8 @@
 
             <section class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
 
-                <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                <article data-aos="fade-up" data-aos-delay="0"
+                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-outline to-surface-variant"></div>
 
                     <div class="flex justify-between items-start mb-3">
@@ -759,11 +762,12 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Total Administradores
                         </h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalAdmins}"></div>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${totalAdmins}"></div>
                     </div>
                 </article>
 
-                <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                <article data-aos="fade-up" data-aos-delay="100"
+                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
 
                     <div class="flex justify-between items-start mb-3">
@@ -780,11 +784,12 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Administradores Activos
                         </h4>
-                        <div class="text-3xl font-extrabold text-secondary" th:text="${activeAdmins}"></div>
+                        <div class="text-3xl font-extrabold text-secondary kpi-counter" th:text="${activeAdmins}"></div>
                     </div>
                 </article>
 
-                <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                <article data-aos="fade-up" data-aos-delay="200"
+                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container"></div>
 
                     <div class="flex justify-between items-start mb-3">
@@ -801,11 +806,12 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Administradores Bloqueados
                         </h4>
-                        <div class="text-3xl font-extrabold text-error" th:text="${blockedAdmins}"></div>
+                        <div class="text-3xl font-extrabold text-error kpi-counter" th:text="${blockedAdmins}"></div>
                     </div>
                 </article>
 
-                <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                <article data-aos="fade-up" data-aos-delay="300"
+                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
 
                     <div class="flex justify-between items-start mb-3">
@@ -1369,5 +1375,12 @@
         </div>
     </div>
 </div>
+<!-- AOS - Scroll Reveal -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+</script>
+<!-- Contador animado en KPIs -->
+<script th:src="@{/js/animations.js}"></script>
 </body>
 </html>

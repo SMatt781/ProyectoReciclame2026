@@ -52,6 +52,8 @@
             box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
         }
     </style>
+    <!-- AOS - Scroll Reveal -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <div th:replace="~{fragments/responsive}"></div>
 
 </head>
@@ -82,7 +84,8 @@
 
                 <!-- KPIs -->
                 <section class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
-                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                    <article data-aos="fade-up" data-aos-delay="0"
+                             class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-outline to-surface-variant"></div>
                         <div class="flex justify-between items-start mb-3">
                             <div class="w-9 h-9 rounded-lg bg-surface-container text-on-surface-variant flex items-center justify-center shadow-sm">
@@ -95,10 +98,11 @@
                             </div>
                         </div>
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1">Total general</h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalDescargas}"></div>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${totalDescargas}"></div>
                     </article>
 
-                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                    <article data-aos="fade-up" data-aos-delay="100"
+                             class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-outline to-surface-variant"></div>
                         <div class="flex justify-between items-start mb-3">
                             <div class="w-9 h-9 rounded-lg bg-surface-container text-on-surface-variant flex items-center justify-center shadow-sm">
@@ -111,10 +115,11 @@
                             </div>
                         </div>
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1">Normativas</h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalNormativas}"></div>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${totalNormativas}"></div>
                     </article>
 
-                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                    <article data-aos="fade-up" data-aos-delay="200"
+                             class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
                         <div class="flex justify-between items-start mb-3">
                             <div class="w-9 h-9 rounded-lg bg-secondary-container/30 text-secondary flex items-center justify-center shadow-sm">
@@ -127,10 +132,11 @@
                             </div>
                         </div>
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1">Estudios</h4>
-                        <div class="text-3xl font-extrabold text-secondary" th:text="${totalEstudios}"></div>
+                        <div class="text-3xl font-extrabold text-secondary kpi-counter" th:text="${totalEstudios}"></div>
                     </article>
 
-                    <article class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
+                    <article data-aos="fade-up" data-aos-delay="300"
+                             class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
 
                         <div class="flex justify-between items-start mb-3">
@@ -149,7 +155,7 @@
                             Exportaciones
                         </h4>
 
-                        <div class="text-3xl font-extrabold text-secondary"
+                        <div class="text-3xl font-extrabold text-secondary kpi-counter"
                              th:text="${totalExportaciones != null ? totalExportaciones : totalDescargas}">
                             0
                         </div>
@@ -378,6 +384,14 @@
 
                     </div>
                 </div>
+
+<!-- AOS - Scroll Reveal -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+</script>
+<!-- Contador animado en KPIs -->
+<script th:src="@{/js/animations.js}"></script>
 
             </div>
         </div>

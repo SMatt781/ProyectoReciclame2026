@@ -43,6 +43,8 @@
             }
         }
     </script>
+    <!-- AOS - Scroll Reveal -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
@@ -84,7 +86,8 @@
         <!-- ── Fila 1: 4 cards métricas ───────────────────────────────────── -->
         <div class="grid grid-cols-2 xl:grid-cols-4 gap-3">
 
-            <div class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
+            <div data-aos="fade-up" data-aos-delay="0"
+                 class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-400 to-slate-200"></div>
                 <div class="flex justify-between items-start mb-3">
                     <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center">
@@ -93,10 +96,11 @@
                     <span class="text-[9px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md">Total</span>
                 </div>
                 <p class="text-sm font-bold text-black mb-0.5">Administradores</p>
-                <p class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalAdmins}">—</p>
+                <p class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${totalAdmins}">—</p>
             </div>
 
-            <div class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
+            <div data-aos="fade-up" data-aos-delay="100"
+                 class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
                 <div class="flex justify-between items-start mb-3">
                     <div class="w-8 h-8 rounded-lg bg-secondary-container/30 text-secondary flex items-center justify-center">
@@ -105,10 +109,11 @@
                     <span class="text-[9px] font-bold uppercase tracking-wider bg-secondary-container/30 text-secondary px-2 py-0.5 rounded-md">Activos</span>
                 </div>
                 <p class="text-sm font-bold text-black mb-0.5">Admins Activos</p>
-                <p class="text-3xl font-extrabold text-secondary" th:text="${activeAdmins}">—</p>
+                <p class="text-3xl font-extrabold text-secondary kpi-counter" th:text="${activeAdmins}">—</p>
             </div>
 
-            <div class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
+            <div data-aos="fade-up" data-aos-delay="200"
+                 class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-blue-200"></div>
                 <div class="flex justify-between items-start mb-3">
                     <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
@@ -117,10 +122,11 @@
                     <span class="text-[9px] font-bold uppercase tracking-wider bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md">Dominios</span>
                 </div>
                 <p class="text-sm font-bold text-black mb-0.5">Dominios Activos</p>
-                <p class="text-3xl font-extrabold text-blue-600" th:text="${totalDominios}">—</p>
+                <p class="text-3xl font-extrabold text-blue-600 kpi-counter" th:text="${totalDominios}">—</p>
             </div>
 
-            <div class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
+            <div data-aos="fade-up" data-aos-delay="300"
+                 class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-emerald-300"></div>
                 <div class="flex justify-between items-start mb-3">
                     <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
@@ -155,7 +161,8 @@
         <div class="grid grid-cols-1 xl:grid-cols-4 gap-3 pb-4">
 
             <!-- Admins recientes — 1 col -->
-            <div class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+            <div data-aos="fade-up" data-aos-delay="0"
+                 class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
                 <div class="flex justify-between items-center px-4 py-3 border-b border-slate-100">
                     <h3 class="font-black text-black text-lg flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-[18px] text-secondary">admin_panel_settings</span>
@@ -182,7 +189,8 @@
             </div>
 
             <!-- Políticas activas — 1 col -->
-            <div class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
+            <div data-aos="fade-up" data-aos-delay="100"
+                 class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
                 <div class="px-4 py-3 border-b border-slate-100">
                     <h3 class="font-black text-black text-lg flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-[18px] text-[#059669]">security</span>
@@ -238,7 +246,8 @@
             </div>
 
             <!-- Actividad reciente — 1 col -->
-            <div class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
+            <div data-aos="fade-up" data-aos-delay="200"
+                 class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
                 <div class="px-4 py-3 border-b border-slate-100">
                     <h3 class="font-black text-black text-lg flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-[18px] text-slate-500">history</span>
@@ -304,7 +313,8 @@
             </div>
 
             <!-- Accesos directos — 1 col -->
-            <div class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
+            <div data-aos="fade-up" data-aos-delay="300"
+                 class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
                 <div class="px-4 py-3 border-b border-slate-100">
                     <h3 class="font-black text-black text-lg flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-[18px] text-slate-500">bolt</span>
@@ -333,7 +343,8 @@
         </div>
 
         <!-- ── Chatbot IA (referencial) ──────────────────────────────────────── -->
-        <div class="bg-primary-container rounded-[24px] p-6 overflow-hidden relative mb-4">
+        <div data-aos="fade-up" data-aos-delay="100"
+             class="bg-primary-container rounded-[24px] p-6 overflow-hidden relative mb-4">
             <div class="relative z-10">
                 <div class="flex justify-between items-center mb-5">
                     <div>
@@ -376,4 +387,13 @@
 
     </main>
 </div>
+
+<!-- AOS - Scroll Reveal -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+</script>
+<!-- Contador animado en KPIs -->
+<script th:src="@{/js/animations.js}"></script>
+
 </body></html>
