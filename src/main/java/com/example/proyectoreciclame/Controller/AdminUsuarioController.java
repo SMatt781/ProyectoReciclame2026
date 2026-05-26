@@ -55,6 +55,7 @@ public class AdminUsuarioController {
     private final SolicitudRegistroRepository solicitudRegistroRepository;
     private final IdentificacionRepository identificacionRepository;
     private final CorreoService correoService;
+    private final DominioAutorizadoRepository dominioAutorizadoRepository;
 
     public AdminUsuarioController(UsuarioRepository usuarioRepository,
                                   RolRepository rolRepository,
@@ -64,7 +65,8 @@ public class AdminUsuarioController {
                                   AdminNotificacionController adminNotificacionController,
                                   SolicitudRegistroRepository solicitudRegistroRepository,
                                   IdentificacionRepository identificacionRepository,
-                                  CorreoService correoService) {
+                                  CorreoService correoService,
+                                  DominioAutorizadoRepository dominioAutorizadoRepository) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.usuarioEmpresaRepository = usuarioEmpresaRepository;
@@ -74,6 +76,7 @@ public class AdminUsuarioController {
         this.solicitudRegistroRepository = solicitudRegistroRepository;
         this.identificacionRepository = identificacionRepository;
         this.correoService = correoService;
+        this.dominioAutorizadoRepository = dominioAutorizadoRepository;
     }
 
     @GetMapping("/gestion")
@@ -397,7 +400,7 @@ public class AdminUsuarioController {
         adminNotificacionController.crearNotificacionAdmin(
                 "Usuario editado",
                 "El usuario " + usuario.getNombres() + " " + usuario.getApellidoPaterno() + " ha sido editado.",
-                "USUARIO_EDITADO",
+                "EDICION",
                 "/admin/usuarios/gestion"
         );
         // ──────────────────────────────────────────────────────────────────────
@@ -453,7 +456,7 @@ public class AdminUsuarioController {
         adminNotificacionController.crearNotificacionAdmin(
                 "Usuario bloqueado",
                 usuario.getNombres() + " " + usuario.getApellidoPaterno() + " ha sido bloqueado.",
-                "USUARIO_BLOQUEADO",
+                "EDICION",
                 "/admin/usuarios/gestion"
         );
 
@@ -466,7 +469,7 @@ public class AdminUsuarioController {
                 usuario.getIdUsuario(),
                 "Tu cuenta ha sido bloqueada",
                 motivoNotificacion,
-                "USUARIO_BLOQUEADO",
+                "EDICION",
                 null
         );
 
@@ -705,8 +708,31 @@ public class AdminUsuarioController {
             errores.put("numeroIdentificacion", "El RUC debe tener 11 dígitos");
         }
 
-        if (form.getCorreo() == null || form.getCorreo().isBlank()) errores.put("correo", "Campo correo obligatorio");
-        else if (!form.getCorreo().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) errores.put("correo", "Correo no válido");
+        // Validar correo
+        if (form.getCorreo() == null || form.getCorreo().isBlank()) {
+            errores.put("correo", "Campo correo obligatorio");
+        } else if (!form.getCorreo().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            errores.put("correo", "Correo no válido");
+        } else {
+            // Validar que el dominio esté autorizado
+            String correoNormalizado = form.getCorreo().toLowerCase().trim();
+            int posicionArroba = correoNormalizado.lastIndexOf("@");
+            if (posicionArroba != -1) {
+                String dominioCorreo = correoNormalizado.substring(posicionArroba);
+
+                boolean autorizado = dominioAutorizadoRepository.findByEstadoTrue()
+                        .stream()
+                        .map(d -> d.getNombreDominio())
+                        .filter(d -> d != null && !d.isBlank())
+                        .map(d -> d.trim().toLowerCase())
+                        .anyMatch(dominioCorreo::equals);
+
+                if (!autorizado) {
+                    errores.put("correo", "El dominio del correo no está autorizado");
+                }
+            }
+        }
+
         if (form.getTelefono() == null || form.getTelefono().isBlank()) errores.put("telefono", "Campo teléfono obligatorio");
         if (form.getIdRol() == null) errores.put("idRol", "Debe seleccionar un rol");
         return errores;
