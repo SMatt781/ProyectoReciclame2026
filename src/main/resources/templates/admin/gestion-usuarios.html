@@ -108,6 +108,8 @@
             height: 2.5rem;
         }
     </style>
+    <!-- AOS - Scroll Reveal -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <div th:replace="~{fragments/responsive}"></div>
 
 </head>
@@ -174,7 +176,7 @@
             <div class="bg-transparent border border-outline-variant/30 rounded-xl p-4 mb-4 flex flex-col">
                 <!-- KPIs -->
                 <section class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
-                    <article
+                    <article data-aos="fade-up" data-aos-delay="0"
                             class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div
                                 class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-outline to-surface-variant">
@@ -196,12 +198,12 @@
                             <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                                 Total Usuarios
                             </h4>
-                            <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalUsuarios}">
+                            <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${totalUsuarios}">
                             </div>
                         </div>
                     </article>
 
-                    <article
+                    <article data-aos="fade-up" data-aos-delay="100"
                             class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div
                                 class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container">
@@ -222,11 +224,11 @@
                             <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                                 Usuarios Activos
                             </h4>
-                            <div class="text-3xl font-extrabold text-secondary" th:text="${usuariosActivos}"></div>
+                            <div class="text-3xl font-extrabold text-secondary kpi-counter" th:text="${usuariosActivos}"></div>
                         </div>
                     </article>
 
-                    <article
+                    <article data-aos="fade-up" data-aos-delay="200"
                             class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div
                                 class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container">
@@ -248,11 +250,11 @@
                             <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                                 Usuarios Bloqueados
                             </h4>
-                            <div class="text-3xl font-extrabold text-error" th:text="${usuariosBloqueados}"></div>
+                            <div class="text-3xl font-extrabold text-error kpi-counter" th:text="${usuariosBloqueados}"></div>
                         </div>
                     </article>
 
-                    <article
+                    <article data-aos="fade-up" data-aos-delay="300"
                             class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-amber-200">
                         </div>
@@ -272,7 +274,7 @@
                             <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                                 Pendientes
                             </h4>
-                            <div class="text-3xl font-extrabold text-amber-600" th:text="${usuariosPendientes}">
+                            <div class="text-3xl font-extrabold text-amber-600 kpi-counter" th:text="${usuariosPendientes}">
                             </div>
                         </div>
                     </article>
@@ -1179,6 +1181,13 @@
         });
     });
 </script>
+<!-- AOS - Scroll Reveal -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+</script>
+<!-- Contador animado en KPIs -->
+<script th:src="@{/js/animations.js}"></script>
 </body>
 
 </html>

@@ -111,6 +111,8 @@
             height: 2.5rem;
         }
     </style>
+    <!-- AOS - Scroll Reveal -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <div th:replace="~{fragments/responsive}"></div>
 
 </head>
@@ -143,7 +145,7 @@
                 </div>
 
                 <!-- STATS SECTION -->
-                <div
+                <div data-aos="fade-up"
                     class="flex flex-col xl:flex-row gap-8 mb-12 bg-white rounded-xl p-6 w-full shadow-sm border border-outline-variant/30">
 
                     <!-- LEFT: Donut Chart & Legend -->
@@ -168,7 +170,7 @@
                                     <circle cx="60" cy="60" r="45" fill="none" stroke="#888780" stroke-width="18"
                                         th:attr="stroke-dasharray=${dashOtro}, transform=${'rotate(' + startOtro + ' 60 60)'}" />
                                 </svg>
-                                <p class="text-4xl font-bold text-[#1a1a1a] mt-4" th:text="${totalNormas}">142</p>
+                                <p class="text-4xl font-bold text-[#1a1a1a] mt-4 kpi-counter" th:text="${totalNormas}">142</p>
                                 <p class="text-xs text-[#999] uppercase tracking-wider">NORMAS</p>
                             </div>
 
@@ -181,7 +183,7 @@
                                         <span class="text-sm font-medium text-[#666]">Economía circular (EC)</span>
                                     </div>
                                     <div class="flex items-baseline gap-3 pl-6">
-                                        <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countEc}">57</span>
+                                        <span class="text-2xl font-bold text-[#1a1a1a] kpi-counter" th:text="${countEc}">57</span>
                                         <span class="text-xs text-[#999]"
                                             th:text="${#numbers.formatDecimal(pctEc, 0, 0)} + '%'">40%</span>
                                     </div>
@@ -194,7 +196,7 @@
                                         <span class="text-sm font-medium text-[#666]">Gesti. Residuos (GR)</span>
                                     </div>
                                     <div class="flex items-baseline gap-3 pl-6">
-                                        <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countGr}">35</span>
+                                        <span class="text-2xl font-bold text-[#1a1a1a] kpi-counter" th:text="${countGr}">35</span>
                                         <span class="text-xs text-[#999]"
                                             th:text="${#numbers.formatDecimal(pctGr, 0, 0)} + '%'">25%</span>
                                     </div>
@@ -207,7 +209,7 @@
                                         <span class="text-sm font-medium text-[#666]">Envases y Embalajes (EE)</span>
                                     </div>
                                     <div class="flex items-baseline gap-3 pl-6">
-                                        <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countEe}">21</span>
+                                        <span class="text-2xl font-bold text-[#1a1a1a] kpi-counter" th:text="${countEe}">21</span>
                                         <span class="text-xs text-[#999]"
                                             th:text="${#numbers.formatDecimal(pctEe, 0, 0)} + '%'">15%</span>
                                     </div>
@@ -220,7 +222,7 @@
                                         <span class="text-sm font-medium text-[#666]">Ley REP</span>
                                     </div>
                                     <div class="flex items-baseline gap-3 pl-6">
-                                        <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countRep}">17</span>
+                                        <span class="text-2xl font-bold text-[#1a1a1a] kpi-counter" th:text="${countRep}">17</span>
                                         <span class="text-xs text-[#999]"
                                             th:text="${#numbers.formatDecimal(pctRep, 0, 0)} + '%'">12%</span>
                                     </div>
@@ -233,7 +235,7 @@
                                         <span class="text-sm font-medium text-[#666]">Otro</span>
                                     </div>
                                     <div class="flex items-baseline gap-3 pl-6">
-                                        <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countOtro}">0</span>
+                                        <span class="text-2xl font-bold text-[#1a1a1a] kpi-counter" th:text="${countOtro}">0</span>
                                         <span class="text-xs text-[#999]"
                                             th:text="${#numbers.formatDecimal(pctOtro, 0, 0)} + '%'">0%</span>
                                     </div>
@@ -1245,6 +1247,13 @@
             renderPagination();
         });
     </script>
+<!-- AOS - Scroll Reveal -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+</script>
+<!-- Contador animado en KPIs -->
+<script th:src="@{/js/animations.js}"></script>
 </body>
 
 </html>

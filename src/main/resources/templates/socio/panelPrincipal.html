@@ -112,6 +112,8 @@
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
     </style>
+    <!-- AOS - Scroll Reveal -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <div th:replace="~{fragments/responsive}"></div>
 
 </head>
@@ -143,7 +145,7 @@
             <!-- KPI Section -->
             <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 mb-8">
                 <!-- KPI 1: Mis descargas -->
-                <article
+                <article data-aos="fade-up" data-aos-delay="0"
                     class="bg-surface-container-lowest rounded-[1.5rem] p-5 ambient-shadow ghost-border relative overflow-hidden">
                     <div
                         class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container">
@@ -158,7 +160,7 @@
                         </div>
                     </div>
                     <div class="flex-1">
-                        <div class="text-4xl font-extrabold text-on-primary-fixed mb-4"
+                        <div class="text-4xl font-extrabold text-on-primary-fixed mb-4 kpi-counter"
                             th:text="${totalDescargas ?: 0}">0</div>
                         <div class="flex items-center justify-between text-sm">
                             <p class="text-on-surface-variant font-medium">Total histórico</p>
@@ -193,7 +195,7 @@
                 </article>
 
                 <!-- KPI 2: Este mes -->
-                <article
+                <article data-aos="fade-up" data-aos-delay="100"
                     class="bg-surface-container-lowest rounded-[1.5rem] p-5 ambient-shadow ghost-border relative overflow-hidden">
                     <div
                         class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200">
@@ -208,7 +210,7 @@
                         </div>
                     </div>
                     <div class="flex-1">
-                        <div class="text-4xl font-extrabold text-on-primary-fixed mb-4"
+                        <div class="text-4xl font-extrabold text-on-primary-fixed mb-4 kpi-counter"
                             th:text="${descargasMesActual ?: 0}">0</div>
                         <div class="flex items-center justify-between text-sm">
                             <p class="text-on-surface-variant font-medium">
@@ -239,7 +241,7 @@
                 </article>
 
                 <!-- KPI 4: Última visita -->
-                <article
+                <article data-aos="fade-up" data-aos-delay="200"
                     class="bg-surface-container-lowest rounded-[1.5rem] p-5 ambient-shadow ghost-border relative overflow-hidden">
                     <div
                         class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-purple-200">
@@ -288,7 +290,7 @@
                     <!-- Feature Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Estudios Card -->
-                        <div
+                        <div data-aos="fade-right" data-aos-delay="0"
                             class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_40px_-4px_rgba(0,27,46,0.06)] relative overflow-hidden group">
                             <div
                                 class="absolute -right-10 -top-10 w-40 h-40 bg-primary-fixed/20 rounded-full blur-3xl group-hover:bg-primary-fixed/30 transition-all">
@@ -420,6 +422,14 @@
             </div>
         </div>
     </div>
+<!-- AOS - Scroll Reveal -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+</script>
+<!-- Contador animado en KPIs -->
+<script th:src="@{/js/animations.js}"></script>
+
 </body>
 
 </html>
