@@ -143,7 +143,7 @@
 
             <!-- CHANGE 1: KPI Section - Full Width -->
             <!-- KPI Section -->
-            <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 mb-8">
+            <section id="tour-kpis" class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 mb-8">
                 <!-- KPI 1: Mis descargas -->
                 <article data-aos="fade-up" data-aos-delay="0"
                     class="bg-surface-container-lowest rounded-[1.5rem] p-5 ambient-shadow ghost-border relative overflow-hidden">
@@ -367,7 +367,7 @@
                 </div>
 
                 <!-- CHANGE 2: Right Sidebar: Novedades -->
-                <div class="lg:col-span-1">
+                <div id="tour-novedades" class="lg:col-span-1">
                     <div
                             class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_40px_-4px_rgba(0,27,46,0.06)] flex flex-col max-h-[520px]">                        <div class="flex items-center gap-2 mb-6">
                             <div th:replace="~{fragments/icons.html :: icon-ultimas-actualizaciones-inicio}"></div>
@@ -429,6 +429,97 @@
 </script>
 <!-- Contador animado en KPIs -->
 <script th:src="@{/js/animations.js}"></script>
+
+<!-- ───────────────────────────────────────────────────────────── -->
+<!-- TOUR GUIADO — SOCIO                                           -->
+<!-- ───────────────────────────────────────────────────────────── -->
+<script th:src="@{/js/tour.js}"></script>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const usuarioId = /*[[${sessionUser != null ? sessionUser.idUsuario : 0}]]*/ 0;
+
+        window.reciclaTourInstance = new ReciclaTour({
+            usuarioId: usuarioId,
+            rol: 'SOCIO',
+            steps: [
+                {
+                    title:   '¡Bienvenido/a a Reciclame!',
+                    emoji:   '♻️',
+                    content: 'Te mostraremos las funciones principales en menos de 1 minuto. ' +
+                             'Puedes saltar el tutorial si ya conoces la plataforma.',
+                    target:  null   /* pantalla completa centrada */
+                },
+                {
+                    title:   'Menú de Navegación',
+                    emoji:   '🧭',
+                    content: 'Este es tu menú lateral. Desde aquí accedes a todas las secciones: ' +
+                             '<strong>Inicio, Estudios, Repositorio Normativo</strong> y <strong>Mi Espacio</strong>.',
+                    target:  'aside#sidebar',
+                    position: 'right'
+                },
+                {
+                    title:   'Estudios Reciclame',
+                    emoji:   '📚',
+                    content: 'Explora investigaciones y análisis sobre economía circular. ' +
+                             'Puedes descargar o leer los documentos según tu tipo de acceso.',
+                    target:  '#sidebar a[href="/estudios"]',
+                    position: 'right'
+                },
+                {
+                    title:   'Repositorio Normativo',
+                    emoji:   '⚖️',
+                    content: 'Consulta el marco legal actualizado: leyes, decretos y reglamentos ' +
+                             'del sector medioambiental, organizados por temática.',
+                    target:  '#sidebar a[href="/normativas"]',
+                    position: 'right'
+                },
+                {
+                    title:   'Mi Espacio',
+                    emoji:   '📌',
+                    content: 'Tu área personal. Aquí encuentras tu historial de descargas y documentos favoritos.',
+                    target:  '#sidebar a[href="/socio/mi-espacio"]',
+                    position: 'right'
+                },
+                {
+                    title:   'Tu Actividad',
+                    emoji:   '📊',
+                    content: 'Estas métricas muestran tu actividad: ' +
+                             '<strong>descargas totales</strong>, <strong>descargas del mes</strong> ' +
+                             'y tu <strong>última visita</strong> registrada.',
+                    target:  '#tour-kpis',
+                    position: 'bottom'
+                },
+                {
+                    title:   'Novedades',
+                    emoji:   '🆕',
+                    content: 'Aquí aparecen los documentos <strong>nuevos o actualizados</strong> ' +
+                             'desde tu última visita. ¡Mantente siempre al día con lo que llega!',
+                    target:  '#tour-novedades',
+                    position: 'left'
+                },
+                {
+                    title:   'Notificaciones',
+                    emoji:   '🔔',
+                    content: 'Recibe alertas sobre cambios en tu cuenta, solicitudes y ' +
+                             'novedades importantes del sistema.',
+                    target:  'header a[href*="notificaciones"]',
+                    position: 'bottom'
+                },
+                {
+                    title:   'Tu Perfil',
+                    emoji:   '👤',
+                    content: 'Haz clic aquí para actualizar tus datos personales, ' +
+                             'cambiar tu contraseña o añadir una foto de perfil.',
+                    target:  'header a[href="/perfil"]',
+                    position: 'bottom'
+                }
+            ]
+        });
+
+        /* Iniciar automáticamente si es el primer acceso */
+        window.reciclaTourInstance.startIfNew();
+    });
+</script>
 
 </body>
 

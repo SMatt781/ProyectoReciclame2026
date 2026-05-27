@@ -136,7 +136,7 @@
                 </header>
 
                 <!-- Quick Access Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
+                <div id="tour-acceso-rapido" class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
                     <!-- Estudios Card -->
                     <a href="/visualizador/estudios" data-aos="fade-right" data-aos-delay="100"
                        class="group bg-surface-container-lowest rounded-2xl p-8 ambient-shadow ghost-border hover:shadow-lg transition-shadow duration-300">
@@ -181,7 +181,7 @@
                 </div>
 
                 <!-- Info Section -->
-                <div class="mt-12 max-w-2xl" data-aos="fade-up" data-aos-delay="300">
+                <div id="tour-lectura-info" class="mt-12 max-w-2xl" data-aos="fade-up" data-aos-delay="300">
                     <div class="bg-blue-50 rounded-xl p-6 border border-blue-200">
                         <div class="flex items-start gap-4">
                             <svg class="icon-md text-blue-600 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 24 24">
@@ -205,6 +205,97 @@
 <script>
     AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
 </script>
+
+<!-- ───────────────────────────────────────────────────────────── -->
+<!-- TOUR GUIADO — VISUALIZADOR                                    -->
+<!-- ───────────────────────────────────────────────────────────── -->
+<script th:src="@{/js/tour.js}"></script>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const usuarioId = /*[[${sessionUser != null ? sessionUser.idUsuario : 0}]]*/ 0;
+
+        window.reciclaTourInstance = new ReciclaTour({
+            usuarioId: usuarioId,
+            rol: 'VISUALIZADOR',
+            steps: [
+                {
+                    title:   '¡Bienvenido/a al Centro de Lectura!',
+                    emoji:   '👁️',
+                    content: 'Como <strong>Visualizador</strong>, tienes acceso a estudios y normativas ' +
+                             'en <strong>modo lectura protegida</strong>. ' +
+                             'Te mostramos cómo sacarle el máximo provecho.',
+                    target:  null   /* pantalla centrada */
+                },
+                {
+                    title:   'Menú de Navegación',
+                    emoji:   '🧭',
+                    content: 'Desde aquí accedes a todas tus secciones: ' +
+                             '<strong>Inicio, Estudios, Repositorio Normativo</strong> y <strong>Mis Lecturas</strong>.',
+                    target:  'aside#sidebar',
+                    position: 'right'
+                },
+                {
+                    title:   'Estudios del Sector',
+                    emoji:   '📚',
+                    content: 'Explora investigaciones, análisis y reportes sobre economía circular. ' +
+                             'Los documentos se abren directamente en el navegador para su lectura.',
+                    target:  '#sidebar a[href="/visualizador/estudios"]',
+                    position: 'right'
+                },
+                {
+                    title:   'Repositorio Normativo',
+                    emoji:   '⚖️',
+                    content: 'Consulta leyes, reglamentos y normativas del sector medioambiental, ' +
+                             'organizadas por temática y alcance geográfico.',
+                    target:  '#sidebar a[href="/visualizador/normativas"]',
+                    position: 'right'
+                },
+                {
+                    title:   'Mis Lecturas',
+                    emoji:   '🔖',
+                    content: 'Aquí se registran automáticamente todos los documentos que has leído. ' +
+                             'Úsalo para retomar donde lo dejaste o llevar un seguimiento de tu actividad.',
+                    target:  '#sidebar a[href="/visualizador/mis-lecturas"]',
+                    position: 'right'
+                },
+                {
+                    title:   'Acceso Rápido',
+                    emoji:   '🚀',
+                    content: 'Desde estas tarjetas puedes ir directamente a <strong>Estudios</strong> o ' +
+                             'al <strong>Repositorio Normativo</strong> con un solo clic.',
+                    target:  '#tour-acceso-rapido',
+                    position: 'bottom'
+                },
+                {
+                    title:   'Modo Lectura Protegida',
+                    emoji:   '🔒',
+                    content: 'Los documentos están <strong>protegidos contra descargas y capturas de pantalla</strong>. ' +
+                             'Solo podrás consultarlos en línea. Esto garantiza la seguridad del contenido.',
+                    target:  '#tour-lectura-info',
+                    position: 'top'
+                },
+                {
+                    title:   'Notificaciones',
+                    emoji:   '🔔',
+                    content: 'Recibe alertas sobre cambios en tu cuenta y novedades importantes del sistema.',
+                    target:  'header a[href*="notificaciones"]',
+                    position: 'bottom'
+                },
+                {
+                    title:   'Tu Perfil',
+                    emoji:   '👤',
+                    content: 'Actualiza tus datos personales, cambia tu contraseña o añade una foto de perfil.',
+                    target:  'header a[href="/perfil"]',
+                    position: 'bottom'
+                }
+            ]
+        });
+
+        /* Iniciar automáticamente si es el primer acceso */
+        window.reciclaTourInstance.startIfNew();
+    });
+</script>
+
 </body>
 
 </html>
