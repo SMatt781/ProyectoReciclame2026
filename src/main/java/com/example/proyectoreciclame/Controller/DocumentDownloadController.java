@@ -8,6 +8,8 @@ import com.example.proyectoreciclame.Repository.NormativaRepository;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
 import com.example.proyectoreciclame.Service.DocumentConverterService;
 import com.example.proyectoreciclame.Service.S3StorageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +34,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/documentos")
 public class DocumentDownloadController {
+
+    private static final Logger log = LoggerFactory.getLogger(DocumentDownloadController.class);
 
     @Autowired
     private EstudioRepository estudioRepository;
@@ -68,12 +74,22 @@ public class DocumentDownloadController {
 
         try {
             String clave = estudio.getArchivoUrl().replace("/uploads/estudios/", "estudios/");
-            byte[] fileData = s3StorageService.downloadFile(clave);
+            log.info("[STREAM] id={} formato={} clave={}", id, estudio.getFormato(), clave);
+
+            log.info("[STREAM] Generando presigned URL y descargando via HTTP...");
+            String presignedUrl = s3StorageService.generatePresignedUrl(clave, 300);
+            byte[] fileData;
+            try (InputStream is = new URL(presignedUrl).openStream()) {
+                fileData = is.readAllBytes();
+            }
+            log.info("[STREAM] Descarga OK: {} bytes", fileData.length);
 
             byte[] pdfData;
             String filename;
             if (estudio.getFormato() == Estudio.FormatoEstudio.PPTX) {
+                log.info("[STREAM] Convirtiendo PPTX a PDF con Aspose.Slides...");
                 pdfData = documentConverterService.convertPptxToPdf(fileData);
+                log.info("[STREAM] Conversión OK: {} bytes PDF", pdfData.length);
                 String base = estudio.getArchivoNombre() != null
                         ? estudio.getArchivoNombre().replaceAll("\\.[^.]+$", "")
                         : "presentacion";
@@ -90,7 +106,9 @@ public class DocumentDownloadController {
             response.setContentLength(pdfData.length);
             response.getOutputStream().write(pdfData);
             response.getOutputStream().flush();
+            log.info("[STREAM] Enviado OK");
         } catch (Exception e) {
+            log.error("[STREAM] ERROR: {}", e.getMessage(), e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                     "Error al cargar el documento: " + e.getMessage());
         }

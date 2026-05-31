@@ -49,6 +49,7 @@ public class SecurityConfig {
         csrfHandler.setCsrfRequestAttributeName(null);
 
         http
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .csrf(csrf -> csrf.csrfTokenRequestHandler(csrfHandler))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(

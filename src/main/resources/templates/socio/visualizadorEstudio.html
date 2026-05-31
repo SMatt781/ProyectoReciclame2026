@@ -185,7 +185,8 @@
 
                     <!-- Viewer Canvas -->
                     <div class="flex-1 bg-surface-container overflow-hidden relative" id="viewer-container">
-                        <input type="hidden" id="estudioFormato" th:value="${estudio.formato.name()}" />
+                        <input type="hidden" id="viewerFormato" th:value="${estudio.formato.name()}" />
+                        <input type="hidden" id="estudioId" th:value="${estudio.idEstudio}" />
 
                         <!-- PDF FORMAT: native iframe viewer -->
                         <div th:if="${estudio.formato.name() == 'PDF'}" class="w-full h-full relative">
@@ -207,19 +208,21 @@
                             </div>
                         </div>
 
-                        <!-- PPTX FORMAT: Maintenance view -->
-                        <div th:if="${estudio.formato.name() == 'PPTX'}" class="w-full h-full flex flex-col items-center justify-center text-center p-6 bg-surface-container select-none overflow-y-auto">
-                            <span class="px-4 py-1.5 bg-[#e2f0d9] text-[#006d37] border border-[#006d37]/20 rounded-full font-label text-xs font-bold uppercase tracking-wider mb-4 animate-pulse">
-                                Optimizando Experiencia
-                            </span>
-                            <img src="/images/maintenance.png" alt="Mantenimiento" class="w-64 max-w-full h-auto mb-4 drop-shadow-lg transform hover:scale-105 transition-transform duration-300" />
-                            <h2 class="font-headline font-bold text-2xl text-on-primary-fixed mb-2 max-w-md leading-snug">¡Ups! Nos atrapaste en mantenimiento</h2>
-                            <p class="font-body text-sm text-on-surface-variant max-w-sm leading-relaxed mb-6">
-                                Estamos haciendo algunos mantenimientos para esta vista de diapositivas. Cuando esté lista, te lo notificaremos de inmediato.
-                            </p>
-                            <a th:href="@{/estudios}" class="bg-[#006d37] hover:bg-[#00522a] text-white font-headline font-bold text-xs px-6 py-3 rounded-full transition-all shadow-md hover:shadow-lg flex items-center gap-2">
-                                Volver a Estudios
-                            </a>
+                        <!-- PPTX FORMAT: backend conversion to PDF via /stream -->
+                        <div th:if="${estudio.formato.name() == 'PPTX'}" class="w-full h-full relative">
+                            <div id="pptLoading" class="absolute inset-0 flex flex-col items-center justify-center bg-surface-container z-10">
+                                <div class="w-10 h-10 border-4 border-[#006d37]/20 border-t-[#006d37] rounded-full animate-spin mb-3"></div>
+                                <p class="text-sm text-on-surface-variant">Convirtiendo presentación...</p>
+                                <p class="text-xs text-on-surface-variant mt-1 opacity-60">Esto puede tomar unos segundos</p>
+                            </div>
+                            <iframe id="pptViewer" class="w-full h-full border-0" oncontextmenu="return false;"></iframe>
+                            <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]" style="z-index: 50;">
+                                <div class="transform -rotate-45 text-4xl sm:text-5xl font-bold text-gray-800 whitespace-nowrap p-10 flex flex-col gap-24 text-center">
+                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
+                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
+                                    <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -228,9 +231,10 @@
                 <script>
                     document.addEventListener('DOMContentLoaded', async function () {
                         const viewerContainer = document.getElementById('viewer-container');
-                        const formatoInput = document.getElementById('estudioFormato');
+                        const formatoInput = document.getElementById('viewerFormato');
                         const formato = formatoInput ? formatoInput.value : '';
-                        const estudioId = window.location.pathname.split('/').pop();
+                        const estudioId = document.getElementById('estudioId').value;
+                        console.log('[PPTX] formato=' + formato + ' estudioId=' + estudioId);
 
                         if (formato === 'PDF') {
                             const iframeEl = document.getElementById('pdfViewer');
@@ -241,6 +245,24 @@
                                     iframeEl.src = data.url + '#toolbar=0&navpanes=0&scrollbar=0';
                                 } catch (err) {
                                     console.error('Error cargando PDF:', err);
+                                }
+                            }
+                        } else if (formato === 'PPTX') {
+                            const iframeEl = document.getElementById('pptViewer');
+                            const loadingEl = document.getElementById('pptLoading');
+                            if (iframeEl) {
+                                try {
+                                    const resp = await fetch('/documentos/estudio/' + estudioId + '/stream');
+                                    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                                    const blob = await resp.blob();
+                                    const blobUrl = URL.createObjectURL(blob);
+                                    iframeEl.onload = function () {
+                                        if (loadingEl) loadingEl.style.display = 'none';
+                                    };
+                                    iframeEl.src = blobUrl + '#toolbar=0&navpanes=0';
+                                } catch (err) {
+                                    console.error('[PPTX] Error:', err);
+                                    if (loadingEl) loadingEl.style.display = 'none';
                                 }
                             }
                         }
