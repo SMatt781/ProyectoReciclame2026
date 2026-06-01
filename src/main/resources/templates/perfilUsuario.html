@@ -45,6 +45,8 @@
             },
         }
     </script>
+    <!-- AOS - Scroll Reveal -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <div th:replace="~{fragments/responsive}"></div>
 
 </head>
@@ -61,7 +63,7 @@
         <main class="flex-1 overflow-y-auto px-8 py-8">
             <div class="max-w-5xl mx-auto">
 
-                <div class="mb-8">
+                <div class="mb-8" data-aos="fade-down">
                     <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                         <div>
                             <h1 class="text-[32px] font-bold text-[#001B2E] tracking-tight">Mi Perfil</h1>
@@ -109,7 +111,7 @@
                     <span th:text="${errorContrasena}" class="font-medium text-sm"></span>
                 </div>
 
-                <div class="bg-surface-container-lowest rounded-[32px] border border-outline-variant/30 shadow-sm overflow-hidden">
+                <div data-aos="fade-up" data-aos-delay="80" class="bg-surface-container-lowest rounded-[32px] border border-outline-variant/30 shadow-sm overflow-hidden">
 
                     <div class="p-8 border-b border-outline-variant/20 bg-gradient-to-r from-surface-container-low to-transparent">
                         <div class="flex items-center gap-6">
@@ -223,7 +225,7 @@
                     </form>
                 </div>
                 <!-- ── CAMBIAR CONTRASEÑA ────────────────────────────────────── -->
-                <div class="mt-8 bg-surface-container-lowest rounded-[32px] border border-outline-variant/30 shadow-sm overflow-hidden">
+                <div data-aos="fade-up" data-aos-delay="140" class="mt-8 bg-surface-container-lowest rounded-[32px] border border-outline-variant/30 shadow-sm overflow-hidden">
 
                     <div class="p-8 border-b border-outline-variant/20 bg-gradient-to-r from-surface-container-low to-transparent">
                         <div class="flex items-center gap-3">
@@ -559,6 +561,11 @@
             });
         });
     });
+</script>
+<!-- AOS - Scroll Reveal -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
 </script>
 
 </html>
