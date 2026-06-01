@@ -92,6 +92,8 @@
         .icon-lg { width: 2rem; height: 2rem; }
         .icon-xl { width: 2.5rem; height: 2.5rem; }
     </style>
+    <!-- AOS - Scroll Reveal -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <div th:replace="~{fragments/responsive}"></div>
 
 </head>
@@ -107,7 +109,7 @@
         <div class="w-full">
 
             <!-- Header igual al dashboard -->
-            <div class="mb-5">
+            <div class="mb-5" data-aos="fade-down">
                 <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                     <div>
                         <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">
@@ -136,7 +138,8 @@
                 <div class="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
 
                     <!-- Perfil -->
-                    <aside class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border h-fit">
+                    <aside data-aos="fade-right" data-aos-delay="100"
+                           class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border h-fit">
                         <div class="flex flex-col items-center text-center">
                             <!-- Avatar: DNI (dos iniciales) o RUC (una inicial de razón social) -->
                             <div class="mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-secondary-container/30 text-3xl font-extrabold text-secondary">
@@ -181,10 +184,11 @@
                     </aside>
 
                     <!-- Panel derecho -->
-                    <section class="space-y-6">
+                    <section data-aos="fade-left" data-aos-delay="150" class="space-y-6">
 
                         <!-- Datos del solicitante -->
-                        <section class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border">
+                        <section data-aos="fade-up" data-aos-delay="200"
+                                 class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border">
                             <div class="mb-6">
                                 <h3 class="font-headline text-lg font-bold text-on-primary-fixed">
                                     Datos del solicitante
@@ -243,7 +247,8 @@
                         </section>
 
                         <!-- Evaluación -->
-                        <section class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border">
+                        <section data-aos="fade-up" data-aos-delay="300"
+                                 class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border">
                             <div class="mb-6">
                                 <h3 class="font-headline text-lg font-bold text-on-primary-fixed">
                                     Evaluación de acceso
@@ -292,5 +297,10 @@
         </div>
     </main>
 </div>
+<!-- AOS - Scroll Reveal -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+</script>
 </body>
 </html>
