@@ -612,12 +612,15 @@ public class SuperadminController {
 
         // ── Sesiones y seguridad ──────────────────────────────────────────
         LocalDateTime inicioDia = LocalDate.now().atStartOfDay();
+
         model.addAttribute("sesionesActivas",
                 registroSesionRepository.countSesionesActivas(LocalDateTime.now().minusHours(8)));
         model.addAttribute("sesionesHoy",
                 registroSesionRepository.countByFechaInicioAfter(inicioDia));
-        model.addAttribute("intentosFallidosHoy",
-                intentoLoginRepository.countByFechaAfterAndExitosoFalse(inicioDia));
+
+        long intentosFallidos = intentoLoginRepository.countByFechaAfterAndExitosoFalse(inicioDia);
+        model.addAttribute("intentosFallidosHoy", intentosFallidos);
+
         model.addAttribute("recuperacionesActivas",
                 recuperacionPasswordRepository.countByUsadoFalse());
         model.addAttribute("solicitudesPendientes",
@@ -627,6 +630,7 @@ public class SuperadminController {
         long t0 = System.currentTimeMillis();
         rolRepository.count();
         long latencia = System.currentTimeMillis() - t0;
+
         model.addAttribute("dbLatencyMs", latencia);
         model.addAttribute("dbConexionOk", true);
 
@@ -643,11 +647,12 @@ public class SuperadminController {
         Usuario superadmin = usuarioRepository
                 .findByCorreoWithRol(authentication.getName()).orElse(null);
         Long superadminId = superadmin != null ? superadmin.getIdUsuario() : null;
-        // ── Alerta automática si hay muchos intentos fallidos ─────────────────
-        long intentosFallidos = intentoLoginRepository.countByFechaAfterAndExitosoFalse(inicioDia);
+
+        // ── Alerta automática si hay muchos intentos fallidos ─────────────
         if (intentosFallidos >= 5 && superadminId != null) {
             boolean yaExisteAlerta = notificacionRepository
                     .existsAlertaSistemaHoy(superadminId, "SISTEMA_ALERTA", inicioDia);
+
             if (!yaExisteAlerta) {
                 crearNotificacionSuperadmin(
                         "⚠️ Alerta de seguridad",
@@ -658,32 +663,48 @@ public class SuperadminController {
             }
         }
 
-        // ── CPU, RAM, Disco ───────────────────────────────────────────────────────
+        // ── Variables para análisis inteligente del sistema ───────────────
+        int cpuUsage = -1;
+        int ramUsagePct = -1;
+        int diskUsagePct = -1;
+
+        long ramUsadaMb = 0;
+        long ramTotalMb = 0;
+        long usadoGb = 0;
+        long totalGb = 0;
+
+        // ── CPU, RAM, Disco ───────────────────────────────────────────────
         try {
             // CPU
             com.sun.management.OperatingSystemMXBean osBean =
                     (com.sun.management.OperatingSystemMXBean)
                             java.lang.management.ManagementFactory.getOperatingSystemMXBean();
+
             double cpuLoad = osBean.getCpuLoad();
-            int cpuUsage = cpuLoad >= 0 ? (int) Math.round(cpuLoad * 100) : -1;
+            cpuUsage = cpuLoad >= 0 ? (int) Math.round(cpuLoad * 100) : -1;
+
             model.addAttribute("cpuUsage", cpuUsage);
 
             // RAM
             Runtime runtime = Runtime.getRuntime();
-            long ramTotalMb = runtime.totalMemory() / (1024 * 1024);
+            ramTotalMb = runtime.totalMemory() / (1024 * 1024);
             long ramLibreMb = runtime.freeMemory() / (1024 * 1024);
-            long ramUsadaMb = ramTotalMb - ramLibreMb;
-            int ramUsagePct = (int) ((ramUsadaMb * 100) / ramTotalMb);
+            ramUsadaMb = ramTotalMb - ramLibreMb;
+
+            ramUsagePct = ramTotalMb > 0 ? (int) ((ramUsadaMb * 100) / ramTotalMb) : 0;
+
             model.addAttribute("ramUsage", ramUsagePct);
             model.addAttribute("ramUsadaMb", ramUsadaMb);
             model.addAttribute("ramTotalMb", ramTotalMb);
 
             // Disco
             java.io.File disco = new java.io.File("/");
-            long totalGb = disco.getTotalSpace() / (1024 * 1024 * 1024);
+            totalGb = disco.getTotalSpace() / (1024 * 1024 * 1024);
             long libreGb = disco.getUsableSpace() / (1024 * 1024 * 1024);
-            long usadoGb = totalGb - libreGb;
-            int diskUsagePct = totalGb > 0 ? (int) ((usadoGb * 100) / totalGb) : 0;
+            usadoGb = totalGb - libreGb;
+
+            diskUsagePct = totalGb > 0 ? (int) ((usadoGb * 100) / totalGb) : 0;
+
             model.addAttribute("diskUsage", diskUsagePct);
             model.addAttribute("diskUsadoGb", usadoGb);
             model.addAttribute("diskTotalGb", totalGb);
@@ -697,6 +718,60 @@ public class SuperadminController {
             model.addAttribute("diskUsadoGb", 0);
             model.addAttribute("diskTotalGb", 0);
         }
+
+        // ── IA básica: análisis inteligente del estado del sistema ────────
+        int puntosRiesgo = 0;
+        List<String> factoresDetectados = new ArrayList<>();
+
+
+        if (cpuUsage >= 80) {
+            puntosRiesgo += 2;
+            factoresDetectados.add("uso elevado de CPU");
+        }
+
+        if (ramUsagePct >= 80) {
+            puntosRiesgo += 2;
+            factoresDetectados.add("uso elevado de memoria RAM");
+        }
+
+        if (diskUsagePct >= 75) {
+            puntosRiesgo += 2;
+            factoresDetectados.add("almacenamiento cercano al límite");
+        }
+
+        if (latencia >= 100) {
+            puntosRiesgo += 1;
+            factoresDetectados.add("latencia elevada en la base de datos");
+        }
+
+        if (intentosFallidos >= 5) {
+            puntosRiesgo += 2;
+            factoresDetectados.add("múltiples intentos fallidos de acceso");
+        }
+
+        String iaNivelRiesgo;
+        String iaResumenSistema;
+        String iaRecomendacionSistema;
+
+        if (puntosRiesgo >= 5) {
+            iaNivelRiesgo = "CRÍTICO";
+            iaResumenSistema = "La IA detectó señales relevantes de riesgo operativo o de seguridad en el sistema.";
+            iaRecomendacionSistema = "Revisar recursos del servidor, limpiar almacenamiento, validar logs de acceso y verificar posibles intentos de ingreso no autorizados.";
+        } else if (puntosRiesgo >= 3) {
+            iaNivelRiesgo = "MEDIO";
+            iaResumenSistema = "La IA detectó condiciones que podrían afectar el rendimiento si continúan aumentando.";
+            iaRecomendacionSistema = "Monitorear CPU, RAM, disco, latencia de base de datos y actividad reciente de usuarios.";
+        } else {
+            iaNivelRiesgo = "BAJO";
+            iaResumenSistema = "La IA no detectó riesgos relevantes. El sistema se encuentra estable.";
+            iaRecomendacionSistema = "Mantener el monitoreo preventivo y revisar periódicamente las métricas del sistema.";
+        }
+
+        model.addAttribute("iaNivelRiesgo", iaNivelRiesgo);
+        model.addAttribute("iaResumenSistema", iaResumenSistema);
+        model.addAttribute("iaRecomendacionSistema", iaRecomendacionSistema);
+        model.addAttribute("iaFactoresDetectados", factoresDetectados);
+
 
         return "superadmin/estadoSistema";
     }
