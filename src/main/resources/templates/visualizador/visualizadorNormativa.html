@@ -388,24 +388,23 @@
 
                         <!-- Panel: Relacionados -->
                         <div id="panel-relacionados" class="h-full overflow-y-auto p-5" style="display:none;">
-                            <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-4 flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
-                                    </path>
+                                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                                 </svg>
                                 También te podría interesar
                             </h3>
-                            <div class="flex flex-col gap-2">
+                            <div class="flex flex-col gap-3">
                                 <div th:each="sim : ${detalle.normativasSimilares}"
                                      class="bg-[#f9f9fb] p-3 rounded-xl border border-transparent hover:border-outline-variant/30 transition-colors">
-                                    <a th:href="@{/normativas/{id}(id=${sim.id})}" class="block">
-                                        <h4 class="text-sm font-bold text-on-primary-fixed leading-snug" th:text="${sim.titulo}">Título similar</h4>
+                                    <a th:href="@{/visualizador/normativas/{id}(id=${sim.id})}" class="block">
+                                        <h4 class="text-sm font-bold text-on-primary-fixed leading-snug mb-1" th:text="${sim.titulo}">Título similar</h4>
                                         <div class="flex items-center justify-between mt-2">
-                                            <span class="text-xs text-on-surface-variant">★★★★☆</span>
+                                            <span class="text-xs text-on-surface-variant" th:text="${sim.anio != null ? sim.anio : ''}"></span>
                                             <span th:text="${sim.acceso}"
                                                   th:classappend="${#strings.equalsIgnoreCase(sim.acceso, 'PAGO') ? 'text-de-pago bg-de-pago/10' : 'text-gratuito bg-gratuito/10'}"
-                                                  class="px-2 py-0.5 rounded-md text-xs font-bold uppercase">GRATIS</span>
+                                                  class="px-2 py-0.5 rounded-md text-xs font-bold uppercase">GRATUITO</span>
                                         </div>
                                     </a>
                                 </div>

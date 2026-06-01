@@ -45,8 +45,15 @@ public interface NormativaRepository extends JpaRepository<Normativa, Long> {
     @Query("SELECT n FROM Normativa n WHERE n.organismoEmisor = :organismoEmisor AND n.idNormativa != :idActual AND n.estado IN (com.example.proyectoreciclame.Entity.Normativa.EstadoNormativa.VIGENTE, com.example.proyectoreciclame.Entity.Normativa.EstadoNormativa.PUBLICADA) ORDER BY n.fechaActualizacion DESC")
     List<Normativa> findNormativasRelacionadas(@Param("organismoEmisor") String organismoEmisor, @Param("idActual") Long idActual, Pageable pageable);
 
-    @Query("SELECT DISTINCT n FROM Normativa n JOIN n.categorias c WHERE c.idCategoria IN :idsCategorias AND n.idNormativa != :idActual AND n.estado IN (com.example.proyectoreciclame.Entity.Normativa.EstadoNormativa.VIGENTE, com.example.proyectoreciclame.Entity.Normativa.EstadoNormativa.PUBLICADA) ORDER BY n.fechaActualizacion DESC")
-    List<Normativa> findNormativasSimilaresPorCategoria(@Param("idsCategorias") List<Integer> idsCategorias, @Param("idActual") Long idActual, Pageable pageable);
+    @Query("SELECT DISTINCT n FROM Normativa n JOIN n.categorias c " +
+           "WHERE n.idNormativa <> :idActual AND n.eliminadoEn IS NULL " +
+           "AND c IN (SELECT c2 FROM Normativa n2 JOIN n2.categorias c2 WHERE n2.idNormativa = :idActual) " +
+           "ORDER BY n.fechaActualizacion DESC")
+    List<Normativa> findNormativasSimilaresPorCategoria(@Param("idActual") Long idActual);
+
+    @Query("SELECT n FROM Normativa n WHERE n.anio = :anio AND n.idNormativa <> :idActual " +
+           "AND n.eliminadoEn IS NULL ORDER BY n.fechaActualizacion DESC")
+    List<Normativa> findNormativasSimilaresPorAnio(@Param("anio") Integer anio, @Param("idActual") Long idActual);
 
     List<Normativa> findByFechaCreacionAfter(LocalDateTime fechaCreacion);
     List<Normativa> findByFechaCreacionAfterAndEliminadoEnIsNull(LocalDateTime fechaCreacion);

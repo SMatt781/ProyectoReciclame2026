@@ -77,81 +77,44 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
-
-        .ambient-shadow {
-            box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06);
-        }
-
-        .ghost-border {
-            box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
-        }
-
-        /* SVG Icon utility */
-        .icon-sm {
-            width: 1.25rem;
-            height: 1.25rem;
-        }
-
-        .icon-md {
-            width: 1.5rem;
-            height: 1.5rem;
-        }
-
-        .icon-lg {
-            width: 2rem;
-            height: 2rem;
-        }
-
-        .icon-xl {
-            width: 2.5rem;
-            height: 2.5rem;
-        }
+        .ambient-shadow { box-shadow: 0 4px 24px -4px rgba(0, 27, 46, 0.06); }
+        .ghost-border   { box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15); }
+        .icon-sm  { width: 1.25rem; height: 1.25rem; }
+        .icon-md  { width: 1.5rem;  height: 1.5rem;  }
+        .icon-lg  { width: 2rem;    height: 2rem;    }
+        .icon-xl  { width: 2.5rem;  height: 2.5rem;  }
     </style>
     <div th:replace="~{fragments/responsive}"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 
-<body
-    class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+<body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
     <!-- SideNavBar -->
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
     <!-- Main Content Canvas -->
     <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
-        <!-- TopAppBar -->
-        <!-- TopAppBar -->
         <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-        <!-- Main Scrollable Content -->
         <main class="flex-1 overflow-y-auto px-4 sm:px-6 py-2 bg-[#f9f9ff]">
-            <div class="w-full ">
-                <!-- Page Header -->
+            <div class="w-full">
+                <!-- Breadcrumb + Título -->
                 <header class="mb-6">
-                    <div
-                        class="flex items-center font-label text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-4 flex-wrap gap-2">
+                    <div class="flex items-center font-label text-xs font-semibold text-on-surface-variant uppercase tracking-widest mb-4 flex-wrap gap-2">
                         <a th:href="@{/socio}" class="cursor-pointer hover:underline">INICIO</a>
-                        <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
-                        </svg>
+                        <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
                         <a th:href="@{/estudios}" class="cursor-pointer hover:underline">ESTUDIOS</a>
-                        <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
-                        </svg>
-                        <span class="text-on-primary-fixed" th:text="${estudio.titulo}">ANÁLISIS DE LA CADENA DE VALOR
-                            DEL PLÁSTICO 2024</span>
+                        <svg class="icon-md text-outline-variant" fill="currentColor" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                        <span class="text-on-primary-fixed" th:text="${estudio.titulo}">TÍTULO</span>
                     </div>
-                    <h1 th:text="${estudio.titulo}" class="font-headline text-[2rem] leading-tight font-bold text-on-primary-fixed mb-4 
-                        max-w-5xl tracking-tight">
+                    <h1 th:text="${estudio.titulo}" class="font-headline text-[2rem] leading-tight font-bold text-on-primary-fixed mb-4 max-w-5xl tracking-tight">
                         Análisis de la Cadena de Valor del Plástico 2024
                     </h1>
                     <div class="flex items-center gap-3 mb-2">
                         <span th:text="${estudio.estado.name().replace('_', ' ')}"
-                            th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'bg-[#006d37] text-white' : (estudio.estado.name() == 'BORRADOR' ? 'bg-[#e0e0e0] text-[#666]' : 'bg-[#ba1a1a] text-white')}"
-                            class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold uppercase">
-                            VIGENTE
-                        </span>
-                        <span class="inline-flex items-center gap-1.5 justify-center bg-[#e2e8f8] text-[#00210c] px-4 py-1.5 
-                            rounded-full font-label text-xs font-bold tracking-wide uppercase">
+                              th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'bg-[#006d37] text-white' : (estudio.estado.name() == 'BORRADOR' ? 'bg-[#e0e0e0] text-[#666]' : 'bg-[#ba1a1a] text-white')}"
+                              class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold uppercase">VIGENTE</span>
+                        <span class="inline-flex items-center gap-1.5 justify-center bg-[#e2e8f8] text-[#00210c] px-4 py-1.5 rounded-full font-label text-xs font-bold tracking-wide uppercase">
                             <div th:replace="~{fragments/icons.html :: icon-solo-lectura}"></div>
                             <span th:text="${estudio.tipoAcceso}">SOLO LECTURA</span>
                         </span>
@@ -159,47 +122,43 @@
                 </header>
             </div>
 
-            <div class="flex-1 flex flex-col xl:flex-row gap-10">
-                <!-- PDF Viewer Card (Level 1 Surface) -->
+            <!-- Layout: viewer (izq) + panel con tabs (der) -->
+            <div class="flex-1 flex flex-col xl:flex-row gap-6">
+
+                <!-- PDF / PPTX Viewer -->
                 <section class="flex-1 bg-surface-container-lowest rounded-xl flex flex-col overflow-hidden min-w-0"
-                    style="box-shadow: 0 24px 40px -4px rgba(0, 27, 46, 0.04);">
-                    <!-- Viewer Toolbar -->
-                    <div
-                        class="h-16 bg-surface-container-lowest flex items-center justify-between px-6 z-10 sticky top-0 border-b border-surface-container/50 flex-wrap">
+                         style="box-shadow: 0 24px 40px -4px rgba(0, 27, 46, 0.04);">
+                    <!-- Toolbar -->
+                    <div class="h-16 bg-surface-container-lowest flex items-center justify-between px-6 z-10 sticky top-0 border-b border-surface-container/50 flex-wrap">
                         <div class="flex items-center gap-3">
                             <svg class="icon-md text-on-surface-variant" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
+                                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/>
                             </svg>
                             <h3 class="font-headline font-semibold text-on-primary-fixed text-sm">Vista Previa</h3>
                             <div class="h-4 w-px bg-outline-variant/30"></div>
                             <span th:text="${estudio.archivoNombre != null ? estudio.archivoNombre : 'Documento'}"
-                                class="font-body text-sm text-on-surface-variant w-40 truncate sm:w-auto">analisis_plastico_2024_vfinal.pdf</span>
+                                  class="font-body text-sm text-on-surface-variant w-40 truncate sm:w-auto">documento.pdf</span>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <span
-                                class="font-label text-xs font-medium text-error uppercase px-2 py-1 bg-error-container rounded-md">
-                                Vista Protegida
-                            </span>
-                        </div>
+                        <span class="font-label text-xs font-medium text-error uppercase px-2 py-1 bg-error-container rounded-md">Vista Protegida</span>
                     </div>
 
-                    <!-- Viewer Canvas -->
+                    <!-- Canvas -->
                     <div class="flex-1 bg-surface-container overflow-hidden relative" id="viewer-container">
                         <input type="hidden" id="viewerFormato" th:value="${estudio.formato.name()}" />
-                        <input type="hidden" id="estudioId" th:value="${estudio.idEstudio}" />
+                        <input type="hidden" id="estudioId"    th:value="${estudio.idEstudio}" />
 
-                        <!-- PDF FORMAT: native iframe viewer -->
+                        <!-- PDF -->
                         <div th:if="${estudio.formato.name() == 'PDF'}" class="w-full h-full relative">
                             <iframe id="pdfViewer" th:if="${estudio.archivoUrl != null}"
-                                class="w-full h-full border-0" oncontextmenu="return false;"></iframe>
+                                    class="w-full h-full border-0" oncontextmenu="return false;"></iframe>
                             <div th:if="${estudio.archivoUrl == null}"
-                                class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
+                                 class="w-full h-full flex items-center justify-center text-on-surface-variant flex-col">
                                 <svg class="icon-xl opacity-50 mb-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
                                 </svg>
                                 <span>No hay documento disponible</span>
                             </div>
-                            <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]" style="z-index: 50;">
+                            <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]" style="z-index:50;">
                                 <div class="transform -rotate-45 text-4xl sm:text-5xl font-bold text-gray-800 whitespace-nowrap p-10 flex flex-col gap-24 text-center">
                                     <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
                                     <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
@@ -208,7 +167,7 @@
                             </div>
                         </div>
 
-                        <!-- PPTX FORMAT: backend conversion to PDF via /stream -->
+                        <!-- PPTX -->
                         <div th:if="${estudio.formato.name() == 'PPTX'}" class="w-full h-full relative">
                             <div id="pptLoading" class="absolute inset-0 flex flex-col items-center justify-center bg-surface-container z-10">
                                 <div class="w-10 h-10 border-4 border-[#006d37]/20 border-t-[#006d37] rounded-full animate-spin mb-3"></div>
@@ -216,7 +175,7 @@
                                 <p class="text-xs text-on-surface-variant mt-1 opacity-60">Esto puede tomar unos segundos</p>
                             </div>
                             <iframe id="pptViewer" class="w-full h-full border-0" oncontextmenu="return false;"></iframe>
-                            <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]" style="z-index: 50;">
+                            <div class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden opacity-[0.15]" style="z-index:50;">
                                 <div class="transform -rotate-45 text-4xl sm:text-5xl font-bold text-gray-800 whitespace-nowrap p-10 flex flex-col gap-24 text-center">
                                     <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
                                     <span th:text="${(sessionUser != null ? sessionUser.nombreCompleto : 'Usuario') + ' - CONFIDENCIAL'}">usuario - CONFIDENCIAL</span>
@@ -227,160 +186,292 @@
                     </div>
                 </section>
 
-                <!-- Viewer Script -->
-                <script>
-                    document.addEventListener('DOMContentLoaded', async function () {
-                        const viewerContainer = document.getElementById('viewer-container');
-                        const formatoInput = document.getElementById('viewerFormato');
-                        const formato = formatoInput ? formatoInput.value : '';
-                        const estudioId = document.getElementById('estudioId').value;
-                        console.log('[PPTX] formato=' + formato + ' estudioId=' + estudioId);
+                <!-- ══════════════════════════════════════════════
+                     Panel derecho con TABS (igual que normativa)
+                     ══════════════════════════════════════════════ -->
+                <div class="w-full xl:w-[420px] flex-shrink-0 flex flex-col xl:h-[calc(100vh-12rem)] bg-white rounded-2xl shadow-sm border border-outline-variant/20 overflow-hidden">
 
-                        if (formato === 'PDF') {
-                            const iframeEl = document.getElementById('pdfViewer');
-                            if (iframeEl) {
-                                try {
-                                    const resp = await fetch('/documentos/estudio/' + estudioId + '/presigned-url');
-                                    const data = await resp.json();
-                                    iframeEl.src = data.url + '#toolbar=0&navpanes=0&scrollbar=0';
-                                } catch (err) {
-                                    console.error('Error cargando PDF:', err);
-                                }
-                            }
-                        } else if (formato === 'PPTX') {
-                            const iframeEl = document.getElementById('pptViewer');
-                            const loadingEl = document.getElementById('pptLoading');
-                            if (iframeEl) {
-                                try {
-                                    const resp = await fetch('/documentos/estudio/' + estudioId + '/stream');
-                                    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-                                    const blob = await resp.blob();
-                                    const blobUrl = URL.createObjectURL(blob);
-                                    iframeEl.onload = function () {
-                                        if (loadingEl) loadingEl.style.display = 'none';
-                                    };
-                                    iframeEl.src = blobUrl + '#toolbar=0&navpanes=0';
-                                } catch (err) {
-                                    console.error('[PPTX] Error:', err);
-                                    if (loadingEl) loadingEl.style.display = 'none';
-                                }
-                            }
-                        }
+                    <!-- Tab Nav -->
+                    <div class="flex-shrink-0 flex px-2 border-b border-outline-variant/40">
+                        <button id="tab-est-detalles" onclick="switchEstTab('detalles')"
+                                class="flex items-center gap-2 px-4 py-3 text-sm font-semibold text-on-surface border-b-2 border-on-surface -mb-px transition-all duration-200">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM12 18H8v-2h4v2zm4-4H8v-2h8v2zm0-4H8V8h8v2z"/>
+                            </svg>
+                            Detalles
+                        </button>
+                        <button id="tab-est-ia" onclick="switchEstTab('ia')"
+                                class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-on-surface-variant border-b-2 border-transparent -mb-px transition-all duration-200 hover:text-on-surface">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                            </svg>
+                            Resumen IA
+                        </button>
+                        <button id="tab-est-relacionados" onclick="switchEstTab('relacionados')"
+                                class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-on-surface-variant border-b-2 border-transparent -mb-px transition-all duration-200 hover:text-on-surface">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            Relacionados
+                        </button>
+                    </div>
 
-                        document.addEventListener('contextmenu', event => event.preventDefault());
-                        document.addEventListener('keydown', function (e) {
-                            if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S')) ||
-                                e.key === 'F12' || e.key === 'PrintScreen') { e.preventDefault(); return false; }
-                        });
-                        window.addEventListener('keyup', function (e) { if (e.key === 'PrintScreen') navigator.clipboard.writeText(''); });
-                        window.addEventListener('blur', function () { if (viewerContainer) viewerContainer.style.filter = 'blur(10px)'; });
-                        window.addEventListener('focus', function () { if (viewerContainer) viewerContainer.style.filter = 'none'; });
-                    });
-                </script>
+                    <!-- Tab Content -->
+                    <div class="flex-1 overflow-hidden">
 
-                <!-- Right Metadata Panel -->
-                <div class="w-full xl:w-[380px] flex-shrink-0 flex flex-col space-y-10">
-                    <!-- Key Details + Meta Grid -->
-                    <section class="space-y-6 bg-white rounded-xl p-5 shadow-sm">
-                        <div>
-                            <h4 class="font-label text-xs font-bold text-on-surface-variant
-                                uppercase tracking-wider mb-2">
-                                NOMBRE DEL ESTUDIO</h4>
-                            <p th:text="${estudio.titulo}" class="font-headline font-semibold text-on-primary-fixed text-[1.125rem]
-                                leading-snug">
-                                Análisis de la Cadena de Valor del Plástico 2024
-                            </p>
-                        </div>
-                        <div>
-                            <h4 class="font-label text-xs font-bold text-on-surface-variant 
-                                uppercase tracking-wider mb-2">
-                                DESCRIPCIÓN</h4>
-                            <p th:text="${estudio.descripcion}" class="font-body text-sm text-on-surface-variant leading-relaxed 
-                            text-[#1a1a1a]">
-                                Evaluar los flujos de materiales plásticos...
-                            </p>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-y-6 gap-x-4 pt-2 border-t border-surface-variant/40">
+                        <!-- Panel: Detalles -->
+                        <div id="panel-est-detalles" class="h-full overflow-y-auto p-5 space-y-4">
                             <div>
-                                <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">
-                                    AÑO</h3>
-                                <p th:text="${estudio.anio}"
-                                    class="font-body text-sm font-medium text-on-primary-fixed">2024</p>
-                            </div>
-                            <div>
-                                <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">
-                                    FORMATO</h3>
-                                <div
-                                    class="font-body text-sm font-medium text-on-primary-fixed flex items-center gap-1.5 [&_svg]:w-[18px] [&_svg]:h-[18px]">
-                                    <th:block th:switch="${estudio.formato.name()}">
-                                        <th:block th:case="'PDF'">
-                                            <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
-                                        </th:block>
-                                        <th:block th:case="'PPTX'">
-                                            <div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div>
-                                        </th:block>
-                                        <th:block th:case="'XLSX'">
-                                            <div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div>
-                                        </th:block>
-                                        <th:block th:case="*">
-                                            <div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div>
-                                        </th:block>
-                                    </th:block>
-                                    <span th:text="${estudio.formato}">PDF</span>
-                                </div>
-                            </div>
-                            <div class="col-span-2">
-                                <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">
-                                    FECHA DE PUBLICACIÓN</h3>
-                                <p th:text="${estudio.fechaPublicacion != null ? #temporals.format(estudio.fechaPublicacion, 'dd ''de'' MMMM, yyyy') : 'No especificada'}"
-                                    class="font-body text-sm font-medium text-on-primary-fixed">14 de Octubre, 2024</p>
-                            </div>
-                            <div class="col-span-2 pt-2">
-                                <form th:if="${estaGuardado == null or !estaGuardado}" th:action="@{/socio/mi-espacio/guardar}" method="post" class="w-full">
-                                    <input type="hidden" name="tipoDocumento" value="ESTUDIO" />
-                                    <input type="hidden" name="idDocumento" th:value="${estudio.idEstudio}" />
-                                    <input type="hidden" name="nombreDocumento" th:value="${estudio.titulo}" />
-                                    <input type="hidden" name="redirectUrl" th:value="'/estudios/' + ${estudio.idEstudio}" />
-                                    <button type="submit" title="Guardar en Mi Espacio"
-                                        class="w-full bg-[#006d37] hover:bg-[#00522a] text-white font-bold text-sm py-3 px-4 rounded-[14px] flex items-center justify-center gap-2 transition-colors shadow-sm">
-                                        <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M17 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-8H5V5h10v6z" />
-                                        </svg>
-                                        Guardar en Mi Espacio
-                                    </button>
-                                </form>
-                                <a th:if="${estaGuardado != null and estaGuardado}" th:href="@{/socio/mi-espacio}"
-                                    class="w-full bg-[#e8f5e9] border border-[#006d37] text-[#006d37] font-bold text-sm py-3 px-4 rounded-[14px] flex items-center justify-center gap-2 transition-colors">
-                                    <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                                    </svg>
-                                    Guardado en Mi Espacio
-                                </a>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Legal Info Box -->
-                    <section class="bg-[#dce2f3] rounded-xl p-5">
-                        <div class="flex items-start gap-3">
-                            <div th:replace="~{fragments/icons.html :: icon-info-legal}"></div>
-                            <div>
-                                <h4
-                                    class="font-label text-xs font-bold text-on-primary-fixed uppercase tracking-wider mb-1">
-                                    INFORMACIÓN LEGAL</h4>
-                                <p class="font-body text-xs text-[#43474c] leading-relaxed">
-                                    Este documento es de carácter confidencial y su uso está restringido a los socios
-                                    activos de Reciclame. Prohibida su distribución a terceros sin autorización expresa.
+                                <h4 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">NOMBRE DEL ESTUDIO</h4>
+                                <p th:text="${estudio.titulo}" class="font-headline font-semibold text-on-primary-fixed text-[1.125rem] leading-snug">
+                                    Análisis de la Cadena de Valor del Plástico 2024
                                 </p>
                             </div>
-                        </div>
-                    </section>
+                            <div>
+                                <h4 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">DESCRIPCIÓN</h4>
+                                <p th:text="${estudio.descripcion}" class="font-body text-sm text-on-surface-variant leading-relaxed text-[#1a1a1a]">
+                                    Evaluar los flujos de materiales plásticos...
+                                </p>
+                            </div>
 
+                            <div class="grid grid-cols-2 gap-y-4 gap-x-4 pt-3 border-t border-surface-variant/40">
+                                <div>
+                                    <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">AÑO</h3>
+                                    <p th:text="${estudio.anio}" class="font-body text-sm font-medium text-on-primary-fixed">2024</p>
+                                </div>
+                                <div>
+                                    <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">FORMATO</h3>
+                                    <div class="font-body text-sm font-medium text-on-primary-fixed flex items-center gap-1.5 [&_svg]:w-[18px] [&_svg]:h-[18px]">
+                                        <th:block th:switch="${estudio.formato.name()}">
+                                            <th:block th:case="'PDF'"><div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div></th:block>
+                                            <th:block th:case="'PPTX'"><div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div></th:block>
+                                            <th:block th:case="'XLSX'"><div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div></th:block>
+                                            <th:block th:case="*"><div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div></th:block>
+                                        </th:block>
+                                        <span th:text="${estudio.formato}">PDF</span>
+                                    </div>
+                                </div>
+                                <div class="col-span-2">
+                                    <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">FECHA DE PUBLICACIÓN</h3>
+                                    <p th:text="${estudio.fechaPublicacion != null ? #temporals.format(estudio.fechaPublicacion, 'dd ''de'' MMMM, yyyy') : 'No especificada'}"
+                                       class="font-body text-sm font-medium text-on-primary-fixed">14 de Octubre, 2024</p>
+                                </div>
+                                <div class="col-span-2 pt-1">
+                                    <form th:if="${estaGuardado == null or !estaGuardado}" th:action="@{/socio/mi-espacio/guardar}" method="post" class="w-full">
+                                        <input type="hidden" name="tipoDocumento" value="ESTUDIO" />
+                                        <input type="hidden" name="idDocumento"    th:value="${estudio.idEstudio}" />
+                                        <input type="hidden" name="nombreDocumento" th:value="${estudio.titulo}" />
+                                        <input type="hidden" name="redirectUrl"    th:value="'/estudios/' + ${estudio.idEstudio}" />
+                                        <button type="submit" title="Guardar en Mi Espacio"
+                                            class="w-full bg-[#006d37] hover:bg-[#00522a] text-white font-bold text-sm py-3 px-4 rounded-[14px] flex items-center justify-center gap-2 transition-colors shadow-sm">
+                                            <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M17 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-8H5V5h10v6z"/>
+                                            </svg>
+                                            Guardar en Mi Espacio
+                                        </button>
+                                    </form>
+                                    <a th:if="${estaGuardado != null and estaGuardado}" th:href="@{/socio/mi-espacio}"
+                                       class="w-full bg-[#e8f5e9] border border-[#006d37] text-[#006d37] font-bold text-sm py-3 px-4 rounded-[14px] flex items-center justify-center gap-2 transition-colors">
+                                        <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                        Guardado en Mi Espacio
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Info Legal -->
+                            <div class="pt-3 border-t border-surface-variant/40">
+                                <div class="bg-[#dce2f3] rounded-xl p-4 flex items-start gap-3">
+                                    <div th:replace="~{fragments/icons.html :: icon-info-legal}"></div>
+                                    <div>
+                                        <h4 class="font-label text-xs font-bold text-on-primary-fixed uppercase tracking-wider mb-1">INFORMACIÓN LEGAL</h4>
+                                        <p class="font-body text-xs text-[#43474c] leading-relaxed">
+                                            Este documento es de carácter confidencial y su uso está restringido a los socios activos de Reciclame. Prohibida su distribución a terceros sin autorización expresa.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel: Resumen IA -->
+                        <div id="panel-est-ia" class="h-full overflow-y-auto p-5" style="display:none;">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-[#006d37]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                                    </svg>
+                                    Resumen Ejecutivo IA
+                                </h4>
+                                <span id="resumenRestantes" class="text-xs text-[#666]"></span>
+                            </div>
+                            <p class="text-xs text-on-surface-variant mb-4 leading-relaxed">
+                                La IA analizará el documento y generará 5 puntos clave del contenido. Límite: 5 resúmenes por día.
+                            </p>
+                            <div id="resumenBtnArea">
+                                <button id="btnGenerarResumen" onclick="generarResumen()"
+                                    class="w-full bg-[#006d37] hover:bg-[#00522a] text-white font-bold text-sm py-2.5 px-4 rounded-[12px] flex items-center justify-center gap-2 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                                    </svg>
+                                    Generar resumen
+                                </button>
+                            </div>
+                            <div id="resumenSpinner" class="hidden flex-col items-center py-6 gap-2">
+                                <svg class="animate-spin w-6 h-6 text-[#006d37]" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                                </svg>
+                                <p class="text-xs text-[#666]">Analizando documento...</p>
+                            </div>
+                            <div id="resumenResultado" class="hidden mt-2">
+                                <div id="resumenTexto" class="text-sm text-[#1a1a1a] leading-relaxed space-y-2"></div>
+                                <button onclick="ocultarResumen()" class="mt-4 text-xs text-[#666] hover:text-[#006d37] underline">Ocultar resumen</button>
+                            </div>
+                            <div id="resumenError" class="hidden mt-2 p-3 bg-red-50 rounded-lg text-xs text-red-700"></div>
+                        </div>
+
+                        <!-- Panel: Relacionados -->
+                        <div id="panel-est-relacionados" class="h-full overflow-y-auto p-5" style="display:none;">
+                            <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                                También te podría interesar
+                            </h3>
+                            <div class="flex flex-col gap-3">
+                                <div th:each="rel : ${estudiosRelacionados}"
+                                     class="bg-[#f9f9fb] p-3 rounded-xl border border-transparent hover:border-outline-variant/30 transition-colors">
+                                    <a th:href="@{/estudios/{id}(id=${rel.idEstudio})}" class="block">
+                                        <h4 class="text-sm font-bold text-on-primary-fixed leading-snug mb-1"
+                                            th:text="${rel.titulo}">Título del estudio</h4>
+                                        <div class="flex items-center justify-between mt-2">
+                                            <span class="text-xs text-on-surface-variant" th:text="${rel.anio}">2024</span>
+                                            <span class="px-2 py-0.5 rounded-md text-xs font-bold uppercase"
+                                                  th:text="${rel.formato}"
+                                                  th:classappend="${rel.formato != null and rel.formato.name() == 'PDF'} ? 'bg-red-50 text-red-700' : 'bg-orange-50 text-orange-700'">PDF</span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <p th:if="${estudiosRelacionados == null or #lists.isEmpty(estudiosRelacionados)}"
+                                   class="text-sm text-on-surface-variant">No hay estudios relacionados.</p>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
+
             </div>
         </main>
     </div>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            const viewerContainer = document.getElementById('viewer-container');
+            const formatoInput    = document.getElementById('viewerFormato');
+            const formato         = formatoInput ? formatoInput.value : '';
+            const estudioId       = document.getElementById('estudioId').value;
+            console.log('[PPTX] formato=' + formato + ' estudioId=' + estudioId);
+
+            if (formato === 'PDF') {
+                const iframeEl = document.getElementById('pdfViewer');
+                if (iframeEl) {
+                    try {
+                        const resp = await fetch('/documentos/estudio/' + estudioId + '/presigned-url');
+                        const data = await resp.json();
+                        iframeEl.src = data.url + '#toolbar=0&navpanes=0&scrollbar=0';
+                    } catch (err) { console.error('Error cargando PDF:', err); }
+                }
+            } else if (formato === 'PPTX') {
+                const iframeEl  = document.getElementById('pptViewer');
+                const loadingEl = document.getElementById('pptLoading');
+                if (iframeEl) {
+                    try {
+                        const resp = await fetch('/documentos/estudio/' + estudioId + '/stream');
+                        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                        const blob    = await resp.blob();
+                        const blobUrl = URL.createObjectURL(blob);
+                        iframeEl.onload = function () { if (loadingEl) loadingEl.style.display = 'none'; };
+                        iframeEl.src = blobUrl + '#toolbar=0&navpanes=0';
+                    } catch (err) {
+                        console.error('[PPTX] Error:', err);
+                        if (loadingEl) loadingEl.style.display = 'none';
+                    }
+                }
+            }
+
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('keydown', function (e) {
+                if ((e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S')) ||
+                    e.key === 'F12' || e.key === 'PrintScreen') { e.preventDefault(); return false; }
+            });
+            window.addEventListener('keyup',  e => { if (e.key === 'PrintScreen') navigator.clipboard.writeText(''); });
+            window.addEventListener('blur',   () => { if (viewerContainer) viewerContainer.style.filter = 'blur(10px)'; });
+            window.addEventListener('focus',  () => { if (viewerContainer) viewerContainer.style.filter = 'none'; });
+        });
+
+        function switchEstTab(tab) {
+            var active   = 'flex items-center gap-2 px-4 py-3 text-sm font-semibold text-on-surface border-b-2 border-on-surface -mb-px transition-all duration-200';
+            var inactive = 'flex items-center gap-2 px-4 py-3 text-sm font-medium text-on-surface-variant border-b-2 border-transparent -mb-px transition-all duration-200 hover:text-on-surface';
+            ['detalles', 'ia', 'relacionados'].forEach(function (t) {
+                var panel = document.getElementById('panel-est-' + t);
+                var btn   = document.getElementById('tab-est-' + t);
+                if (!panel || !btn) return;
+                if (t === tab) { panel.style.display = ''; btn.className = active; }
+                else           { panel.style.display = 'none'; btn.className = inactive; }
+            });
+        }
+    </script>
+
+    <!-- ✨ Script Resumen Ejecutivo IA -->
+    <script th:inline="javascript">
+        const ESTUDIO_ID_AI = /*[[${estudio.idEstudio}]]*/ 0;
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/ai/estudio/' + ESTUDIO_ID_AI + '/resumen/restantes')
+                .then(r => r.json())
+                .then(data => {
+                    const el = document.getElementById('resumenRestantes');
+                    if (el) el.textContent = data.restantes + '/5 disponibles hoy';
+                }).catch(() => {});
+        });
+        async function generarResumen() {
+            const btnArea   = document.getElementById('resumenBtnArea');
+            const spinner   = document.getElementById('resumenSpinner');
+            const resultado = document.getElementById('resumenResultado');
+            const texto     = document.getElementById('resumenTexto');
+            const errorDiv  = document.getElementById('resumenError');
+            const contador  = document.getElementById('resumenRestantes');
+            btnArea.classList.add('hidden');
+            spinner.classList.remove('hidden');
+            spinner.classList.add('flex');
+            errorDiv.classList.add('hidden');
+            try {
+                const resp = await fetch('/ai/estudio/' + ESTUDIO_ID_AI + '/resumen');
+                const data = await resp.json();
+                if (!resp.ok) throw new Error(data.mensaje || data.error || 'Error al generar resumen');
+                const lineas = data.resumen.split('\n').filter(l => l.trim());
+                texto.innerHTML = lineas.map(l =>
+                    `<p class="flex gap-2"><span class="text-[#006d37] font-bold flex-shrink-0">›</span><span>${l.replace(/^\d+\.\s*/, '')}</span></p>`
+                ).join('');
+                spinner.classList.add('hidden');
+                spinner.classList.remove('flex');
+                resultado.classList.remove('hidden');
+                if (contador && data.restantes !== undefined)
+                    contador.textContent = data.restantes + '/5 disponibles hoy';
+            } catch (err) {
+                spinner.classList.add('hidden');
+                spinner.classList.remove('flex');
+                errorDiv.classList.remove('hidden');
+                errorDiv.textContent = err.message;
+                btnArea.classList.remove('hidden');
+            }
+        }
+        function ocultarResumen() {
+            document.getElementById('resumenResultado').classList.add('hidden');
+            document.getElementById('resumenBtnArea').classList.remove('hidden');
+        }
+    </script>
 </body>
 
 </html>

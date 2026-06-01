@@ -138,7 +138,23 @@ public class EstudioController {
             return "redirect:/estudios";
         }
 
+        // Fetch related studies
+        org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
+        java.util.LinkedHashMap<Long, Estudio> vistos = new java.util.LinkedHashMap<>();
+        try {
+            List<Estudio> porCat = estudioRepository.findSimilaresPorCategorias(id);
+            porCat.forEach(e -> vistos.putIfAbsent(e.getIdEstudio(), e));
+            if (vistos.size() < 4) {
+                List<Estudio> porAnio = estudioRepository.findSimilaresPorAnio(id, estudio.getAnio());
+                porAnio.forEach(e -> vistos.putIfAbsent(e.getIdEstudio(), e));
+            }
+        } catch (Exception ex) {
+            log.warn("[RELACIONADOS] Error: {}", ex.getMessage(), ex);
+        }
+        List<Estudio> relacionados = vistos.values().stream().limit(4).toList();
+
         model.addAttribute("estudio", estudio);
+        model.addAttribute("estudiosRelacionados", relacionados);
         model.addAttribute("currentPage", "estudios");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

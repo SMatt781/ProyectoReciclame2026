@@ -108,9 +108,15 @@ public class DocumentDownloadController {
             response.getOutputStream().flush();
             log.info("[STREAM] Enviado OK");
         } catch (Exception e) {
-            log.error("[STREAM] ERROR: {}", e.getMessage(), e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "Error al cargar el documento: " + e.getMessage());
+            if (e.getClass().getName().contains("ClientAbortException")) {
+                log.debug("[STREAM] El cliente abortó la conexión antes de terminar la descarga.");
+            } else {
+                log.error("[STREAM] ERROR: {}", e.getMessage(), e);
+                if (!response.isCommitted()) {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                            "Error al cargar el documento: " + e.getMessage());
+                }
+            }
         }
     }
 
@@ -284,8 +290,15 @@ public class DocumentDownloadController {
             response.getOutputStream().write(pdfData);
             response.getOutputStream().flush();
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "Error al cargar el documento: " + e.getMessage());
+            if (e.getClass().getName().contains("ClientAbortException")) {
+                log.debug("[STREAM] El cliente abortó la conexión (view-pdf).");
+            } else {
+                log.error("[STREAM] ERROR: {}", e.getMessage(), e);
+                if (!response.isCommitted()) {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                            "Error al cargar el documento: " + e.getMessage());
+                }
+            }
         }
     }
 
