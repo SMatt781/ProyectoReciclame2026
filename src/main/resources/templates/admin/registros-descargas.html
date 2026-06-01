@@ -69,7 +69,7 @@
         <div class="w-full h-full">
 
             <!-- Encabezado -->
-            <div class="mb-3">
+            <div class="mb-3" data-aos="fade-down">
                 <div>
                     <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
                         Registros de Descargas
@@ -280,7 +280,9 @@
                             </div>
 
                             <!-- Filas -->
-                            <div th:each="r : ${descargas}"
+                            <div th:each="r, rIdx : ${descargas}"
+                                 data-aos="fade-up"
+                                 th:data-aos-delay="${rIdx.index <= 9 ? rIdx.index * 40 : 0}"
                                  class="bg-surface-container-lowest rounded-xl p-4 md:px-4 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[minmax(260px,2fr)_minmax(220px,2fr)_1fr_1fr_1fr] gap-2 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
 
                                 <div class="flex items-center gap-3 w-full min-w-0">

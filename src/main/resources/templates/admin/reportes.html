@@ -83,7 +83,7 @@
         <div class="w-full h-full">
 
             <!-- Encabezado -->
-            <div class="mb-3">
+            <div class="mb-3" data-aos="fade-down">
                 <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
                     <div>
                         <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
@@ -265,7 +265,8 @@
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-6">
 
                 <!-- Top 5 documentos más descargados -->
-                <div class="bg-surface-container-lowest rounded-[1.25rem] p-5 ambient-shadow ghost-border">
+                <div data-aos="fade-up" data-aos-delay="0"
+                     class="bg-surface-container-lowest rounded-[1.25rem] p-5 ambient-shadow ghost-border">
                     <h3 class="font-headline font-bold text-base text-on-primary-fixed mb-4">
                         Top 5 documentos más descargados
                     </h3>
@@ -279,6 +280,8 @@
 
                     <!-- Filas -->
                     <div th:each="doc, stat : ${topDocumentos}"
+                         data-aos="fade-right"
+                         th:data-aos-delay="${stat.index * 80}"
                          class="grid grid-cols-[1fr_auto_auto] gap-2 py-2.5 border-b border-outline-variant/20 items-center last:border-0">
 
                         <!-- Nombre del documento -->
@@ -318,7 +321,8 @@
                 </div>
 
                 <!-- Descargas por rol -->
-                <div class="bg-surface-container-lowest rounded-[1.25rem] p-5 ambient-shadow ghost-border">
+                <div data-aos="fade-up" data-aos-delay="100"
+                     class="bg-surface-container-lowest rounded-[1.25rem] p-5 ambient-shadow ghost-border">
                     <h3 class="font-headline font-bold text-base text-on-primary-fixed mb-4">
                         Descargas por rol de usuario
                     </h3>
@@ -326,7 +330,7 @@
                     <div class="flex flex-col gap-5">
 
                         <!-- Barra Socio -->
-                        <div class="flex flex-col gap-2">
+                        <div data-aos="fade-right" data-aos-delay="250" class="flex flex-col gap-2">
                             <div class="flex justify-between items-center">
                                 <span class="text-sm font-bold text-on-primary-fixed">Socios</span>
                                 <span class="text-sm font-extrabold text-secondary" th:text="${descargasSocio}">0</span>
@@ -343,7 +347,7 @@
                         </div>
 
                         <!-- Barra Visualizador -->
-                        <div class="flex flex-col gap-2">
+                        <div data-aos="fade-right" data-aos-delay="350" class="flex flex-col gap-2">
                             <div class="flex justify-between items-center">
                                 <span class="text-sm font-bold text-on-primary-fixed">Visualizadores</span>
                                 <span class="text-sm font-extrabold text-blue-600" th:text="${descargasVisualizador}">0</span>
