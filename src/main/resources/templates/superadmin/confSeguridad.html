@@ -93,6 +93,8 @@
             box-shadow: inset 0 0 0 1px rgba(195, 199, 205, 0.15);
         }
     </style>
+    <!-- AOS - Scroll Reveal -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 
 </head>
 <body class="bg-surface text-on-surface font-body h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
@@ -107,7 +109,7 @@
     <main class="flex-1 overflow-y-auto px-6 py-2">
         <div class="space-y-6">
 
-            <div>
+            <div data-aos="fade-down">
                 <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
                     Configuración de seguridad
                 </h2>
@@ -131,7 +133,7 @@
             </div>
 
             <!-- DOMINIOS ARRIBA -->
-            <div class="bg-transparent border border-outline-variant/30 rounded-xl p-4 mb-4 flex flex-col">
+            <div data-aos="fade-up" data-aos-delay="50" class="bg-transparent border border-outline-variant/30 rounded-xl p-4 mb-4 flex flex-col">
 
                 <!-- HEADER -->
                 <div class="flex justify-between items-center mb-6">
@@ -235,7 +237,9 @@
                             </div>
 
                             <!-- Filas -->
-                            <div th:each="dominio : ${dominios}"
+                            <div th:each="dominio, dIdx : ${dominios}"
+                                 data-aos="fade-up"
+                                 th:data-aos-delay="${dIdx.index <= 9 ? dIdx.index * 40 : 0}"
                                  class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-5 gap-4 items-start md:items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
                                 <!-- Dominio -->
                                 <div class="flex items-center w-full">
@@ -349,7 +353,7 @@
             </div>
 
             <!-- POLÍTICAS DE CONTRASEÑA -->
-            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 p-6 ambient-shadow">
+            <div data-aos="fade-up" data-aos-delay="100" class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 p-6 ambient-shadow">
                 <div class="mb-6">
                     <h3 class="font-headline font-extrabold text-xl text-on-primary-fixed">Políticas de Contraseña</h3>
                     <p class="text-base text-on-surface-variant mt-2">Defina los requisitos mínimos de complejidad para todas las cuentas administrativas.</p>
@@ -1156,6 +1160,11 @@
     });
 
 </script>
-
+<!-- AOS - Scroll Reveal -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+</script>
+<script th:src="@{/js/animations.js}"></script>
 </body>
 </html>

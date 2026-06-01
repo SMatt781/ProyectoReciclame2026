@@ -104,6 +104,8 @@
             height: 1px;
         }
     </style>
+    <!-- AOS - Scroll Reveal -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 </head>
 
 <body class="bg-surface text-on-surface h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
@@ -122,7 +124,7 @@
              ENCABEZADO — Versión + estado global
              Variables: ${appVersion}, ${buildEnv}, ${uptimePct}
              ══════════════════════════════════════════════════════════════ -->
-        <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+        <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4" data-aos="fade-down">
 
             <!-- Título técnico -->
             <div>
@@ -174,7 +176,7 @@
         <div class="grid grid-cols-2 xl:grid-cols-4 gap-3">
 
             <!-- CPU -->
-            <div class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
+            <div data-aos="fade-up" data-aos-delay="0" class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">CPU</p>
@@ -194,7 +196,7 @@
             </div>
 
             <!-- RAM -->
-            <div class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
+            <div data-aos="fade-up" data-aos-delay="100" class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Memoria RAM</p>
@@ -217,7 +219,7 @@
             </div>
 
             <!-- Almacenamiento -->
-            <div class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
+            <div data-aos="fade-up" data-aos-delay="200" class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Almacenamiento</p>
@@ -240,7 +242,7 @@
             </div>
 
             <!-- Latencia BD -->
-            <div class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
+            <div data-aos="fade-up" data-aos-delay="300" class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Latencia BD</p>
@@ -268,7 +270,7 @@
              IA — Análisis inteligente del sistema
              Variables: ${iaNivelRiesgo}, ${iaResumenSistema}, ${iaRecomendacionSistema}, ${iaFactoresDetectados}
              ══════════════════════════════════════════════════════════════ -->
-        <div class="bg-white rounded-[1.25rem] border border-slate-100 shadow-sm p-5 card-lift overflow-hidden relative">
+        <div data-aos="fade-up" data-aos-delay="50" class="bg-white rounded-[1.25rem] border border-slate-100 shadow-sm p-5 card-lift overflow-hidden relative">
             <div class="absolute top-0 right-0 w-40 h-40 bg-purple-50 rounded-full blur-3xl opacity-70 -translate-y-16 translate-x-16"></div>
 
             <div class="relative flex flex-col xl:flex-row xl:items-start xl:justify-between gap-5">
@@ -662,6 +664,10 @@
     document.getElementById('disk-val').textContent = diskUsage;
 </script>
 ══ -->
-
+<!-- AOS - Scroll Reveal -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+</script>
 </body>
 </html>
