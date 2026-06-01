@@ -42,35 +42,26 @@ public class NormativaService {
         // 1B. Estadísticas
         long descargas = registroDescargaRepository.countByIdDocumentoAndTipoDocumento(idNormativa, "NORMATIVA");
 
-        // 4. Normativas Similares
-        List<Normativa> similaresEntities = new ArrayList<>();
-        // Primero intentamos buscar del mismo organismo (usamos las mismas ya buscadas)
-        if (!relacionadasEntities.isEmpty()) {
-            int limite = Math.min(2, relacionadasEntities.size());
-            for(int i = 0; i < limite; i++){
-                similaresEntities.add(relacionadasEntities.get(i));
-            }
+        // 4. Normativas Similares — merge: categorías → organismo → año
+        java.util.LinkedHashMap<Long, Normativa> vistos = new java.util.LinkedHashMap<>();
+
+        // a) por categorías comunes (native SQL, más fiable)
+        normativaRepository.findNormativasSimilaresPorCategoria(idNormativa)
+                .forEach(n -> vistos.putIfAbsent(n.getIdNormativa(), n));
+
+        // b) por organismo emisor
+        if (vistos.size() < 4) {
+            relacionadasEntities.forEach(n -> vistos.putIfAbsent(n.getIdNormativa(), n));
         }
-        
-        // Completamos con categorias si faltan (hasta llegar a 3)
-        if (similaresEntities.size() < 3 && normativa.getCategorias() != null && !normativa.getCategorias().isEmpty()) {
-            List<Integer> idsCategorias = normativa.getCategorias().stream()
-                    .map(Categoria::getIdCategoria)
-                    .collect(Collectors.toList());
-            List<Normativa> similaresPorCat = normativaRepository.findNormativasSimilaresPorCategoria(
-                    idsCategorias,
-                    idNormativa,
-                    PageRequest.of(0, 3)
-            );
-            for (Normativa n : similaresPorCat) {
-                if (similaresEntities.size() >= 3) break;
-                if (similaresEntities.stream().noneMatch(s -> s.getIdNormativa().equals(n.getIdNormativa()))) {
-                    similaresEntities.add(n);
-                }
-            }
+
+        // c) por año como fallback
+        if (vistos.size() < 4) {
+            normativaRepository.findNormativasSimilaresPorAnio(normativa.getAnio(), idNormativa)
+                    .forEach(n -> vistos.putIfAbsent(n.getIdNormativa(), n));
         }
-        
-        List<NormativaResumenDTO> similares = similaresEntities.stream()
+
+        List<NormativaResumenDTO> similares = vistos.values().stream()
+                .limit(4)
                 .map(NormativaResumenDTO::fromEntity)
                 .collect(Collectors.toList());
 

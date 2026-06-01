@@ -157,7 +157,27 @@ public class VisualizadorController {
             historialLecturaService.registrarOActualizar(idUsuario, "ESTUDIO", id, estudio.getTitulo());
         }
 
+        // Estudios relacionados: categorías comunes → mismo año como fallback
+        org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
+        java.util.LinkedHashMap<Long, Estudio> vistos = new java.util.LinkedHashMap<>();
+        try {
+            List<Estudio> porCat = estudioRepository.findSimilaresPorCategorias(id);
+            log.info("[RELACIONADOS] id={} anio={} porCategorias={}", id, estudio.getAnio(), porCat.size());
+            porCat.forEach(e -> vistos.putIfAbsent(e.getIdEstudio(), e));
+            if (vistos.size() < 4) {
+                List<Estudio> porAnio = estudioRepository.findSimilaresPorAnio(id, estudio.getAnio());
+                log.info("[RELACIONADOS] porAnio={}", porAnio.size());
+                porAnio.forEach(e -> vistos.putIfAbsent(e.getIdEstudio(), e));
+            }
+        } catch (Exception ex) {
+            log.warn("[RELACIONADOS] Error: {}", ex.getMessage(), ex);
+        }
+        List<Estudio> relacionados = vistos.values().stream().limit(4)
+                .collect(Collectors.toList());
+        log.info("[RELACIONADOS] final={}", relacionados.size());
+
         model.addAttribute("estudio", estudio);
+        model.addAttribute("estudiosRelacionados", relacionados);
         model.addAttribute("citas", citaService.generarCitasEstudio(id));
         model.addAttribute("currentPage", "visualizadorEstudio");
 

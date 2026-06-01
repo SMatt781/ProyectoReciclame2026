@@ -75,6 +75,18 @@ public interface EstudioRepository extends JpaRepository<Estudio, Long> {
 
     long countByFechaPublicacionAfterAndEliminadoEnIsNull(LocalDate fechaPublicacion);
 
+    /** Estudios que comparten al menos una categoría. JPQL sin Pageable para evitar HHH90003004. */
+    @Query("SELECT DISTINCT e FROM Estudio e JOIN e.categorias c " +
+           "WHERE e.idEstudio <> :id AND e.eliminadoEn IS NULL " +
+           "AND c IN (SELECT c2 FROM Estudio e2 JOIN e2.categorias c2 WHERE e2.idEstudio = :id) " +
+           "ORDER BY e.fechaPublicacion DESC")
+    List<Estudio> findSimilaresPorCategorias(@Param("id") Long id);
+
+    /** Estudios del mismo año como fallback. */
+    @Query("SELECT e FROM Estudio e WHERE e.anio = :anio AND e.idEstudio <> :id " +
+           "AND e.eliminadoEn IS NULL ORDER BY e.fechaPublicacion DESC")
+    List<Estudio> findSimilaresPorAnio(@Param("id") Long id, @Param("anio") Integer anio);
+
     @Query("""
             SELECT FUNCTION('year', e.fechaPublicacion), COUNT(e)
             FROM Estudio e

@@ -120,6 +120,19 @@
             <classifier>jdk16</classifier>
         </dependency>
 
+        <!-- AWS Bedrock Runtime (para IA conversacional con Claude en AWS) -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>bedrockruntime</artifactId>
+            <version>2.21.0</version>
+        </dependency>
+
+        <!-- Thymeleaf Spring Security extras -->
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+        </dependency>
+
     </dependencies>
 
     <repositories>

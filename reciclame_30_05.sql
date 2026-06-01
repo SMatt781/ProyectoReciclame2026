@@ -1024,7 +1024,7 @@ INSERT INTO estudios
 VALUES
 (1,  'Mapa de valorización de residuos plásticos en Lima Metropolitana',
      'Estudio orientado a identificar flujos, actores y oportunidades de valorización de residuos plásticos.', 2024, 'PDF', 'VIGENTE', 'DESCARGA',
-     '1779122782159_mapa_valorizacion_plasticos_2024.pdf', 'estudios/1779122765118_diagnostico_trazabilidad_2025.pptx', 4,
+     '1779122782159_mapa_valorizacion_plasticos_2024.pdf', 'estudios/1779122782159_mapa_valorizacion_plasticos_2024.pdf', 4,
      '2024-10-05', 92, 'Documento de uso informativo para análisis sectorial.', 2, 3, '2026-03-29 10:00:00', '2026-05-18 11:46:22', NULL),
 (2,  'Diagnóstico de trazabilidad para cadenas de reciclaje',
      'Análisis de brechas de trazabilidad documental y operativa en gestores y recicladores.', 2025, 'PPTX', 'VIGENTE', 'LECTURA',

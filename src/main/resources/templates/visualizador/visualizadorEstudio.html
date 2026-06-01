@@ -281,94 +281,133 @@
                     });
                 </script>
 
-                <!-- Right Metadata Panel -->
-                <div class="w-full xl:w-[380px] flex-shrink-0 flex flex-col space-y-10">
-                    <!-- Key Details + Meta Grid -->
-                    <section class="space-y-6 bg-white rounded-xl p-5 shadow-sm">
-                        <div>
-                            <h4 class="font-label text-xs font-bold text-on-surface-variant
-                                uppercase tracking-wider mb-2">
-                                NOMBRE DEL ESTUDIO</h4>
-                            <p th:text="${estudio.titulo}" class="font-headline font-semibold text-on-primary-fixed text-[1.125rem]
-                            leading-snug">
-                                Análisis de la Cadena de Valor del Plástico 2024
-                            </p>
-                        </div>
-                        <div>
-                            <h4 class="font-label text-xs font-bold text-on-surface-variant
-                                uppercase tracking-wider mb-2">
-                                DESCRIPCIÓN</h4>
-                            <p th:text="${estudio.descripcion}" class="font-body text-sm text-on-surface-variant leading-relaxed
-                            text-[#1a1a1a]">
-                                Evaluar los flujos de materiales plásticos...
-                            </p>
-                        </div>
+                <!-- Panel derecho con Tabs -->
+                <div class="w-full xl:w-[420px] flex-shrink-0 flex flex-col xl:h-[calc(100vh-12rem)] bg-white rounded-2xl shadow-sm border border-outline-variant/20 overflow-hidden">
 
-                        <div class="grid grid-cols-2 gap-y-6 gap-x-4 pt-2 border-t border-surface-variant/40">
-                            <div>
-                                <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">
-                                    AÑO</h3>
-                                <p th:text="${estudio.anio}"
-                                    class="font-body text-sm font-medium text-on-primary-fixed">2024</p>
-                            </div>
-                            <div>
-                                <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">
-                                    FORMATO</h3>
-                                <div
-                                    class="font-body text-sm font-medium text-on-primary-fixed flex items-center gap-1.5 [&_svg]:w-[18px] [&_svg]:h-[18px]">
-                                    <th:block th:switch="${estudio.formato.name()}">
-                                        <th:block th:case="'PDF'">
-                                            <div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div>
-                                        </th:block>
-                                        <th:block th:case="'PPTX'">
-                                            <div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div>
-                                        </th:block>
-                                        <th:block th:case="'XLSX'">
-                                            <div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div>
-                                        </th:block>
-                                        <th:block th:case="*">
-                                            <div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div>
-                                        </th:block>
-                                    </th:block>
-                                    <span th:text="${estudio.formato}">PDF</span>
-                                </div>
-                            </div>
-                            <div class="col-span-2">
-                                <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">
-                                    FECHA DE PUBLICACIÓN</h3>
-                                <p th:text="${estudio.fechaPublicacion != null ? #temporals.format(estudio.fechaPublicacion, 'dd ''de'' MMMM, yyyy') : 'No especificada'}"
-                                    class="font-body text-sm font-medium text-on-primary-fixed">14 de Octubre, 2024</p>
-                            </div>
-                            <div class="col-span-2 pt-2" th:if="${citas != null}">
-                                <button onclick="document.getElementById('citaModal').classList.remove('hidden')"
-                                    class="w-full bg-[#006d37] hover:bg-[#00522a] text-white font-bold text-sm py-3 px-4 rounded-[14px] flex items-center justify-center gap-2 transition-colors shadow-sm">
-                                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                                    </svg>
-                                    Exportar Cita Académica
-                                </button>
-                            </div>
-                        </div>
-                    </section>
+                    <!-- Tab Nav -->
+                    <div class="flex-shrink-0 flex px-2 border-b border-outline-variant/40">
+                        <button id="tab-viz-detalles" onclick="switchVizTab('detalles')"
+                                class="flex items-center gap-2 px-4 py-3 text-sm font-semibold text-on-surface border-b-2 border-on-surface -mb-px transition-all duration-200">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM12 18H8v-2h4v2zm4-4H8v-2h8v2zm0-4H8V8h8v2z"/>
+                            </svg>
+                            Detalles
+                        </button>
+                        <button id="tab-viz-relacionados" onclick="switchVizTab('relacionados')"
+                                class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-on-surface-variant border-b-2 border-transparent -mb-px transition-all duration-200 hover:text-on-surface">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            Relacionados
+                        </button>
+                    </div>
 
-                    <!-- Legal Info Box -->
-                    <section class="bg-[#dce2f3] rounded-xl p-5">
-                        <div class="flex items-start gap-3">
-                            <div th:replace="~{fragments/icons.html :: icon-info-legal}"></div>
+                    <!-- Tab Content -->
+                    <div class="flex-1 overflow-hidden">
+
+                        <!-- Panel: Detalles -->
+                        <div id="panel-viz-detalles" class="h-full overflow-y-auto p-5 space-y-4">
                             <div>
-                                <h4
-                                    class="font-label text-xs font-bold text-on-primary-fixed uppercase tracking-wider mb-1">
-                                    INFORMACIÓN LEGAL</h4>
-                                <p class="font-body text-xs text-[#43474c] leading-relaxed">
-                                    Este documento es de carácter confidencial y su uso está restringido a los usuarios
-                                    activos de Reciclame. Prohibida su distribución a terceros sin autorización expresa.
+                                <h4 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">NOMBRE DEL ESTUDIO</h4>
+                                <p th:text="${estudio.titulo}" class="font-headline font-semibold text-on-primary-fixed text-[1.125rem] leading-snug">
+                                    Análisis de la Cadena de Valor del Plástico 2024
                                 </p>
                             </div>
+                            <div>
+                                <h4 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">DESCRIPCIÓN</h4>
+                                <p th:text="${estudio.descripcion}" class="font-body text-sm text-on-surface-variant leading-relaxed text-[#1a1a1a]">
+                                    Evaluar los flujos de materiales plásticos...
+                                </p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-y-4 gap-x-4 pt-3 border-t border-surface-variant/40">
+                                <div>
+                                    <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">AÑO</h3>
+                                    <p th:text="${estudio.anio}" class="font-body text-sm font-medium text-on-primary-fixed">2024</p>
+                                </div>
+                                <div>
+                                    <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">FORMATO</h3>
+                                    <div class="font-body text-sm font-medium text-on-primary-fixed flex items-center gap-1.5 [&_svg]:w-[18px] [&_svg]:h-[18px]">
+                                        <th:block th:switch="${estudio.formato.name()}">
+                                            <th:block th:case="'PDF'"><div th:replace="~{fragments/icons.html :: icon-pdf-estudios}"></div></th:block>
+                                            <th:block th:case="'PPTX'"><div th:replace="~{fragments/icons.html :: icon-pptx-estudios}"></div></th:block>
+                                            <th:block th:case="'XLSX'"><div th:replace="~{fragments/icons.html :: icon-xlsx-estudios}"></div></th:block>
+                                            <th:block th:case="*"><div th:replace="~{fragments/icons.html :: icon-docx-estudios}"></div></th:block>
+                                        </th:block>
+                                        <span th:text="${estudio.formato}">PDF</span>
+                                    </div>
+                                </div>
+                                <div class="col-span-2">
+                                    <h3 class="text-xs font-bold text-[#666] uppercase tracking-wider mb-1">FECHA DE PUBLICACIÓN</h3>
+                                    <p th:text="${estudio.fechaPublicacion != null ? #temporals.format(estudio.fechaPublicacion, 'dd ''de'' MMMM, yyyy') : 'No especificada'}"
+                                       class="font-body text-sm font-medium text-on-primary-fixed">14 de Octubre, 2024</p>
+                                </div>
+                                <div class="col-span-2 pt-1" th:if="${citas != null}">
+                                    <button onclick="document.getElementById('citaModal').classList.remove('hidden')"
+                                        class="w-full bg-[#006d37] hover:bg-[#00522a] text-white font-bold text-sm py-3 px-4 rounded-[14px] flex items-center justify-center gap-2 transition-colors shadow-sm">
+                                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+                                        </svg>
+                                        Exportar Cita Académica
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Info Legal -->
+                            <div class="pt-3 border-t border-surface-variant/40">
+                                <div class="bg-[#dce2f3] rounded-xl p-4 flex items-start gap-3">
+                                    <div th:replace="~{fragments/icons.html :: icon-info-legal}"></div>
+                                    <div>
+                                        <h4 class="font-label text-xs font-bold text-on-primary-fixed uppercase tracking-wider mb-1">INFORMACIÓN LEGAL</h4>
+                                        <p class="font-body text-xs text-[#43474c] leading-relaxed">
+                                            Este documento es de carácter confidencial y su uso está restringido a los usuarios activos de Reciclame. Prohibida su distribución a terceros sin autorización expresa.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </section>
+
+                        <!-- Panel: Relacionados -->
+                        <div id="panel-viz-relacionados" class="h-full overflow-y-auto p-5" style="display:none;">
+                            <h3 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                                También te podría interesar
+                            </h3>
+                            <div class="flex flex-col gap-3">
+                                <div th:each="rel : ${estudiosRelacionados}"
+                                     class="bg-[#f9f9fb] p-3 rounded-xl border border-transparent hover:border-outline-variant/30 transition-colors">
+                                    <a th:href="@{/visualizador/estudios/{id}(id=${rel.idEstudio})}" class="block">
+                                        <h4 class="text-sm font-bold text-on-primary-fixed leading-snug mb-1"
+                                            th:text="${rel.titulo}">Título del estudio</h4>
+                                        <div class="flex items-center justify-between mt-2">
+                                            <span class="text-xs text-on-surface-variant" th:text="${rel.anio}">2024</span>
+                                            <span class="px-2 py-0.5 rounded-md text-xs font-bold uppercase"
+                                                  th:text="${rel.formato}"
+                                                  th:classappend="${rel.formato != null and rel.formato.name() == 'PDF'} ? 'bg-red-50 text-red-700' : 'bg-orange-50 text-orange-700'">PDF</span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <p th:if="${estudiosRelacionados == null or #lists.isEmpty(estudiosRelacionados)}"
+                                   class="text-sm text-on-surface-variant">No hay estudios relacionados.</p>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
+
+                <script>
+                    function switchVizTab(tab) {
+                        var active   = 'flex items-center gap-2 px-4 py-3 text-sm font-semibold text-on-surface border-b-2 border-on-surface -mb-px transition-all duration-200';
+                        var inactive = 'flex items-center gap-2 px-4 py-3 text-sm font-medium text-on-surface-variant border-b-2 border-transparent -mb-px transition-all duration-200 hover:text-on-surface';
+                        ['detalles', 'relacionados'].forEach(function(t) {
+                            var panel = document.getElementById('panel-viz-' + t);
+                            var btn   = document.getElementById('tab-viz-' + t);
+                            if (!panel || !btn) return;
+                            if (t === tab) { panel.style.display = ''; btn.className = active; }
+                            else           { panel.style.display = 'none'; btn.className = inactive; }
+                        });
+                    }
+                </script>
             </div>
         </main>
     </div>
