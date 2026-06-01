@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+
 <html class="light" lang="es">
+
 <head>
     <title>Recíclame - Estado del Monitor</title>
     <meta charset="utf-8"/>
@@ -260,6 +262,78 @@
                 </div>
             </div>
 
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             IA — Análisis inteligente del sistema
+             Variables: ${iaNivelRiesgo}, ${iaResumenSistema}, ${iaRecomendacionSistema}, ${iaFactoresDetectados}
+             ══════════════════════════════════════════════════════════════ -->
+        <div class="bg-white rounded-[1.25rem] border border-slate-100 shadow-sm p-5 card-lift overflow-hidden relative">
+            <div class="absolute top-0 right-0 w-40 h-40 bg-purple-50 rounded-full blur-3xl opacity-70 -translate-y-16 translate-x-16"></div>
+
+            <div class="relative flex flex-col xl:flex-row xl:items-start xl:justify-between gap-5">
+
+                <div class="flex items-start gap-3 min-w-0">
+                    <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0 border border-purple-100">
+                        <span class="material-symbols-outlined text-[26px]">psychology</span>
+                    </div>
+
+                    <div class="min-w-0">
+                        <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                            <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                                Análisis Inteligente del Sistema
+                            </h3>
+
+                            <span class="font-mono text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase"
+                                  th:classappend="${iaNivelRiesgo == 'CRÍTICO'} ? ' bg-red-100 text-red-600' :
+                                                  (${iaNivelRiesgo == 'MEDIO'} ? ' bg-amber-100 text-amber-700' :
+                                                  ' bg-emerald-100 text-emerald-600')"
+                                  th:text="${iaNivelRiesgo} ?: 'BAJO'">
+                                BAJO
+                            </span>
+                        </div>
+
+                        <p class="text-sm text-slate-600 leading-relaxed max-w-3xl"
+                           th:text="${iaResumenSistema} ?: 'La IA no detectó riesgos relevantes. El sistema se encuentra estable.'">
+                            La IA no detectó riesgos relevantes. El sistema se encuentra estable.
+                        </p>
+
+                        <div class="mt-4">
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                                Factores detectados
+                            </p>
+
+                            <div class="flex flex-wrap gap-2"
+                                 th:if="${iaFactoresDetectados != null and !iaFactoresDetectados.isEmpty()}">
+                                <span th:each="factor : ${iaFactoresDetectados}"
+                                      class="font-mono text-[10px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg border border-slate-200"
+                                      th:text="${factor}">
+                                    factor detectado
+                                </span>
+                            </div>
+
+                            <p class="text-xs text-slate-400 font-mono"
+                               th:if="${iaFactoresDetectados == null or iaFactoresDetectados.isEmpty()}">
+                                Sin factores críticos detectados.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 xl:w-[430px] flex-shrink-0">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="material-symbols-outlined text-[18px] text-purple-500">tips_and_updates</span>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                            Recomendación IA
+                        </p>
+                    </div>
+
+                    <p class="text-sm font-medium text-slate-700 leading-relaxed"
+                       th:text="${iaRecomendacionSistema} ?: 'Mantener el monitoreo preventivo y revisar periódicamente las métricas del sistema.'">
+                        Mantener el monitoreo preventivo y revisar periódicamente las métricas del sistema.
+                    </p>
+                </div>
+            </div>
         </div>
 
         <!-- ══════════════════════════════════════════════════════════════
