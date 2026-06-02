@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  CHATBOT WIDGET — EcoAsistente
+  Incluir en navbar.html con:
+      th:replace="~{fragments/chatbot-widget :: chatbot}"
+  Solo se muestra para SOCIO, VISUALIZADOR y ADMIN.
+-->
+<th:block th:fragment="chatbot">
+<div th:if="${usuarioRol == 'SOCIO' or usuarioRol == 'VISUALIZADOR' or usuarioRol == 'ADMIN' or usuarioRol == 'SUPERADMIN'}">
+
+  <!-- ── Botón flotante ───────────────────────────────────────────────── -->
+  <button id="chatbot-toggle"
+          onclick="chatbotToggle()"
+          title="EcoAsistente"
+          class="fixed bottom-6 right-6 z-[200] w-14 h-14 rounded-full bg-[#2ECC71] hover:bg-[#27AE60] shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95">
+    <!-- Icono chat (visible cuando cerrado) -->
+    <svg id="chatbot-icon-open" class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+    </svg>
+    <!-- Icono X (visible cuando abierto) -->
+    <svg id="chatbot-icon-close" class="w-6 h-6 text-white hidden" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+    </svg>
+    <!-- Badge de notificación (oculto por defecto) -->
+    <span id="chatbot-badge" class="hidden absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-[10px] font-bold flex items-center justify-center">!</span>
+  </button>
+
+  <!-- ── Modal confirmación nueva sesión ─────────────────────────────── -->
+  <div id="chatbot-modal" class="hidden fixed inset-0 z-[210] flex items-center justify-center">
+    <div class="absolute inset-0 bg-black/40" onclick="chatbotModalCerrar()"></div>
+    <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-5 w-72 z-10">
+      <p class="font-bold text-slate-800 dark:text-white text-sm mb-1">¿Nueva conversación?</p>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Se borrará el historial de esta sesión.</p>
+      <div class="flex gap-2 justify-end">
+        <button onclick="chatbotModalCerrar()"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+          Cancelar
+        </button>
+        <button onclick="chatbotModalConfirmar()"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#2ECC71] hover:bg-[#27AE60] text-white transition-colors">
+          Nueva sesión
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Panel del chatbot ─────────────────────────────────────────────── -->
+  <div id="chatbot-panel"
+       class="hidden fixed bottom-24 right-6 z-[199] w-[360px] max-h-[560px] flex flex-col rounded-2xl shadow-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 overflow-hidden transition-all duration-300">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between px-4 py-3 bg-[#2ECC71] text-white flex-shrink-0">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </div>
+        <div>
+          <p class="font-bold text-sm leading-tight">EcoAsistente</p>
+          <p class="text-[10px] text-white/80 leading-tight">Economía circular · Normativas</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1">
+        <!-- Botón nueva conversación -->
+        <button onclick="chatbotNuevaSesion()"
+                title="Nueva conversación"
+                class="p-1.5 rounded-lg hover:bg-white/20 transition-colors">
+          <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mensajes -->
+    <div id="chatbot-messages"
+         class="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-[300px] max-h-[380px] bg-slate-50 dark:bg-slate-800">
+      <!-- Mensaje de bienvenida -->
+      <div class="flex gap-2 items-start" id="chatbot-welcome">
+        <div class="w-7 h-7 rounded-full bg-[#2ECC71] flex items-center justify-center flex-shrink-0 mt-0.5">
+          <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </div>
+        <div class="bg-white dark:bg-slate-700 rounded-2xl rounded-tl-sm px-3 py-2 max-w-[260px] shadow-sm">
+          <p class="text-sm text-slate-700 dark:text-slate-200">¡Hola! Soy <strong>EcoAsistente</strong> 🌿<br>Estoy especializado en economía circular, reciclaje y normativas ambientales del Perú.<br><br>¿En qué te puedo ayudar?</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="px-3 py-3 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex-shrink-0">
+      <!-- Indicador restantes -->
+      <p id="chatbot-restantes" class="text-[10px] text-slate-400 text-right mb-1.5"></p>
+      <div class="flex gap-2 items-end">
+        <textarea id="chatbot-input"
+                  placeholder="Escribe tu consulta..."
+                  rows="1"
+                  maxlength="500"
+                  onkeydown="chatbotKeydown(event)"
+                  oninput="chatbotAutoResize(this)"
+                  class="flex-1 resize-none rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-sm text-slate-800 dark:text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#2ECC71] placeholder-slate-400 max-h-24 leading-snug"></textarea>
+        <button id="chatbot-send-btn"
+                onclick="chatbotEnviar()"
+                class="w-10 h-10 rounded-xl bg-[#2ECC71] hover:bg-[#27AE60] flex items-center justify-center flex-shrink-0 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</th:block>
+
+<!-- ── Script del chatbot ──────────────────────────────────────────────────── -->
+<th:block th:fragment="chatbot-script">
+<script th:inline="javascript">
+(function() {
+
+  let chatbotAbierto = false;
+  let cargando      = false;
+
+  // ── Toggle panel ─────────────────────────────────────────────────────────
+  window.chatbotToggle = function() {
+    chatbotAbierto = !chatbotAbierto;
+    const panel     = document.getElementById('chatbot-panel');
+    const iconOpen  = document.getElementById('chatbot-icon-open');
+    const iconClose = document.getElementById('chatbot-icon-close');
+    const badge     = document.getElementById('chatbot-badge');
+
+    if (chatbotAbierto) {
+      panel.classList.remove('hidden');
+      iconOpen.classList.add('hidden');
+      iconClose.classList.remove('hidden');
+      badge.classList.add('hidden');
+      cargarHistorial();
+      setTimeout(() => document.getElementById('chatbot-input')?.focus(), 200);
+    } else {
+      panel.classList.add('hidden');
+      iconOpen.classList.remove('hidden');
+      iconClose.classList.add('hidden');
+    }
+  };
+
+  // ── Cargar historial al abrir ────────────────────────────────────────────
+  function cargarHistorial() {
+    fetch('/chatbot/historial')
+      .then(r => r.json())
+      .then(data => {
+        const mensajes = data.mensajes || [];
+        // Si ya hay mensajes en BD, los renderizamos (sin el welcome)
+        if (mensajes.length > 0) {
+          document.getElementById('chatbot-welcome').style.display = 'none';
+          mensajes.forEach(m => renderMensaje(m.emisor, m.mensaje));
+        }
+        actualizarRestantes(data.restantes);
+        scrollBottom();
+      })
+      .catch(() => {}); // silencioso si no hay sesión aún
+  }
+
+  // ── Enviar mensaje ───────────────────────────────────────────────────────
+  window.chatbotEnviar = function() {
+    const input = document.getElementById('chatbot-input');
+    const texto = input.value.trim();
+    if (!texto || cargando) return;
+
+    renderMensaje('USUARIO', texto);
+    input.value = '';
+    chatbotAutoResize(input);
+    mostrarTyping();
+    bloquearInput(true);
+    scrollBottom();
+
+    fetch('/chatbot/mensaje', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', [csrfHeader()]: csrfToken() },
+      body:    JSON.stringify({ mensaje: texto })
+    })
+    .then(r => r.json())
+    .then(data => {
+      quitarTyping();
+      if (data.error) {
+        renderMensaje('SISTEMA', '⚠️ ' + data.error);
+      } else {
+        renderMensaje('SISTEMA', data.respuesta);
+        if (data.recursos && data.recursos.length > 0) {
+          renderTarjetas(data.recursos);
+        }
+        actualizarRestantes(data.restantes);
+      }
+      bloquearInput(false);
+      scrollBottom();
+      document.getElementById('chatbot-input').focus();
+    })
+    .catch(() => {
+      quitarTyping();
+      renderMensaje('SISTEMA', '❌ Error de conexión. Intenta de nuevo.');
+      bloquearInput(false);
+    });
+  };
+
+  // ── Nueva sesión — modal custom ──────────────────────────────────────────
+  window.chatbotNuevaSesion = function() {
+    document.getElementById('chatbot-modal').classList.remove('hidden');
+  };
+
+  window.chatbotModalCerrar = function() {
+    document.getElementById('chatbot-modal').classList.add('hidden');
+  };
+
+  window.chatbotModalConfirmar = function() {
+    chatbotModalCerrar();
+    fetch('/chatbot/nueva-sesion', {
+      method:  'POST',
+      headers: { [csrfHeader()]: csrfToken() }
+    })
+    .then(() => {
+      const container = document.getElementById('chatbot-messages');
+      container.innerHTML = `
+        <div class="flex gap-2 items-start" id="chatbot-welcome">
+          <div class="w-7 h-7 rounded-full bg-[#2ECC71] flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+          </div>
+          <div class="bg-white dark:bg-slate-700 rounded-2xl rounded-tl-sm px-3 py-2 max-w-[260px] shadow-sm">
+            <p class="text-sm text-slate-700 dark:text-slate-200">¡Nueva conversación iniciada! 🌿 ¿En qué te puedo ayudar?</p>
+          </div>
+        </div>`;
+      actualizarRestantes(50);
+    });
+  };
+
+  // ── Renderizar burbuja de mensaje ────────────────────────────────────────
+  function renderMensaje(emisor, texto) {
+    const container = document.getElementById('chatbot-messages');
+    const esUsuario = emisor === 'USUARIO';
+
+    const div = document.createElement('div');
+    div.className = 'flex gap-2 items-start ' + (esUsuario ? 'flex-row-reverse' : '');
+
+    // Avatar
+    const avatar = document.createElement('div');
+    avatar.className = 'w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold '
+      + (esUsuario ? 'bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-200' : 'bg-[#2ECC71] text-white');
+    avatar.innerHTML = esUsuario
+      ? '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>'
+      : '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+
+    // Burbuja
+    const burbuja = document.createElement('div');
+    burbuja.className = 'rounded-2xl px-3 py-2 max-w-[260px] shadow-sm text-sm leading-relaxed '
+      + (esUsuario
+        ? 'bg-[#2ECC71] text-white rounded-tr-sm'
+        : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-tl-sm');
+
+    burbuja.innerHTML = formatearTexto(texto);
+
+    div.appendChild(avatar);
+    div.appendChild(burbuja);
+    container.appendChild(div);
+  }
+
+  // ── Indicador "escribiendo..." ───────────────────────────────────────────
+  function mostrarTyping() {
+    cargando = true;
+    const container = document.getElementById('chatbot-messages');
+    const div = document.createElement('div');
+    div.id = 'chatbot-typing';
+    div.className = 'flex gap-2 items-start';
+    div.innerHTML = `
+      <div class="w-7 h-7 rounded-full bg-[#2ECC71] flex items-center justify-center flex-shrink-0 mt-0.5">
+        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+      </div>
+      <div class="bg-white dark:bg-slate-700 rounded-2xl rounded-tl-sm px-3 py-2 shadow-sm">
+        <div class="flex gap-1 items-center h-5">
+          <span class="w-2 h-2 rounded-full bg-slate-400 animate-bounce" style="animation-delay:0ms"></span>
+          <span class="w-2 h-2 rounded-full bg-slate-400 animate-bounce" style="animation-delay:150ms"></span>
+          <span class="w-2 h-2 rounded-full bg-slate-400 animate-bounce" style="animation-delay:300ms"></span>
+        </div>
+      </div>`;
+    container.appendChild(div);
+    scrollBottom();
+  }
+
+  function quitarTyping() {
+    cargando = false;
+    document.getElementById('chatbot-typing')?.remove();
+  }
+
+  // ── Helpers ──────────────────────────────────────────────────────────────
+  function scrollBottom() {
+    const c = document.getElementById('chatbot-messages');
+    if (c) setTimeout(() => { c.scrollTop = c.scrollHeight; }, 50);
+  }
+
+  function bloquearInput(bloqueado) {
+    const input = document.getElementById('chatbot-input');
+    const btn   = document.getElementById('chatbot-send-btn');
+    if (input) input.disabled = bloqueado;
+    if (btn)   btn.disabled   = bloqueado;
+  }
+
+  function actualizarRestantes(n) {
+    const el = document.getElementById('chatbot-restantes');
+    if (el) el.textContent = n !== undefined ? n + ' mensajes restantes' : '';
+  }
+
+  window.chatbotAutoResize = function(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 96) + 'px';
+  };
+
+  window.chatbotKeydown = function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      chatbotEnviar();
+    }
+  };
+
+  function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  /** Convierte texto plano/markdown básico a HTML limpio */
+  function formatearTexto(texto) {
+    let s = escapeHtml(texto);
+    // Negrita **texto** o __texto__
+    s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/__(.+?)__/g, '<strong>$1</strong>');
+    // Cursiva *texto*
+    s = s.replace(/\*([^*\n]+?)\*/g, '<em>$1</em>');
+    // Eliminar # de encabezados markdown
+    s = s.replace(/^#{1,3}\s+/gm, '');
+    // Listas con * o - al inicio de línea → li
+    s = s.replace(/^[*\-]\s+(.+)$/gm, '<li>$1</li>');
+    // Envolver li consecutivos en ul
+    s = s.replace(/(<li>.*<\/li>\n?)+/g, m => '<ul class="list-disc pl-4 space-y-0.5 my-1">' + m + '</ul>');
+    // Saltos de línea
+    s = s.replace(/\n/g, '<br>');
+    return s;
+  }
+
+  /** Renderiza tarjetas de recursos debajo del mensaje */
+  function renderTarjetas(recursos) {
+    const container = document.getElementById('chatbot-messages');
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'px-2 pb-2';
+
+    const titulo = document.createElement('p');
+    titulo.className = 'text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-9';
+    titulo.textContent = 'Recursos en la plataforma';
+    wrapper.appendChild(titulo);
+
+    const grid = document.createElement('div');
+    grid.className = 'flex flex-col gap-1.5 ml-9';
+
+    recursos.forEach(r => {
+      const card = document.createElement('div');
+      card.className = 'bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 cursor-pointer hover:border-[#2ECC71] hover:shadow-sm transition-all';
+
+      const esNormativa = r.tipo === 'NORMATIVA';
+      const badge = esNormativa
+        ? '<span class="text-[9px] font-bold bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full uppercase">Normativa</span>'
+        : '<span class="text-[9px] font-bold bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded-full uppercase">Estudio</span>';
+
+      const codigoAnio = [r.codigo, r.anio].filter(Boolean).join(' · ');
+
+      card.innerHTML = `
+        <div class="flex items-start justify-between gap-2">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-1.5 mb-0.5">
+              ${badge}
+              ${codigoAnio ? `<span class="text-[9px] text-slate-400">${escapeHtml(codigoAnio)}</span>` : ''}
+            </div>
+            <p class="text-xs font-semibold text-slate-700 dark:text-slate-200 leading-tight truncate">${escapeHtml(r.titulo)}</p>
+          </div>
+          <svg id="chevron-${r.tipo}-${r.id}" class="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+          </svg>
+        </div>
+        <div id="desc-${r.tipo}-${r.id}" class="hidden mt-1.5 pt-1.5 border-t border-slate-100 dark:border-slate-600">
+          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">${escapeHtml(r.descripcion || 'Sin descripción disponible.')}</p>
+        </div>`;
+
+      card.addEventListener('click', () => {
+        const desc    = document.getElementById(`desc-${r.tipo}-${r.id}`);
+        const chevron = document.getElementById(`chevron-${r.tipo}-${r.id}`);
+        const oculto  = desc.classList.contains('hidden');
+        desc.classList.toggle('hidden', !oculto);
+        chevron.style.transform = oculto ? 'rotate(180deg)' : '';
+      });
+
+      grid.appendChild(card);
+    });
+
+    wrapper.appendChild(grid);
+    container.appendChild(wrapper);
+  }
+
+  // CSRF helpers (Spring Security — valores inyectados por Thymeleaf)
+  const _csrfToken  = /*[[${_csrf.token}]]*/ '';
+  const _csrfHeader = /*[[${_csrf.headerName}]]*/ 'X-CSRF-TOKEN';
+  function csrfToken()  { return _csrfToken; }
+  function csrfHeader() { return _csrfHeader; }
+
+})();
+</script>
+</th:block>
+
+</body>
+</html>

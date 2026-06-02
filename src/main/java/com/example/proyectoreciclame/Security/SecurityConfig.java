@@ -77,6 +77,7 @@ public class SecurityConfig {
                         .requestMatchers("/estudios", "/estudios/**").hasAnyRole("SOCIO", "VISUALIZADOR")
                         .requestMatchers("/perfil/**").authenticated()
                         .requestMatchers("/ai/**").hasAnyRole("SOCIO", "VISUALIZADOR", "ADMIN", "SUPERADMIN")
+                        .requestMatchers("/chatbot/**").hasAnyRole("SOCIO", "VISUALIZADOR", "ADMIN", "SUPERADMIN")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

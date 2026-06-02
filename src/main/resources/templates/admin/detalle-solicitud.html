@@ -302,5 +302,8 @@
 <script>
     AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
 </script>
+<!-- Chatbot -->
+<th:block th:replace="~{fragments/chatbot-widget :: chatbot}"></th:block>
+<th:block th:replace="~{fragments/chatbot-widget :: chatbot-script}"></th:block>
 </body>
 </html>
