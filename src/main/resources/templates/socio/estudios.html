@@ -107,6 +107,8 @@
             height: 2.5rem;
         }
     </style>
+    <!-- AOS - Scroll Reveal -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <div th:replace="~{fragments/responsive}"></div>
 
 </head>
@@ -128,7 +130,7 @@
         <main class="flex-1 overflow-y-auto px-8 py-3">
             <div class="w-full">
                 <!-- Page Header -->
-                <div class="mb-5">
+                <div class="mb-5" data-aos="fade-down">
                     <div>
                         <h2
                             class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
@@ -144,7 +146,7 @@
 
 
                 <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-                    <article
+                    <article data-aos="fade-up" data-aos-delay="0"
                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div
                             class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container">
@@ -166,10 +168,10 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Total estudios
                         </h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalEstudios}">0</div>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${totalEstudios}">0</div>
                     </article>
 
-                    <article
+                    <article data-aos="fade-up" data-aos-delay="100"
                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200"></div>
                         <div class="flex justify-between items-start mb-3">
@@ -189,11 +191,11 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Descargas de estudios
                         </h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalDescargasEstudios}">0
+                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${totalDescargasEstudios}">0
                         </div>
                     </article>
 
-                    <article
+                    <article data-aos="fade-up" data-aos-delay="200"
                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200">
                         </div>
@@ -214,11 +216,11 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Añadidos en 30 días
                         </h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${estudiosRecientes}">0
+                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${estudiosRecientes}">0
                         </div>
                     </article>
 
-                    <article
+                    <article data-aos="fade-up" data-aos-delay="300"
                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container">
                         </div>
@@ -243,7 +245,7 @@
                     </article>
                 </section>
 
-                <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6 flex flex-col">
+                <div data-aos="fade-up" data-aos-delay="60" class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6 flex flex-col">
                     <!-- Search Bar -->
                     <form action="/estudios" method="GET" class="flex flex-col sm:flex-row gap-4 mb-6 w-full flex-wrap">
                         <div class="flex-1 relative">
@@ -911,6 +913,23 @@
             renderPagination();
         });
     </script>
+<!-- AOS - Scroll Reveal -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+    (function () {
+        var s = document.querySelector('main.overflow-y-auto') || document.querySelector('.overflow-y-auto');
+        if (!s) return;
+        function checkAOS() {
+            var h = window.innerHeight;
+            document.querySelectorAll('[data-aos]:not(.aos-animate)').forEach(function(el) {
+                if (el.getBoundingClientRect().top < h - 40) el.classList.add('aos-animate');
+            });
+        }
+        s.addEventListener('scroll', checkAOS, { passive: true });
+    })();
+</script>
+<script th:src="@{/js/animations.js}"></script>
 <!-- Chatbot -->
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot}"></th:block>
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot-script}"></th:block>

@@ -131,7 +131,7 @@
         <main class="flex-1 overflow-y-auto px-4 sm:px-6 py-2">
             <div class="w-full">
                 <!-- Page Header -->
-                <div class="mb-5">
+                <div class="mb-5" data-aos="fade-down">
                     <div>
                         <h2
                             class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
@@ -425,7 +425,7 @@
                 </div>
 
                 <!-- SEARCH & FILTERS -->
-                <div class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
+                <div data-aos="fade-up" data-aos-delay="60" class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
                     <!-- Search Bar -->
                     <!-- Search Bar -->
                     <form action="/normativas" method="GET"
@@ -1251,6 +1251,18 @@
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
     AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+    // Parche: AOS en contenedor de scroll interno (layout h-screen overflow-hidden)
+    (function () {
+        var s = document.querySelector('main.overflow-y-auto') || document.querySelector('.overflow-y-auto');
+        if (!s) return;
+        function checkAOS() {
+            var h = window.innerHeight;
+            document.querySelectorAll('[data-aos]:not(.aos-animate)').forEach(function(el) {
+                if (el.getBoundingClientRect().top < h - 40) el.classList.add('aos-animate');
+            });
+        }
+        s.addEventListener('scroll', checkAOS, { passive: true });
+    })();
 </script>
 <!-- Contador animado en KPIs -->
 <script th:src="@{/js/animations.js}"></script>

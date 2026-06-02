@@ -160,6 +160,8 @@
             box-shadow: 0 0 0 3px white, 0 0 0 5px currentColor;
         }
     </style>
+    <!-- AOS - Scroll Reveal -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <div th:replace="~{fragments/responsive}"></div>
 
 </head>
@@ -222,7 +224,7 @@
                 </div>
 
                 <!-- Page Header -->
-                <div class="mb-5">
+                <div class="mb-5" data-aos="fade-down">
                     <div class="flex items-center gap-3 mb-1">
 
                         <div>
@@ -238,7 +240,7 @@
                 <!-- KPIs (Indicadores) -->
                 <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
                     <!-- KPI Total -->
-                    <article
+                    <article data-aos="fade-up" data-aos-delay="0"
                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-emerald-200">
                         </div>
@@ -257,11 +259,11 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Total de documentos
                         </h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalGuardados}">0</div>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${totalGuardados}">0</div>
                     </article>
 
                     <!-- KPI Estudios -->
-                    <article
+                    <article data-aos="fade-up" data-aos-delay="100"
                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200"></div>
                         <div class="flex justify-between items-start mb-3">
@@ -280,11 +282,11 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Total guardados
                         </h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalEstudios}">0</div>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${totalEstudios}">0</div>
                     </article>
 
                     <!-- KPI Normativas -->
-                    <article
+                    <article data-aos="fade-up" data-aos-delay="200"
                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200">
                         </div>
@@ -304,11 +306,11 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Total guardadas
                         </h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalNormativas}">0</div>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${totalNormativas}">0</div>
                     </article>
 
                     <!-- KPI Carpeta más poblada -->
-                    <article
+                    <article data-aos="fade-up" data-aos-delay="300"
                         class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-purple-200">
                         </div>
@@ -330,7 +332,7 @@
                                 th:text="${carpetaMasPoblada.nombre}">
                                 Carpeta Principal
                             </h4>
-                            <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${maxDocumentos}">0
+                            <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${maxDocumentos}">0
                             </div>
                         </div>
                         <div th:if="${carpetaMasPoblada == null}">
@@ -1344,6 +1346,24 @@
         // Inicializar filtros y búsqueda
         filtrarTipo('todos');
     </script>
+<!-- AOS - Scroll Reveal -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+    (function () {
+
+        var s = document.querySelector('main.overflow-y-auto') || document.querySelector('.overflow-y-auto');
+        if (!s) return;
+        function checkAOS() {
+            var h = window.innerHeight;
+            document.querySelectorAll('[data-aos]:not(.aos-animate)').forEach(function(el) {
+                if (el.getBoundingClientRect().top < h - 40) el.classList.add('aos-animate');
+            });
+        }
+        s.addEventListener('scroll', checkAOS, { passive: true });
+    })();
+</script>
+<script th:src="@{/js/animations.js}"></script>
 <!-- Chatbot -->
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot}"></th:block>
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot-script}"></th:block>
