@@ -1228,18 +1228,41 @@
  */
 function abrirModalDinamico(url) {
     var container = document.getElementById('modal-dinamico-container');
-    // Indicador visual de carga
-    container.innerHTML = '<div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm"><div class="w-10 h-10 rounded-full border-4 border-white/30 border-t-white animate-spin"></div></div>';
 
-    fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-        .then(function(res) { return res.text(); })
+    // Spinner de carga
+    container.innerHTML = [
+        '<div style="position:fixed;inset:0;z-index:200;display:flex;align-items:center;',
+        'justify-content:center;background:rgba(0,0,0,0.45);backdrop-filter:blur(4px)">',
+        '<div style="width:40px;height:40px;border-radius:50%;border:4px solid rgba(255,255,255,0.3);',
+        'border-top-color:#fff;animation:spin .7s linear infinite"></div></div>',
+        '<style>@keyframes spin{to{transform:rotate(360deg)}}</style>'
+    ].join('');
+
+    fetch(url, { credentials: 'same-origin' })
+        .then(function(res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.text();
+        })
         .then(function(html) {
             var doc = new DOMParser().parseFromString(html, 'text/html');
 
-            // Buscar el modal overlay (primer elemento fixed z-[100])
-            var modal = doc.querySelector('[class*="z-[100]"]');
+            // Buscar el modal: div con clase "fixed" e "inset-0" que NO sea el modal de filtros
+            var modal = null;
+            var candidates = doc.querySelectorAll('div');
+            for (var i = 0; i < candidates.length; i++) {
+                var el = candidates[i];
+                if (el.id === 'filtersModal') continue;        // excluir filtros avanzados
+                if (el.classList.contains('fixed') &&
+                    el.classList.contains('inset-0') &&
+                    !el.classList.contains('hidden') &&
+                    !el.classList.contains('pointer-events-none')) {
+                    modal = el;
+                    break;
+                }
+            }
+
             if (!modal) {
-                // No se encontró modal: limpiar spinner y navegar normalmente
+                // No se encontró modal → navegar normalmente (fallback)
                 container.innerHTML = '';
                 window.location.href = url;
                 return;
@@ -1247,10 +1270,9 @@ function abrirModalDinamico(url) {
 
             container.innerHTML = modal.outerHTML;
 
-            // Interceptar los enlaces de "Cerrar" / "Cancelar" que vuelven a la lista
+            // Interceptar "Cerrar" / "Cancelar" para que no recarguen la página
             container.querySelectorAll('a').forEach(function(a) {
                 var href = a.getAttribute('href') || '';
-                // Si es un link de cierre (sin param modal= en la URL)
                 if (href.indexOf('/gestion') !== -1 && href.indexOf('modal=') === -1) {
                     a.addEventListener('click', function(e) {
                         e.preventDefault();
@@ -1259,17 +1281,18 @@ function abrirModalDinamico(url) {
                 }
             });
 
-            // Cerrar al hacer click en el overlay oscuro (fuera del card)
-            var overlay = container.querySelector('[class*="fixed"][class*="inset-0"]');
+            // Cerrar haciendo click en el fondo oscuro
+            var overlay = container.firstElementChild;
             if (overlay) {
                 overlay.addEventListener('click', function(e) {
                     if (e.target === overlay) container.innerHTML = '';
                 });
             }
         })
-        .catch(function() {
+        .catch(function(err) {
+            console.error('abrirModalDinamico error:', err);
             container.innerHTML = '';
-            window.location.href = url;
+            window.location.href = url;  // fallback: navegación normal
         });
 }
 </script>
