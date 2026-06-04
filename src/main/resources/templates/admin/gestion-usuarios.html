@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" class="h-full" xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -203,7 +203,7 @@
                         </div>
                     </article>
 
-                    <article data-aos="fade-up" data-aos-delay="100"
+                    <article data-aos="fade-up" data-aos-delay="50"
                             class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div
                                 class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container">
@@ -228,7 +228,7 @@
                         </div>
                     </article>
 
-                    <article data-aos="fade-up" data-aos-delay="200"
+                    <article data-aos="fade-up" data-aos-delay="100"
                             class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div
                                 class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container">
@@ -254,7 +254,7 @@
                         </div>
                     </article>
 
-                    <article data-aos="fade-up" data-aos-delay="300"
+                    <article data-aos="fade-up" data-aos-delay="150"
                             class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-amber-200">
                         </div>
@@ -412,12 +412,7 @@
                                 <div class="flex flex-wrap items-start justify-start lg:justify-center gap-x-3 gap-y-2 w-full max-w-full min-w-0">
 
                                     <!-- EDITAR - Siempre presente -->
-                                    <a th:if="${u.estado != 'Bloqueado' && u.estado != 'Pendiente' && u.estado != 'Rechazado'}"
-                                       th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='edit', id=${u.idUsuario})}"
-                                       class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors "
-                                       title="Editar usuario">
-                                        Editar
-                                    </a>
+                                    <button type="button" th:if="${u.estado != 'Bloqueado' && u.estado != 'Pendiente' && u.estado != 'Rechazado'}" th:data-url="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='edit', id=${u.idUsuario})}" onclick="abrirModalDinamico(this.dataset.url)" class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors " title="Editar usuario"> Editar </button>
                                     <button th:if="${u.estado == 'Bloqueado' || u.estado == 'Pendiente' || u.estado == 'Rechazado'}"
                                             disabled
                                             class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant opacity-40 cursor-not-allowed "
@@ -426,18 +421,22 @@
                                     </button>
 
                                     <!-- BLOQUEAR / DESBLOQUEAR - Siempre presente -->
-                                    <a th:if="${u.estado == 'Activo'}"
-                                       th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='block', id=${u.idUsuario})}"
-                                       class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-error-container hover:text-error transition-colors "
-                                       title="Bloquear usuario">
+                                    <button type="button"
+                                            th:if="${u.estado == 'Activo'}"
+                                            th:data-url="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='block', id=${u.idUsuario})}"
+                                            onclick="abrirModalDinamico(this.dataset.url)"
+                                            class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-error-container hover:text-error transition-colors"
+                                            title="Bloquear usuario">
                                         Bloquear
-                                    </a>
-                                    <a th:if="${u.estado == 'Bloqueado'}"
-                                       th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='unblock', id=${u.idUsuario})}"
-                                       class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors "
-                                       title="Desbloquear usuario">
+                                    </button>
+                                    <button type="button"
+                                            th:if="${u.estado == 'Bloqueado'}"
+                                            th:data-url="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='unblock', id=${u.idUsuario})}"
+                                            onclick="abrirModalDinamico(this.dataset.url)"
+                                            class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors"
+                                            title="Desbloquear usuario">
                                         Desbloquear
-                                    </a>
+                                    </button>
                                     <button th:if="${u.estado == 'Pendiente' || u.estado == 'Rechazado'}"
                                             disabled
                                             class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant opacity-40 cursor-not-allowed "
@@ -446,14 +445,16 @@
                                     </button>
 
                                     <!-- HISTORIAL - Siempre habilitado -->
-                                    <a th:href="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='historial', id=${u.idUsuario})}"
-                                       class="inline-flex items-center justify-center gap-1 rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-surface-container hover:text-on-primary-fixed transition-colors "
-                                       title="Ver historial de cambios">
+                                    <button type="button"
+                                            th:data-url="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='historial', id=${u.idUsuario})}"
+                                            onclick="abrirModalDinamico(this.dataset.url)"
+                                            class="inline-flex items-center justify-center gap-1 rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-surface-container hover:text-on-primary-fixed transition-colors"
+                                            title="Ver historial de cambios">
                                         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
                                         </svg>
                                         Historial
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -1208,12 +1209,70 @@
 <!-- AOS - Scroll Reveal -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded' });
 </script>
 <!-- Contador animado en KPIs -->
 <script th:src="@{/js/animations.js}"></script>
 <!-- Spinner en formularios -->
 <script th:src="@{/js/spinner.js}"></script>
+
+<!-- Contenedor para modales dinámicos (sin recarga de página) -->
+<div id="modal-dinamico-container"></div>
+
+<script>
+/**
+ * Abre un modal (historial / editar / bloquear) sin recargar la página.
+ * Hace fetch de la URL, extrae el primer overlay "fixed inset-0 z-[100]"
+ * del HTML devuelto y lo inyecta en el contenedor.
+ * Los botones de cerrar/cancelar dentro del modal simplemente limpian el contenedor.
+ */
+function abrirModalDinamico(url) {
+    var container = document.getElementById('modal-dinamico-container');
+    // Indicador visual de carga
+    container.innerHTML = '<div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm"><div class="w-10 h-10 rounded-full border-4 border-white/30 border-t-white animate-spin"></div></div>';
+
+    fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(function(res) { return res.text(); })
+        .then(function(html) {
+            var doc = new DOMParser().parseFromString(html, 'text/html');
+
+            // Buscar el modal overlay (primer elemento fixed z-[100])
+            var modal = doc.querySelector('[class*="z-[100]"]');
+            if (!modal) {
+                // No se encontró modal: limpiar spinner y navegar normalmente
+                container.innerHTML = '';
+                window.location.href = url;
+                return;
+            }
+
+            container.innerHTML = modal.outerHTML;
+
+            // Interceptar los enlaces de "Cerrar" / "Cancelar" que vuelven a la lista
+            container.querySelectorAll('a').forEach(function(a) {
+                var href = a.getAttribute('href') || '';
+                // Si es un link de cierre (sin param modal= en la URL)
+                if (href.indexOf('/gestion') !== -1 && href.indexOf('modal=') === -1) {
+                    a.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        container.innerHTML = '';
+                    });
+                }
+            });
+
+            // Cerrar al hacer click en el overlay oscuro (fuera del card)
+            var overlay = container.querySelector('[class*="fixed"][class*="inset-0"]');
+            if (overlay) {
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === overlay) container.innerHTML = '';
+                });
+            }
+        })
+        .catch(function() {
+            container.innerHTML = '';
+            window.location.href = url;
+        });
+}
+</script>
 <!-- Chatbot -->
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot}"></th:block>
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot-script}"></th:block>

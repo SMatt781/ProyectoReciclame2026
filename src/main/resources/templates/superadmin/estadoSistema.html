@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html class="light" lang="es">
 
@@ -196,7 +196,7 @@
             </div>
 
             <!-- RAM -->
-            <div data-aos="fade-up" data-aos-delay="100" class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
+            <div data-aos="fade-up" data-aos-delay="50" class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Memoria RAM</p>
@@ -219,7 +219,7 @@
             </div>
 
             <!-- Almacenamiento -->
-            <div data-aos="fade-up" data-aos-delay="200" class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
+            <div data-aos="fade-up" data-aos-delay="100" class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Almacenamiento</p>
@@ -242,7 +242,7 @@
             </div>
 
             <!-- Latencia BD -->
-            <div data-aos="fade-up" data-aos-delay="300" class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
+            <div data-aos="fade-up" data-aos-delay="150" class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Latencia BD</p>
@@ -667,7 +667,7 @@
 <!-- AOS - Scroll Reveal -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded' });
 </script>
 <!-- Chatbot -->
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot}"></th:block>

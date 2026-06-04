@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" class="h-full" xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -138,7 +138,7 @@
                 </article>
 
                 <!-- Ingresos esta semana -->
-                <article data-aos="fade-up" data-aos-delay="100"
+                <article data-aos="fade-up" data-aos-delay="50"
                          class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
                     <div class="flex justify-between items-start mb-3">
@@ -156,7 +156,7 @@
                 </article>
 
                 <!-- Total descargas -->
-                <article data-aos="fade-up" data-aos-delay="200"
+                <article data-aos="fade-up" data-aos-delay="100"
                          class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-300"></div>
                     <div class="flex justify-between items-start mb-3">
@@ -174,7 +174,7 @@
                 </article>
 
                 <!-- Usuarios activos -->
-                <article data-aos="fade-up" data-aos-delay="300"
+                <article data-aos="fade-up" data-aos-delay="150"
                          class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-300"></div>
                     <div class="flex justify-between items-start mb-3">
@@ -193,7 +193,7 @@
             </section>
 
             <!-- ── Fila de gráficos ── -->
-            <div data-aos="fade-up" data-aos-delay="100"
+            <div data-aos="fade-up" data-aos-delay="50"
                  class="grid grid-cols-1 xl:grid-cols-[1.8fr_1fr] gap-4 mb-4">
 
                 <!-- Gráfico de barras: ingresos por día -->
@@ -321,7 +321,7 @@
                 </div>
 
                 <!-- Descargas por rol -->
-                <div data-aos="fade-up" data-aos-delay="100"
+                <div data-aos="fade-up" data-aos-delay="50"
                      class="bg-surface-container-lowest rounded-[1.25rem] p-5 ambient-shadow ghost-border">
                     <h3 class="font-headline font-bold text-base text-on-primary-fixed mb-4">
                         Descargas por rol de usuario
@@ -525,7 +525,7 @@
 <!-- AOS - Scroll Reveal -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded' });
 </script>
 <!-- Contador animado en KPIs -->
 <script th:src="@{/js/animations.js}"></script>
