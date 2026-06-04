@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" class="h-full">
 <head>
     <meta charset="utf-8" />
@@ -138,7 +138,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
 
                     <!-- Perfil -->
-                    <aside data-aos="fade-right" data-aos-delay="100"
+                    <aside data-aos="fade-right" data-aos-delay="50"
                            class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border h-fit">
                         <div class="flex flex-col items-center text-center">
                             <!-- Avatar: DNI (dos iniciales) o RUC (una inicial de razón social) -->
@@ -187,7 +187,7 @@
                     <section data-aos="fade-left" data-aos-delay="150" class="space-y-6">
 
                         <!-- Datos del solicitante -->
-                        <section data-aos="fade-up" data-aos-delay="200"
+                        <section data-aos="fade-up" data-aos-delay="100"
                                  class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border">
                             <div class="mb-6">
                                 <h3 class="font-headline text-lg font-bold text-on-primary-fixed">
@@ -247,7 +247,7 @@
                         </section>
 
                         <!-- Evaluación -->
-                        <section data-aos="fade-up" data-aos-delay="300"
+                        <section data-aos="fade-up" data-aos-delay="150"
                                  class="bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow ghost-border">
                             <div class="mb-6">
                                 <h3 class="font-headline text-lg font-bold text-on-primary-fixed">
@@ -300,7 +300,7 @@
 <!-- AOS - Scroll Reveal -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded' });
 </script>
 <!-- Chatbot -->
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot}"></th:block>

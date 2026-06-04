@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html class="light" lang="es"><head>
     <meta charset="utf-8"/>
@@ -99,7 +99,7 @@
                 <p class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${totalAdmins}">—</p>
             </div>
 
-            <div data-aos="fade-up" data-aos-delay="100"
+            <div data-aos="fade-up" data-aos-delay="50"
                  class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
                 <div class="flex justify-between items-start mb-3">
@@ -112,7 +112,7 @@
                 <p class="text-3xl font-extrabold text-secondary kpi-counter" th:text="${activeAdmins}">—</p>
             </div>
 
-            <div data-aos="fade-up" data-aos-delay="200"
+            <div data-aos="fade-up" data-aos-delay="100"
                  class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-blue-200"></div>
                 <div class="flex justify-between items-start mb-3">
@@ -125,7 +125,7 @@
                 <p class="text-3xl font-extrabold text-blue-600 kpi-counter" th:text="${totalDominios}">—</p>
             </div>
 
-            <div data-aos="fade-up" data-aos-delay="300"
+            <div data-aos="fade-up" data-aos-delay="150"
                  class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-emerald-300"></div>
                 <div class="flex justify-between items-start mb-3">
@@ -189,7 +189,7 @@
             </div>
 
             <!-- Políticas activas — 1 col -->
-            <div data-aos="fade-up" data-aos-delay="100"
+            <div data-aos="fade-up" data-aos-delay="50"
                  class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
                 <div class="px-4 py-3 border-b border-slate-100">
                     <h3 class="font-black text-black text-lg flex items-center gap-1.5">
@@ -246,7 +246,7 @@
             </div>
 
             <!-- Actividad reciente — 1 col -->
-            <div data-aos="fade-up" data-aos-delay="200"
+            <div data-aos="fade-up" data-aos-delay="100"
                  class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
                 <div class="px-4 py-3 border-b border-slate-100">
                     <h3 class="font-black text-black text-lg flex items-center gap-1.5">
@@ -313,7 +313,7 @@
             </div>
 
             <!-- Accesos directos — 1 col -->
-            <div data-aos="fade-up" data-aos-delay="300"
+            <div data-aos="fade-up" data-aos-delay="150"
                  class="xl:col-span-1 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
                 <div class="px-4 py-3 border-b border-slate-100">
                     <h3 class="font-black text-black text-lg flex items-center gap-1.5">
@@ -343,7 +343,7 @@
         </div>
 
         <!-- ── Chatbot IA (referencial) ──────────────────────────────────────── -->
-        <div data-aos="fade-up" data-aos-delay="100"
+        <div data-aos="fade-up" data-aos-delay="50"
              class="bg-primary-container rounded-[24px] p-6 overflow-hidden relative mb-4">
             <div class="relative z-10">
                 <div class="flex justify-between items-center mb-5">
@@ -391,7 +391,7 @@
 <!-- AOS - Scroll Reveal -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    AOS.init({ duration: 550, easing: 'ease-out-cubic', once: true, offset: 40 });
+    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded' });
 </script>
 <!-- Contador animado en KPIs -->
 <script th:src="@{/js/animations.js}"></script>
