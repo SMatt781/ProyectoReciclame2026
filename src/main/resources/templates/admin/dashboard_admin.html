@@ -144,7 +144,7 @@
                             Normativas vigentes
                         </h4>
 
-                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${normativasVigentes}">
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${normativasVigentes}">
                             84
                         </div>
                     </article>
@@ -167,7 +167,7 @@
                             Estudios vigentes
                         </h4>
 
-                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${estudiosVigentes}">
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${estudiosVigentes}">
                             28
                         </div>
                     </article>
@@ -190,7 +190,7 @@
                             Consulta pública
                         </h4>
 
-                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${normativasConsulta}">
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${normativasConsulta}">
                             16
                         </div>
                     </article>
@@ -213,7 +213,7 @@
                             Normativas derogadas
                         </h4>
 
-                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${normativasDerogadas}">
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${normativasDerogadas}">
                             14
                         </div>
                     </article>
@@ -289,37 +289,30 @@
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-1 gap-3 w-full">
-                                <div class="flex items-center justify-between text-sm">
-                                    <div class="flex items-center gap-2">
-                                        <div class="h-2.5 w-2.5 rounded-full bg-secondary"></div>
-                                        <span>Envases</span>
-                                    </div>
-                                    <span class="font-bold" th:text="${countEe}">56</span>
+                            <div class="grid grid-cols-1 gap-2.5 w-full">
+
+                                <div class="flex items-center gap-2 text-sm">
+                                    <div class="h-2.5 w-2.5 rounded-full bg-secondary shrink-0"></div>
+                                    <span class="text-on-surface-variant">Envases</span>
+                                    <span class="font-bold text-on-primary-fixed tabular-nums" th:text="'— ' + ${countEe} + ' norm.'">— 56 norm.</span>
                                 </div>
 
-                                <div class="flex items-center justify-between text-sm">
-                                    <div class="flex items-center gap-2">
-                                        <div class="h-2.5 w-2.5 rounded-full bg-orange-500"></div>
-                                        <span>Residuos</span>
-                                    </div>
-                                    <span class="font-bold" th:text="${countGr}">35</span>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <div class="h-2.5 w-2.5 rounded-full bg-orange-500 shrink-0"></div>
+                                    <span class="text-on-surface-variant">Residuos</span>
+                                    <span class="font-bold text-on-primary-fixed tabular-nums" th:text="'— ' + ${countGr} + ' norm.'">— 35 norm.</span>
                                 </div>
 
-                                <div class="flex items-center justify-between text-sm">
-                                    <div class="flex items-center gap-2">
-                                        <div class="h-2.5 w-2.5 rounded-full bg-blue-500"></div>
-                                        <span>Responsabilidad extendida</span>
-                                    </div>
-                                    <span class="font-bold" th:text="${countRep}">28</span>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <div class="h-2.5 w-2.5 rounded-full bg-blue-500 shrink-0"></div>
+                                    <span class="text-on-surface-variant">Resp. extendida</span>
+                                    <span class="font-bold text-on-primary-fixed tabular-nums" th:text="'— ' + ${countRep} + ' norm.'">— 28 norm.</span>
                                 </div>
 
-                                <div class="flex items-center justify-between text-sm">
-                                    <div class="flex items-center gap-2">
-                                        <div class="h-2.5 w-2.5 rounded-full bg-error"></div>
-                                        <span>Otros</span>
-                                    </div>
-                                    <span class="font-bold" th:text="${countOtro}">23</span>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <div class="h-2.5 w-2.5 rounded-full bg-error shrink-0"></div>
+                                    <span class="text-on-surface-variant">Otros</span>
+                                    <span class="font-bold text-on-primary-fixed tabular-nums" th:text="'— ' + ${countOtro} + ' norm.'">— 23 norm.</span>
                                 </div>
                             </div>
 

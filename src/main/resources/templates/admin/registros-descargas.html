@@ -98,7 +98,7 @@
                             </div>
                         </div>
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1">Total general</h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${totalDescargas}"></div>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalDescargas}"></div>
                     </article>
 
                     <article data-aos="fade-up" data-aos-delay="50"
@@ -115,7 +115,7 @@
                             </div>
                         </div>
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1">Normativas</h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${totalNormativas}"></div>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalNormativas}"></div>
                     </article>
 
                     <article data-aos="fade-up" data-aos-delay="100"
@@ -132,7 +132,7 @@
                             </div>
                         </div>
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1">Estudios</h4>
-                        <div class="text-3xl font-extrabold text-secondary kpi-counter" th:text="${totalEstudios}"></div>
+                        <div class="text-3xl font-extrabold text-secondary" th:text="${totalEstudios}"></div>
                     </article>
 
                     <article data-aos="fade-up" data-aos-delay="150"
@@ -155,7 +155,7 @@
                             Exportaciones
                         </h4>
 
-                        <div class="text-3xl font-extrabold text-secondary kpi-counter"
+                        <div class="text-3xl font-extrabold text-secondary"
                              th:text="${totalExportaciones != null ? totalExportaciones : totalDescargas}">
                             0
                         </div>
