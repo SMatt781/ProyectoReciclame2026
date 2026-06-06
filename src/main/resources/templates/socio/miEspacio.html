@@ -259,7 +259,7 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Total de documentos
                         </h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${totalGuardados}">0</div>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalGuardados}">0</div>
                     </article>
 
                     <!-- KPI Estudios -->
@@ -282,7 +282,7 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Total guardados
                         </h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${totalEstudios}">0</div>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalEstudios}">0</div>
                     </article>
 
                     <!-- KPI Normativas -->
@@ -306,7 +306,7 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Total guardadas
                         </h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${totalNormativas}">0</div>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalNormativas}">0</div>
                     </article>
 
                     <!-- KPI Carpeta más poblada -->
@@ -332,7 +332,7 @@
                                 th:text="${carpetaMasPoblada.nombre}">
                                 Carpeta Principal
                             </h4>
-                            <div class="text-3xl font-extrabold text-on-primary-fixed kpi-counter" th:text="${maxDocumentos}">0
+                            <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${maxDocumentos}">0
                             </div>
                         </div>
                         <div th:if="${carpetaMasPoblada == null}">
