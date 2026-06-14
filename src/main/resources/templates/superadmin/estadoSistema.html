@@ -584,38 +584,25 @@
                 </h3>
                 <span class="text-[10px] text-slate-400 font-mono">Acciones irreversibles</span>
             </div>
-            <div class="px-5 py-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-                <form th:action="@{/superadmin/sistema/limpiar-cache}" method="post">
+            <div class="px-5 py-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                <!-- Limpiar Caché -->
+                <form id="form-cache" th:action="@{/superadmin/sistema/limpiar-cache}" method="post">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    <button type="submit"
-                            onclick="return confirm('¿Confirmas la limpieza de caché del sistema?')"
+                    <button type="button" onclick="abrirModal('modal-cache')"
                             class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border border-slate-200 hover:bg-secondary-container/20 hover:border-secondary/30 transition-colors group text-left">
                         <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 group-hover:bg-secondary-container/30 group-hover:text-secondary flex items-center justify-center flex-shrink-0 transition-colors">
                             <span class="material-symbols-outlined text-[22px]">cached</span>
                         </div>
                         <div>
                             <p class="text-sm font-bold text-slate-700 group-hover:text-secondary transition-colors">Limpiar Caché</p>
-                            <p class="text-[10px] text-slate-400 font-mono">Libera memoria temporal del servidor</p>
+                            <p class="text-[10px] text-slate-400 font-mono">Libera resúmenes IA almacenados</p>
                         </div>
                     </button>
                 </form>
-                <form th:action="@{/superadmin/sistema/exportar-backup}" method="post">
+                <!-- Resetear Sesiones -->
+                <form id="form-sesiones" th:action="@{/superadmin/sistema/resetear-sesiones}" method="post">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    <button type="submit"
-                            class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border border-slate-200 hover:bg-blue-50 hover:border-blue-200 transition-colors group text-left">
-                        <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 group-hover:bg-blue-100 group-hover:text-blue-600 flex items-center justify-center flex-shrink-0 transition-colors">
-                            <span class="material-symbols-outlined text-[22px]">backup</span>
-                        </div>
-                        <div>
-                            <p class="text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">Exportar Backup SQL</p>
-                            <p class="text-[10px] text-slate-400 font-mono">Descarga snapshot de la base de datos</p>
-                        </div>
-                    </button>
-                </form>
-                <form th:action="@{/superadmin/sistema/resetear-sesiones}" method="post">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    <button type="submit"
-                            onclick="return confirm('¿Cerrar todas las sesiones activas?')"
+                    <button type="button" onclick="abrirModal('modal-sesiones')"
                             class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border border-slate-200 hover:bg-amber-50 hover:border-amber-200 transition-colors group text-left">
                         <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 group-hover:bg-amber-100 group-hover:text-amber-600 flex items-center justify-center flex-shrink-0 transition-colors">
                             <span class="material-symbols-outlined text-[22px]">logout</span>
@@ -626,22 +613,59 @@
                         </div>
                     </button>
                 </form>
-                <form th:action="@{/superadmin/sistema/reindexar-bd}" method="post">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    <button type="submit"
-                            onclick="return confirm('¿Iniciar reindexación de la base de datos?')"
-                            class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border border-slate-200 hover:bg-red-50 hover:border-red-200 transition-colors group text-left">
-                        <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 group-hover:bg-red-100 group-hover:text-red-500 flex items-center justify-center flex-shrink-0 transition-colors">
-                            <span class="material-symbols-outlined text-[22px]">database_sync</span>
-                        </div>
-                        <div>
-                            <p class="text-sm font-bold text-slate-700 group-hover:text-red-500 transition-colors">Reindexar BD</p>
-                            <p class="text-[10px] text-slate-400 font-mono">Optimiza índices de la base de datos</p>
-                        </div>
-                    </button>
-                </form>
             </div>
         </div>
+
+        <!-- Modal: Limpiar Caché -->
+        <div id="modal-cache" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm mx-4">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-secondary-container/30 text-secondary flex items-center justify-center flex-shrink-0">
+                        <span class="material-symbols-outlined text-[22px]">cached</span>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-base">¿Limpiar caché?</h3>
+                </div>
+                <p class="text-sm text-slate-500 mb-5">Se eliminarán todos los resúmenes IA almacenados. Los socios podrán regenerarlos en cualquier momento.</p>
+                <div class="flex gap-3 justify-end">
+                    <button type="button" onclick="cerrarModal('modal-cache')"
+                            class="px-4 py-2 text-sm font-semibold text-slate-500 border border-slate-200 rounded-xl hover:bg-slate-50 transition">
+                        Cancelar
+                    </button>
+                    <button type="button" onclick="document.getElementById('form-cache').submit()"
+                            class="px-4 py-2 text-sm font-semibold text-white bg-secondary rounded-xl hover:bg-secondary/90 transition">
+                        Sí, limpiar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Resetear Sesiones -->
+        <div id="modal-sesiones" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm mx-4">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0">
+                        <span class="material-symbols-outlined text-[22px]">logout</span>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-base">¿Resetear sesiones?</h3>
+                </div>
+                <p class="text-sm text-slate-500 mb-5">Todos los usuarios activos serán desconectados y deberán iniciar sesión nuevamente. Tu sesión como superadmin no se verá afectada.</p>
+                <div class="flex gap-3 justify-end">
+                    <button type="button" onclick="cerrarModal('modal-sesiones')"
+                            class="px-4 py-2 text-sm font-semibold text-slate-500 border border-slate-200 rounded-xl hover:bg-slate-50 transition">
+                        Cancelar
+                    </button>
+                    <button type="button" onclick="document.getElementById('form-sesiones').submit()"
+                            class="px-4 py-2 text-sm font-semibold text-white bg-amber-500 rounded-xl hover:bg-amber-600 transition">
+                        Sí, resetear
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function abrirModal(id) { document.getElementById(id).classList.remove('hidden'); }
+            function cerrarModal(id) { document.getElementById(id).classList.add('hidden'); }
+        </script>
 
     </main>
 </div>
