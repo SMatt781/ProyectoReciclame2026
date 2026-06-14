@@ -61,6 +61,10 @@ public class Estudio {
     @Column(name = "archivo_url")
     private String archivoUrl;
 
+    @Size(max = 500)
+    @Column(name = "archivo_preview_url")
+    private String archivoPreviewUrl;
+
     @Column(name = "archivo_tamanio_kb")
     private Integer archivoTamanioKb;
 
