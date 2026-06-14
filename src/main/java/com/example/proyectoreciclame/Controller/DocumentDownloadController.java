@@ -73,30 +73,46 @@ public class DocumentDownloadController {
         }
 
         try {
-            String clave = estudio.getArchivoUrl().replace("/uploads/estudios/", "estudios/");
-            log.info("[STREAM] id={} formato={} clave={}", id, estudio.getFormato(), clave);
-
-            log.info("[STREAM] Generando presigned URL y descargando via HTTP...");
-            String presignedUrl = s3StorageService.generatePresignedUrl(clave, 300);
-            byte[] fileData;
-            try (InputStream is = new URL(presignedUrl).openStream()) {
-                fileData = is.readAllBytes();
-            }
-            log.info("[STREAM] Descarga OK: {} bytes", fileData.length);
+            log.info("[STREAM] id={} formato={}", id, estudio.getFormato());
 
             byte[] pdfData;
             String filename;
-            if (estudio.getFormato() == Estudio.FormatoEstudio.PPTX) {
-                log.info("[STREAM] Convirtiendo PPTX a PDF con Aspose.Slides...");
-                pdfData = documentConverterService.convertPptxToPdf(fileData);
-                log.info("[STREAM] Conversión OK: {} bytes PDF", pdfData.length);
+
+            // ── Fast path: PDF pre-generado por PptxPreviewService ──────────
+            if (estudio.getFormato() == Estudio.FormatoEstudio.PPTX
+                    && estudio.getArchivoPreviewUrl() != null
+                    && !estudio.getArchivoPreviewUrl().isBlank()) {
+                log.info("[STREAM] Sirviendo preview pre-generado: {}", estudio.getArchivoPreviewUrl());
+                pdfData = s3StorageService.downloadFile(estudio.getArchivoPreviewUrl());
                 String base = estudio.getArchivoNombre() != null
                         ? estudio.getArchivoNombre().replaceAll("\\.[^.]+$", "")
                         : "presentacion";
                 filename = base + ".pdf";
+                log.info("[STREAM] Preview OK: {} bytes", pdfData.length);
+
+            // ── Slow path: conversión on-demand con Aspose (fallback) ────────
             } else {
-                pdfData = fileData;
-                filename = estudio.getArchivoNombre() != null ? estudio.getArchivoNombre() : "documento.pdf";
+                String clave = estudio.getArchivoUrl().replace("/uploads/estudios/", "estudios/");
+                log.info("[STREAM] Preview no disponible — descargando y convirtiendo on-demand: {}", clave);
+                String presignedUrl = s3StorageService.generatePresignedUrl(clave, 300);
+                byte[] fileData;
+                try (InputStream is = new URL(presignedUrl).openStream()) {
+                    fileData = is.readAllBytes();
+                }
+                log.info("[STREAM] Descarga OK: {} bytes", fileData.length);
+
+                if (estudio.getFormato() == Estudio.FormatoEstudio.PPTX) {
+                    log.info("[STREAM] Convirtiendo PPTX a PDF con Aspose (fallback)...");
+                    pdfData = documentConverterService.convertPptxToPdf(fileData);
+                    log.info("[STREAM] Conversión OK: {} bytes PDF", pdfData.length);
+                    String base = estudio.getArchivoNombre() != null
+                            ? estudio.getArchivoNombre().replaceAll("\\.[^.]+$", "")
+                            : "presentacion";
+                    filename = base + ".pdf";
+                } else {
+                    pdfData = fileData;
+                    filename = estudio.getArchivoNombre() != null ? estudio.getArchivoNombre() : "documento.pdf";
+                }
             }
 
             response.setContentType("application/pdf");
