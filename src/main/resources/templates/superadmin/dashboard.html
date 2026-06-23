@@ -84,7 +84,7 @@
         </div>
 
         <!-- ── Fila 1: 4 cards métricas ───────────────────────────────────── -->
-        <div class="grid grid-cols-2 xl:grid-cols-4 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
 
             <div data-aos="fade-up" data-aos-delay="0"
                  class="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-sm relative overflow-hidden">
@@ -137,8 +137,14 @@
                 <p class="text-sm font-bold text-black mb-1.5">Contraseña mínima</p>
 
                 <!-- Longitud mínima -->
-                <p class="text-3xl font-extrabold text-emerald-600"
-                   th:text="${politica != null} ? ${politica.longitudMinima} + ' caracteres' : '—'">— car.</p>
+                <div class="flex items-baseline gap-1 flex-wrap">
+                    <p class="text-3xl font-extrabold text-emerald-600 leading-none"
+                       th:text="${politica != null} ? ${politica.longitudMinima} : '—'">10</p>
+
+                    <span class="text-sm font-bold text-emerald-600">
+        caracteres
+    </span>
+                </div>
 
                 <!-- Chips de requisitos activos -->
                 <div class="flex flex-wrap gap-1 mt-1.5">

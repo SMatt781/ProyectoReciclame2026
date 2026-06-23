@@ -3,6 +3,7 @@ package com.example.proyectoreciclame.Controller;
 import com.example.proyectoreciclame.Entity.*;
 import com.example.proyectoreciclame.Repository.*;
 import com.example.proyectoreciclame.Service.CorreoService;
+import com.example.proyectoreciclame.Service.SessionStore;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -48,6 +49,8 @@ public class SuperadminController {
     private final IdentificacionRepository identificacionRepository;
     private final org.springframework.core.env.Environment env;
     private final CorreoService correoService;
+    private final AiResumenCacheRepository aiResumenCacheRepository;
+    private final SessionStore sessionStore;
 
     public SuperadminController(UsuarioRepository usuarioRepository,
                                 DominioAutorizadoRepository dominioAutorizadoRepository,
@@ -64,6 +67,8 @@ public class SuperadminController {
                                 HistorialRolesRepository historialRolesRepository,
                                 IdentificacionRepository identificacionRepository,
                                 CorreoService correoService,
+                                AiResumenCacheRepository aiResumenCacheRepository,
+                                SessionStore sessionStore,
                                 org.springframework.core.env.Environment env) {
         this.historialRolesRepository = historialRolesRepository;
         this.usuarioRepository = usuarioRepository;
@@ -80,6 +85,8 @@ public class SuperadminController {
         this.solicitudRegistroRepository = solicitudRegistroRepository;
         this.identificacionRepository = identificacionRepository;
         this.correoService = correoService;
+        this.aiResumenCacheRepository = aiResumenCacheRepository;
+        this.sessionStore = sessionStore;
         this.env = env;
     }
 
@@ -1167,6 +1174,26 @@ public class SuperadminController {
             workbook.write(response.getOutputStream());
         }
     }
+    // ── Herramientas de Mantenimiento ────────────────────────────────────────
+
+    @PostMapping("/sistema/limpiar-cache")
+    public String limpiarCache(RedirectAttributes redirectAttributes) {
+        long total = aiResumenCacheRepository.count();
+        aiResumenCacheRepository.deleteAll();
+        redirectAttributes.addFlashAttribute("success",
+                "Caché limpiada correctamente. Se eliminaron " + total + " resúmen(es) almacenado(s).");
+        return "redirect:/superadmin/estadoSistema";
+    }
+
+    @PostMapping("/sistema/resetear-sesiones")
+    public String resetearSesiones(RedirectAttributes redirectAttributes,
+                                   jakarta.servlet.http.HttpSession sesionActual) {
+        int cerradas = sessionStore.invalidarTodas(sesionActual.getId());
+        redirectAttributes.addFlashAttribute("success",
+                "Sesiones reseteadas correctamente. Se cerraron " + cerradas + " sesión(es) activa(s).");
+        return "redirect:/superadmin/estadoSistema";
+    }
+
     private void crearNotificacionSuperadmin(String titulo, String mensaje,
                                              String tipo, String enlace) {
         try {

@@ -38,6 +38,9 @@ public class AdminEstudiosController {
     private com.example.proyectoreciclame.Service.DocumentConverterService documentConverterService;
 
     @Autowired
+    private com.example.proyectoreciclame.Service.PptxPreviewService pptxPreviewService;
+
+    @Autowired
     private AdminNotificacionController adminNotificacionController;
 
     @GetMapping("/admin/estudios")
@@ -211,6 +214,11 @@ public class AdminEstudiosController {
             estudio.setFechaActualizacion(ahora);
 
             estudioRepository.save(estudio);
+
+            // Generar preview PDF en background si es PPTX
+            if (estudio.getFormato() == Estudio.FormatoEstudio.PPTX && estudio.getArchivoUrl() != null) {
+                pptxPreviewService.generarPreviewAsync(estudio.getIdEstudio());
+            }
 
             // Generar notificaciones si el estudio es publicado (VIGENTE)
             if (estudio.getEstado() == Estudio.EstadoEstudio.VIGENTE) {
@@ -1028,7 +1036,20 @@ public class AdminEstudiosController {
 
             estudio.setFechaActualizacion(java.time.LocalDateTime.now());
 
+            // Si se reemplazó el archivo PPTX, limpiar el preview anterior para que se regenere
+            boolean archivoNuevoPptx = archivo != null && !archivo.isEmpty()
+                    && archivo.getOriginalFilename() != null
+                    && archivo.getOriginalFilename().toLowerCase().endsWith(".pptx");
+            if (archivoNuevoPptx) {
+                estudio.setArchivoPreviewUrl(null);
+            }
+
             estudioRepository.save(estudio);
+
+            // Regenerar preview en background si se subió un PPTX nuevo
+            if (archivoNuevoPptx && estudio.getArchivoUrl() != null) {
+                pptxPreviewService.generarPreviewAsync(estudio.getIdEstudio());
+            }
 
             String estadoActual = estudio.getEstado() != null ? estudio.getEstado().name() : "-";
             String accion = estadoAnterior != estudio.getEstado()
