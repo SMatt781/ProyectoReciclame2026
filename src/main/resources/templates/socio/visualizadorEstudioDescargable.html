@@ -153,10 +153,26 @@
 
                         <!-- PPTX -->
                         <div th:if="${estudio.formato.name() == 'PPTX'}" class="flex-1 w-full relative" style="min-height:500px;">
-                            <div id="pptLoading" class="absolute inset-0 flex flex-col items-center justify-center bg-surface-container z-10">
-                                <div class="w-10 h-10 border-4 border-[#006d37]/20 border-t-[#006d37] rounded-full animate-spin mb-3"></div>
-                                <p class="text-sm text-on-surface-variant">Convirtiendo presentación...</p>
-                                <p class="text-xs text-on-surface-variant mt-1 opacity-60">Esto puede tomar unos segundos</p>
+                            <div id="pptLoading" class="absolute inset-0 flex flex-col items-center justify-center bg-surface-container z-10 px-6">
+                                <div class="relative mb-5">
+                                    <div class="w-14 h-14 rounded-xl bg-[#006d37]/10 flex items-center justify-center">
+                                        <svg class="w-7 h-7 text-[#006d37]" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-3 14H7v-2h9v2zm2-4H7v-2h11v2zm0-4H7V7h11v2z"/></svg>
+                                    </div>
+                                    <div class="absolute -inset-1 border-4 border-[#006d37]/15 border-t-[#006d37] rounded-full animate-spin"></div>
+                                </div>
+                                <p id="pptStageLabel" class="text-sm font-semibold text-on-surface mb-3 text-center">Preparando el documento...</p>
+                                <div class="w-52 h-1.5 bg-[#006d37]/10 rounded-full overflow-hidden mb-2">
+                                    <div id="pptProgressBar" class="h-full bg-[#006d37] rounded-full transition-all duration-1000 ease-out" style="width:4%"></div>
+                                </div>
+                                <p id="pptTimerLabel" class="text-xs text-on-surface-variant/60 mb-1">0 s</p>
+                                <p class="text-xs text-on-surface-variant/50 text-center max-w-[200px]">Las presentaciones pueden tardar entre 10 y 30 s</p>
+                                <div id="pptWarning" class="hidden mt-4 max-w-[260px] bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-center">
+                                    <p class="text-xs text-amber-800 font-medium">Está tardando más de lo esperado, pero ya casi termina. Por favor no cierres la página.</p>
+                                </div>
+                                <div id="pptError" class="hidden flex-col items-center gap-3 mt-4">
+                                    <p class="text-sm text-error font-semibold text-center">No se pudo cargar el documento</p>
+                                    <button onclick="location.reload()" class="text-xs px-5 py-2 bg-[#006d37] text-white rounded-lg hover:bg-[#005229] transition-colors font-medium">Reintentar</button>
+                                </div>
                             </div>
                             <iframe id="pptViewer" class="w-full h-full border-0" oncontextmenu="return false;"></iframe>
                         </div>
@@ -431,21 +447,7 @@
                     iframeEl.src = data.url + '#toolbar=0&navpanes=0&scrollbar=0';
                 }
             } else if (formato === 'PPTX') {
-                const iframeEl  = document.getElementById('pptViewer');
-                const loadingEl = document.getElementById('pptLoading');
-                if (iframeEl) {
-                    try {
-                        const resp = await fetch('/documentos/estudio/' + estudioId + '/stream');
-                        if (!resp.ok) throw new Error('HTTP ' + resp.status);
-                        const blob    = await resp.blob();
-                        const blobUrl = URL.createObjectURL(blob);
-                        iframeEl.onload = function () { if (loadingEl) loadingEl.style.display = 'none'; };
-                        iframeEl.src = blobUrl + '#toolbar=0&navpanes=0';
-                    } catch (err) {
-                        console.error('[PPTX] Error:', err);
-                        if (loadingEl) loadingEl.style.display = 'none';
-                    }
-                }
+                iniciarCargaPptx(estudioId);
             }
 
             document.addEventListener('contextmenu', e => e.preventDefault());
@@ -457,6 +459,55 @@
             window.addEventListener('blur',   () => { if (viewerContainer) viewerContainer.style.filter = 'blur(10px)'; });
             window.addEventListener('focus',  () => { if (viewerContainer) viewerContainer.style.filter = 'none'; });
         });
+
+        async function iniciarCargaPptx(estudioId) {
+            const iframeEl    = document.getElementById('pptViewer');
+            const loadingEl   = document.getElementById('pptLoading');
+            const stageLabel  = document.getElementById('pptStageLabel');
+            const progressBar = document.getElementById('pptProgressBar');
+            const timerLabel  = document.getElementById('pptTimerLabel');
+            const warningEl   = document.getElementById('pptWarning');
+            const errorEl     = document.getElementById('pptError');
+            if (!iframeEl) return;
+            const stages = [
+                { t:  2, label: 'Descargando desde el servidor...',   p: 20 },
+                { t:  5, label: 'Convirtiendo presentación a PDF...', p: 45 },
+                { t: 12, label: 'Procesando diapositivas...',          p: 70 },
+                { t: 20, label: 'Casi listo...',                       p: 88 },
+            ];
+            let elapsed = 0, stageIdx = 0, done = false;
+            const ticker = setInterval(() => {
+                if (done) return;
+                elapsed++;
+                if (timerLabel) timerLabel.textContent = elapsed + ' s';
+                if (stageIdx < stages.length && elapsed >= stages[stageIdx].t) {
+                    if (stageLabel)  stageLabel.textContent  = stages[stageIdx].label;
+                    if (progressBar) progressBar.style.width = stages[stageIdx].p + '%';
+                    stageIdx++;
+                }
+                if (elapsed === 25 && warningEl) warningEl.classList.remove('hidden');
+            }, 1000);
+            try {
+                const resp = await fetch('/documentos/estudio/' + estudioId + '/stream');
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                const blob    = await resp.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                if (stageLabel)  stageLabel.textContent  = 'Cargando visor...';
+                if (progressBar) progressBar.style.width = '98%';
+                iframeEl.onload = function () {
+                    done = true; clearInterval(ticker);
+                    if (loadingEl) loadingEl.style.display = 'none';
+                };
+                iframeEl.src = blobUrl + '#toolbar=0&navpanes=0';
+            } catch (err) {
+                done = true; clearInterval(ticker);
+                console.error('[PPTX]', err);
+                if (stageLabel)  stageLabel.textContent  = 'No se pudo cargar';
+                if (progressBar) { progressBar.style.width = '100%'; progressBar.style.background = '#ba1a1a'; }
+                if (warningEl)   warningEl.classList.add('hidden');
+                if (errorEl)     { errorEl.classList.remove('hidden'); errorEl.classList.add('flex'); }
+            }
+        }
 
         function switchEstTab(tab) {
             var active   = 'flex items-center gap-2 px-4 py-3 text-sm font-semibold text-on-surface border-b-2 border-on-surface -mb-px transition-all duration-200';

@@ -1,6 +1,8 @@
 package com.example.proyectoreciclame.Security;
 
 import com.example.proyectoreciclame.Service.RecaptchaService;
+import com.example.proyectoreciclame.Service.SessionStore;
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,6 +37,11 @@ public class SecurityConfig {
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
+    }
+
+    @Bean
+    public ServletListenerRegistrationBean<SessionStore> sessionStoreListener(SessionStore sessionStore) {
+        return new ServletListenerRegistrationBean<>(sessionStore);
     }
 
     @Bean

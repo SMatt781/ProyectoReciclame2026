@@ -1194,7 +1194,7 @@ VALUES
 (3,  5,  'Normativa actualizada',             'Se actualizó el estado de una normativa relevante para tu sector.',    'NORMATIVA', 0, '/normativas/2',            'NORMATIVA',          2,  '2026-04-12 11:05:00'),
 (4,  7,  'Bienvenido al repositorio',         'Tu cuenta ha sido aprobada y ya puedes ingresar al sistema.',          'SISTEMA',   1, '/home',                    'USUARIO',            7,  '2026-04-01 08:31:00'),
 (5,  8,  'Nueva publicación institucional',   'Se publicó un nuevo boletín editorial en la sección publicaciones.',  'SISTEMA',   0, '/publicaciones/2',         'PUBLICACION',        2,  '2026-04-14 08:00:00'),
-(6,  1,  'Actividad administrativa relevante','Se registró el bloqueo manual de un usuario socio.',                   'SISTEMA',   0, '/auditoria/acciones/2',    'AUDITORIA',          2,  '2026-04-10 16:15:00'),
+(6,  1,  'Actividad administrativa relevante','Se registró el bloqueo manual de un usuario socio.',                   'SISTEMA',   0, '/superadmin/administradores', 'AUDITORIA',          2,  '2026-04-10 16:15:00'),
 (7,  11, 'Nueva normativa disponible',        'Ya puedes revisar la nueva normativa sobre eficiencia energética.',    'NORMATIVA', 0, '/normativas/6',            'NORMATIVA',          6,  '2026-04-15 10:05:00'),
 (8,  12, 'Actualización de normativa RAEE',   'Se actualizó el reglamento RAEE con un nuevo enlace de consulta.',     'NORMATIVA', 0, '/normativas/8',            'NORMATIVA',          8,  '2026-04-15 12:05:00'),
 (9,  13, 'Nueva guía publicada',              'Hay una nueva guía internacional de simbiosis industrial.',            'NORMATIVA', 0, '/normativas/7',            'NORMATIVA',          7,  '2026-04-15 11:05:00'),

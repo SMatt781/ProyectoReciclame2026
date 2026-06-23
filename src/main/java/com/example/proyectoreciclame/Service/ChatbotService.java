@@ -193,8 +193,13 @@ public class ChatbotService {
         mensajeRepo.save(msgUsuario);
 
         // 4. Obtener contexto conversacional
-        List<ChatMensaje> contexto = mensajeRepo.findUltimosMensajes(sesion.getIdChat(), CONTEXTO_MENSAJES);
+        List<ChatMensaje> contexto = new java.util.ArrayList<>(
+                mensajeRepo.findUltimosMensajes(sesion.getIdChat(), CONTEXTO_MENSAJES));
         Collections.reverse(contexto);
+        // Gemini exige que el primer mensaje sea del usuario — si empieza con SISTEMA, lo quitamos
+        while (!contexto.isEmpty() && contexto.get(0).getEmisor() == EmisorMensaje.SISTEMA) {
+            contexto.remove(0);
+        }
 
         // 4b. Buscar recursos en BD y construir contexto + lista de tarjetas
         BusquedaBDResultado busqueda = buscarRecursosBD(textoUsuario);
@@ -648,6 +653,7 @@ public class ChatbotService {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
+                .timeout(java.time.Duration.ofSeconds(30))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(body)))
                 .build();
