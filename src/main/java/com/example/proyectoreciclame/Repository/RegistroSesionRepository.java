@@ -20,6 +20,7 @@ public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, 
             JOIN rs.usuario u
             JOIN u.rol r
             WHERE u.eliminadoEn IS NULL
+              AND UPPER(r.nombre) NOT IN ('ADMIN', 'SUPERADMIN')
               AND (:texto IS NULL OR
                    LOWER(u.nombres) LIKE LOWER(CONCAT('%', :texto, '%')) OR
                    LOWER(u.apellidoPaterno) LIKE LOWER(CONCAT('%', :texto, '%')) OR
@@ -36,6 +37,7 @@ public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, 
             JOIN rs.usuario u
             JOIN u.rol r
             WHERE u.eliminadoEn IS NULL
+              AND UPPER(r.nombre) NOT IN ('ADMIN', 'SUPERADMIN')
               AND (:texto IS NULL OR
                    LOWER(u.nombres) LIKE LOWER(CONCAT('%', :texto, '%')) OR
                    LOWER(u.apellidoPaterno) LIKE LOWER(CONCAT('%', :texto, '%')) OR
@@ -64,22 +66,24 @@ public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, 
                                                   @Param("fechaFin") LocalDateTime fechaFin);
     List<RegistroSesion> findByUsuarioAndEstado(Usuario usuario, String estado);
 
-    // 1. Promedio de duración (en minutos)
-    @Query("SELECT AVG(rs.duracionMinutos) FROM RegistroSesion rs WHERE rs.duracionMinutos IS NOT NULL")
+    // 1. Promedio de duración (en minutos) — excluye admins/superadmins
+    @Query("SELECT AVG(rs.duracionMinutos) FROM RegistroSesion rs JOIN rs.usuario u JOIN u.rol r WHERE rs.duracionMinutos IS NOT NULL AND UPPER(r.nombre) NOT IN ('ADMIN', 'SUPERADMIN')")
     Double getPromedioDuracion();
 
-    // 2. Fecha de la última sesión
-    @Query("SELECT MAX(rs.fechaInicio) FROM RegistroSesion rs")
+    // 2. Fecha de la última sesión — excluye admins/superadmins
+    @Query("SELECT MAX(rs.fechaInicio) FROM RegistroSesion rs JOIN rs.usuario u JOIN u.rol r WHERE UPPER(r.nombre) NOT IN ('ADMIN', 'SUPERADMIN')")
     LocalDateTime getUltimaSesion();
 
-    // 3. Total de usuarios activos (con sesión 'VIGENTE')
-    @Query("SELECT COUNT(DISTINCT rs.usuario.idUsuario) FROM RegistroSesion rs WHERE rs.estado = 'VIGENTE'")
+    // 3. Total de usuarios activos (con sesión 'VIGENTE') — excluye admins/superadmins
+    @Query("SELECT COUNT(DISTINCT rs.usuario.idUsuario) FROM RegistroSesion rs JOIN rs.usuario u JOIN u.rol r WHERE rs.estado = 'VIGENTE' AND UPPER(r.nombre) NOT IN ('ADMIN', 'SUPERADMIN')")
     long countUsuariosActivos();
 
-    // 4. Nombre del usuario más frecuente
+    // 4. Nombre del usuario más frecuente — excluye admins/superadmins
     @Query(value = "SELECT CONCAT(u.nombres, ' ', u.apellido_paterno) " +
             "FROM registro_sesiones rs " +
             "JOIN usuarios u ON rs.id_usuario = u.id_usuario " +
+            "JOIN roles r ON u.id_rol = r.id_rol " +
+            "WHERE UPPER(r.nombre) NOT IN ('ADMIN', 'SUPERADMIN') " +
             "GROUP BY rs.id_usuario " +
             "ORDER BY COUNT(rs.id_sesion) DESC LIMIT 1", nativeQuery = true)
     String getUsuarioMasFrecuente();

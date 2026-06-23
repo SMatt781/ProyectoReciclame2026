@@ -587,31 +587,20 @@
                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
             </div>
 
-            <!-- Tipo de Identificación -->
+            <!-- Tipo de Identificación (solo lectura) -->
             <div>
                 <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Tipo de identificación</label>
-                <select th:field="*{tipoIdentificacion}" id="selectTipoIdentificacion"
-                        onchange="actualizarValidacionNumeroIdentificacion(); toggleApellidosEdit(this.value)"
-                        class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                    <option value="DNI">DNI</option>
-                    <option value="RUC" id="opcionRuc">RUC</option>
-                </select>
+                <input type="text" th:value="*{tipoIdentificacion}" readonly
+                       class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container text-on-surface-variant cursor-not-allowed select-none">
+                <input type="hidden" th:field="*{tipoIdentificacion}">
             </div>
 
-            <!-- Número de Identificación -->
+            <!-- Número de Identificación (solo lectura) -->
             <div>
                 <label class="block text-xs font-bold text-on-surface-variant uppercase mb-1">Número de identificación</label>
-                <input type="text" th:field="*{numeroIdentificacion}" id="numeroIdentificacion" maxlength="11"
-                       inputmode="numeric"
-                       class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-secondary/20"
-                       placeholder="DNI: 8 dígitos / RUC: 11 dígitos"
-                       oninput="validarNumeroIdentificacion(this)">
-                <p id="contadorIdentificacion" class="text-xs text-on-surface-variant ml-1 mt-1 hidden">
-                    DNI debe tener 8 dígitos (0/8)
-                </p>
-                <p th:if="${fieldErrors != null and fieldErrors['numeroIdentificacion'] != null}"
-                   th:text="${fieldErrors['numeroIdentificacion']}"
-                   class="mt-1 text-xs font-medium text-error"></p>
+                <input type="text" th:value="*{numeroIdentificacion}" readonly
+                       class="w-full px-4 py-3 border border-outline-variant/30 rounded-lg bg-surface-container text-on-surface-variant cursor-not-allowed select-none">
+                <input type="hidden" th:field="*{numeroIdentificacion}">
             </div>
 
             <div>
