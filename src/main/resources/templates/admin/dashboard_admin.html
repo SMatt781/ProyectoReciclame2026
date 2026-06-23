@@ -123,98 +123,116 @@
 
             <div class="bg-transparent border border-outline-variant/30 rounded-xl p-4 mb-4 flex flex-col">
 
+                <!-- Banner solicitudes pendientes -->
+                <div th:if="${solicitudesPendientes > 0}"
+                     data-aos="fade-down"
+                     class="mb-4 flex items-center justify-between gap-4 rounded-xl border border-amber-300/60 bg-amber-50 px-4 py-3">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+                            <span class="material-symbols-outlined text-lg">pending_actions</span>
+                        </div>
+                        <p class="text-sm font-bold text-amber-800">
+                            Tienes
+                            <span th:text="${solicitudesPendientes}">3</span>
+                            solicitud<span th:if="${solicitudesPendientes != 1}">es</span>
+                            de registro pendiente<span th:if="${solicitudesPendientes != 1}">s</span>
+                            de aprobación.
+                        </p>
+                    </div>
+                    <a th:href="@{/admin/usuarios/solicitudes}"
+                       class="shrink-0 rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-amber-700 transition-colors no-underline">
+                        Revisar ahora
+                    </a>
+                </div>
+
                 <!-- KPIs -->
                 <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
 
                     <article data-aos="fade-up" data-aos-delay="0"
                              class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary to-secondary-container"></div>
-
                         <div class="flex justify-between items-start mb-3">
                             <div class="bg-emerald-50 text-secondary rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
                                 <span class="material-symbols-outlined text-xl">verified</span>
                             </div>
-
-                            <span class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                Vigente
-                            </span>
+                            <span class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">Vigente</span>
                         </div>
-
-                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                            Normativas vigentes
-                        </h4>
-
-                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${normativasVigentes}">
-                            84
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">Normativas vigentes</h4>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${normativasVigentes}">84</div>
+                        <div class="flex items-center gap-3 mt-2">
+                            <span class="text-[10px] text-on-surface-variant">
+                                <span class="font-bold text-on-primary-fixed" th:text="${normativasVigentesNacional}">0</span> nacional
+                            </span>
+                            <span class="text-outline-variant">·</span>
+                            <span class="text-[10px] text-on-surface-variant">
+                                <span class="font-bold text-on-primary-fixed" th:text="${normativasVigentesInternacional}">0</span> internacional
+                            </span>
                         </div>
                     </article>
 
                     <article data-aos="fade-up" data-aos-delay="50"
                              class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-orange-200"></div>
-
                         <div class="flex justify-between items-start mb-3">
                             <div class="bg-orange-100 text-orange-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
                                 <span class="material-symbols-outlined text-xl">publish</span>
                             </div>
-
-                            <span class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                Publicado
-                            </span>
+                            <span class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">Publicado</span>
                         </div>
-
-                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                            Estudios vigentes
-                        </h4>
-
-                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${estudiosVigentes}">
-                            28
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">Estudios vigentes</h4>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${estudiosVigentes}">28</div>
+                        <div class="flex items-center gap-3 mt-2">
+                            <span class="text-[10px] text-on-surface-variant">
+                                <span class="font-bold text-on-primary-fixed" th:text="${estudiosPdf}">0</span> PDF
+                            </span>
+                            <span class="text-outline-variant">·</span>
+                            <span class="text-[10px] text-on-surface-variant">
+                                <span class="font-bold text-on-primary-fixed" th:text="${estudiosPptx}">0</span> PPTX
+                            </span>
                         </div>
                     </article>
 
                     <article data-aos="fade-up" data-aos-delay="100"
                              class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200"></div>
-
                         <div class="flex justify-between items-start mb-3">
                             <div class="bg-blue-100 text-blue-600 rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
                                 <span class="material-symbols-outlined text-xl">forum</span>
                             </div>
-
-                            <span class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                Consulta
-                            </span>
+                            <span class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">Consulta</span>
                         </div>
-
-                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                            Consulta pública
-                        </h4>
-
-                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${normativasConsulta}">
-                            16
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">Consulta pública</h4>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${normativasConsulta}">16</div>
+                        <div class="flex items-center gap-3 mt-2">
+                            <span class="text-[10px] text-on-surface-variant">
+                                <span class="font-bold text-on-primary-fixed" th:text="${normativasConsultaNacional}">0</span> nacional
+                            </span>
+                            <span class="text-outline-variant">·</span>
+                            <span class="text-[10px] text-on-surface-variant">
+                                <span class="font-bold text-on-primary-fixed" th:text="${normativasConsultaInternacional}">0</span> internacional
+                            </span>
                         </div>
                     </article>
 
                     <article data-aos="fade-up" data-aos-delay="150"
                              class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error to-error-container"></div>
-
                         <div class="flex justify-between items-start mb-3">
                             <div class="bg-error-container text-error rounded-lg w-9 h-9 flex items-center justify-center shadow-sm">
                                 <span class="material-symbols-outlined text-xl">cancel</span>
                             </div>
-
-                            <span class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">
-                                Derogada
-                            </span>
+                            <span class="bg-surface-container text-on-surface-variant text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-md">Derogada</span>
                         </div>
-
-                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                            Normativas derogadas
-                        </h4>
-
-                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${normativasDerogadas}">
-                            14
+                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">Normativas derogadas</h4>
+                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${normativasDerogadas}">14</div>
+                        <div class="flex items-center gap-3 mt-2">
+                            <span class="text-[10px] text-on-surface-variant">
+                                <span class="font-bold text-on-primary-fixed" th:text="${normativasDerogadasNacional}">0</span> nacional
+                            </span>
+                            <span class="text-outline-variant">·</span>
+                            <span class="text-[10px] text-on-surface-variant">
+                                <span class="font-bold text-on-primary-fixed" th:text="${normativasDerogadasInternacional}">0</span> internacional
+                            </span>
                         </div>
                     </article>
 
@@ -229,93 +247,115 @@
                             Distribución por temática
                         </h3>
 
-                        <div class="flex flex-col sm:flex-row items-center justify-around gap-6">
+                        <div class="flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
 
+                            <!-- Donut -->
                             <div class="relative h-36 w-36 sm:h-40 sm:w-40 shrink-0">
                                 <svg class="h-full w-full -rotate-90 transform" viewBox="0 0 36 36">
-                                    <circle class="text-surface-container"
-                                            cx="18"
-                                            cy="18"
-                                            fill="transparent"
-                                            r="16"
-                                            stroke="currentColor"
-                                            stroke-width="3">
-                                    </circle>
-
-                                    <circle class="donut-segment"
-                                            cx="18"
-                                            cy="18"
-                                            fill="transparent"
-                                            r="16"
-                                            stroke="#006d42"
-                                            th:attr="stroke-dasharray=${dashEe}"
-                                            stroke-width="4">
-                                    </circle>
-
-                                    <circle class="donut-segment"
-                                            cx="18"
-                                            cy="18"
-                                            fill="transparent"
-                                            r="16"
-                                            stroke="#f59e0b"
-                                            th:attr="stroke-dasharray=${dashGr}, stroke-dashoffset=${offsetGr}"
-                                            stroke-width="4">
-                                    </circle>
-
-                                    <circle class="donut-segment"
-                                            cx="18"
-                                            cy="18"
-                                            fill="transparent"
-                                            r="16"
-                                            stroke="#3b82f6"
-                                            th:attr="stroke-dasharray=${dashRep}, stroke-dashoffset=${offsetRep}"
-                                            stroke-width="4">
-                                    </circle>
-
-                                    <circle class="donut-segment"
-                                            cx="18"
-                                            cy="18"
-                                            fill="transparent"
-                                            r="16"
-                                            stroke="#ef4444"
-                                            th:attr="stroke-dasharray=${dashOtro}, stroke-dashoffset=${offsetOtro}"
-                                            stroke-width="4">
-                                    </circle>
+                                    <circle class="text-surface-container" cx="18" cy="18" fill="transparent" r="16" stroke="currentColor" stroke-width="3"></circle>
+                                    <circle class="donut-segment" cx="18" cy="18" fill="transparent" r="16" stroke="#006d42" th:attr="stroke-dasharray=${dashEe}" stroke-width="4"></circle>
+                                    <circle class="donut-segment" cx="18" cy="18" fill="transparent" r="16" stroke="#f59e0b" th:attr="stroke-dasharray=${dashGr}, stroke-dashoffset=${offsetGr}" stroke-width="4"></circle>
+                                    <circle class="donut-segment" cx="18" cy="18" fill="transparent" r="16" stroke="#3b82f6" th:attr="stroke-dasharray=${dashRep}, stroke-dashoffset=${offsetRep}" stroke-width="4"></circle>
+                                    <circle class="donut-segment" cx="18" cy="18" fill="transparent" r="16" stroke="#ef4444" th:attr="stroke-dasharray=${dashOtro}, stroke-dashoffset=${offsetOtro}" stroke-width="4"></circle>
                                 </svg>
-
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
                                     <span class="text-2xl font-black" th:text="${totalNormas}">142</span>
                                     <span class="text-[9px] font-bold uppercase">Total</span>
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-1 gap-2.5 w-full">
+                            <!-- Leyenda con barras -->
+                            <div class="flex flex-col gap-3 w-full">
 
-                                <div class="flex items-center gap-2 text-sm">
-                                    <div class="h-2.5 w-2.5 rounded-full bg-secondary shrink-0"></div>
-                                    <span class="text-on-surface-variant">Envases</span>
-                                    <span class="font-bold text-on-primary-fixed tabular-nums" th:text="'— ' + ${countEe} + ' norm.'">— 56 norm.</span>
+                                <!-- Envases -->
+                                <div>
+                                    <div class="flex items-center justify-between text-sm mb-1">
+                                        <span class="flex items-center gap-2">
+                                            <span class="h-2 w-2 rounded-full bg-secondary shrink-0"></span>
+                                            <span class="text-on-surface-variant">Envases</span>
+                                        </span>
+                                        <span class="flex items-center gap-2 tabular-nums">
+                                            <span class="font-bold text-on-primary-fixed" th:text="${countEe}">0</span>
+                                            <span class="text-[10px] text-on-surface-variant"
+                                                  th:text="${(countEe + countGr + countRep + countOtro) > 0 ? '(' + #numbers.formatInteger(countEe * 100 / (countEe + countGr + countRep + countOtro), 1) + '%)' : '(0%)'}">
+                                                (0%)
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="h-1.5 w-full rounded-full bg-surface-container overflow-hidden">
+                                        <div class="h-1.5 rounded-full bg-secondary transition-all"
+                                             th:style="${(countEe + countGr + countRep + countOtro) > 0 ? 'width: ' + (countEe * 100 / (countEe + countGr + countRep + countOtro)) + '%' : 'width: 0%'}">
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="flex items-center gap-2 text-sm">
-                                    <div class="h-2.5 w-2.5 rounded-full bg-orange-500 shrink-0"></div>
-                                    <span class="text-on-surface-variant">Residuos</span>
-                                    <span class="font-bold text-on-primary-fixed tabular-nums" th:text="'— ' + ${countGr} + ' norm.'">— 35 norm.</span>
+                                <!-- Residuos -->
+                                <div>
+                                    <div class="flex items-center justify-between text-sm mb-1">
+                                        <span class="flex items-center gap-2">
+                                            <span class="h-2 w-2 rounded-full bg-orange-500 shrink-0"></span>
+                                            <span class="text-on-surface-variant">Residuos</span>
+                                        </span>
+                                        <span class="flex items-center gap-2 tabular-nums">
+                                            <span class="font-bold text-on-primary-fixed" th:text="${countGr}">0</span>
+                                            <span class="text-[10px] text-on-surface-variant"
+                                                  th:text="${(countEe + countGr + countRep + countOtro) > 0 ? '(' + #numbers.formatInteger(countGr * 100 / (countEe + countGr + countRep + countOtro), 1) + '%)' : '(0%)'}">
+                                                (0%)
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="h-1.5 w-full rounded-full bg-surface-container overflow-hidden">
+                                        <div class="h-1.5 rounded-full bg-orange-500 transition-all"
+                                             th:style="${(countEe + countGr + countRep + countOtro) > 0 ? 'width: ' + (countGr * 100 / (countEe + countGr + countRep + countOtro)) + '%' : 'width: 0%'}">
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="flex items-center gap-2 text-sm">
-                                    <div class="h-2.5 w-2.5 rounded-full bg-blue-500 shrink-0"></div>
-                                    <span class="text-on-surface-variant">Resp. extendida</span>
-                                    <span class="font-bold text-on-primary-fixed tabular-nums" th:text="'— ' + ${countRep} + ' norm.'">— 28 norm.</span>
+                                <!-- Resp. extendida -->
+                                <div>
+                                    <div class="flex items-center justify-between text-sm mb-1">
+                                        <span class="flex items-center gap-2">
+                                            <span class="h-2 w-2 rounded-full bg-blue-500 shrink-0"></span>
+                                            <span class="text-on-surface-variant">Resp. extendida</span>
+                                        </span>
+                                        <span class="flex items-center gap-2 tabular-nums">
+                                            <span class="font-bold text-on-primary-fixed" th:text="${countRep}">0</span>
+                                            <span class="text-[10px] text-on-surface-variant"
+                                                  th:text="${(countEe + countGr + countRep + countOtro) > 0 ? '(' + #numbers.formatInteger(countRep * 100 / (countEe + countGr + countRep + countOtro), 1) + '%)' : '(0%)'}">
+                                                (0%)
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="h-1.5 w-full rounded-full bg-surface-container overflow-hidden">
+                                        <div class="h-1.5 rounded-full bg-blue-500 transition-all"
+                                             th:style="${(countEe + countGr + countRep + countOtro) > 0 ? 'width: ' + (countRep * 100 / (countEe + countGr + countRep + countOtro)) + '%' : 'width: 0%'}">
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="flex items-center gap-2 text-sm">
-                                    <div class="h-2.5 w-2.5 rounded-full bg-error shrink-0"></div>
-                                    <span class="text-on-surface-variant">Otros</span>
-                                    <span class="font-bold text-on-primary-fixed tabular-nums" th:text="'— ' + ${countOtro} + ' norm.'">— 23 norm.</span>
+                                <!-- Otros -->
+                                <div>
+                                    <div class="flex items-center justify-between text-sm mb-1">
+                                        <span class="flex items-center gap-2">
+                                            <span class="h-2 w-2 rounded-full bg-error shrink-0"></span>
+                                            <span class="text-on-surface-variant">Otros</span>
+                                        </span>
+                                        <span class="flex items-center gap-2 tabular-nums">
+                                            <span class="font-bold text-on-primary-fixed" th:text="${countOtro}">0</span>
+                                            <span class="text-[10px] text-on-surface-variant"
+                                                  th:text="${(countEe + countGr + countRep + countOtro) > 0 ? '(' + #numbers.formatInteger(countOtro * 100 / (countEe + countGr + countRep + countOtro), 1) + '%)' : '(0%)'}">
+                                                (0%)
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="h-1.5 w-full rounded-full bg-surface-container overflow-hidden">
+                                        <div class="h-1.5 rounded-full bg-error transition-all"
+                                             th:style="${(countEe + countGr + countRep + countOtro) > 0 ? 'width: ' + (countOtro * 100 / (countEe + countGr + countRep + countOtro)) + '%' : 'width: 0%'}">
+                                        </div>
+                                    </div>
                                 </div>
+
                             </div>
-
                         </div>
                     </section>
 
@@ -332,18 +372,28 @@
                                 No hay actualizaciones recientes.
                             </div>
 
-                            <div class="flex items-center gap-3"
+                            <div class="flex items-start gap-3"
                                  th:each="novedad : ${ultimasActualizaciones}">
 
-                                <div class="bg-surface-container p-2 rounded-md shrink-0">
+                                <div class="bg-surface-container p-2 rounded-md shrink-0 mt-0.5">
                                     <span class="material-symbols-outlined text-base"
                                           th:text="${novedad.tipo == 'Normativa' ? 'description' : 'article'}">
                                         description
                                     </span>
                                 </div>
 
-                                <div class="min-w-0">
-                                    <p class="text-xs font-bold truncate"
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex items-center gap-1.5 mb-0.5">
+                                        <span th:if="${novedad.accion == 'AÑADIDO'}"
+                                              class="inline-block text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-secondary-container/30 text-secondary">
+                                            Añadido
+                                        </span>
+                                        <span th:if="${novedad.accion == 'MODIFICADO'}"
+                                              class="inline-block text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">
+                                            Modificado
+                                        </span>
+                                    </div>
+                                    <p class="text-xs font-bold truncate text-on-primary-fixed"
                                        th:text="${novedad.nombre}">
                                         Ley de Envases - PE
                                     </p>

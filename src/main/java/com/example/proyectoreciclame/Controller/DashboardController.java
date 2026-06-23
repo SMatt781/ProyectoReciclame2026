@@ -5,6 +5,7 @@ import com.example.proyectoreciclame.Entity.Estudio;
 import com.example.proyectoreciclame.Entity.Normativa;
 import com.example.proyectoreciclame.Repository.EstudioRepository;
 import com.example.proyectoreciclame.Repository.NormativaRepository;
+import com.example.proyectoreciclame.Repository.SolicitudRegistroRepository;
 import com.example.proyectoreciclame.util.DateUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,13 +20,16 @@ public class DashboardController {
 
     private final NormativaRepository normativaRepository;
     private final EstudioRepository estudioRepository;
+    private final SolicitudRegistroRepository solicitudRegistroRepository;
     private final DateUtil dateUtil;
 
     public DashboardController(NormativaRepository normativaRepository,
                                EstudioRepository estudioRepository,
+                               SolicitudRegistroRepository solicitudRegistroRepository,
                                DateUtil dateUtil) {
         this.normativaRepository = normativaRepository;
         this.estudioRepository = estudioRepository;
+        this.solicitudRegistroRepository = solicitudRegistroRepository;
         this.dateUtil = dateUtil;
     }
 
@@ -157,6 +161,10 @@ public class DashboardController {
         model.addAttribute("offsetGr", -pctEe);
         model.addAttribute("offsetRep", -(pctEe + pctGr));
         model.addAttribute("offsetOtro", -(pctEe + pctGr + pctRep));
+
+        // Solicitudes pendientes
+        long solicitudesPendientes = solicitudRegistroRepository.countByEstado("Pendiente");
+        model.addAttribute("solicitudesPendientes", solicitudesPendientes);
 
         // Últimas actualizaciones
         List<NovedadDTO> novedades = new ArrayList<>();
