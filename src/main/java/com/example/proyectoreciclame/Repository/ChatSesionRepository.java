@@ -17,4 +17,7 @@ public interface ChatSesionRepository extends JpaRepository<ChatSesion, Long> {
 
     /** Cuenta sesiones totales de un usuario. */
     long countByUsuario_IdUsuario(Long idUsuario);
+
+    /** Cuenta sesiones activas en toda la plataforma. */
+    long countByActivaTrue();
 }

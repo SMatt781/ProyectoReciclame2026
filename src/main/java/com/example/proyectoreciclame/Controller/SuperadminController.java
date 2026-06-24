@@ -51,6 +51,8 @@ public class SuperadminController {
     private final CorreoService correoService;
     private final AiResumenCacheRepository aiResumenCacheRepository;
     private final SessionStore sessionStore;
+    private final ChatMensajeRepository chatMensajeRepository;
+    private final ChatSesionRepository chatSesionRepository;
 
     public SuperadminController(UsuarioRepository usuarioRepository,
                                 DominioAutorizadoRepository dominioAutorizadoRepository,
@@ -69,6 +71,8 @@ public class SuperadminController {
                                 CorreoService correoService,
                                 AiResumenCacheRepository aiResumenCacheRepository,
                                 SessionStore sessionStore,
+                                ChatMensajeRepository chatMensajeRepository,
+                                ChatSesionRepository chatSesionRepository,
                                 org.springframework.core.env.Environment env) {
         this.historialRolesRepository = historialRolesRepository;
         this.usuarioRepository = usuarioRepository;
@@ -87,6 +91,8 @@ public class SuperadminController {
         this.correoService = correoService;
         this.aiResumenCacheRepository = aiResumenCacheRepository;
         this.sessionStore = sessionStore;
+        this.chatMensajeRepository = chatMensajeRepository;
+        this.chatSesionRepository = chatSesionRepository;
         this.env = env;
     }
 
@@ -116,6 +122,15 @@ public class SuperadminController {
                 historialRolesRepository.findTopByEstadoAnteriorIsNullOrderByFechaCambioDesc().orElse(null));
         model.addAttribute("actividadDominio",
                 dominioAutorizadoRepository.findTopByOrderByFechaRegistroDesc().orElse(null));
+
+        // Estadísticas del Chatbot IA (datos reales)
+        model.addAttribute("chatTotalMensajes", chatMensajeRepository.count());
+        model.addAttribute("chatSesionesActivas", chatSesionRepository.countByActivaTrue());
+        model.addAttribute("chatTotalSesiones", chatSesionRepository.count());
+        String apiKey = env.getProperty("ai.gemini.api-key", "");
+        model.addAttribute("chatServicioActivo", !apiKey.isBlank() && !apiKey.equals("TU_API_KEY_AQUI"));
+        model.addAttribute("chatModelo", env.getProperty("ai.gemini.model", "gemini-2.5-flash"));
+        model.addAttribute("chatProveedor", env.getProperty("ai.provider", "GEMINI"));
 
         return "superadmin/dashboard";
     }
@@ -779,6 +794,58 @@ public class SuperadminController {
         model.addAttribute("iaRecomendacionSistema", iaRecomendacionSistema);
         model.addAttribute("iaFactoresDetectados", factoresDetectados);
 
+        // ── Log entries para la terminal ──────────────────────────────────────
+        java.time.format.DateTimeFormatter logFmt =
+                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDateTime ahora = LocalDateTime.now();
+
+        long jvmStartMs = java.lang.management.ManagementFactory.getRuntimeMXBean().getStartTime();
+        LocalDateTime jvmStart = LocalDateTime.ofInstant(
+                java.time.Instant.ofEpochMilli(jvmStartMs),
+                java.time.ZoneId.systemDefault());
+
+        List<Map<String, String>> logEntries = new ArrayList<>();
+
+        logEntries.add(Map.of(
+                "ts", jvmStart.format(logFmt),
+                "nivel", "INFO",
+                "msg", "Servidor iniciado · Java " + System.getProperty("java.version")));
+
+        logEntries.add(Map.of(
+                "ts", ahora.format(logFmt),
+                "nivel", latencia < 100 ? "INFO" : "WARN",
+                "msg", "Conexión BD verificada · " + latencia + "ms"));
+
+        if (diskUsagePct >= 80) {
+            logEntries.add(Map.of("ts", ahora.format(logFmt), "nivel", "ERROR",
+                    "msg", "Almacenamiento crítico · " + diskUsagePct + "% utilizado"));
+        } else if (diskUsagePct >= 75) {
+            logEntries.add(Map.of("ts", ahora.format(logFmt), "nivel", "WARN",
+                    "msg", "Almacenamiento elevado · " + diskUsagePct + "% — revisar pronto"));
+        } else if (diskUsagePct >= 0) {
+            logEntries.add(Map.of("ts", ahora.format(logFmt), "nivel", "INFO",
+                    "msg", "Almacenamiento en " + diskUsagePct + "% · " + usadoGb + " GB / " + totalGb + " GB"));
+        }
+
+        if (ramUsagePct >= 80) {
+            logEntries.add(Map.of("ts", ahora.format(logFmt), "nivel", "WARN",
+                    "msg", "Memoria RAM al " + ramUsagePct + "% · " + ramUsadaMb + " MB / " + ramTotalMb + " MB"));
+        }
+
+        if (cpuUsage >= 80) {
+            logEntries.add(Map.of("ts", ahora.format(logFmt), "nivel", "WARN",
+                    "msg", "Carga CPU elevada · " + cpuUsage + "%"));
+        }
+
+        if (intentosFallidos >= 5) {
+            logEntries.add(Map.of("ts", ahora.format(logFmt), "nivel", "ERROR",
+                    "msg", intentosFallidos + " intentos de acceso fallidos detectados hoy"));
+        } else if (intentosFallidos > 0) {
+            logEntries.add(Map.of("ts", ahora.format(logFmt), "nivel", "WARN",
+                    "msg", intentosFallidos + " intento(s) de login fallido(s) hoy"));
+        }
+
+        model.addAttribute("logEntries", logEntries);
 
         return "superadmin/estadoSistema";
     }

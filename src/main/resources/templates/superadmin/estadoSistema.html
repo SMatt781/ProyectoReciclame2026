@@ -3,7 +3,7 @@
 <html class="light" lang="es">
 
 <head>
-    <title>Recíclame - Estado del Monitor</title>
+    <title>Recíclame - Estado del Sistema</title>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -219,11 +219,14 @@
             </div>
 
             <!-- Almacenamiento -->
-            <div data-aos="fade-up" data-aos-delay="100" class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
+            <div data-aos="fade-up" data-aos-delay="100"
+                 th:classappend="${diskUsage >= 80} ? 'border-red-300 ring-1 ring-red-200' : 'border-slate-100'"
+                 class="bg-white rounded-[1.25rem] p-5 border shadow-sm card-lift relative overflow-hidden">
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Almacenamiento</p>
-                        <p class="font-mono text-3xl font-bold text-amber-600">
+                        <p class="font-mono text-3xl font-bold"
+                           th:classappend="${diskUsage >= 80} ? 'text-red-600' : 'text-amber-600'">
                             <span id="disk-val" th:text="${diskUsage >= 0 ? diskUsage : '—'}">—</span>%
                         </p>
                         <p class="text-[11px] text-slate-400 font-mono mt-1"
@@ -231,13 +234,23 @@
                             — GB / — GB
                         </p>
                     </div>
-                    <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center"
+                         th:classappend="${diskUsage >= 80} ? 'bg-red-50 text-red-500' : 'bg-amber-50 text-amber-500'">
                         <span class="material-symbols-outlined text-[20px]">hard_drive</span>
                     </div>
                 </div>
                 <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div id="disk-bar" class="h-full bg-gradient-to-r from-amber-500 to-amber-300 bar-animated rounded-full"
+                    <div id="disk-bar" class="h-full bar-animated rounded-full"
+                         th:classappend="${diskUsage >= 80} ? 'bg-gradient-to-r from-red-500 to-red-300' : 'bg-gradient-to-r from-amber-500 to-amber-300'"
                          th:style="'width: ' + ${diskUsage >= 0 ? diskUsage : 0} + '%;'"></div>
+                </div>
+                <!-- Alerta crítica de almacenamiento -->
+                <div th:if="${diskUsage >= 80}"
+                     class="mt-3 flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
+                    <span class="material-symbols-outlined text-red-500 text-[16px]">warning</span>
+                    <p class="text-[11px] font-bold text-red-600">
+                        Almacenamiento crítico — libere espacio para evitar fallos del sistema
+                    </p>
                 </div>
             </div>
 
@@ -256,9 +269,11 @@
                     </div>
                 </div>
                 <div class="space-y-1">
-                    <!-- Barra inversa: más rápido = mejor. Threshold 200ms = 100% de barra roja -->
+                    <!-- Barra proporcional: 200ms = 100%. Color según umbral -->
                     <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div class="h-full bg-gradient-to-r from-secondary to-secondary-container bar-animated rounded-full" style="width: 12%;"></div>
+                        <div class="h-full bar-animated rounded-full"
+                             th:classappend="${dbLatencyMs > 100} ? 'bg-gradient-to-r from-red-500 to-red-300' : (${dbLatencyMs > 50} ? 'bg-gradient-to-r from-amber-500 to-amber-300' : 'bg-gradient-to-r from-secondary to-secondary-container')"
+                             th:style="'width: ' + (${dbLatencyMs > 200 ? 100 : dbLatencyMs * 100 / 200}) + '%;'"></div>
                     </div>
                     <p class="text-[10px] text-slate-400 font-mono">Threshold: &lt;100ms Óptimo</p>
                 </div>
@@ -528,40 +543,16 @@
                         </div>
                     </div>
                     <div class="log-terminal px-0 py-2 flex-1 overflow-y-auto">
-                        <div class="log-line flex gap-3 px-4 py-1.5 cursor-default">
-                            <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40">——/——/—— ——:——:——</span>
-                            <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0 text-emerald-400">INFO</span>
-                            <span class="font-mono text-[10px] text-slate-300">Servidor iniciado en puerto 8080</span>
-                        </div>
-                        <div class="log-line flex gap-3 px-4 py-1.5 cursor-default">
-                            <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40">——/——/—— ——:——:——</span>
-                            <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0 text-emerald-400">INFO</span>
-                            <span class="font-mono text-[10px] text-slate-300">Conexión BD establecida · reciclame@localhost</span>
-                        </div>
-                        <div class="log-line flex gap-3 px-4 py-1.5 cursor-default">
-                            <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40">——/——/—— ——:——:——</span>
-                            <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0 text-amber-400">WARN</span>
-                            <span class="font-mono text-[10px] text-slate-300">Uso de disco superó el 75% — revisar almacenamiento</span>
-                        </div>
-                        <div class="log-line flex gap-3 px-4 py-1.5 cursor-default">
-                            <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40">——/——/—— ——:——:——</span>
-                            <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0 text-emerald-400">INFO</span>
-                            <span class="font-mono text-[10px] text-slate-300">Backup automático completado correctamente</span>
-                        </div>
-                        <div class="log-line flex gap-3 px-4 py-1.5 cursor-default">
-                            <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40">——/——/—— ——:——:——</span>
-                            <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0 text-red-400">ERROR</span>
-                            <span class="font-mono text-[10px] text-slate-300">Timeout al intentar conectar con servicio externo</span>
-                        </div>
-                        <div class="log-line flex gap-3 px-4 py-1.5 cursor-default">
-                            <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40">——/——/—— ——:——:——</span>
-                            <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0 text-emerald-400">INFO</span>
-                            <span class="font-mono text-[10px] text-slate-300">Política de contraseña actualizada por SUPERADMIN</span>
-                        </div>
-                        <div class="log-line flex gap-3 px-4 py-1.5 cursor-default">
-                            <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40">——/——/—— ——:——:——</span>
-                            <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0 text-emerald-400">INFO</span>
-                            <span class="font-mono text-[10px] text-slate-300">Caché limpiada manualmente por operador</span>
+                        <div th:each="entry : ${logEntries}"
+                             class="log-line flex gap-3 px-4 py-1.5 cursor-default">
+                            <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40"
+                                  th:text="${entry.ts}">——/——/—— ——:——:——</span>
+                            <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0"
+                                  th:classappend="${entry.nivel == 'ERROR'} ? 'text-red-400' :
+                                                  (${entry.nivel == 'WARN'} ? 'text-amber-400' : 'text-emerald-400')"
+                                  th:text="${entry.nivel}">INFO</span>
+                            <span class="font-mono text-[10px] text-slate-300"
+                                  th:text="${entry.msg}">—</span>
                         </div>
                         <div class="px-4 py-1">
                             <span class="font-mono text-[10px] text-secondary animate-pulse">█</span>
