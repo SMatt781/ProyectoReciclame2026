@@ -147,6 +147,19 @@
                         <input type="hidden" id="viewerFormato" th:value="${estudio.formato.name()}" />
                         <input type="hidden" id="estudioId"    th:value="${estudio.idEstudio}" />
 
+                        <!-- Error overlay compartido (PDF y PPTX) -->
+                        <div id="docError" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-surface-container z-20 p-8 text-center">
+                            <div class="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-4">
+                                <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                                </svg>
+                            </div>
+                            <p class="font-semibold text-on-surface text-base mb-2">No se pudo cargar el documento</p>
+                            <p class="text-sm text-on-surface-variant max-w-xs leading-relaxed">
+                                Estamos notificando al equipo responsable de este inconveniente. Por favor intenta de nuevo más tarde.
+                            </p>
+                        </div>
+
                         <!-- PDF -->
                         <div th:if="${estudio.formato.name() == 'PDF'}" class="w-full h-full relative">
                             <iframe id="pdfViewer" th:if="${estudio.archivoUrl != null}"
@@ -383,21 +396,62 @@
 
     <!-- Scripts -->
     <script>
+        let _estudioIdPPTX = null;
+
+        async function cargarPPTX(estudioId) {
+            const iframeEl  = document.getElementById('pptViewer');
+            const loadingEl = document.getElementById('pptLoading');
+            const errorEl   = document.getElementById('pptError');
+            if (!iframeEl) return;
+
+            if (loadingEl) { loadingEl.style.display = 'flex'; }
+            if (errorEl)   { errorEl.style.display   = 'none'; }
+
+            const controller = new AbortController();
+            const timeoutId  = setTimeout(() => controller.abort(), 30000);
+
+            try {
+                const resp = await fetch('/documentos/estudio/' + estudioId + '/stream', { signal: controller.signal });
+                clearTimeout(timeoutId);
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                const blob    = await resp.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                iframeEl.onload = function () { if (loadingEl) loadingEl.style.display = 'none'; };
+                iframeEl.src = blobUrl + '#toolbar=0&navpanes=0';
+            } catch (err) {
+                clearTimeout(timeoutId);
+                console.error('[PPTX] Error:', err);
+                if (loadingEl) loadingEl.style.display = 'none';
+                if (errorEl)   errorEl.style.display   = 'flex';
+            }
+        }
+
+        function reintentarCargaPPTX() {
+            if (_estudioIdPPTX) cargarPPTX(_estudioIdPPTX);
+        }
+
         document.addEventListener('DOMContentLoaded', async function () {
             const viewerContainer = document.getElementById('viewer-container');
             const formatoInput    = document.getElementById('viewerFormato');
             const formato         = formatoInput ? formatoInput.value : '';
             const estudioId       = document.getElementById('estudioId').value;
-            console.log('[PPTX] formato=' + formato + ' estudioId=' + estudioId);
+            _estudioIdPPTX = estudioId;
 
             if (formato === 'PDF') {
                 const iframeEl = document.getElementById('pdfViewer');
                 if (iframeEl) {
                     try {
                         const resp = await fetch('/documentos/estudio/' + estudioId + '/presigned-url');
+                        if (!resp.ok) throw new Error('HTTP ' + resp.status);
                         const data = await resp.json();
+                        if (data.error) throw new Error(data.error);
                         iframeEl.src = data.url + '#toolbar=0&navpanes=0&scrollbar=0';
-                    } catch (err) { console.error('Error cargando PDF:', err); }
+                    } catch (err) {
+                        console.error('[PDF] Error:', err);
+                        const errEl = document.getElementById('docError');
+                        if (errEl) errEl.classList.remove('hidden');
+                        iframeEl.style.display = 'none';
+                    }
                 }
             } else if (formato === 'PPTX') {
                 iniciarCargaPptx(estudioId);
@@ -483,7 +537,7 @@
                 .then(r => r.json())
                 .then(data => {
                     const el = document.getElementById('resumenRestantes');
-                    if (el) el.textContent = data.restantes + '/5 disponibles hoy';
+                    if (el) el.textContent = data.restantes + '/' + (data.limite || 5) + ' disponibles hoy';
                 }).catch(() => {});
         });
         async function generarResumen() {
@@ -509,7 +563,7 @@
                 spinner.classList.remove('flex');
                 resultado.classList.remove('hidden');
                 if (contador && data.restantes !== undefined)
-                    contador.textContent = data.restantes + '/5 disponibles hoy';
+                    contador.textContent = data.restantes + '/' + (data.limite || 5) + ' disponibles hoy';
             } catch (err) {
                 spinner.classList.add('hidden');
                 spinner.classList.remove('flex');

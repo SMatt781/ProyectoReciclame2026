@@ -671,3 +671,4 @@ public class ChatbotService {
                    .path("text").asText();
     }
 }
+

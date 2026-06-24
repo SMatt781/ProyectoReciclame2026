@@ -172,6 +172,26 @@ public class S3StorageService {
     }
 
     /**
+     * Sube bytes a S3 usando una clave completa (sin generar timestamp ni carpeta).
+     * Útil para archivos de preview con ruta fija como "estudios/preview/{id}.pdf".
+     */
+    public void uploadFile(byte[] data, String claveCompleta, String contentType) {
+        try {
+            S3Client s3Client = getS3Client();
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(s3Config.getBucketName())
+                    .key(claveCompleta)
+                    .contentType(contentType)
+                    .contentLength((long) data.length)
+                    .build();
+            s3Client.putObject(putObjectRequest, software.amazon.awssdk.core.sync.RequestBody.fromBytes(data));
+            s3Client.close();
+        } catch (Exception e) {
+            throw new RuntimeException("Error al subir archivo a S3: " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * Genera una URL pre-firmada con Content-Disposition: attachment para forzar descarga en el navegador.
      * @param clave Clave del archivo en S3
      * @param filename Nombre de archivo que verá el usuario al descargar

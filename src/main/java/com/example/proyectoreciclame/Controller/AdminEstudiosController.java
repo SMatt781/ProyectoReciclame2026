@@ -41,6 +41,9 @@ public class AdminEstudiosController {
     private com.example.proyectoreciclame.Service.PptxPreviewService pptxPreviewService;
 
     @Autowired
+    private com.example.proyectoreciclame.Service.LibreOfficeConverterService libreOfficeConverterService;
+
+    @Autowired
     private AdminNotificacionController adminNotificacionController;
 
     @GetMapping("/admin/estudios")
@@ -189,7 +192,6 @@ public class AdminEstudiosController {
                  int tamanioKb;
  
                  if (extension.equals(".pptx")) {
-                     // Upload original PPTX — Office Online renders it natively, no conversion needed
                      clave = s3StorageService.uploadFile(archivo, "estudios");
                      nombreDestino = s3StorageService.getFileName(clave);
                      tamanioKb = (int) (archivo.getSize() / 1024);
@@ -928,6 +930,54 @@ public class AdminEstudiosController {
         return "redirect:/admin/normativas";
     }
 
+    /**
+     * POST /admin/estudios/migrar-pptx
+     * Genera previews PDF para todos los estudios PPTX que aún no tienen archivoPreviewUrl.
+     * Procesa cada uno: descarga el PPTX de S3, convierte a PDF con Aspose, sube a S3 como
+     * estudios/preview/{id}.pdf y guarda la clave en archivoPreviewUrl.
+     */
+    @PostMapping("/admin/estudios/migrar-pptx")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public org.springframework.http.ResponseEntity<?> migrarPptxBatch() {
+        java.util.List<com.example.proyectoreciclame.Entity.Estudio> pendientes =
+                estudioRepository.findAll().stream()
+                        .filter(e -> e.getFormato() == com.example.proyectoreciclame.Entity.Estudio.FormatoEstudio.PPTX)
+                        .filter(e -> e.getArchivoUrl() != null && !e.getArchivoUrl().isBlank())
+                        .filter(e -> e.getArchivoPreviewUrl() == null || e.getArchivoPreviewUrl().isBlank())
+                        .toList();
+
+        int ok = 0, error = 0;
+        java.util.List<String> errores = new java.util.ArrayList<>();
+
+        for (com.example.proyectoreciclame.Entity.Estudio estudio : pendientes) {
+            try {
+                String clave = estudio.getArchivoUrl();
+                if (clave.startsWith("/uploads/")) clave = clave.replace("/uploads/estudios/", "estudios/");
+                byte[] pptxData = s3StorageService.downloadFile(clave);
+                byte[] pdfData  = libreOfficeConverterService.convertAndWatermark(pptxData);
+
+                String previewKey = "estudios/preview/" + estudio.getIdEstudio() + ".pdf";
+                s3StorageService.uploadFile(pdfData, previewKey, "application/pdf");
+
+                estudio.setArchivoPreviewUrl(previewKey);
+                estudio.setFechaActualizacion(java.time.LocalDateTime.now());
+                estudioRepository.save(estudio);
+                ok++;
+            } catch (Exception e) {
+                error++;
+                errores.add("Estudio " + estudio.getIdEstudio() + " (" + estudio.getTitulo() + "): " + e.getMessage());
+            }
+        }
+
+        java.util.Map<String, Object> resultado = new java.util.LinkedHashMap<>();
+        resultado.put("total",    pendientes.size());
+        resultado.put("migrados", ok);
+        resultado.put("errores",  error);
+        if (!errores.isEmpty()) resultado.put("detalle", errores);
+
+        return org.springframework.http.ResponseEntity.ok(resultado);
+    }
+
     @GetMapping("/admin/estudios/eliminar/{id}")
     public String eliminarEstudio(@PathVariable Long id, RedirectAttributes attr) {
         Estudio estudio = estudioRepository.findById(id)
@@ -1014,10 +1064,11 @@ public class AdminEstudiosController {
                  int tamanioKb;
  
                  if (extension.equals(".pptx")) {
-                     // Upload original PPTX — Office Online renders it natively, no conversion needed
                      clave = s3StorageService.uploadFile(archivo, "estudios");
                      nombreDestino = s3StorageService.getFileName(clave);
                      tamanioKb = (int) (archivo.getSize() / 1024);
+                     // Resetear preview anterior — se regenerará tras el save
+                     estudio.setArchivoPreviewUrl(null);
                  } else if (extension.equals(".xlsx")) {
                      byte[] convertedPdf = documentConverterService.convertXlsxToPdf(archivo.getBytes());
                      nombreDestino = nombreOriginal.substring(0, nombreOriginal.lastIndexOf(".")) + ".pdf";

@@ -35,7 +35,8 @@ public class AiService {
     private static final Logger log = LoggerFactory.getLogger(AiService.class);
 
     // ── Límites diarios por rol ───────────────────────────────────────────────
-    private static final int LIMITE_RESUMEN_DIA  = 5;
+    // TODO: volver a 5 tras las pruebas de funcionalidad
+    private static final int LIMITE_RESUMEN_DIA  = 15;
     private static final int LIMITE_CHATBOT_DIA  = 20;
     private static final int CACHE_HORAS         = 24;
 
@@ -200,6 +201,11 @@ public class AiService {
         return consultasRestantes(idUsuario, "RESUMEN", LIMITE_RESUMEN_DIA);
     }
 
+    /** Límite diario de resúmenes (para mostrar en mensajes y contadores). */
+    public int getLimiteResumenDia() {
+        return LIMITE_RESUMEN_DIA;
+    }
+
     // ═══════════════════════════════════════════════════════════════════════════
     // PROVEEDORES DE IA
     // ═══════════════════════════════════════════════════════════════════════════
@@ -277,7 +283,7 @@ public class AiService {
 
         // Config de generación
         ObjectNode genConfig = body.putObject("generationConfig");
-        genConfig.put("maxOutputTokens", 1024);
+        genConfig.put("maxOutputTokens", 2048);
         genConfig.put("temperature", 0.3);
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -295,9 +301,30 @@ public class AiService {
         }
 
         JsonNode json = mapper.readTree(response.body());
-        return json.path("candidates").get(0)
-                   .path("content").path("parts").get(0)
-                   .path("text").asText();
+        JsonNode candidate = json.path("candidates").get(0);
+        if (candidate == null || candidate.isMissingNode()) {
+            log.error("[AI] Gemini sin candidatos. Respuesta: {}", response.body());
+            throw new RuntimeException("Gemini no devolvió candidatos (posible bloqueo de seguridad)");
+        }
+
+        String finishReason = candidate.path("finishReason").asText("");
+        // Concatenar TODAS las partes (Gemini puede dividir la respuesta en varias)
+        StringBuilder sb = new StringBuilder();
+        JsonNode partsNode = candidate.path("content").path("parts");
+        if (partsNode.isArray()) {
+            for (JsonNode part : partsNode) {
+                String t = part.path("text").asText("");
+                if (!t.isEmpty()) sb.append(t);
+            }
+        }
+        String texto = sb.toString().trim();
+        log.info("[AI] Gemini finishReason={} longitud={} chars", finishReason, texto.length());
+
+        if (texto.isEmpty()) {
+            log.error("[AI] Gemini texto vacío. finishReason={} body={}", finishReason, response.body());
+            throw new RuntimeException("Gemini no devolvió texto (finishReason=" + finishReason + ")");
+        }
+        return texto;
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
