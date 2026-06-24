@@ -5,7 +5,9 @@ import com.example.proyectoreciclame.Entity.Estudio;
 import com.example.proyectoreciclame.Entity.Normativa;
 import com.example.proyectoreciclame.Repository.EstudioRepository;
 import com.example.proyectoreciclame.Repository.NormativaRepository;
+import com.example.proyectoreciclame.Repository.RegistroSesionRepository;
 import com.example.proyectoreciclame.Repository.SolicitudRegistroRepository;
+import com.example.proyectoreciclame.Repository.UsuarioRepository;
 import com.example.proyectoreciclame.util.DateUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,15 +23,21 @@ public class DashboardController {
     private final NormativaRepository normativaRepository;
     private final EstudioRepository estudioRepository;
     private final SolicitudRegistroRepository solicitudRegistroRepository;
+    private final RegistroSesionRepository registroSesionRepository;
+    private final UsuarioRepository usuarioRepository;
     private final DateUtil dateUtil;
 
     public DashboardController(NormativaRepository normativaRepository,
                                EstudioRepository estudioRepository,
                                SolicitudRegistroRepository solicitudRegistroRepository,
+                               RegistroSesionRepository registroSesionRepository,
+                               UsuarioRepository usuarioRepository,
                                DateUtil dateUtil) {
         this.normativaRepository = normativaRepository;
         this.estudioRepository = estudioRepository;
         this.solicitudRegistroRepository = solicitudRegistroRepository;
+        this.registroSesionRepository = registroSesionRepository;
+        this.usuarioRepository = usuarioRepository;
         this.dateUtil = dateUtil;
     }
 
@@ -162,8 +170,8 @@ public class DashboardController {
         model.addAttribute("offsetRep", -(pctEe + pctGr));
         model.addAttribute("offsetOtro", -(pctEe + pctGr + pctRep));
 
-        // Solicitudes pendientes
-        long solicitudesPendientes = solicitudRegistroRepository.countByEstado("Pendiente");
+        // Solicitudes pendientes (misma fuente que la página de solicitudes)
+        long solicitudesPendientes = usuarioRepository.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE");
         model.addAttribute("solicitudesPendientes", solicitudesPendientes);
 
         // Últimas actualizaciones
@@ -199,6 +207,9 @@ public class DashboardController {
 
         model.addAttribute("ultimasActualizaciones",
                 novedades.stream().limit(3).toList());
+
+        // Usuario más frecuente
+        model.addAttribute("usuarioFrecuente", registroSesionRepository.getUsuarioMasFrecuente());
 
         return "admin/dashboard_admin";
     }

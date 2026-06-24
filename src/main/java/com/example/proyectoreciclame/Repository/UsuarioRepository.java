@@ -151,10 +151,10 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     long countBlockedAdminsByRole(@Param("rolIds") List<Integer> rolIds);
     boolean existsByCorreoAndEliminadoEnIsNull(String correo);
     @Query("""
-    SELECT u
+    SELECT DISTINCT u
     FROM Usuario u
     LEFT JOIN FETCH u.rol r
-    LEFT JOIN FETCH u.usuarioEmpresa ue
+    LEFT JOIN u.usuarioEmpresa ue
     LEFT JOIN u.identificacion id
     WHERE u.estadoAprobacion = 'PENDIENTE'
       AND u.eliminadoEn IS NULL
