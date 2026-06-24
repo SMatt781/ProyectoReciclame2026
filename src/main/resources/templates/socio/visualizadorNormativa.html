@@ -200,6 +200,18 @@
                         <!-- Viewer Canvas -->
                         <div id="viewerContainer"
                             class="flex-1 bg-surface-container relative overflow-hidden transition-all duration-300">
+                            <!-- Error overlay -->
+                            <div id="docError" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-surface-container z-30 p-8 text-center">
+                                <div class="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-4">
+                                    <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                                    </svg>
+                                </div>
+                                <p class="font-semibold text-on-surface text-base mb-2">No se pudo cargar el documento</p>
+                                <p class="text-sm text-on-surface-variant max-w-xs leading-relaxed">
+                                    Estamos notificando al equipo responsable de este inconveniente. Por favor intenta de nuevo más tarde.
+                                </p>
+                            </div>
                             <div class="absolute inset-0 bg-white/50 z-10 pointer-events-none"></div>
                             <div class="relative w-full h-full" style="z-index: 20;">
                                 <!-- PDF Iframe -->
@@ -509,21 +521,18 @@
             const viewerContainer = document.getElementById('viewerContainer');
 
             try {
-                // Fetch pre-signed URL from backend
                 const response = await fetch(`/documentos/normativa/${normativaId}/presigned-url`);
-                if (!response.ok) {
-                    throw new Error('Failed to get presigned URL');
-                }
+                if (!response.ok) throw new Error('HTTP ' + response.status);
                 const data = await response.json();
-                const presignedUrl = data.url;
-
-                // Set iframe src with presigned URL
-                if (pdfViewer && presignedUrl) {
-                    pdfViewer.src = presignedUrl + '#toolbar=0&navpanes=0&scrollbar=0';
+                if (data.error) throw new Error(data.error);
+                if (pdfViewer && data.url) {
+                    pdfViewer.src = data.url + '#toolbar=0&navpanes=0&scrollbar=0';
                 }
             } catch (e) {
                 console.error('Error loading document:', e);
                 if (pdfViewer) pdfViewer.style.display = 'none';
+                const errEl = document.getElementById('docError');
+                if (errEl) errEl.classList.remove('hidden');
             }
 
             // Block context menu (right click)
@@ -576,7 +585,7 @@
                 .then(r => r.json())
                 .then(data => {
                     const el = document.getElementById('normResumenRestantes');
-                    if (el) el.textContent = data.restantes + '/5 disponibles hoy';
+                    if (el) el.textContent = data.restantes + '/' + (data.limite || 5) + ' disponibles hoy';
                 }).catch(() => {});
         });
         async function generarResumenNorm() {
@@ -602,7 +611,7 @@
                 spinner.classList.remove('flex');
                 resultado.classList.remove('hidden');
                 if (contador && data.restantes !== undefined)
-                    contador.textContent = data.restantes + '/5 disponibles hoy';
+                    contador.textContent = data.restantes + '/' + (data.limite || 5) + ' disponibles hoy';
             } catch (err) {
                 spinner.classList.add('hidden');
                 spinner.classList.remove('flex');

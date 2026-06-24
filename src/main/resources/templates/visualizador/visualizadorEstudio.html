@@ -184,6 +184,20 @@
                     <input type="hidden" id="estudioId" th:value="${estudio.idEstudio}" />
                     <div class="flex-1 bg-surface-container overflow-hidden relative"
                         id="viewer-container">
+
+                        <!-- Error overlay compartido -->
+                        <div id="docError" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-surface-container z-20 p-8 text-center">
+                            <div class="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-4">
+                                <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                                </svg>
+                            </div>
+                            <p class="font-semibold text-on-surface text-base mb-2">No se pudo cargar el documento</p>
+                            <p class="text-sm text-on-surface-variant max-w-xs leading-relaxed">
+                                Estamos notificando al equipo responsable de este inconveniente. Por favor intenta de nuevo más tarde.
+                            </p>
+                        </div>
+
                         <!-- PDF iframe viewer -->
                         <th:block th:if="${estudio.archivoUrl != null and estudio.formato.name() == 'PDF'}">
                             <iframe id="pdfViewer" class="w-full h-full border-0" allowfullscreen></iframe>
@@ -253,9 +267,18 @@
                         if (formato === 'PDF') {
                             const iframeEl = document.getElementById('pdfViewer');
                             if (iframeEl) {
-                                const resp = await fetch('/documentos/estudio/' + estudioId + '/presigned-url');
-                                const data = await resp.json();
-                                iframeEl.src = data.url + '#toolbar=0&navpanes=0&scrollbar=0';
+                                try {
+                                    const resp = await fetch('/documentos/estudio/' + estudioId + '/presigned-url');
+                                    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                                    const data = await resp.json();
+                                    if (data.error) throw new Error(data.error);
+                                    iframeEl.src = data.url + '#toolbar=0&navpanes=0&scrollbar=0';
+                                } catch (err) {
+                                    console.error('[PDF] Error:', err);
+                                    iframeEl.style.display = 'none';
+                                    const errEl = document.getElementById('docError');
+                                    if (errEl) errEl.classList.remove('hidden');
+                                }
                             }
                         } else if (formato === 'PPTX') {
                             iniciarCargaPptx(estudioId);

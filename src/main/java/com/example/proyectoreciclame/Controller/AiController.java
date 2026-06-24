@@ -53,7 +53,7 @@ public class AiController {
         if (restantes <= 0) {
             return ResponseEntity.status(429).body(Map.of(
                     "error",   "Límite diario alcanzado",
-                    "mensaje", "Has alcanzado el límite de 5 resúmenes por día. Se renueva a medianoche.",
+                    "mensaje", "Has alcanzado el límite de " + aiService.getLimiteResumenDia() + " resúmenes por día. Se renueva a medianoche.",
                     "restantes", 0
             ));
         }
@@ -109,7 +109,8 @@ public class AiController {
 
             return ResponseEntity.ok(Map.of(
                     "resumen",   resumen,
-                    "restantes", aiService.resumenesRestantes(idUsuario)
+                    "restantes", aiService.resumenesRestantes(idUsuario),
+                    "limite",    aiService.getLimiteResumenDia()
             ));
         } catch (Exception e) {
             log.error("[AI-CTRL] Error generando resumen: {}", e.getMessage());
@@ -132,7 +133,7 @@ public class AiController {
         long restantes = aiService.resumenesRestantes(idUsuario);
         if (restantes <= 0) return ResponseEntity.status(429).body(Map.of(
                 "error", "Límite diario alcanzado",
-                "mensaje", "Has alcanzado el límite de 5 resúmenes por día. Se renueva a medianoche.",
+                "mensaje", "Has alcanzado el límite de " + aiService.getLimiteResumenDia() + " resúmenes por día. Se renueva a medianoche.",
                 "restantes", 0));
 
         Optional<Normativa> normOpt = normativaRepository.findById(id);
@@ -165,7 +166,7 @@ public class AiController {
         try {
             String resumen = aiService.generarResumenNormativa(id, idUsuario, textoDocumento, normativa.getTitulo());
             if (resumen == null) return ResponseEntity.status(429).body(Map.of("error", "Límite diario alcanzado", "restantes", 0));
-            return ResponseEntity.ok(Map.of("resumen", resumen, "restantes", aiService.resumenesRestantes(idUsuario)));
+            return ResponseEntity.ok(Map.of("resumen", resumen, "restantes", aiService.resumenesRestantes(idUsuario), "limite", aiService.getLimiteResumenDia()));
         } catch (Exception e) {
             log.error("[AI-CTRL] Error generando resumen normativa: {}", e.getMessage());
             return ResponseEntity.internalServerError().body(Map.of("error", "Error al generar el resumen: " + e.getMessage()));
@@ -177,7 +178,9 @@ public class AiController {
     public ResponseEntity<?> consultarRestantesNormativa() {
         SessionUserDto sessionUser = authUserService.obtenerUsuarioSesion();
         if (sessionUser == null) return ResponseEntity.status(401).build();
-        return ResponseEntity.ok(Map.of("restantes", aiService.resumenesRestantes(sessionUser.getIdUsuario())));
+        return ResponseEntity.ok(Map.of(
+                "restantes", aiService.resumenesRestantes(sessionUser.getIdUsuario()),
+                "limite", aiService.getLimiteResumenDia()));
     }
 
     /** GET /ai/diagnostico/modelos — lista modelos disponibles para la API key (temporal) */
@@ -202,7 +205,8 @@ public class AiController {
             return ResponseEntity.status(401).build();
         }
         return ResponseEntity.ok(Map.of(
-                "restantes", aiService.resumenesRestantes(sessionUser.getIdUsuario())
+                "restantes", aiService.resumenesRestantes(sessionUser.getIdUsuario()),
+                "limite", aiService.getLimiteResumenDia()
         ));
     }
 }
