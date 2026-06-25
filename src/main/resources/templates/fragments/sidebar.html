@@ -72,6 +72,15 @@
                 <div th:replace="~{fragments/icons.html :: icon-registros-descarga-sidebar}"></div>
                 Registros de descarga
             </a>
+
+            <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"
+               th:classappend="${currentSection == 'admin-notificacion-masiva'} ? ' bg-[#2ECC71]/20 text-[#00743a] dark:text-[#6bfe9c]' : ''"
+               th:href="@{/admin/notificaciones/masiva}">
+                <svg class="w-5 h-5 text-current flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V5h2v6zm0 4h-2v-2h2v2z"/>
+                </svg>
+                Notificación masiva
+            </a>
         </div>
 
         <!-- Socio Navigation -->

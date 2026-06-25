@@ -75,6 +75,9 @@ public class LoginAuditoriaService {
             sesion.setEstado("VIGENTE");
             sesion.setIp(obtenerIp(request));
             sesion.setAgenteUsuario(request.getHeader("User-Agent"));
+            if (usuario.getRol() != null) {
+                sesion.setRolNombre(usuario.getRol().getNombre());
+            }
             registroSesionRepository.save(sesion);
 
             HttpSession httpSession = request.getSession();
