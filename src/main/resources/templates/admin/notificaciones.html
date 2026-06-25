@@ -198,7 +198,7 @@
 
                         <div class="flex items-center gap-2 flex-wrap">
                             <a th:if="${n.enlaceReferencia != null}"
-                               th:href="${n.enlaceReferencia}"
+                               th:href="${sessionUser.rol == 'ADMIN' ? '/admin' + n.enlaceReferencia : (sessionUser.rol == 'VISUALIZADOR' ? '/visualizador' + n.enlaceReferencia : n.enlaceReferencia)}"
                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 text-secondary font-semibold rounded-lg text-xs hover:bg-secondary-container/20 transition-colors">
                                 <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
                                 Ver detalle
