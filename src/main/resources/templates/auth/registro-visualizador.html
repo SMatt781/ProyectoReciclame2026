@@ -245,8 +245,9 @@
                     <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
                         Nombres
                     </label>
-                    <input th:field="*{nombres}"
-                           id="inputNombresVis"
+                    <input id="inputNombresVis"
+                           name="nombres"
+                           th:value="${registroForm.nombres}"
                            type="text"
                            placeholder="Se completará automáticamente"
                            class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm disabled-field"
@@ -261,8 +262,9 @@
                     <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
                         Apellido paterno
                     </label>
-                    <input th:field="*{apellidoPaterno}"
-                           id="inputApPatVis"
+                    <input id="inputApPatVis"
+                           name="apellidoPaterno"
+                           th:value="${registroForm.apellidoPaterno}"
                            type="text"
                            placeholder="Se completará automáticamente"
                            class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm disabled-field"
@@ -277,8 +279,9 @@
                     <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
                         Apellido materno
                     </label>
-                    <input th:field="*{apellidoMaterno}"
-                           id="inputApMatVis"
+                    <input id="inputApMatVis"
+                           name="apellidoMaterno"
+                           th:value="${registroForm.apellidoMaterno}"
                            type="text"
                            placeholder="Se completará automáticamente"
                            class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm disabled-field"

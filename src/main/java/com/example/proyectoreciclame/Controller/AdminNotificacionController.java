@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class AdminNotificacionController {
@@ -124,6 +125,51 @@ public class AdminNotificacionController {
 
         redirectAttributes.addFlashAttribute("success", "Notificación marcada como leída.");
         return "redirect:/" + sessionUser.getRol().toLowerCase() + "/notificaciones";
+    }
+
+    // ──────────────────────────────────────────────────────────────────
+    // Notificación masiva (solo ADMIN)
+    // ──────────────────────────────────────────────────────────────────
+
+    @GetMapping("/admin/notificaciones/masiva")
+    public String mostrarFormularioMasivo(Model model) {
+        model.addAttribute("currentSection", "admin-notificacion-masiva");
+        model.addAttribute("currentPageName", "notificacion-masiva");
+        return "admin/notificaciones-masivas";
+    }
+
+    @PostMapping("/admin/notificaciones/masiva")
+    public String enviarNotificacionMasiva(
+            @RequestParam("titulo") String titulo,
+            @RequestParam("mensaje") String mensaje,
+            @RequestParam(value = "tipo", defaultValue = "INFO") String tipo,
+            @RequestParam(value = "enlace", required = false) String enlace,
+            @RequestParam(value = "roles", required = false) List<Integer> roles,
+            RedirectAttributes redirectAttributes) {
+
+        if (roles == null || roles.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Debes seleccionar al menos un rol destinatario.");
+            return "redirect:/admin/notificaciones/masiva";
+        }
+
+        // Solo permitir roles ADMIN(2), SOCIO(3), VISUALIZADOR(4) — excluir SUPERADMIN(1)
+        List<Integer> rolesPermitidos = roles.stream()
+                .filter(r -> r == 2 || r == 3 || r == 4)
+                .collect(Collectors.toList());
+
+        if (rolesPermitidos.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Rol no permitido seleccionado.");
+            return "redirect:/admin/notificaciones/masiva";
+        }
+
+        crearNotificacionPorRol(rolesPermitidos,
+                titulo != null ? titulo.trim() : "",
+                mensaje != null ? mensaje.trim() : "",
+                tipo,
+                enlace != null && !enlace.isBlank() ? enlace.trim() : null);
+
+        redirectAttributes.addFlashAttribute("exito", "Notificación enviada correctamente a los roles seleccionados.");
+        return "redirect:/admin/notificaciones/masiva";
     }
 
     // ──────────────────────────────────────────────────────────────────

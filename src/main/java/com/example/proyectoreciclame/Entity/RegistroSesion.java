@@ -39,6 +39,9 @@ public class RegistroSesion {
     @Column(name = "estado")
     private String estado;
 
+    @Column(name = "rol_nombre", length = 50)
+    private String rolNombre;
+
     public Long getIdSesion() {
         return idSesion;
     }
@@ -109,6 +112,14 @@ public class RegistroSesion {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public String getRolNombre() {
+        return rolNombre;
+    }
+
+    public void setRolNombre(String rolNombre) {
+        this.rolNombre = rolNombre;
     }
 
     @Transient
