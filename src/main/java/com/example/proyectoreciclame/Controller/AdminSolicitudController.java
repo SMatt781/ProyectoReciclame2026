@@ -41,17 +41,20 @@ public class AdminSolicitudController {
     private final CorreoService correoService;
     private final HistorialRolesRepository historialRolesRepository;
     private final AdminNotificacionController adminNotificacionController;
+    private final com.example.proyectoreciclame.Service.NotificacionWebSocketService webSocketService;
 
     public AdminSolicitudController(SolicitudRegistroRepository solicitudRegistroRepository,
                                     UsuarioRepository usuarioRepository,
                                     CorreoService correoService,
                                     HistorialRolesRepository historialRolesRepository,
-                                    AdminNotificacionController adminNotificacionController) {
+                                    AdminNotificacionController adminNotificacionController,
+                                    com.example.proyectoreciclame.Service.NotificacionWebSocketService webSocketService) {
         this.solicitudRegistroRepository = solicitudRegistroRepository;
         this.usuarioRepository = usuarioRepository;
         this.correoService = correoService;
         this.historialRolesRepository = historialRolesRepository;
         this.adminNotificacionController = adminNotificacionController;
+        this.webSocketService = webSocketService;
     }
 
     @GetMapping
@@ -263,6 +266,9 @@ public class AdminSolicitudController {
             // ── Flash message ─────────────────────────────────────────────────
             redirectAttributes.addFlashAttribute("success", "Solicitud aceptada correctamente. Usuario creado y activado.");
             // ──────────────────────────────────────────────────────────────────
+
+            long pendientes = usuarioRepository.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE");
+            webSocketService.enviarTopico("/topic/admin/solicitudes", java.util.Map.of("count", pendientes));
         }
 
         return "redirect:/admin/usuarios/solicitudes";
@@ -325,6 +331,9 @@ public class AdminSolicitudController {
             // ── Flash message ─────────────────────────────────────────────────
             redirectAttributes.addFlashAttribute("success", "Solicitud denegada correctamente.");
             // ──────────────────────────────────────────────────────────────────
+
+            long pendientes = usuarioRepository.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE");
+            webSocketService.enviarTopico("/topic/admin/solicitudes", java.util.Map.of("count", pendientes));
         }
 
         return "redirect:/admin/usuarios/solicitudes";

@@ -8,6 +8,34 @@
    EXTENSIONES RESPONSIVE PARA TAILWIND
    ============================================ */
 
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 80ms;
+  animation-timing-function: ease-out;
+}
+
+::view-transition-new(root) {
+  animation-name: vt-fade-in;
+}
+
+::view-transition-old(root) {
+  animation-name: vt-fade-out;
+}
+
+@keyframes vt-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes vt-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
 :root {
   --primary-color: #000000;
   --secondary-color: #006d37;
@@ -736,10 +764,55 @@
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       ResponsiveHelpers.init();
+      prefetchPaginationLinks();
+      prefetchSidebarLinks();
+      initHoverPrefetch();
     });
   } else {
     ResponsiveHelpers.init();
+    prefetchPaginationLinks();
+    prefetchSidebarLinks();
+    initHoverPrefetch();
   }
 
 })();
+
+function addPrefetchLink(href) {
+  if (!href || href.startsWith('#') || href.startsWith('javascript') || href.startsWith('mailto')) return;
+  if (document.querySelector('link[rel="prefetch"][href="' + href + '"]')) return;
+  var el = document.createElement('link');
+  el.rel = 'prefetch';
+  el.href = href;
+  document.head.appendChild(el);
+}
+
+function prefetchPaginationLinks() {
+  // Prefetch pagination page links
+  document.querySelectorAll('a[href]').forEach(function(link) {
+    var href = link.getAttribute('href');
+    if (href && href.includes('page=')) addPrefetchLink(href);
+  });
+}
+
+function prefetchSidebarLinks() {
+  // Prefetch all sidebar nav links immediately on page load
+  var sidebar = document.querySelector('aside');
+  if (!sidebar) return;
+  sidebar.querySelectorAll('a[href]').forEach(function(link) {
+    var href = link.getAttribute('href');
+    if (href && href.startsWith('/') && !href.includes('page=')) {
+      addPrefetchLink(href);
+    }
+  });
+}
+
+function initHoverPrefetch() {
+  // On hover start prefetching any internal link not yet prefetched
+  document.addEventListener('mouseover', function(e) {
+    var link = e.target.closest('a[href]');
+    if (!link) return;
+    var href = link.getAttribute('href');
+    if (href && href.startsWith('/')) addPrefetchLink(href);
+  }, { passive: true });
+}
 </script>

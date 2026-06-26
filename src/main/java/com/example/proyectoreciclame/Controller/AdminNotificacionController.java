@@ -6,10 +6,12 @@ import com.example.proyectoreciclame.Entity.Usuario;
 import com.example.proyectoreciclame.Repository.NotificacionRepository;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
 import com.example.proyectoreciclame.Service.AuthenticatedUserService;
+import com.example.proyectoreciclame.Service.NotificacionWebSocketService;
 import com.example.proyectoreciclame.util.PaginationUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
@@ -29,13 +32,27 @@ public class AdminNotificacionController {
     private final AuthenticatedUserService authenticatedUserService;
     private final UsuarioRepository usuarioRepository;
     private final NotificacionRepository notificacionRepository;
+    private final NotificacionWebSocketService webSocketService;
 
     public AdminNotificacionController(AuthenticatedUserService authenticatedUserService,
                                        UsuarioRepository usuarioRepository,
-                                       NotificacionRepository notificacionRepository) {
+                                       NotificacionRepository notificacionRepository,
+                                       NotificacionWebSocketService webSocketService) {
         this.authenticatedUserService = authenticatedUserService;
         this.usuarioRepository = usuarioRepository;
         this.notificacionRepository = notificacionRepository;
+        this.webSocketService = webSocketService;
+    }
+
+    @GetMapping("/api/notificaciones/no-leidas")
+    @ResponseBody
+    public ResponseEntity<java.util.Map<String, Object>> conteoNoLeidas() {
+        SessionUserDto sessionUser = authenticatedUserService.obtenerUsuarioSesion();
+        if (sessionUser == null) return ResponseEntity.ok(java.util.Map.of("count", 0));
+        Usuario usuario = usuarioRepository.findByCorreoWithRol(sessionUser.getCorreo()).orElse(null);
+        if (usuario == null) return ResponseEntity.ok(java.util.Map.of("count", 0));
+        long count = notificacionRepository.countByUsuarioAndLeidoFalse(usuario);
+        return ResponseEntity.ok(java.util.Map.of("count", count));
     }
 
     @GetMapping({"/admin/notificaciones", "/socio/notificaciones", "/visualizador/notificaciones"})
@@ -201,6 +218,7 @@ public class AdminNotificacionController {
                 n.setLeido(false);
                 n.setFecha(LocalDateTime.now());
                 notificacionRepository.save(n);
+                webSocketService.enviarNotificacion(usuario.getCorreo(), titulo, mensaje, tipo);
             }
         } catch (Exception e) {
             System.out.println("ERROR notificación por usuario: " + e.getMessage());
@@ -221,6 +239,7 @@ public class AdminNotificacionController {
                         n.setLeido(false);
                         n.setFecha(LocalDateTime.now());
                         notificacionRepository.save(n);
+                        webSocketService.enviarNotificacion(usuario.getCorreo(), titulo, mensaje, tipo);
                     });
         } catch (Exception e) {
             System.out.println("ERROR notificación: " + e.getMessage());

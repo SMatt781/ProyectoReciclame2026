@@ -844,59 +844,119 @@
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
+var previewCache = {};
+
+function buildTooltipHtml(data) {
+    var categorias = '';
+    if (data.categorias && data.categorias.length) {
+        categorias = '<div class="flex flex-wrap gap-1 mt-2">' +
+            data.categorias.map(function(c) {
+                return '<span class="text-[10px] font-bold uppercase tracking-wide bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">' + c + '</span>';
+            }).join('') + '</div>';
+    }
+    var acceso = data.tipoAcceso === 'DESCARGA'
+        ? '<span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Descargable</span>'
+        : '<span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Solo lectura</span>';
+    var fecha = data.fechaPublicacion
+        ? '<p class="text-[10px] text-slate-400 mt-2">Publicado: ' + data.fechaPublicacion + '</p>'
+        : '';
+    var html = '<div class="flex items-center gap-2 mb-2">' +
+        '<span class="text-[10px] font-bold uppercase tracking-wide text-slate-400">' + data.anio + ' · ' + data.formato + '</span>' +
+        acceso + '</div>' +
+        '<h4 class="font-bold text-sm text-slate-800 leading-tight mb-1">' + data.titulo + '</h4>' +
+        '<p class="text-xs text-slate-500 leading-relaxed line-clamp-3">' + data.descripcion + '</p>';
+    if (data.formato === 'PDF' && data.archivoUrl) {
+        html += '<div class="mt-3 bg-slate-50 rounded-lg overflow-hidden border border-slate-100" style="height:160px; display:flex; align-items:center; justify-content:center;">' +
+            '<div style="position:relative; width:100%; height:100%;">' +
+            '<canvas id="pdf-preview-canvas" style="position:absolute; top:0; left:0; max-width:100%; max-height:100%;"></canvas>' +
+            '</div></div>';
+    }
+    html += categorias + fecha;
+    return html;
+}
+
+function prefetchPdf(id, pdfUrl) {
+    pdfjsLib.getDocument({ url: pdfUrl, withCredentials: true }).promise.then(function(pdf) {
+        pdf.getPage(1).then(function(page) {
+            var viewport = page.getViewport({ scale: 1 });
+            var scale = Math.min(280 / viewport.width, 160 / viewport.height) * 0.95;
+            var sv = page.getViewport({ scale: scale });
+            var offCanvas = document.createElement('canvas');
+            offCanvas.width = sv.width; offCanvas.height = sv.height;
+            var ctx = offCanvas.getContext('2d');
+            page.render({ canvasContext: ctx, viewport: sv }).promise.then(function() {
+                if (previewCache[id]) {
+                    previewCache[id].imageData = ctx.getImageData(0, 0, offCanvas.width, offCanvas.height);
+                    previewCache[id].pdfWidth  = sv.width;
+                    previewCache[id].pdfHeight = sv.height;
+                }
+            });
+        });
+    }).catch(function() {});
+}
+
+function prefetchAll() {
+    var ids = [];
+    document.querySelectorAll('[data-estudio-id]').forEach(function(el) {
+        var id = el.getAttribute('data-estudio-id');
+        if (id && !ids.includes(id)) { ids.push(id); }
+    });
+    ids.forEach(function(id, i) {
+        setTimeout(function() {
+            if (previewCache[id]) return;
+            fetch('/api/estudios/' + id + '/preview', { credentials: 'same-origin' })
+                .then(function(r) { return r.ok ? r.json() : null; })
+                .then(function(data) {
+                    if (!data) return;
+                    previewCache[id] = { data: data };
+                    if (data.formato === 'PDF' && data.archivoUrl) { prefetchPdf(id, data.archivoUrl); }
+                }).catch(function() {});
+        }, i * 200);
+    });
+}
+
 $(document).ready(function () {
     var $tooltip = $('#estudio-preview-tooltip');
     var $content = $('#tooltip-content');
     var hoverTimer;
 
+    setTimeout(prefetchAll, 800);
+
     $(document).on('mouseenter', '[data-estudio-id]', function () {
         var $el = $(this);
-        var id  = $el.data('estudio-id');
+        var id  = String($el.data('estudio-id'));
 
         hoverTimer = setTimeout(function () {
-            $content.html('<p class="text-xs text-slate-400 text-center py-2">Cargando vista previa...</p>');
             posicionarTooltip($el);
-            $tooltip.show();
-
-            $.get('/api/estudios/' + id + '/preview')
-                .done(function (data) {
-                    var categorias = '';
-                    if (data.categorias && data.categorias.length) {
-                        categorias = '<div class="flex flex-wrap gap-1 mt-2">' +
-                            $.map(data.categorias, function (c) {
-                                return '<span class="text-[10px] font-bold uppercase tracking-wide bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">' + c + '</span>';
-                            }).join('') + '</div>';
+            var cached = previewCache[id];
+            if (cached && cached.data) {
+                $content.html(buildTooltipHtml(cached.data));
+                $tooltip.show();
+                if (cached.imageData) {
+                    var canvas = document.getElementById('pdf-preview-canvas');
+                    if (canvas) {
+                        canvas.width = cached.pdfWidth; canvas.height = cached.pdfHeight;
+                        canvas.getContext('2d').putImageData(cached.imageData, 0, 0);
+                        canvas.style.display = 'block';
                     }
-                    var acceso = data.tipoAcceso === 'DESCARGA'
-                        ? '<span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Descargable</span>'
-                        : '<span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Solo lectura</span>';
-                    var fecha = data.fechaPublicacion
-                        ? '<p class="text-[10px] text-slate-400 mt-2">Publicado: ' + data.fechaPublicacion + '</p>'
-                        : '';
-
-                    var previewHtml = '<div class="flex items-center gap-2 mb-2">' +
-                        '<span class="text-[10px] font-bold uppercase tracking-wide text-slate-400">' + data.anio + ' · ' + data.formato + '</span>' +
-                        acceso + '</div>' +
-                        '<h4 class="font-bold text-sm text-slate-800 leading-tight mb-1">' + data.titulo + '</h4>' +
-                        '<p class="text-xs text-slate-500 leading-relaxed line-clamp-3">' + data.descripcion + '</p>';
-
-                    if (data.formato === 'PDF' && data.archivoUrl) {
-                        previewHtml += '<div class="mt-3 bg-slate-50 rounded-lg overflow-hidden border border-slate-100" style="height:160px; display:flex; align-items:center; justify-content:center;">' +
-                            '<div style="position:relative; width:100%; height:100%;">' +
-                            '<canvas id="pdf-preview-canvas" style="position:absolute; top:0; left:0; max-width:100%; max-height:100%;"></canvas>' +
-                            '</div>' +
-                            '</div>';
-                    }
-
-                    previewHtml += categorias + fecha;
-                    $content.html(previewHtml);
-
-                    if (data.formato === 'PDF' && data.archivoUrl) {
-                        setTimeout(() => renderPdfPreview(data.archivoUrl), 100);
-                    }
-                })
-                .fail(function () { $tooltip.hide(); });
-        }, 600);
+                } else if (cached.data.formato === 'PDF' && cached.data.archivoUrl) {
+                    setTimeout(function() { renderPdfPreview(cached.data.archivoUrl); }, 100);
+                }
+            } else {
+                $content.html('<p class="text-xs text-slate-400 text-center py-2">Cargando vista previa...</p>');
+                $tooltip.show();
+                fetch('/api/estudios/' + id + '/preview', { credentials: 'same-origin' })
+                    .then(function(r) { return r.ok ? r.json() : null; })
+                    .then(function(data) {
+                        if (!data) { $tooltip.hide(); return; }
+                        previewCache[id] = { data: data };
+                        $content.html(buildTooltipHtml(data));
+                        if (data.formato === 'PDF' && data.archivoUrl) {
+                            setTimeout(function() { renderPdfPreview(data.archivoUrl); }, 100);
+                        }
+                    }).catch(function() { $tooltip.hide(); });
+            }
+        }, 300);
     }).on('mouseleave', '[data-estudio-id]', function () {
         clearTimeout(hoverTimer);
         $tooltip.hide();
@@ -913,38 +973,23 @@ $(document).ready(function () {
     function renderPdfPreview(pdfUrl) {
         var canvas = document.getElementById('pdf-preview-canvas');
         if (!canvas) return;
-
-        pdfjsLib.getDocument({
-            url: pdfUrl,
-            withCredentials: true
-        }).promise.then(function (pdf) {
-            pdf.getPage(1).then(function (page) {
-                var containerWidth = canvas.parentElement.clientWidth;
+        pdfjsLib.getDocument({ url: pdfUrl, withCredentials: true }).promise.then(function(pdf) {
+            pdf.getPage(1).then(function(page) {
+                var containerWidth = canvas.parentElement.clientWidth || 280;
                 var containerHeight = 160;
                 var viewport = page.getViewport({ scale: 1 });
                 var scale = Math.min(containerWidth / viewport.width, containerHeight / viewport.height) * 0.95;
-                var scaledViewport = page.getViewport({ scale: scale });
-
-                canvas.width = scaledViewport.width;
-                canvas.height = scaledViewport.height;
-                canvas.style.width = scaledViewport.width + 'px';
-                canvas.style.height = scaledViewport.height + 'px';
-
-                var ctx = canvas.getContext('2d');
-                var renderContext = {
-                    canvasContext: ctx,
-                    viewport: scaledViewport
-                };
-                page.render(renderContext).promise.then(function() {
+                var sv = page.getViewport({ scale: scale });
+                canvas.width = sv.width; canvas.height = sv.height;
+                canvas.style.width = sv.width + 'px'; canvas.style.height = sv.height + 'px';
+                page.render({ canvasContext: canvas.getContext('2d'), viewport: sv }).promise.then(function() {
                     canvas.style.display = 'block';
                 });
-            }).catch(function (err) {
-                console.error('Error obteniendo página PDF:', err);
-                canvas.parentElement.innerHTML = '<p style="text-align:center; color:#999; font-size:11px;">No se pudo cargar vista previa</p>';
+            }).catch(function() {
+                if (canvas.parentElement) canvas.parentElement.innerHTML = '<p style="text-align:center;color:#999;font-size:11px;">No se pudo cargar vista previa</p>';
             });
-        }).catch(function (err) {
-            console.error('Error cargando PDF:', err);
-            canvas.parentElement.innerHTML = '<p style="text-align:center; color:#999; font-size:11px;">PDF no disponible</p>';
+        }).catch(function() {
+            if (canvas.parentElement) canvas.parentElement.innerHTML = '<p style="text-align:center;color:#999;font-size:11px;">PDF no disponible</p>';
         });
     }
 });

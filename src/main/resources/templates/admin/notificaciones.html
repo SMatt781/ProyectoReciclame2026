@@ -163,13 +163,19 @@
                                     (${#strings.startsWith(n.tipo, 'NORMATIVA')} ? 'bg-amber-50 text-amber-600' :
                                     (${#strings.startsWith(n.tipo, 'SOLICITUD')} ? 'bg-secondary-container/40 text-secondary' :
                                     (${#strings.startsWith(n.tipo, 'EDICION')} ? 'bg-purple-50 text-purple-600' :
-                                    'bg-slate-200 text-slate-500')))">
+                                    (${n.tipo == 'INFO'} ? 'bg-blue-50 text-blue-500' :
+                                    (${n.tipo == 'ALERTA'} ? 'bg-amber-50 text-amber-600' :
+                                    (${n.tipo == 'EXITO'} ? 'bg-green-50 text-green-600' :
+                                    'bg-slate-100 text-slate-500'))))))">
                     <span class="material-symbols-outlined text-[22px]"
                           th:text="${#strings.startsWith(n.tipo, 'ESTUDIO')} ? 'description' :
                                    (${#strings.startsWith(n.tipo, 'NORMATIVA')} ? 'domain' :
                                    (${#strings.startsWith(n.tipo, 'SOLICITUD')} ? 'assignment' :
                                    (${#strings.startsWith(n.tipo, 'EDICION')} ? 'edit' :
-                                   'notifications')))">
+                                   (${n.tipo == 'INFO'} ? 'info' :
+                                   (${n.tipo == 'ALERTA'} ? 'warning' :
+                                   (${n.tipo == 'EXITO'} ? 'check_circle' :
+                                   'notifications'))))))">
                         notifications
                     </span>
                     </div>
@@ -183,7 +189,10 @@
                                           (${#strings.startsWith(n.tipo, 'NORMATIVA')} ? 'Normativa' :
                                           (${#strings.startsWith(n.tipo, 'SOLICITUD')} ? 'Solicitud' :
                                           (${#strings.startsWith(n.tipo, 'EDICION')} ? 'Edición' :
-                                          'Sistema')))">Tipo</span>
+                                          (${n.tipo == 'INFO'} ? 'Informativa' :
+                                          (${n.tipo == 'ALERTA'} ? 'Alerta' :
+                                          (${n.tipo == 'EXITO'} ? 'Éxito' :
+                                          'Sistema'))))))">Tipo</span>
                                 <span th:if="${n.leido == false}"
                                       class="w-2 h-2 rounded-full bg-red-500 flex-shrink-0"></span>
                             </div>
