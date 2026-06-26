@@ -273,6 +273,7 @@
                     <article th:each="estudio, stat : ${estudios}"
                         data-aos="fade-up"
                         th:data-aos-delay="${stat.index <= 8 ? stat.index * 60 : 0}"
+                        th:attr="data-estudio-id=${estudio.idEstudio}"
                         class="grid-item bg-surface-container-lowest rounded-[1.5rem] p-6 ambient-shadow flex flex-col h-full group hover:-translate-y-1 transition-transform duration-300 ghost-border relative overflow-hidden"
                         th:classappend="${estudio.estado.name() == 'DEROGADO' ? 'bg-opacity-80' : ''}">
                         <div th:classappend="${estudio.estado.name() == 'VIGENTE' ? 'bg-gradient-to-r from-secondary to-secondary-container' : (estudio.estado.name() == 'BORRADOR' ? 'bg-gradient-to-r from-outline to-surface-variant' : 'bg-gradient-to-r from-error to-error-container')}"
@@ -380,6 +381,7 @@
                     <div th:each="estudio, stat : ${estudios}"
                         data-aos="fade-up"
                         th:data-aos-delay="${stat.index <= 9 ? stat.index * 45 : 0}"
+                        th:attr="data-estudio-id=${estudio.idEstudio}"
                         class="list-item bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-12 gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
                         <div class="col-span-6 lg:col-span-5 flex items-center gap-4 w-full">
                             <h4 th:text="${estudio.titulo}"
@@ -1038,6 +1040,124 @@
 <!-- Chatbot -->
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot}"></th:block>
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot-script}"></th:block>
+
+<!-- Tooltip de preview de estudio -->
+<div id="estudio-preview-tooltip"
+     style="display:none; position:fixed; z-index:9999; width:288px; pointer-events:none;"
+     class="bg-white rounded-2xl shadow-2xl border border-slate-100 p-4">
+    <div id="tooltip-content"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+$(document).ready(function () {
+    var $tooltip = $('#estudio-preview-tooltip');
+    var $content = $('#tooltip-content');
+    var hoverTimer;
+
+    $(document).on('mouseenter', '[data-estudio-id]', function () {
+        var $el = $(this);
+        var id  = $el.data('estudio-id');
+
+        hoverTimer = setTimeout(function () {
+            $content.html('<p class="text-xs text-slate-400 text-center py-2">Cargando vista previa...</p>');
+            posicionarTooltip($el);
+            $tooltip.show();
+
+            $.get('/api/estudios/' + id + '/preview')
+                .done(function (data) {
+                    var categorias = '';
+                    if (data.categorias && data.categorias.length) {
+                        categorias = '<div class="flex flex-wrap gap-1 mt-2">' +
+                            $.map(data.categorias, function (c) {
+                                return '<span class="text-[10px] font-bold uppercase tracking-wide bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">' + c + '</span>';
+                            }).join('') + '</div>';
+                    }
+                    var acceso = data.tipoAcceso === 'DESCARGA'
+                        ? '<span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Descargable</span>'
+                        : '<span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Solo lectura</span>';
+                    var fecha = data.fechaPublicacion
+                        ? '<p class="text-[10px] text-slate-400 mt-2">Publicado: ' + data.fechaPublicacion + '</p>'
+                        : '';
+
+                    var previewHtml = '<div class="flex items-center gap-2 mb-2">' +
+                        '<span class="text-[10px] font-bold uppercase tracking-wide text-slate-400">' + data.anio + ' · ' + data.formato + '</span>' +
+                        acceso + '</div>' +
+                        '<h4 class="font-bold text-sm text-slate-800 leading-tight mb-1">' + data.titulo + '</h4>' +
+                        '<p class="text-xs text-slate-500 leading-relaxed line-clamp-3">' + data.descripcion + '</p>';
+
+                    if (data.formato === 'PDF' && data.archivoUrl) {
+                        previewHtml += '<div class="mt-3 bg-slate-50 rounded-lg overflow-hidden border border-slate-100" style="height:160px; display:flex; align-items:center; justify-content:center;">' +
+                            '<div style="position:relative; width:100%; height:100%;">' +
+                            '<canvas id="pdf-preview-canvas" style="position:absolute; top:0; left:0; max-width:100%; max-height:100%;"></canvas>' +
+                            '</div>' +
+                            '</div>';
+                    }
+
+                    previewHtml += categorias + fecha;
+                    $content.html(previewHtml);
+
+                    if (data.formato === 'PDF' && data.archivoUrl) {
+                        setTimeout(() => renderPdfPreview(data.archivoUrl), 100);
+                    }
+                })
+                .fail(function () { $tooltip.hide(); });
+        }, 600);
+    }).on('mouseleave', '[data-estudio-id]', function () {
+        clearTimeout(hoverTimer);
+        $tooltip.hide();
+    });
+
+    function posicionarTooltip($el) {
+        var rect = $el[0].getBoundingClientRect();
+        var left = rect.right + 12;
+        if (left + 288 > window.innerWidth) { left = rect.left - 300; }
+        var top  = Math.min(rect.top, window.innerHeight - 220);
+        $tooltip.css({ top: top + 'px', left: left + 'px' });
+    }
+
+    function renderPdfPreview(pdfUrl) {
+        var canvas = document.getElementById('pdf-preview-canvas');
+        if (!canvas) return;
+
+        pdfjsLib.getDocument({
+            url: pdfUrl,
+            withCredentials: true
+        }).promise.then(function (pdf) {
+            pdf.getPage(1).then(function (page) {
+                var containerWidth = canvas.parentElement.clientWidth;
+                var containerHeight = 160;
+                var viewport = page.getViewport({ scale: 1 });
+                var scale = Math.min(containerWidth / viewport.width, containerHeight / viewport.height) * 0.95;
+                var scaledViewport = page.getViewport({ scale: scale });
+
+                canvas.width = scaledViewport.width;
+                canvas.height = scaledViewport.height;
+                canvas.style.width = scaledViewport.width + 'px';
+                canvas.style.height = scaledViewport.height + 'px';
+
+                var ctx = canvas.getContext('2d');
+                var renderContext = {
+                    canvasContext: ctx,
+                    viewport: scaledViewport
+                };
+                page.render(renderContext).promise.then(function() {
+                    canvas.style.display = 'block';
+                });
+            }).catch(function (err) {
+                console.error('Error obteniendo página PDF:', err);
+                canvas.parentElement.innerHTML = '<p style="text-align:center; color:#999; font-size:11px;">No se pudo cargar vista previa</p>';
+            });
+        }).catch(function (err) {
+            console.error('Error cargando PDF:', err);
+            canvas.parentElement.innerHTML = '<p style="text-align:center; color:#999; font-size:11px;">PDF no disponible</p>';
+        });
+    }
+});
+</script>
 </body>
 
 </html>

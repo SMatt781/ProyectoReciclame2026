@@ -59,9 +59,6 @@ public class PerfilController {
     /** Guarda cambios de datos personales */
     @PostMapping("/guardar")
     public String guardarPerfil(Authentication authentication,
-                                @RequestParam("nombres") String nombres,
-                                @RequestParam(value = "apellidoPaterno", required = false) String apellidoPaterno,
-                                @RequestParam(value = "apellidoMaterno", required = false) String apellidoMaterno,
                                 @RequestParam(value = "telefono", required = false) String telefono,
                                 @RequestParam(value = "razonSocial", required = false) String razonSocial,
                                 @RequestParam(value = "cargo", required = false) String cargo,
@@ -73,27 +70,13 @@ public class PerfilController {
 
             boolean esRUC = usuario.getApellidoPaterno() == null;
 
-            usuario.setNombres(nombres != null ? nombres.trim() : "");
-
-            if (!esRUC) {
-                // DNI: actualizar apellidos normalmente
-                usuario.setApellidoPaterno(apellidoPaterno != null && !apellidoPaterno.isBlank() ? apellidoPaterno.trim() : null);
-                usuario.setApellidoMaterno(apellidoMaterno != null && !apellidoMaterno.isBlank() ? apellidoMaterno.trim() : null);
-            }
-            // RUC: apellidos siguen siendo null, no se tocan
-
             usuario.setTelefono(telefono != null ? telefono.trim() : null);
             usuarioRepository.save(usuario);
 
             // Actualizar información de empresa
             usuarioEmpresaRepository.findByUsuario(usuario).ifPresentOrElse(
                     ue -> {
-                        if (esRUC) {
-                            // RUC: sincronizar razonSocial con el campo nombres
-                            String nuevaRazon = nombres != null ? nombres.trim() : "";
-                            ue.setRazonSocial(nuevaRazon);
-                        } else if (razonSocial != null && !razonSocial.isBlank()) {
-                            // DNI: usar razonSocial si se proporciona
+                        if (!esRUC && razonSocial != null && !razonSocial.isBlank()) {
                             ue.setRazonSocial(razonSocial.trim());
                         }
 
@@ -105,14 +88,12 @@ public class PerfilController {
                     },
                     () -> {
                         // Crear nuevo registro si no existe y hay datos para guardar
-                        if ((esRUC || (razonSocial != null && !razonSocial.isBlank())) ||
+                        if ((razonSocial != null && !razonSocial.isBlank()) ||
                             (cargo != null && !cargo.isBlank())) {
                             com.example.proyectoreciclame.Entity.UsuarioEmpresa ue =
                                 new com.example.proyectoreciclame.Entity.UsuarioEmpresa();
                             ue.setUsuario(usuario);
-                            if (esRUC) {
-                                ue.setRazonSocial(nombres != null ? nombres.trim() : "");
-                            } else if (razonSocial != null && !razonSocial.isBlank()) {
+                            if (!esRUC && razonSocial != null && !razonSocial.isBlank()) {
                                 ue.setRazonSocial(razonSocial.trim());
                             }
                             if (cargo != null && !cargo.isBlank()) {

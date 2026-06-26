@@ -276,7 +276,7 @@
                                 <!-- Rol -->
                                 <div class="w-full md:w-auto flex items-center justify-start">
                                         <span class="rounded-full bg-secondary-container/20 px-3 py-1 text-[10px] font-extrabold uppercase text-secondary"
-                                              th:text="${r.usuario.rol.nombre}">
+                                              th:text="${r.rolNombre != null ? r.rolNombre : r.usuario.rol.nombre}">
                                         </span>
                                 </div>
 

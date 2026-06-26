@@ -28,7 +28,7 @@ public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, 
                    LOWER(u.correo) LIKE LOWER(CONCAT('%', :texto, '%')))
               AND (:fechaInicio IS NULL OR rs.fechaInicio >= :fechaInicio)
               AND (:fechaFin IS NULL OR rs.fechaInicio <= :fechaFin)
-              AND (:rol IS NULL OR UPPER(r.nombre) = UPPER(:rol))
+              AND (:rol IS NULL OR UPPER(rs.rolNombre) = UPPER(:rol))
             ORDER BY rs.fechaInicio DESC
             """,
             countQuery = """
@@ -45,7 +45,7 @@ public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, 
                    LOWER(u.correo) LIKE LOWER(CONCAT('%', :texto, '%')))
               AND (:fechaInicio IS NULL OR rs.fechaInicio >= :fechaInicio)
               AND (:fechaFin IS NULL OR rs.fechaInicio <= :fechaFin)
-              AND (:rol IS NULL OR UPPER(r.nombre) = UPPER(:rol))
+              AND (:rol IS NULL OR UPPER(rs.rolNombre) = UPPER(:rol))
             """)
     Page<RegistroSesion> buscarFiltrado(@Param("texto") String texto,
                                         @Param("fechaInicio") LocalDateTime fechaInicio,
