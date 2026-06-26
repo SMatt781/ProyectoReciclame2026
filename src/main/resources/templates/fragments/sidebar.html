@@ -34,6 +34,16 @@
                th:href="@{/admin/usuarios/gestion}">
                 <div th:replace="~{fragments/icons.html :: icon-usuarios-sidebar}"></div>
                 Usuarios
+                <span id="solicitudes-badge"
+                      th:if="${solicitudesPendientes != null and solicitudesPendientes > 0}"
+                      th:text="${solicitudesPendientes}"
+                      class="ml-auto min-w-[20px] h-5 px-1 rounded-full bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center">
+                </span>
+                <span id="solicitudes-badge-hidden"
+                      th:unless="${solicitudesPendientes != null and solicitudesPendientes > 0}"
+                      style="display:none"
+                      class="ml-auto min-w-[20px] h-5 px-1 rounded-full bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center">
+                </span>
             </a>
 
             <a class="text-slate-600 dark:text-slate-400 hover:bg-[#2ECC71]/20 hover:text-[#00743a] dark:hover:bg-[#2ECC71]/20 dark:hover:text-[#6bfe9c] rounded-xl px-4 py-3 flex items-center gap-3 transition-all scale-95 active:scale-100 active:bg-[#2ECC71]/30 font-headline font-bold text-sm tracking-tight"

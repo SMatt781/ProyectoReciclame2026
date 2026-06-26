@@ -3,6 +3,7 @@ package com.example.proyectoreciclame.Controller;
 import com.example.proyectoreciclame.Entity.*;
 import com.example.proyectoreciclame.Repository.*;
 import com.example.proyectoreciclame.Service.CorreoService;
+import com.example.proyectoreciclame.Service.NotificacionWebSocketService;
 import com.example.proyectoreciclame.Service.SessionStore;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -53,6 +54,7 @@ public class SuperadminController {
     private final SessionStore sessionStore;
     private final ChatMensajeRepository chatMensajeRepository;
     private final ChatSesionRepository chatSesionRepository;
+    private final NotificacionWebSocketService webSocketService;
 
     public SuperadminController(UsuarioRepository usuarioRepository,
                                 DominioAutorizadoRepository dominioAutorizadoRepository,
@@ -73,6 +75,7 @@ public class SuperadminController {
                                 SessionStore sessionStore,
                                 ChatMensajeRepository chatMensajeRepository,
                                 ChatSesionRepository chatSesionRepository,
+                                NotificacionWebSocketService webSocketService,
                                 org.springframework.core.env.Environment env) {
         this.historialRolesRepository = historialRolesRepository;
         this.usuarioRepository = usuarioRepository;
@@ -93,6 +96,7 @@ public class SuperadminController {
         this.sessionStore = sessionStore;
         this.chatMensajeRepository = chatMensajeRepository;
         this.chatSesionRepository = chatSesionRepository;
+        this.webSocketService = webSocketService;
         this.env = env;
     }
 
@@ -1277,6 +1281,7 @@ public class SuperadminController {
                         n.setLeido(false);
                         n.setFecha(LocalDateTime.now());
                         notificacionRepository.save(n);
+                        webSocketService.enviarNotificacion(superadmin.getCorreo(), titulo, mensaje, tipo);
                     });
         } catch (Exception e) {
             System.out.println("ERROR notificación: " + e.getMessage());

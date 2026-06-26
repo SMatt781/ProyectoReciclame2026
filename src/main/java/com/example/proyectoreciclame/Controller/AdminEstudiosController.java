@@ -46,6 +46,9 @@ public class AdminEstudiosController {
     @Autowired
     private AdminNotificacionController adminNotificacionController;
 
+    @Autowired
+    private com.example.proyectoreciclame.Service.NotificacionWebSocketService webSocketService;
+
     @GetMapping("/admin/estudios")
     public String estudiosAdmin(
             @RequestParam(required = false) String search,
@@ -987,6 +990,8 @@ public class AdminEstudiosController {
         estudio.setFechaActualizacion(java.time.LocalDateTime.now());
 
         estudioRepository.save(estudio);
+        webSocketService.enviarTopico("/topic/estudios",
+                java.util.Map.of("idEstudio", estudio.getIdEstudio(), "estado", "DEROGADO", "titulo", estudio.getTitulo()));
 
         String enlaceEstudio = "/estudios/" + estudio.getIdEstudio();
         String tituloNotif = "Estudio actualizado";
@@ -1086,6 +1091,10 @@ public class AdminEstudiosController {
              }
 
             estudio.setFechaActualizacion(java.time.LocalDateTime.now());
+            webSocketService.enviarTopico("/topic/estudios",
+                    java.util.Map.of("idEstudio", estudio.getIdEstudio(),
+                            "estado", estudio.getEstado() != null ? estudio.getEstado().name() : "BORRADOR",
+                            "titulo", estudio.getTitulo() != null ? estudio.getTitulo() : ""));
 
             // Si se reemplazó el archivo PPTX, limpiar el preview anterior para que se regenere
             boolean archivoNuevoPptx = archivo != null && !archivo.isEmpty()

@@ -91,6 +91,12 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
+        <!-- WebSocket con STOMP -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+
         <!-- AWS S3 SDK -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
