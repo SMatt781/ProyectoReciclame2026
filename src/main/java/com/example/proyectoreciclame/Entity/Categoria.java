@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "categoria", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"nombre", "tipo"})
+        @UniqueConstraint(columnNames = {"nombre", "tipo"})
 })
 public class Categoria {
 
