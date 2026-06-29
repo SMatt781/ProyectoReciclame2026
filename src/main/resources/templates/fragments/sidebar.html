@@ -2,19 +2,29 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <th:block th:fragment="sidebar">
-<aside id="sidebar" class="md:flex flex-col h-full w-64 p-5 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50 fixed md:static left-0 top-0 h-screen md:h-auto -translate-x-full md:translate-x-0 transition-transform duration-300">
-    <div class="flex items-center gap-3 mb-10 pl-2">
-        <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
-            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                        d="M7 19c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-8h4V9h-4V7c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H3v2h4v8zm2-8h6V7H9v4z" />
+<aside id="sidebar" class="md:flex flex-col h-full w-64 p-5 border-none bg-[#f2f4f6] dark:bg-slate-900 z-50 fixed md:static left-0 top-0 h-screen md:h-auto -translate-x-full md:translate-x-0 transition-transform duration-300 overflow-y-auto md:overflow-visible">
+
+    <!-- Logo + botón cerrar (mobile) -->
+    <div class="flex items-center justify-between mb-10 pl-2">
+        <!-- Logo -->
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0">
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M7 19c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-8h4V9h-4V7c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H3v2h4v8zm2-8h6V7H9v4z" />
+                </svg>
+            </div>
+            <div class="flex flex-col">
+                <h1 class="text-[#001B2E] dark:text-white font-black text-xl font-headline tracking-tight">Reciclame</h1>
+                <span class="text-xs text-on-surface-variant font-medium">Economía Circular</span>
+            </div>
+        </div>
+        <!-- Botón cerrar (solo mobile) -->
+        <button onclick="toggleSidebar()"
+                class="md:hidden p-2 rounded-lg hover:bg-surface-container-low transition-colors text-on-surface-variant flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
-        </div>
-        <div class="flex flex-col">
-            <h1 class="text-[#001B2E] dark:text-white font-black text-xl font-headline tracking-tight">Reciclame
-            </h1>
-            <span class="text-xs text-on-surface-variant font-medium">Economía Circular</span>
-        </div>
+        </button>
     </div>
 
     <!-- Navigation Tabs -->
