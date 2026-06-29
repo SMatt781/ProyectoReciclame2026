@@ -320,7 +320,7 @@
                 <!-- Tabla div-grid -->
                 <div class="flex flex-col">
                     <div class="overflow-x-auto w-full pb-4" th:if="${not #lists.isEmpty(solicitudes)}">
-                        <div class="flex flex-col gap-4 min-w-[1200px] w-full">
+                        <div class="flex flex-col gap-4 md:min-w-[1200px] w-full">
 
                             <!-- Cabecera -->
                             <div class="hidden md:grid grid-cols-[240px_100px_180px_150px_100px_150px_1fr] gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">
@@ -351,7 +351,7 @@
                                 </div>
 
                                 <!-- DNI/RUC -->
-                                <div class="flex justify-start min-w-0">
+                                <div class="flex justify-start w-full md:w-auto min-w-0">
                                     <!-- DNI Badge -->
                                     <span th:if="${s.tipoIdentificacion == 'DNI'}"
                                           class="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-extrabold uppercase text-blue-600 border border-blue-200">
@@ -383,7 +383,7 @@
                                      th:text="${s.fechaSolicitud}"></div>
 
                                 <!-- Acciones -->
-                                <div class="flex justify-center w-full md:w-auto items-center gap-2 flex-wrap">
+                                <div class="flex justify-start md:justify-center w-full md:w-auto items-center gap-2 flex-wrap">
                                     <a th:href="@{'/admin/usuarios/solicitudes/' + ${s.idUsuario}}"
                                        class="inline-flex items-center rounded-lg px-3 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container transition-colors">
                                         Ver
@@ -574,7 +574,19 @@
 <!-- AOS - Scroll Reveal -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded' });
+    var isMobileAOS = window.innerWidth < 768;
+    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded', disable: isMobileAOS });
+    (function () {
+        var s = document.querySelector('.overflow-y-auto');
+        if (!s) return;
+        function checkAOS() {
+            document.querySelectorAll('[data-aos]:not(.aos-animate)').forEach(function(el) {
+                el.classList.add('aos-animate');
+            });
+        }
+        s.addEventListener('scroll', checkAOS, { passive: true });
+        setTimeout(checkAOS, 500);
+    })();
 </script>
 <script th:src="@{/js/animations.js}"></script>
 <!-- Chatbot -->

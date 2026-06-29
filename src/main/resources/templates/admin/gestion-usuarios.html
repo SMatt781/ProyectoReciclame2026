@@ -385,7 +385,7 @@
                                 </div>
 
                                 <!-- Estado -->
-                                <div class="flex items-center justify-center min-w-0 text-xs font-body text-on-surface-variant min-w-0">
+                                <div class="flex items-center justify-start lg:justify-center min-w-0 text-xs font-body text-on-surface-variant min-w-0">
                                     <div class="flex items-center gap-2" th:if="${u.estado == 'Activo'}">
                                         <div class="h-2 w-2 rounded-full bg-secondary"></div>
                                         <span class="text-sm font-bold text-secondary" th:text="${u.estado}"></span>
@@ -1198,7 +1198,19 @@
 <!-- AOS - Scroll Reveal -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded' });
+    var isMobileAOS = window.innerWidth < 768;
+    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded', disable: isMobileAOS });
+    (function () {
+        var s = document.querySelector('.overflow-y-auto');
+        if (!s) return;
+        function checkAOS() {
+            document.querySelectorAll('[data-aos]:not(.aos-animate)').forEach(function(el) {
+                el.classList.add('aos-animate');
+            });
+        }
+        s.addEventListener('scroll', checkAOS, { passive: true });
+        setTimeout(checkAOS, 500);
+    })();
 </script>
 <!-- Contador animado en KPIs -->
 <script th:src="@{/js/animations.js}"></script>

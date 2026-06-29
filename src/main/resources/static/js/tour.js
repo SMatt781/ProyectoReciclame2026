@@ -96,11 +96,14 @@
             /* Tarjeta principal */
             const card = document.createElement('div');
             card.id = 'rt-card';
+            const isMobile = window.innerWidth < 480;
+            const cardWidth = isMobile ? '280px' : '340px';
+            const cardPadding = isMobile ? '16px 20px 18px' : '22px 24px 20px';
             card.style.cssText = [
                 'position:fixed', 'z-index:9999',
-                'width:340px', 'max-width:calc(100vw - 24px)',
-                'background:#ffffff', 'border-radius:20px',
-                'padding:22px 24px 20px',
+                'width:' + cardWidth, 'max-width:calc(100vw - 20px)',
+                'background:#ffffff', 'border-radius:16px',
+                'padding:' + cardPadding,
                 'box-shadow:0 24px 64px rgba(2,29,48,0.22),0 4px 20px rgba(2,29,48,0.10)',
                 'font-family:Inter,system-ui,sans-serif',
                 'opacity:0', 'transform:translateY(12px) scale(0.96)',
@@ -122,11 +125,10 @@
 
             this._els = { blocker, overlay, spot, card, arrow };
 
-            /* Animar entrada de la tarjeta */
+            /* Animar entrada de la tarjeta (solo opacidad; _render posiciona el transform) */
             requestAnimationFrame(() => {
                 setTimeout(() => {
-                    card.style.opacity   = '1';
-                    card.style.transform = 'translateY(0) scale(1)';
+                    card.style.opacity = '1';
                 }, 60);
             });
         }
@@ -232,7 +234,31 @@
             /* ── Posición de la tarjeta ── */
             if (targetEl) {
                 requestAnimationFrame(() => {
-                    setTimeout(() => this._positionCard(targetEl, step.position || 'bottom'), 120);
+                    setTimeout(() => {
+                        const sidebar  = document.querySelector('aside');
+                        const isMobile = window.innerWidth < 768;
+                        const isSidebarItself = isMobile && sidebar && sidebar.isSameNode(targetEl);
+
+                        /* Paso que apunta al sidebar completo en mobile: fijar al fondo centrado */
+                        if (isSidebarItself) {
+                            this._pinToBottom();
+                            return;
+                        }
+
+                        /* En mobile, pasos que apuntan a enlaces dentro del sidebar usan 'bottom' */
+                        const inSidebar = isMobile && sidebar && sidebar.contains(targetEl);
+                        let position = inSidebar ? 'bottom' : (step.position || 'bottom');
+
+                        /* Si no cabe la card debajo del elemento, ponerla arriba */
+                        const r   = targetEl.getBoundingClientRect();
+                        const ch2 = card.offsetHeight || 300;
+                        const gap2 = 18;
+                        if (r.bottom + ch2 + gap2 + 8 > window.innerHeight) {
+                            position = 'top';
+                        }
+
+                        this._positionCard(targetEl, position);
+                    }, 120);
                 });
             } else {
                 this._centerCard();
@@ -252,7 +278,7 @@
                 spot.style.boxShadow  = 'none';
                 return;
             }
-            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            el.scrollIntoView({ behavior: 'instant', block: 'nearest' });
             requestAnimationFrame(() => {
                 setTimeout(() => {
                     const r = el.getBoundingClientRect();
@@ -272,12 +298,12 @@
         _positionCard(el, position) {
             const { card, arrow } = this._els;
             const r   = el.getBoundingClientRect();
-            const cw  = 340;
+            const cw  = card.offsetWidth || 340;
             const ch  = card.offsetHeight || 300;
             const gap = 18;
             const vw  = window.innerWidth;
             const vh  = window.innerHeight;
-            const margin = 10;
+            const margin = window.innerWidth < 480 ? 8 : 10;
 
             let left, top, arrowL, arrowT, showArrow = true;
 
@@ -327,12 +353,45 @@
             }
         }
 
+        /* Card fija en la parte inferior centrada (para pasos que apuntan al sidebar completo) */
+        _pinToBottom() {
+            const { card, arrow } = this._els;
+            arrow.style.display = 'none';
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    const vw = window.innerWidth;
+                    const cw = card.offsetWidth  || 280;
+                    const ch = card.offsetHeight || 320;
+                    const margin = 8;
+                    card.style.left      = Math.max(margin, Math.round((vw - cw) / 2)) + 'px';
+                    card.style.top       = (window.innerHeight - ch - margin) + 'px';
+                    card.style.transform = 'none';
+                }, 80);
+            });
+        }
+
         _centerCard() {
             const { card, arrow } = this._els;
-            card.style.left      = '50%';
-            card.style.top       = '50%';
-            card.style.transform = 'translate(-50%,-50%)';
-            arrow.style.display  = 'none';
+            arrow.style.display = 'none';
+            const isMobile = window.innerWidth < 480;
+            if (isMobile) {
+                /* En mobile calcular posición absoluta una vez que el DOM pintó el card */
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        const vw = window.innerWidth;
+                        const cw = card.offsetWidth  || 280;
+                        const ch = card.offsetHeight || 320;
+                        const vh = window.innerHeight;
+                        card.style.left      = Math.max(8, Math.round((vw - cw) / 2)) + 'px';
+                        card.style.top       = Math.max(8, Math.round((vh - ch) / 2)) + 'px';
+                        card.style.transform = 'none';
+                    }, 80);
+                });
+            } else {
+                card.style.left      = '50%';
+                card.style.top       = '50%';
+                card.style.transform = 'translate(-50%,-50%)';
+            }
         }
 
         /* ─────────────────────────────────────────────────────── */
@@ -340,14 +399,47 @@
         /* ─────────────────────────────────────────────────────── */
         _goTo(index) {
             const { card } = this._els;
-            card.style.opacity   = '0.55';
-            card.style.transform = 'translateY(4px) scale(0.98)';
-            setTimeout(() => {
-                card.style.opacity   = '1';
-                card.style.transform = 'none';
-                this.currentStep = index;
-                this._render(index);
-            }, 170);
+            const isMobile = window.innerWidth < 768;
+            const nextStep = this.steps[index];
+            const prevStep = this.steps[this.currentStep];
+            const sidebar  = document.querySelector('aside');
+
+            const _isInSidebar = (sel) => {
+                if (!sel || !sidebar) return false;
+                const el = document.querySelector(sel);
+                return el && sidebar.contains(el);
+            };
+
+            const sidebarClosed = () => sidebar && sidebar.classList.contains('-translate-x-full');
+
+            const doTransition = () => {
+                card.style.opacity   = '0.55';
+                card.style.transform = 'translateY(4px) scale(0.98)';
+                setTimeout(() => {
+                    card.style.opacity   = '1';
+                    card.style.transform = 'none';
+                    this.currentStep = index;
+                    this._render(index);
+                }, 170);
+            };
+
+            if (isMobile && sidebar) {
+                const nextInSidebar = _isInSidebar(nextStep && nextStep.target);
+                const prevInSidebar = _isInSidebar(prevStep && prevStep.target);
+
+                if (nextInSidebar && sidebarClosed()) {
+                    /* Open sidebar before rendering the step */
+                    if (typeof toggleSidebar === 'function') toggleSidebar();
+                    setTimeout(doTransition, 320);
+                    return;
+                }
+                if (!nextInSidebar && prevInSidebar && !sidebarClosed()) {
+                    /* Close sidebar when leaving sidebar steps */
+                    if (typeof toggleSidebar === 'function') toggleSidebar();
+                }
+            }
+
+            doTransition();
         }
 
         /* ─────────────────────────────────────────────────────── */
