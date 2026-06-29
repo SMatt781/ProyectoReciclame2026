@@ -2,7 +2,9 @@ package com.example.proyectoreciclame.Controller;
 
 import com.example.proyectoreciclame.Dto.NormativaDTO;
 import com.example.proyectoreciclame.Dto.NormativaDetalleDTO;
+import com.example.proyectoreciclame.Entity.Categoria;
 import com.example.proyectoreciclame.Entity.Normativa;
+import com.example.proyectoreciclame.Repository.CategoriaRepository;
 import com.example.proyectoreciclame.Repository.NormativaRepository;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
 import com.example.proyectoreciclame.Service.CitaService;
@@ -27,6 +29,9 @@ public class NormativaController {
 
     @Autowired
     private NormativaRepository normativaRepository;
+
+    @Autowired
+    private CategoriaRepository categoriaRepository;
 
     @Autowired
     private NormativaService normativaService;
@@ -94,6 +99,18 @@ public class NormativaController {
         } else {
             normativas = normativaRepository.findAllNormativas();
         }
+
+        normativas = normativas.stream()
+                .sorted(java.util.Comparator
+                        .comparing(
+                                Normativa::getIdNormativa,
+                                java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder())
+                        )
+                        .thenComparing(
+                                Normativa::getFechaCreacion,
+                                java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder())
+                        ))
+                .toList();
 
         List<NormativaDTO> normativasDTO = normativas.stream()
                 .map(NormativaDTO::fromEntity)
@@ -163,6 +180,84 @@ public class NormativaController {
         String dashRep = (donutPctRep / 100.0 * circumference) + " " + (circumference - (donutPctRep / 100.0 * circumference));
         String dashOtro = (donutPctOtro / 100.0 * circumference) + " " + (circumference - (donutPctOtro / 100.0 * circumference));
 
+        java.util.List<Normativa> normativasGraficos = normativaRepository.findAllNormativas();
+        java.util.Map<Integer, java.util.Map<String, Object>> statsPorCategoria = new java.util.LinkedHashMap<>();
+
+        for (Normativa normativa : normativasGraficos) {
+            if (normativa.getCategorias() == null || normativa.getCategorias().isEmpty()) {
+                continue;
+            }
+
+            for (Categoria categoriaNormativa : normativa.getCategorias()) {
+                if (categoriaNormativa == null || categoriaNormativa.getIdCategoria() == null || esCategoriaOtro(categoriaNormativa)) {
+                    continue;
+                }
+
+                java.util.Map<String, Object> stat = statsPorCategoria.computeIfAbsent(
+                        categoriaNormativa.getIdCategoria(),
+                        id -> crearCategoriaStat(categoriaNormativa)
+                );
+                stat.put("count", ((Long) stat.get("count")) + 1L);
+            }
+        }
+
+        java.util.List<java.util.Map<String, Object>> categoriaStats = new java.util.ArrayList<>(statsPorCategoria.values());
+        categoriaStats.sort((a, b) -> Long.compare((Long) b.get("count"), (Long) a.get("count")));
+
+        long totalCategoriasDinamicas = categoriaStats.stream()
+                .mapToLong(stat -> (Long) stat.get("count"))
+                .sum();
+
+        String[] coloresCategorias = {"#006c46", "#3b82f6", "#f49e0b", "#ba1a1a", "#7c3aed", "#0891b2", "#db2777", "#4b5563"};
+        for (int i = 0; i < categoriaStats.size(); i++) {
+            java.util.Map<String, Object> stat = categoriaStats.get(i);
+            long count = (Long) stat.get("count");
+            double pct = totalCategoriasDinamicas > 0 ? (count * 100.0 / totalCategoriasDinamicas) : 0;
+            String color = (String) stat.get("color");
+
+            if (color == null || color.isBlank()) {
+                color = coloresCategorias[i % coloresCategorias.length];
+            }
+
+            stat.put("pct", pct);
+            stat.put("color", color);
+        }
+
+        java.util.List<java.util.Map<String, Object>> categoriaStatsGrafico = new java.util.ArrayList<>();
+        int maxSegmentosGrafico = 8;
+        int maxCategoriasVisibles = maxSegmentosGrafico - 1;
+
+        if (categoriaStats.size() > maxSegmentosGrafico) {
+            for (int i = 0; i < maxCategoriasVisibles; i++) {
+                categoriaStatsGrafico.add(new java.util.LinkedHashMap<>(categoriaStats.get(i)));
+            }
+
+            long countRestantes = categoriaStats.subList(maxCategoriasVisibles, categoriaStats.size()).stream()
+                    .mapToLong(stat -> (Long) stat.get("count"))
+                    .sum();
+
+            java.util.Map<String, Object> restantes = new java.util.LinkedHashMap<>();
+            restantes.put("id", -1);
+            restantes.put("nombre", "Mas categorias");
+            restantes.put("codigo", "+" + (categoriaStats.size() - maxCategoriasVisibles));
+            restantes.put("color", "#64748b");
+            restantes.put("count", countRestantes);
+            categoriaStatsGrafico.add(restantes);
+        } else {
+            categoriaStats.forEach(stat -> categoriaStatsGrafico.add(new java.util.LinkedHashMap<>(stat)));
+        }
+
+        double startGrafico = -90;
+        for (java.util.Map<String, Object> stat : categoriaStatsGrafico) {
+            long count = (Long) stat.get("count");
+            double pct = totalCategoriasDinamicas > 0 ? (count * 100.0 / totalCategoriasDinamicas) : 0;
+            double dash = totalCategoriasDinamicas > 0 ? (count * circumference / totalCategoriasDinamicas) : 0;
+            stat.put("pct", pct);
+            stat.put("dash", dash + " " + circumference);
+            stat.put("start", startGrafico);
+            startGrafico += pct * 3.6;
+        }
+
         // CHarts logic
 
         long nacVigente = normativasGraficoDTO.stream().filter(n -> "NACIONAL".equalsIgnoreCase(n.alcance()) && "VIGENTE".equalsIgnoreCase(n.estado())).count();
@@ -215,6 +310,9 @@ public class NormativaController {
         model.addAttribute("dashEe", dashEe);
         model.addAttribute("dashRep", dashRep);
         model.addAttribute("dashOtro", dashOtro);
+        model.addAttribute("categoriaStatsGrafico", categoriaStatsGrafico);
+        model.addAttribute("categoriaStats", categoriaStats);
+        model.addAttribute("totalCategoriasDinamicas", totalCategoriasDinamicas);
 
         model.addAttribute("nacVigente", nacVigente);
         model.addAttribute("nacPublicada", nacPublicada);
@@ -248,6 +346,8 @@ public class NormativaController {
         model.addAttribute("selectedAccesos", acceso);
         model.addAttribute("selectedAlcances", alcance);
         model.addAttribute("selectedObligatoriedades", obligatoriedad);
+        model.addAttribute("categoriasNormativa",
+                categoriaRepository.findByTipoAndEstadoTrue(Categoria.TipoCategoria.NORMATIVA));
 
         return "socio/repoNormativo";
     }
@@ -302,5 +402,41 @@ public class NormativaController {
                 || "anonymousUser".equals(authentication.getName())) return null;
         return usuarioRepository.findByCorreoWithRol(authentication.getName())
                 .map(u -> u.getIdUsuario()).orElse(null);
+    }
+
+    private boolean esCategoriaOtro(Categoria categoria) {
+        if (categoria == null) {
+            return false;
+        }
+
+        String nombre = categoria.getNombre();
+        String codigo = categoria.getCodigo();
+        return (nombre != null && nombre.equalsIgnoreCase("Otro"))
+                || (codigo != null && codigo.equalsIgnoreCase("OTRO"));
+    }
+
+    private java.util.Map<String, Object> crearCategoriaStat(Categoria categoria) {
+        java.util.Map<String, Object> stat = new java.util.LinkedHashMap<>();
+        String nombre = categoria.getNombre() != null ? categoria.getNombre() : "Categoria";
+        String codigo = categoria.getCodigo();
+        String color = categoria.getColorHex();
+
+        stat.put("id", categoria.getIdCategoria());
+        stat.put("nombre", nombre);
+        stat.put("codigo", codigo != null && !codigo.isBlank() ? codigo : normalizarCodigoCategoria(nombre));
+        stat.put("color", color != null && color.matches("^#[0-9A-Fa-f]{6}$") ? color : null);
+        stat.put("count", 0L);
+        return stat;
+    }
+
+    private String normalizarCodigoCategoria(String nombre) {
+        String nombreBase = nombre != null ? nombre : "";
+        String generado = java.util.Arrays.stream(nombreBase.split("\\s+"))
+                .filter(s -> !s.isBlank())
+                .limit(3)
+                .map(s -> s.substring(0, 1).toUpperCase())
+                .collect(java.util.stream.Collectors.joining());
+
+        return generado.isBlank() ? "CAT" : generado;
     }
 }
