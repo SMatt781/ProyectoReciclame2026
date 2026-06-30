@@ -173,7 +173,7 @@
              FILA 1 — Métricas de Servidor (CPU · RAM · Disco · Latencia BD)
              Variables: ${cpuUsage}, ${ramUsage}, ${diskUsage}, ${dbLatencyMs}
              ══════════════════════════════════════════════════════════════ -->
-        <div class="grid grid-cols-2 xl:grid-cols-4 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
 
             <!-- CPU -->
             <div data-aos="fade-up" data-aos-delay="0" class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
@@ -354,11 +354,11 @@
         </div>
 
         <!-- ══════════════════════════════════════════════════════════════
-     FILAS 2 y 3 — Reorganizadas en dos columnas principales
-     ══════════════════════════════════════════════════════════════ -->
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+             FILAS 2 y 3 — Sesiones · Despliegue · Salud BD
+             ══════════════════════════════════════════════════════════════ -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-            <!-- ── COLUMNA IZQUIERDA: Sesiones + Salud BD ── -->
+            <!-- ── COLUMNA IZQUIERDA: Sesiones ── -->
             <div class="flex flex-col gap-4">
 
                 <!-- Sesiones activas -->
@@ -406,6 +406,47 @@
                     </div>
                 </div>
 
+            </div>
+
+            <!-- ── COLUMNA DERECHA: Despliegue + Salud BD ── -->
+            <div class="flex flex-col gap-4">
+
+                <!-- Despliegue Actual -->
+                <div class="bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden card-lift">
+                    <div class="px-5 py-4 border-b border-slate-100">
+                        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[18px] text-slate-500">rocket_launch</span>
+                            Despliegue Actual
+                        </h3>
+                    </div>
+                    <div class="p-5 space-y-3">
+                        <div class="flex items-center justify-between py-2 border-b border-dashed border-slate-100">
+                    <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[14px]">tag</span> Versión
+                    </span>
+                            <span class="font-mono text-xs font-bold text-on-primary-fixed bg-slate-50 px-2 py-0.5 rounded" th:text="${appVersion}">v1.0.0-dev</span>
+                        </div>
+                        <div class="flex items-center justify-between py-2 border-b border-dashed border-slate-100">
+                    <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[14px]">cloud</span> Entorno
+                    </span>
+                            <span class="font-mono text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded" th:text="${buildEnv}">LOCAL</span>
+                        </div>
+                        <div class="flex items-center justify-between py-2 border-b border-dashed border-slate-100">
+                    <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[14px]">coffee</span> Java
+                    </span>
+                            <span class="font-mono text-xs text-slate-700" th:text="${javaVersion}">——</span>
+                        </div>
+                        <div class="flex items-center justify-between py-2">
+                    <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[14px]">eco</span> Spring Boot
+                    </span>
+                            <span class="font-mono text-xs text-slate-700" th:text="${springVersion}">——</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Salud de la Base de Datos -->
                 <div class="bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden card-lift">
                     <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
@@ -429,7 +470,7 @@
                         </div>
                     </div>
                     <div class="p-5">
-                        <div class="grid grid-cols-3 gap-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                             <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
                                 <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
                                     <span class="material-symbols-outlined text-[12px]">group</span> Usuarios
@@ -466,96 +507,6 @@
                                 </p>
                                 <p class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalNotificaciones}">—</p>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- ── COLUMNA DERECHA: Despliegue + Terminal ── -->
-            <div class="flex flex-col gap-4">
-
-                <!-- Despliegue Actual -->
-                <div class="bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden card-lift">
-                    <div class="px-5 py-4 border-b border-slate-100">
-                        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[18px] text-slate-500">rocket_launch</span>
-                            Despliegue Actual
-                        </h3>
-                    </div>
-                    <div class="p-5 space-y-3">
-                        <div class="flex items-center justify-between py-2 border-b border-dashed border-slate-100">
-                    <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-[14px]">tag</span> Versión
-                    </span>
-                            <span class="font-mono text-xs font-bold text-on-primary-fixed bg-slate-50 px-2 py-0.5 rounded" th:text="${appVersion}">v1.0.0-dev</span>
-                        </div>
-                        <div class="flex items-center justify-between py-2 border-b border-dashed border-slate-100">
-                    <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-[14px]">cloud</span> Entorno
-                    </span>
-                            <span class="font-mono text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded" th:text="${buildEnv}">LOCAL</span>
-                        </div>
-                        <div class="flex items-center justify-between py-2 border-b border-dashed border-slate-100">
-                    <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-[14px]">calendar_today</span> Build
-                    </span>
-                            <span class="font-mono text-xs text-slate-700">——/——/————</span>
-                        </div>
-                        <div class="flex items-center justify-between py-2 border-b border-dashed border-slate-100">
-                    <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-[14px]">commit</span> Commit
-                    </span>
-                            <span class="font-mono text-xs text-slate-500 bg-slate-50 px-2 py-0.5 rounded">—————</span>
-                        </div>
-                        <div class="flex items-center justify-between py-2 border-b border-dashed border-slate-100">
-                    <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-[14px]">coffee</span> Java
-                    </span>
-                            <span class="font-mono text-xs text-slate-700" th:text="${javaVersion}">——</span>
-                        </div>
-                        <div class="flex items-center justify-between py-2">
-                    <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-[14px]">eco</span> Spring Boot
-                    </span>
-                            <span class="font-mono text-xs text-slate-700" th:text="${springVersion}">——</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Terminal -->
-                <div class="rounded-[1.25rem] border border-slate-800 shadow-sm overflow-hidden flex flex-col flex-1">
-                    <div class="bg-slate-900 px-5 py-3 flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="flex gap-1.5">
-                                <span class="w-3 h-3 rounded-full bg-red-500 opacity-80"></span>
-                                <span class="w-3 h-3 rounded-full bg-amber-400 opacity-80"></span>
-                                <span class="w-3 h-3 rounded-full bg-emerald-400 opacity-80"></span>
-                            </div>
-                            <span class="font-mono text-[10px] text-slate-400 ml-2">reciclame.log — últimas entradas</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="relative w-2 h-2">
-                                <span class="absolute inset-0 rounded-full bg-emerald-400 pulse-dot pulse-dot-green"></span>
-                                <span class="block w-2 h-2 rounded-full bg-emerald-400 relative z-10"></span>
-                            </div>
-                            <span class="font-mono text-[9px] text-emerald-400 uppercase tracking-widest">live</span>
-                        </div>
-                    </div>
-                    <div class="log-terminal px-0 py-2 flex-1 overflow-y-auto">
-                        <div th:each="entry : ${logEntries}"
-                             class="log-line flex gap-3 px-4 py-1.5 cursor-default">
-                            <span class="font-mono text-[10px] text-slate-500 flex-shrink-0 w-40"
-                                  th:text="${entry.ts}">——/——/—— ——:——:——</span>
-                            <span class="font-mono text-[10px] font-bold w-12 flex-shrink-0"
-                                  th:classappend="${entry.nivel == 'ERROR'} ? 'text-red-400' :
-                                                  (${entry.nivel == 'WARN'} ? 'text-amber-400' : 'text-emerald-400')"
-                                  th:text="${entry.nivel}">INFO</span>
-                            <span class="font-mono text-[10px] text-slate-300"
-                                  th:text="${entry.msg}">—</span>
-                        </div>
-                        <div class="px-4 py-1">
-                            <span class="font-mono text-[10px] text-secondary animate-pulse">█</span>
                         </div>
                     </div>
                 </div>

@@ -9,9 +9,12 @@ import com.example.proyectoreciclame.Repository.RegistroSesionRepository;
 import com.example.proyectoreciclame.Repository.SolicitudRegistroRepository;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
 import com.example.proyectoreciclame.util.DateUtil;
+import com.example.proyectoreciclame.Service.SessionStore;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -26,19 +29,30 @@ public class DashboardController {
     private final RegistroSesionRepository registroSesionRepository;
     private final UsuarioRepository usuarioRepository;
     private final DateUtil dateUtil;
+    private final SessionStore sessionStore;
 
     public DashboardController(NormativaRepository normativaRepository,
                                EstudioRepository estudioRepository,
                                SolicitudRegistroRepository solicitudRegistroRepository,
                                RegistroSesionRepository registroSesionRepository,
                                UsuarioRepository usuarioRepository,
-                               DateUtil dateUtil) {
+                               DateUtil dateUtil,
+                               SessionStore sessionStore) {
         this.normativaRepository = normativaRepository;
         this.estudioRepository = estudioRepository;
         this.solicitudRegistroRepository = solicitudRegistroRepository;
         this.registroSesionRepository = registroSesionRepository;
         this.usuarioRepository = usuarioRepository;
         this.dateUtil = dateUtil;
+        this.sessionStore = sessionStore;
+    }
+
+    @GetMapping("/api/admin/solicitudes-pendientes-count")
+    @ResponseBody
+    public ResponseEntity<java.util.Map<String, Object>> solicitudesPendientesCount() {
+        long count = usuarioRepository.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE");
+        int conectados = sessionStore.getCount();
+        return ResponseEntity.ok(java.util.Map.of("solicitudes", count, "conectados", conectados));
     }
 
     @GetMapping("/admin/dashboard")

@@ -1,6 +1,7 @@
 package com.example.proyectoreciclame.Controller;
 
 import com.example.proyectoreciclame.Entity.Estudio;
+import com.example.proyectoreciclame.Entity.Categoria;
 import com.example.proyectoreciclame.Entity.Normativa;
 import com.example.proyectoreciclame.Repository.EstudioRepository;
 import com.example.proyectoreciclame.Repository.NormativaRepository;
@@ -45,6 +46,9 @@ public class AdminEstudiosController {
 
     @Autowired
     private AdminNotificacionController adminNotificacionController;
+
+    @Autowired
+    private com.example.proyectoreciclame.Service.NotificacionWebSocketService webSocketService;
 
     @GetMapping("/admin/estudios")
     public String estudiosAdmin(
@@ -176,40 +180,40 @@ public class AdminEstudiosController {
 
             estudio.setUsuarioCreador(usuario);
 
-             // 🔹 archivo
-             // 🔹 archivo real PDF / PPTX / XLSX - Subir a AWS S3
-             if (archivo != null && !archivo.isEmpty()) {
- 
-                 String nombreOriginal = archivo.getOriginalFilename();
-                 String extension = nombreOriginal.substring(nombreOriginal.lastIndexOf(".")).toLowerCase();
- 
-                 if (!extension.equals(".pdf") && !extension.equals(".pptx") && !extension.equals(".xlsx")) {
-                     throw new RuntimeException("Solo se permiten archivos PDF, PPTX o XLSX");
-                 }
- 
-                 String clave;
-                 String nombreDestino;
-                 int tamanioKb;
- 
-                 if (extension.equals(".pptx")) {
-                     clave = s3StorageService.uploadFile(archivo, "estudios");
-                     nombreDestino = s3StorageService.getFileName(clave);
-                     tamanioKb = (int) (archivo.getSize() / 1024);
-                 } else if (extension.equals(".xlsx")) {
-                     byte[] convertedPdf = documentConverterService.convertXlsxToPdf(archivo.getBytes());
-                     nombreDestino = nombreOriginal.substring(0, nombreOriginal.lastIndexOf(".")) + ".pdf";
-                     clave = s3StorageService.uploadFile(convertedPdf, nombreDestino, "application/pdf", "estudios");
-                     tamanioKb = convertedPdf.length / 1024;
-                 } else {
-                     clave = s3StorageService.uploadFile(archivo, "estudios");
-                     nombreDestino = s3StorageService.getFileName(clave);
-                     tamanioKb = (int) (archivo.getSize() / 1024);
-                 }
+            // 🔹 archivo
+            // 🔹 archivo real PDF / PPTX / XLSX - Subir a AWS S3
+            if (archivo != null && !archivo.isEmpty()) {
 
-                 estudio.setArchivoNombre(nombreDestino);
-                 estudio.setArchivoTamanioKb(tamanioKb);
-                 estudio.setArchivoUrl(clave);
-             }
+                String nombreOriginal = archivo.getOriginalFilename();
+                String extension = nombreOriginal.substring(nombreOriginal.lastIndexOf(".")).toLowerCase();
+
+                if (!extension.equals(".pdf") && !extension.equals(".pptx") && !extension.equals(".xlsx")) {
+                    throw new RuntimeException("Solo se permiten archivos PDF, PPTX o XLSX");
+                }
+
+                String clave;
+                String nombreDestino;
+                int tamanioKb;
+
+                if (extension.equals(".pptx")) {
+                    clave = s3StorageService.uploadFile(archivo, "estudios");
+                    nombreDestino = s3StorageService.getFileName(clave);
+                    tamanioKb = (int) (archivo.getSize() / 1024);
+                } else if (extension.equals(".xlsx")) {
+                    byte[] convertedPdf = documentConverterService.convertXlsxToPdf(archivo.getBytes());
+                    nombreDestino = nombreOriginal.substring(0, nombreOriginal.lastIndexOf(".")) + ".pdf";
+                    clave = s3StorageService.uploadFile(convertedPdf, nombreDestino, "application/pdf", "estudios");
+                    tamanioKb = convertedPdf.length / 1024;
+                } else {
+                    clave = s3StorageService.uploadFile(archivo, "estudios");
+                    nombreDestino = s3StorageService.getFileName(clave);
+                    tamanioKb = (int) (archivo.getSize() / 1024);
+                }
+
+                estudio.setArchivoNombre(nombreDestino);
+                estudio.setArchivoTamanioKb(tamanioKb);
+                estudio.setArchivoUrl(clave);
+            }
             java.time.LocalDateTime ahora = java.time.LocalDateTime.now();
 
             estudio.setFechaCreacion(ahora);
@@ -311,6 +315,18 @@ public class AdminEstudiosController {
                     .toList();
         }
 
+        lista = lista.stream()
+                .sorted(java.util.Comparator
+                        .comparing(
+                                Normativa::getIdNormativa,
+                                java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder())
+                        )
+                        .thenComparing(
+                                Normativa::getFechaCreacion,
+                                java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder())
+                        ))
+                .toList();
+
         // ESTA LISTA ES SOLO PARA LA TABLA
         model.addAttribute("normativas", lista);
 
@@ -325,6 +341,8 @@ public class AdminEstudiosController {
         model.addAttribute("selectedAccesos", acceso);
         model.addAttribute("selectedAlcances", alcance);
         model.addAttribute("selectedObligatoriedades", obligatoriedad);
+        model.addAttribute("categoriasNormativa",
+                categoriaRepository.findByTipoAndEstadoTrue(Categoria.TipoCategoria.NORMATIVA));
 
         // ESTA LISTA ES SOLO PARA GRÁFICAS
         // NO SE FILTRA
@@ -425,6 +443,93 @@ public class AdminEstudiosController {
         model.addAttribute("pctEe", pctEe);
         model.addAttribute("pctRep", pctRep);
         model.addAttribute("pctOtro", pctOtro);
+
+        java.util.Map<Integer, java.util.Map<String, Object>> statsPorCategoria = new java.util.LinkedHashMap<>();
+
+        for (Normativa normativa : listaDashboard) {
+            if (normativa.getCategorias() == null || normativa.getCategorias().isEmpty()) {
+                continue;
+            }
+
+            for (Categoria categoriaNormativa : normativa.getCategorias()) {
+                if (categoriaNormativa == null || categoriaNormativa.getIdCategoria() == null || esCategoriaOtro(categoriaNormativa)) {
+                    continue;
+                }
+
+                java.util.Map<String, Object> stat = statsPorCategoria.computeIfAbsent(
+                        categoriaNormativa.getIdCategoria(),
+                        id -> crearCategoriaStat(categoriaNormativa)
+                );
+                stat.put("count", ((Long) stat.get("count")) + 1L);
+            }
+        }
+
+        java.util.List<java.util.Map<String, Object>> categoriaStats = new java.util.ArrayList<>(statsPorCategoria.values());
+        categoriaStats.sort((a, b) -> Long.compare((Long) b.get("count"), (Long) a.get("count")));
+
+        long totalCategoriasDinamicas = categoriaStats.stream()
+                .mapToLong(stat -> (Long) stat.get("count"))
+                .sum();
+
+        double startCategoria = -90;
+        String[] coloresCategorias = {"#006c46", "#3b82f6", "#f49e0b", "#ba1a1a", "#7c3aed", "#0891b2", "#db2777", "#4b5563"};
+
+        for (int i = 0; i < categoriaStats.size(); i++) {
+            java.util.Map<String, Object> stat = categoriaStats.get(i);
+            long count = (Long) stat.get("count");
+            double pct = totalCategoriasDinamicas > 0 ? (count * 100.0 / totalCategoriasDinamicas) : 0;
+            double dash = totalCategoriasDinamicas > 0 ? (count * circ / totalCategoriasDinamicas) : 0;
+            String color = (String) stat.get("color");
+
+            if (color == null || color.isBlank()) {
+                color = coloresCategorias[i % coloresCategorias.length];
+            }
+
+            stat.put("pct", pct);
+            stat.put("dash", dash + " " + circ);
+            stat.put("start", startCategoria);
+            stat.put("color", color);
+            startCategoria += pct * 3.6;
+        }
+
+        java.util.List<java.util.Map<String, Object>> categoriaStatsGrafico = new java.util.ArrayList<>();
+        int maxSegmentosGrafico = 8;
+        int maxCategoriasVisibles = maxSegmentosGrafico - 1;
+
+        if (categoriaStats.size() > maxSegmentosGrafico) {
+            for (int i = 0; i < maxCategoriasVisibles; i++) {
+                categoriaStatsGrafico.add(new java.util.LinkedHashMap<>(categoriaStats.get(i)));
+            }
+
+            long countRestantes = categoriaStats.subList(maxCategoriasVisibles, categoriaStats.size()).stream()
+                    .mapToLong(stat -> (Long) stat.get("count"))
+                    .sum();
+
+            java.util.Map<String, Object> restantes = new java.util.LinkedHashMap<>();
+            restantes.put("id", -1);
+            restantes.put("nombre", "Mas categorias");
+            restantes.put("codigo", "+" + (categoriaStats.size() - maxCategoriasVisibles));
+            restantes.put("color", "#64748b");
+            restantes.put("count", countRestantes);
+            categoriaStatsGrafico.add(restantes);
+        } else {
+            categoriaStats.forEach(stat -> categoriaStatsGrafico.add(new java.util.LinkedHashMap<>(stat)));
+        }
+
+        double startGrafico = -90;
+        for (java.util.Map<String, Object> stat : categoriaStatsGrafico) {
+            long count = (Long) stat.get("count");
+            double pct = totalCategoriasDinamicas > 0 ? (count * 100.0 / totalCategoriasDinamicas) : 0;
+            double dash = totalCategoriasDinamicas > 0 ? (count * circ / totalCategoriasDinamicas) : 0;
+            stat.put("pct", pct);
+            stat.put("dash", dash + " " + circ);
+            stat.put("start", startGrafico);
+            startGrafico += pct * 3.6;
+        }
+
+        model.addAttribute("categoriaStatsGrafico", categoriaStatsGrafico);
+        model.addAttribute("categoriaStats", categoriaStats);
+        model.addAttribute("totalCategoriasDinamicas", totalCategoriasDinamicas);
 
         // =====================
         // ESTADO POR ALCANCE
@@ -620,6 +725,9 @@ public class AdminEstudiosController {
             // 🔥 NUEVO
             @RequestParam(value = "alcance", required = false) String alcance,
             @RequestParam(value = "categorias", required = false) java.util.List<Integer> categorias,
+            @RequestParam(value = "nuevaCategoriaNombre", required = false) java.util.List<String> nuevaCategoriaNombre,
+            @RequestParam(value = "nuevaCategoriaCodigo", required = false) java.util.List<String> nuevaCategoriaCodigo,
+            @RequestParam(value = "nuevaCategoriaColor", required = false) java.util.List<String> nuevaCategoriaColor,
 
             @RequestParam(value = "archivo", required = false) org.springframework.web.multipart.MultipartFile archivo,
             @RequestParam(value = "enlace", required = false) String enlace,
@@ -665,9 +773,12 @@ public class AdminEstudiosController {
             n.setObligatoriedad("Legal Vinculante");
 
             // 🔥 guardar categorías
-            if (categorias != null && !categorias.isEmpty()) {
-                n.setCategorias(categoriaRepository.findAllById(categorias));
-            }
+            n.setCategorias(resolverCategoriasNormativa(
+                    categorias,
+                    nuevaCategoriaNombre,
+                    nuevaCategoriaCodigo,
+                    nuevaCategoriaColor
+            ));
 
             com.example.proyectoreciclame.Entity.Usuario usuario = null;
             com.example.proyectoreciclame.Dto.SessionUserDto sessionUser = authenticatedUserService.obtenerUsuarioSesion();
@@ -736,6 +847,160 @@ public class AdminEstudiosController {
         return "redirect:/admin/normativas";
 
     }
+
+    private List<Categoria> resolverCategoriasNormativa(
+            List<Integer> categorias,
+            List<String> nuevaCategoriaNombre,
+            List<String> nuevaCategoriaCodigo,
+            List<String> nuevaCategoriaColor
+    ) {
+        java.util.LinkedHashMap<Integer, Categoria> seleccionadas = new java.util.LinkedHashMap<>();
+
+        if (categorias != null && !categorias.isEmpty()) {
+            categoriaRepository.findAllById(categorias).forEach(categoria -> {
+                if (categoria.getTipo() == Categoria.TipoCategoria.NORMATIVA && Boolean.TRUE.equals(categoria.getEstado())) {
+                    Categoria categoriaNormalizada = asegurarCodigoColorCategoria(categoria, null, null);
+                    seleccionadas.put(categoriaNormalizada.getIdCategoria(), categoriaNormalizada);
+                }
+            });
+        }
+
+        if (nuevaCategoriaNombre != null) {
+            for (int i = 0; i < nuevaCategoriaNombre.size(); i++) {
+                String nombre = limpiarNombreCategoria(nuevaCategoriaNombre.get(i));
+                if (nombre == null || nombre.isBlank()) {
+                    continue;
+                }
+                if (!nombre.matches("^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\\s]+$")) {
+                    throw new RuntimeException("El nombre de la nueva categoría solo puede contener letras");
+                }
+                if (nombre.length() < 3) {
+                    throw new RuntimeException("El nombre de la nueva categoría debe tener al menos 3 letras");
+                }
+
+                final String nombreCategoria = nombre;
+                final String codigoCategoria = valorEnIndice(nuevaCategoriaCodigo, i);
+                final String colorCategoria = valorEnIndice(nuevaCategoriaColor, i);
+
+                Categoria categoria = categoriaRepository
+                        .findByNombreIgnoreCaseAndTipo(nombreCategoria, Categoria.TipoCategoria.NORMATIVA)
+                        .map(categoriaExistente -> asegurarCodigoColorCategoria(
+                                categoriaExistente,
+                                codigoCategoria,
+                                colorCategoria
+                        ))
+                        .orElseGet(() -> crearCategoriaNormativa(
+                                nombreCategoria,
+                                codigoCategoria,
+                                colorCategoria
+                        ));
+
+                seleccionadas.put(categoria.getIdCategoria(), categoria);
+            }
+        }
+
+        if (seleccionadas.isEmpty()) {
+            throw new RuntimeException("Debe seleccionar al menos una temática principal");
+        }
+        if (seleccionadas.size() > 3) {
+            throw new RuntimeException("Solo puede seleccionar hasta 3 temáticas principales");
+        }
+
+        return new java.util.ArrayList<>(seleccionadas.values());
+    }
+
+    private Categoria crearCategoriaNormativa(String nombre, String codigo, String colorHex) {
+        Categoria categoria = new Categoria();
+        categoria.setNombre(nombre);
+        categoria.setCodigo(normalizarCodigoCategoria(nombre, codigo));
+        categoria.setColorHex(normalizarColorCategoria(colorHex));
+        categoria.setTipo(Categoria.TipoCategoria.NORMATIVA);
+        categoria.setEstado(true);
+        return categoriaRepository.save(categoria);
+    }
+
+    private Categoria asegurarCodigoColorCategoria(Categoria categoria, String codigo, String colorHex) {
+        boolean actualizado = false;
+
+        if (categoria.getCodigo() == null || categoria.getCodigo().isBlank()) {
+            categoria.setCodigo(normalizarCodigoCategoria(categoria.getNombre(), codigo));
+            actualizado = true;
+        }
+
+        if ((categoria.getColorHex() == null || categoria.getColorHex().isBlank())
+                && colorHex != null
+                && colorHex.matches("^#[0-9A-Fa-f]{6}$")) {
+            categoria.setColorHex(normalizarColorCategoria(colorHex));
+            actualizado = true;
+        }
+
+        return actualizado ? categoriaRepository.save(categoria) : categoria;
+    }
+
+    private String limpiarNombreCategoria(String nombre) {
+        if (nombre == null) {
+            return null;
+        }
+        return nombre.replaceAll("[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ\\s]", "")
+                .replaceAll("\\s+", " ")
+                .trim();
+    }
+
+    private String normalizarCodigoCategoria(String nombre, String codigo) {
+        String limpio = codigo != null ? codigo.replaceAll("[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]", "").toUpperCase() : "";
+        if (!limpio.isBlank()) {
+            return limpio.length() > 10 ? limpio.substring(0, 10) : limpio;
+        }
+
+        String nombreBase = nombre != null ? nombre : "";
+        String generado = java.util.Arrays.stream(nombreBase.split("\\s+"))
+                .filter(s -> !s.isBlank())
+                .limit(3)
+                .map(s -> s.substring(0, 1).toUpperCase())
+                .collect(java.util.stream.Collectors.joining());
+
+        return generado.isBlank() ? "CAT" : generado;
+    }
+
+    private String normalizarColorCategoria(String colorHex) {
+        if (colorHex != null && colorHex.matches("^#[0-9A-Fa-f]{6}$")) {
+            return colorHex;
+        }
+        return "#059669";
+    }
+
+    private String valorEnIndice(List<String> valores, int indice) {
+        if (valores == null || indice < 0 || indice >= valores.size()) {
+            return null;
+        }
+        return valores.get(indice);
+    }
+
+    private boolean esCategoriaOtro(Categoria categoria) {
+        if (categoria == null) {
+            return false;
+        }
+
+        String nombre = categoria.getNombre();
+        String codigo = categoria.getCodigo();
+        return (nombre != null && nombre.equalsIgnoreCase("Otro"))
+                || (codigo != null && codigo.equalsIgnoreCase("OTRO"));
+    }
+
+    private java.util.Map<String, Object> crearCategoriaStat(Categoria categoria) {
+        java.util.Map<String, Object> stat = new java.util.LinkedHashMap<>();
+        String nombre = categoria.getNombre() != null ? categoria.getNombre() : "Categoria";
+        String codigo = categoria.getCodigo();
+
+        stat.put("id", categoria.getIdCategoria());
+        stat.put("nombre", nombre);
+        stat.put("codigo", codigo != null && !codigo.isBlank() ? codigo : normalizarCodigoCategoria(nombre, null));
+        String colorHex = categoria.getColorHex();
+        stat.put("color", colorHex != null && colorHex.matches("^#[0-9A-Fa-f]{6}$") ? colorHex : null);
+        stat.put("count", 0L);
+        return stat;
+    }
+
     @GetMapping("/admin/estudios/exportar")
     public org.springframework.http.ResponseEntity<byte[]> exportarEstudios() throws java.io.IOException {
 
@@ -853,6 +1118,8 @@ public class AdminEstudiosController {
 
         model.addAttribute("normativaEdit", normativa);
         model.addAttribute("normativas", normativaRepository.findAllNormativas());
+        model.addAttribute("categoriasNormativa",
+                categoriaRepository.findByTipoAndEstadoTrue(Categoria.TipoCategoria.NORMATIVA));
         model.addAttribute("currentPage", "repoNormativo");
         model.addAttribute("currentSection", "admin-normativas");
 
@@ -987,6 +1254,8 @@ public class AdminEstudiosController {
         estudio.setFechaActualizacion(java.time.LocalDateTime.now());
 
         estudioRepository.save(estudio);
+        webSocketService.enviarTopico("/topic/estudios",
+                java.util.Map.of("idEstudio", estudio.getIdEstudio(), "estado", "DEROGADO", "titulo", estudio.getTitulo()));
 
         String enlaceEstudio = "/estudios/" + estudio.getIdEstudio();
         String tituloNotif = "Estudio actualizado";
@@ -1050,42 +1319,46 @@ public class AdminEstudiosController {
                 estudio.setTipoAcceso(Estudio.TipoAcceso.valueOf(tipoAcceso));
             }
 
-             // 🔹 Manejar archivo si se proporciona uno nuevo
-             if (archivo != null && !archivo.isEmpty()) {
-                 String nombreOriginal = archivo.getOriginalFilename();
-                 String extension = nombreOriginal.substring(nombreOriginal.lastIndexOf(".")).toLowerCase();
- 
-                 if (!extension.equals(".pdf") && !extension.equals(".pptx") && !extension.equals(".xlsx")) {
-                     throw new RuntimeException("Solo se permiten archivos PDF, PPTX o XLSX");
-                 }
- 
-                 String clave;
-                 String nombreDestino;
-                 int tamanioKb;
- 
-                 if (extension.equals(".pptx")) {
-                     clave = s3StorageService.uploadFile(archivo, "estudios");
-                     nombreDestino = s3StorageService.getFileName(clave);
-                     tamanioKb = (int) (archivo.getSize() / 1024);
-                     // Resetear preview anterior — se regenerará tras el save
-                     estudio.setArchivoPreviewUrl(null);
-                 } else if (extension.equals(".xlsx")) {
-                     byte[] convertedPdf = documentConverterService.convertXlsxToPdf(archivo.getBytes());
-                     nombreDestino = nombreOriginal.substring(0, nombreOriginal.lastIndexOf(".")) + ".pdf";
-                     clave = s3StorageService.uploadFile(convertedPdf, nombreDestino, "application/pdf", "estudios");
-                     tamanioKb = convertedPdf.length / 1024;
-                 } else {
-                     clave = s3StorageService.uploadFile(archivo, "estudios");
-                     nombreDestino = s3StorageService.getFileName(clave);
-                     tamanioKb = (int) (archivo.getSize() / 1024);
-                 }
+            // 🔹 Manejar archivo si se proporciona uno nuevo
+            if (archivo != null && !archivo.isEmpty()) {
+                String nombreOriginal = archivo.getOriginalFilename();
+                String extension = nombreOriginal.substring(nombreOriginal.lastIndexOf(".")).toLowerCase();
 
-                 estudio.setArchivoNombre(nombreDestino);
-                 estudio.setArchivoTamanioKb(tamanioKb);
-                 estudio.setArchivoUrl(clave);
-             }
+                if (!extension.equals(".pdf") && !extension.equals(".pptx") && !extension.equals(".xlsx")) {
+                    throw new RuntimeException("Solo se permiten archivos PDF, PPTX o XLSX");
+                }
+
+                String clave;
+                String nombreDestino;
+                int tamanioKb;
+
+                if (extension.equals(".pptx")) {
+                    clave = s3StorageService.uploadFile(archivo, "estudios");
+                    nombreDestino = s3StorageService.getFileName(clave);
+                    tamanioKb = (int) (archivo.getSize() / 1024);
+                    // Resetear preview anterior — se regenerará tras el save
+                    estudio.setArchivoPreviewUrl(null);
+                } else if (extension.equals(".xlsx")) {
+                    byte[] convertedPdf = documentConverterService.convertXlsxToPdf(archivo.getBytes());
+                    nombreDestino = nombreOriginal.substring(0, nombreOriginal.lastIndexOf(".")) + ".pdf";
+                    clave = s3StorageService.uploadFile(convertedPdf, nombreDestino, "application/pdf", "estudios");
+                    tamanioKb = convertedPdf.length / 1024;
+                } else {
+                    clave = s3StorageService.uploadFile(archivo, "estudios");
+                    nombreDestino = s3StorageService.getFileName(clave);
+                    tamanioKb = (int) (archivo.getSize() / 1024);
+                }
+
+                estudio.setArchivoNombre(nombreDestino);
+                estudio.setArchivoTamanioKb(tamanioKb);
+                estudio.setArchivoUrl(clave);
+            }
 
             estudio.setFechaActualizacion(java.time.LocalDateTime.now());
+            webSocketService.enviarTopico("/topic/estudios",
+                    java.util.Map.of("idEstudio", estudio.getIdEstudio(),
+                            "estado", estudio.getEstado() != null ? estudio.getEstado().name() : "BORRADOR",
+                            "titulo", estudio.getTitulo() != null ? estudio.getTitulo() : ""));
 
             // Si se reemplazó el archivo PPTX, limpiar el preview anterior para que se regenere
             boolean archivoNuevoPptx = archivo != null && !archivo.isEmpty()

@@ -123,8 +123,9 @@
 
             <div class="bg-transparent border border-outline-variant/30 rounded-xl p-4 mb-4 flex flex-col">
 
-                <!-- Banner solicitudes pendientes -->
-                <div th:if="${solicitudesPendientes > 0}"
+                <!-- Banner solicitudes pendientes (dinámico via WebSocket) -->
+                <div id="banner-solicitudes"
+                     th:style="${solicitudesPendientes != null and solicitudesPendientes > 0} ? '' : 'display:none'"
                      data-aos="fade-down"
                      class="mb-4 flex items-center justify-between gap-4 rounded-xl border border-amber-300/60 bg-amber-50 px-4 py-3">
                     <div class="flex items-center gap-3">
@@ -133,9 +134,9 @@
                         </div>
                         <p class="text-sm font-bold text-amber-800">
                             Tienes
-                            <span th:text="${solicitudesPendientes}">3</span>
-                            solicitud<span th:if="${solicitudesPendientes != 1}">es</span>
-                            de registro pendiente<span th:if="${solicitudesPendientes != 1}">s</span>
+                            <span id="banner-solicitudes-count" th:text="${solicitudesPendientes}">0</span>
+                            solicitud<span id="banner-s-plural">es</span>
+                            de registro pendiente<span id="banner-p-plural">s</span>
                             de aprobación.
                         </p>
                     </div>
@@ -237,6 +238,7 @@
                     </article>
 
                 </section>
+
 
                 <!-- Distribución + últimas actualizaciones -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
@@ -458,7 +460,19 @@
 <!-- AOS - Scroll Reveal -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded' });
+    var isMobileAOS = window.innerWidth < 768;
+    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded', disable: isMobileAOS });
+    (function () {
+        var s = document.querySelector('.overflow-y-auto');
+        if (!s) return;
+        function checkAOS() {
+            document.querySelectorAll('[data-aos]:not(.aos-animate)').forEach(function(el) {
+                el.classList.add('aos-animate');
+            });
+        }
+        s.addEventListener('scroll', checkAOS, { passive: true });
+        setTimeout(checkAOS, 500);
+    })();
 </script>
 <!-- Contador animado en KPIs -->
 <script th:src="@{/js/animations.js}"></script>

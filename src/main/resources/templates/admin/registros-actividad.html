@@ -397,7 +397,19 @@
 <!-- AOS - Scroll Reveal -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded' });
+    var isMobileAOS = window.innerWidth < 768;
+    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded', disable: isMobileAOS });
+    (function () {
+        var s = document.querySelector('.overflow-y-auto');
+        if (!s) return;
+        function checkAOS() {
+            document.querySelectorAll('[data-aos]:not(.aos-animate)').forEach(function(el) {
+                el.classList.add('aos-animate');
+            });
+        }
+        s.addEventListener('scroll', checkAOS, { passive: true });
+        setTimeout(checkAOS, 500);
+    })();
 </script>
 <!-- Contador animado en KPIs -->
 <script th:src="@{/js/animations.js}"></script>

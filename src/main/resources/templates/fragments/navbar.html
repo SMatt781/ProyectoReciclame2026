@@ -1,17 +1,14 @@
 <html xmlns:th="http://www.thymeleaf.org"><!-- NAVBAR MEJORADO CON HAMBURGUESA EN EL NAVBAR -->
-<header th:fragment="navbar" class="flex justify-between items-center px-4 md:px-8 py-4 w-full h-20 docked top-0 sticky z-40 bg-[#f7f9fb]/80 dark:bg-slate-950/80 backdrop-blur-xl">
+<header th:fragment="navbar" class="flex justify-between items-center px-4 md:px-8 py-4 w-full h-20 docked top-0 sticky z-[200] bg-[#f7f9fb]/80 dark:bg-slate-950/80 backdrop-blur-xl">
 
     <!-- Logo Area con Hamburguesa -->
     <div class="flex items-center gap-4 flex-shrink-0">
         <!-- Botón Hamburguesa (solo móvil) -->
         <button id="sidebar-toggle"
-                onclick="const sb = document.querySelector('aside[th-fragment]') || document.querySelector('aside'); if(sb) { sb.classList.toggle('-translate-x-full'); document.getElementById('sidebar-overlay')?.classList.toggle('hidden'); document.getElementById('hamburger-icon')?.classList.toggle('hidden'); document.getElementById('close-icon')?.classList.toggle('hidden'); }"
+                onclick="toggleSidebar()"
                 class="md:hidden p-2 hover:bg-surface-container-low dark:hover:bg-slate-800 rounded-lg transition-colors">
-            <svg id="hamburger-icon" class="w-6 h-6 text-on-primary-fixed dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 text-on-primary-fixed dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            <svg id="close-icon" class="w-6 h-6 text-on-primary-fixed dark:text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
 
@@ -23,7 +20,7 @@
     <div id="sidebar-overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/40 md:hidden z-[190]"></div>
 
     <!-- Right Side / Actions & Profile -->
-    <div class="flex items-center gap-6 ml-auto">
+    <div class="flex items-center gap-6 md:gap-6 ml-auto pl-4">
 
         <!-- Botón Ver Tutorial (solo SOCIO y VISUALIZADOR) -->
         <button th:if="${usuarioRol == 'SOCIO' or usuarioRol == 'VISUALIZADOR'}"
@@ -44,14 +41,24 @@
         </button>
 
         <!-- Notifications -->
-        <a th:href="${usuarioRol == 'SUPERADMIN' ? '/superadmin/notificaciones' : (usuarioRol == 'ADMIN' ? '/admin/notificaciones' : (usuarioRol == 'SOCIO' ? '/socio/notificaciones' : '/visualizador/notificaciones'))}"
+        <a id="notif-bell-link"
+           th:href="${usuarioRol == 'SUPERADMIN' ? '/superadmin/notificaciones' : (usuarioRol == 'ADMIN' ? '/admin/notificaciones' : (usuarioRol == 'SOCIO' ? '/socio/notificaciones' : '/visualizador/notificaciones'))}"
+           th:data-user-correo="${sessionUser != null ? sessionUser.correo : ''}"
+           th:data-user-rol="${usuarioRol}"
+           th:data-unread="${notificacionesNoLeidas != null ? notificacionesNoLeidas : 0}"
            class="text-slate-500 dark:text-slate-400 hover:text-[#2ECC71] transition-colors relative inline-flex items-center justify-center">
             <svg class="w-6 h-6 text-current" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V2c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 3.36 6 5.92 6 9v5l-2 2v1h16v-1l-2-2z"/>
             </svg>
 
-            <span th:if="${notificacionesNoLeidas != null and notificacionesNoLeidas > 0}"
+            <span id="notif-badge"
+                  th:if="${notificacionesNoLeidas != null and notificacionesNoLeidas > 0}"
                   th:text="${notificacionesNoLeidas}"
+                  class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center border border-surface-container-lowest">
+            </span>
+            <span id="notif-badge-hidden"
+                  th:if="${notificacionesNoLeidas == null or notificacionesNoLeidas == 0}"
+                  style="display:none"
                   class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center border border-surface-container-lowest">
             </span>
         </a>
@@ -92,30 +99,19 @@
     <!-- Tour guiado: debe estar DENTRO del fragment para cargarse en todas las páginas -->
     <script th:src="@{/js/tour.js}"></script>
 
+    <!-- Utilidades del navbar -->
+    <script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        if (sidebar) sidebar.classList.toggle('-translate-x-full');
+        if (overlay) overlay.classList.toggle('hidden');
+    }
+    </script>
 
 </header>
 
 <script>
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebar-overlay');
-        const hamburgerIcon = document.getElementById('hamburger-icon');
-        const closeIcon = document.getElementById('close-icon');
-
-        if (sidebar) {
-            sidebar.classList.toggle('-translate-x-full');
-        }
-        if (overlay) {
-            overlay.classList.toggle('hidden');
-        }
-        if (hamburgerIcon) {
-            hamburgerIcon.classList.toggle('hidden');
-        }
-        if (closeIcon) {
-            closeIcon.classList.toggle('hidden');
-        }
-    }
-
     // Cerrar sidebar al hacer click en un enlace
     document.addEventListener('DOMContentLoaded', function() {
         console.log('🔍 DOMContentLoaded ejecutado');
@@ -165,6 +161,225 @@
 
 <!-- Spinner global: aplica a todos los formularios de páginas con navbar -->
 <script th:src="@{/js/spinner.js}"></script>
+
+<!-- WebSocket: SockJS + STOMP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+<script>
+(function() {
+    var bellLink = document.getElementById('notif-bell-link');
+    if (!bellLink) return;
+
+    var correo = bellLink.getAttribute('data-user-correo');
+    if (!correo) return;
+
+    // Badge management
+    var unreadCount = parseInt(bellLink.getAttribute('data-unread') || '0', 10);
+
+    console.log('[WS] Init - correo:', correo, '| rol:', bellLink.getAttribute('data-user-rol'), '| unread:', unreadCount);
+
+    function getBadge() {
+        return document.getElementById('notif-badge') || document.getElementById('notif-badge-hidden');
+    }
+
+    function updateBadge(count) {
+        var badge = getBadge();
+        if (!badge) return;
+        badge.id = 'notif-badge';
+        if (count > 0) {
+            badge.textContent = count > 99 ? '99+' : count;
+            badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    // Polling de respaldo: si el WebSocket falla, igual se actualiza la campanita
+    setInterval(function() {
+        fetch('/api/notificaciones/no-leidas', { credentials: 'same-origin' })
+            .then(function(r) { return r.ok ? r.json() : null; })
+            .then(function(data) {
+                if (data && typeof data.count === 'number' && data.count !== unreadCount) {
+                    unreadCount = data.count;
+                    updateBadge(unreadCount);
+                }
+            }).catch(function() {});
+    }, 15000);
+
+    // Toast notifications
+    function showToast(titulo, mensaje, tipo) {
+        var typeMap = {
+            'ALERTA': 'warning',
+            'EXITO': 'success',
+            'SISTEMA': 'info',
+            'INFO': 'info'
+        };
+        var cssType = typeMap[tipo] || 'info';
+
+        // Remove existing toasts if more than 3
+        var existing = document.querySelectorAll('.ws-toast');
+        if (existing.length >= 3) {
+            existing[0].remove();
+        }
+
+        var toast = document.createElement('div');
+        toast.className = 'notification ws-toast ' + cssType;
+        toast.style.cssText = 'position:fixed;top:80px;right:20px;z-index:99999;max-width:360px;min-width:260px;cursor:pointer;';
+        toast.innerHTML =
+            '<div style="display:flex;align-items:flex-start;gap:0.5rem;">' +
+            '<div style="flex:1;">' +
+            '<div style="font-weight:600;font-size:0.875rem;margin-bottom:2px;">' + (titulo || 'Notificación') + '</div>' +
+            (mensaje ? '<div style="font-size:0.8rem;opacity:0.85;">' + mensaje + '</div>' : '') +
+            '</div>' +
+            '<button style="background:none;border:none;font-size:1.1rem;cursor:pointer;opacity:0.6;padding:0;line-height:1;" onclick="this.closest(\'.ws-toast\').remove()">×</button>' +
+            '</div>';
+
+        document.body.appendChild(toast);
+
+        // Offset multiple toasts
+        var toasts = document.querySelectorAll('.ws-toast');
+        var offset = 80;
+        toasts.forEach(function(t, i) {
+            t.style.top = (offset + i * 90) + 'px';
+        });
+
+        setTimeout(function() {
+            if (toast.parentNode) {
+                toast.style.transition = 'opacity 0.4s';
+                toast.style.opacity = '0';
+                setTimeout(function() { toast.remove(); }, 400);
+            }
+        }, 5000);
+
+        toast.addEventListener('click', function(e) {
+            if (e.target.tagName !== 'BUTTON') {
+                window.location.href = bellLink.getAttribute('href');
+            }
+        });
+    }
+
+    var rol = bellLink.getAttribute('data-user-rol') || '';
+
+    // ── Sidebar badge de solicitudes pendientes ───────────────────────────
+    function getSolicitudesBadge() {
+        return document.getElementById('solicitudes-badge') || document.getElementById('solicitudes-badge-hidden');
+    }
+    function updateSolicitudesBadge(count) {
+        var badge = getSolicitudesBadge();
+        if (!badge) return;
+        badge.id = 'solicitudes-badge';
+        if (count > 0) {
+            badge.textContent = count;
+            badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
+        }
+        // También actualiza el banner del dashboard si existe
+        var banner = document.getElementById('banner-solicitudes');
+        if (banner) {
+            var countEl = document.getElementById('banner-solicitudes-count');
+            if (countEl) countEl.textContent = count;
+            if (count > 0) {
+                banner.style.display = '';
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+    }
+
+    // ── Carga inicial para ADMIN (badge sidebar + contador conectados) ─────
+    if (rol === 'ADMIN') {
+        fetch('/api/admin/solicitudes-pendientes-count', { credentials: 'same-origin' })
+            .then(function(r) { return r.ok ? r.json() : null; })
+            .then(function(data) {
+                if (!data) return;
+                updateSolicitudesBadge(data.solicitudes);
+                var el = document.getElementById('usuarios-conectados-count');
+                if (el) el.textContent = data.conectados;
+            }).catch(function() {});
+    }
+
+    // STOMP connection
+    function connectWebSocket() {
+        // Verificar que las librerías estén cargadas
+        if (typeof SockJS === 'undefined' || typeof Stomp === 'undefined') {
+            console.warn('[WS] SockJS o Stomp no cargadas, reintentando en 1s');
+            setTimeout(connectWebSocket, 1000);
+            return;
+        }
+
+        try {
+            var socket = new SockJS('/ws');
+            var stompClient = Stomp.over(socket);
+            stompClient.debug = null;
+
+            stompClient.connect({}, function(frame) {
+                console.log('[WS] Conectado como:', correo, '| frame:', frame);
+
+                // Notificaciones personales
+                stompClient.subscribe('/user/queue/notificaciones', function(message) {
+                    console.log('[WS] Notificación recibida:', message.body);
+                    try {
+                        var data = JSON.parse(message.body);
+                        unreadCount++;
+                        updateBadge(unreadCount);
+                        showToast(data.titulo, data.mensaje, data.tipo);
+                    } catch(e) { console.error('[WS] Error parseando:', e); }
+                });
+
+                // Solicitudes pendientes (solo ADMIN)
+                if (rol === 'ADMIN') {
+                    stompClient.subscribe('/topic/admin/solicitudes', function(message) {
+                        try {
+                            var data = JSON.parse(message.body);
+                            updateSolicitudesBadge(data.count);
+                        } catch(e) {}
+                    });
+
+                    // Usuarios conectados en tiempo real (solo ADMIN)
+                    stompClient.subscribe('/topic/admin/conectados', function(message) {
+                        try {
+                            var data = JSON.parse(message.body);
+                            var el = document.getElementById('usuarios-conectados-count');
+                            if (el) el.textContent = data.count;
+                        } catch(e) {}
+                    });
+                }
+
+                // Estado de estudios en tiempo real (todos los roles)
+                stompClient.subscribe('/topic/estudios', function(message) {
+                    try {
+                        var data = JSON.parse(message.body);
+                        var idEstudio = String(data.idEstudio);
+                        var estado = data.estado;
+                        // Si el estudio se deroga, ocultarlo de la lista de estudios
+                        if (estado === 'DEROGADO') {
+                            document.querySelectorAll('[data-estudio-id="' + idEstudio + '"]').forEach(function(card) {
+                                card.style.transition = 'opacity 0.5s, transform 0.5s';
+                                card.style.opacity = '0';
+                                card.style.transform = 'scale(0.95)';
+                                setTimeout(function() { card.remove(); }, 500);
+                            });
+                        }
+                    } catch(e) {}
+                });
+
+            }, function(error) {
+                console.warn('[WS] Error STOMP, reintentando en 5s:', error);
+                setTimeout(connectWebSocket, 5000);
+            });
+
+            socket.onclose = function() {
+                console.warn('[WS] Socket cerrado, reintentando en 5s');
+                setTimeout(connectWebSocket, 5000);
+            };
+        } catch(e) {}
+    }
+
+    connectWebSocket();
+})();
+</script>
 
 
 </html>

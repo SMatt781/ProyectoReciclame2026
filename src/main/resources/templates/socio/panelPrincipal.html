@@ -426,18 +426,26 @@
 <!-- AOS - Scroll Reveal -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded' });
+    var isMobileAOS = window.innerWidth < 768;
+    AOS.init({
+        duration: 350,
+        easing: 'ease-out-cubic',
+        once: true,
+        offset: -20,
+        startEvent: 'DOMContentLoaded',
+        disable: isMobileAOS   /* En mobile todos los elementos son visibles desde el inicio */
+    });
     // Parche: AOS en contenedor de scroll interno (layout h-screen overflow-hidden)
     (function () {
         var s = document.querySelector('main.overflow-y-auto') || document.querySelector('.overflow-y-auto');
         if (!s) return;
         function checkAOS() {
-            var h = window.innerHeight;
             document.querySelectorAll('[data-aos]:not(.aos-animate)').forEach(function(el) {
-                if (el.getBoundingClientRect().top < h - 40) el.classList.add('aos-animate');
+                el.classList.add('aos-animate');
             });
         }
         s.addEventListener('scroll', checkAOS, { passive: true });
+        setTimeout(checkAOS, 500);
     })();
 </script>
 <!-- Contador animado en KPIs -->

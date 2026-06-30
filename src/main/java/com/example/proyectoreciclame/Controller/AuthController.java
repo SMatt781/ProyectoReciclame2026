@@ -49,6 +49,7 @@ public class AuthController {
     private final RegistroSesionRepository registroSesionRepository;
     private final AdminNotificacionController adminNotificacionController;
     private final IdentificacionRepository identificacionRepository;
+    private final com.example.proyectoreciclame.Service.NotificacionWebSocketService webSocketService;
 
     public AuthController(UsuarioRepository usuarioRepository,
                           RolRepository rolRepository,
@@ -60,7 +61,8 @@ public class AuthController {
                           PoliticaContrasenaRepository politicaContrasenaRepository,
                           RegistroSesionRepository registroSesionRepository,
                           AdminNotificacionController adminNotificacionController,
-                          IdentificacionRepository identificacionRepository) {
+                          IdentificacionRepository identificacionRepository,
+                          com.example.proyectoreciclame.Service.NotificacionWebSocketService webSocketService) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.usuarioEmpresaRepository = usuarioEmpresaRepository;
@@ -72,6 +74,7 @@ public class AuthController {
         this.registroSesionRepository = registroSesionRepository;
         this.adminNotificacionController = adminNotificacionController;
         this.identificacionRepository = identificacionRepository;
+        this.webSocketService = webSocketService;
     }
 
     @Value("${google.recaptcha.site-key}")
@@ -228,6 +231,8 @@ public class AuthController {
         solicitud.setFechaResolucion(null);
 
         solicitudRegistroRepository.save(solicitud);
+        long pendientes = usuarioRepository.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE");
+        webSocketService.enviarTopico("/topic/admin/solicitudes", java.util.Map.of("count", pendientes));
 
         correoService.enviarConfirmacionRegistro(
                 usuario.getCorreo(),
@@ -309,6 +314,8 @@ public class AuthController {
         solicitud.setFechaResolucion(null);
 
         solicitudRegistroRepository.save(solicitud);
+        long pendientesVis = usuarioRepository.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE");
+        webSocketService.enviarTopico("/topic/admin/solicitudes", java.util.Map.of("count", pendientesVis));
 
         correoService.enviarConfirmacionRegistro(
                 usuario.getCorreo(),

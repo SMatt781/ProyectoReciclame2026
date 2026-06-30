@@ -1,4 +1,5 @@
 ﻿<!DOCTYPE html>
+
 <html class="light" lang="es">
 
 <head>
@@ -177,7 +178,7 @@
 
             <!-- STATS SECTION -->
             <div data-aos="fade-up" data-aos-delay="50"
-                    class="flex flex-col xl:flex-row gap-8 mb-12 bg-white rounded-xl p-6 w-full shadow-sm border border-outline-variant/30">
+                 class="flex flex-col xl:flex-row gap-8 mb-12 bg-white rounded-xl p-6 w-full shadow-sm border border-outline-variant/30">
 
                 <!-- LEFT: Donut Chart & Legend -->
                 <div class="flex-1 flex flex-col min-w-0 xl:min-w-[400px]">
@@ -190,85 +191,86 @@
                                 <!-- Center circle (white) -->
                                 <circle cx="60" cy="60" r="35" fill="white" />
                                 <!-- Donut segments -->
-                                <circle cx="60" cy="60" r="45" fill="none" stroke="#006c46" stroke-width="18"
-                                        th:attr="stroke-dasharray=${dashEc}, transform=${'rotate(' + startEc + ' 60 60)'}" />
-                                <circle cx="60" cy="60" r="45" fill="none" stroke="#3b82f6" stroke-width="18"
-                                        th:attr="stroke-dasharray=${dashGr}, transform=${'rotate(' + startGr + ' 60 60)'}" />
-                                <circle cx="60" cy="60" r="45" fill="none" stroke="#f49e0b" stroke-width="18"
-                                        th:attr="stroke-dasharray=${dashEe}, transform=${'rotate(' + startEe + ' 60 60)'}" />
-                                <circle cx="60" cy="60" r="45" fill="none" stroke="#ba1a1a" stroke-width="18"
-                                        th:attr="stroke-dasharray=${dashRep}, transform=${'rotate(' + startRep + ' 60 60)'}" />
-                                <circle cx="60" cy="60" r="45" fill="none" stroke="#888780" stroke-width="18"
-                                        th:attr="stroke-dasharray=${dashOtro}, transform=${'rotate(' + startOtro + ' 60 60)'}" />
+                                <circle th:each="stat : ${categoriaStatsGrafico}"
+                                        th:if="${categoriaStatsGrafico != null}"
+                                        cx="60" cy="60" r="45" fill="none" stroke-width="18"
+                                        th:attr="stroke=${stat.color}, stroke-dasharray=${stat.dash}, transform=${'rotate(' + stat.start + ' 60 60)'}" />
+                                <th:block th:if="${categoriaStatsGrafico == null}">
+                                    <circle cx="60" cy="60" r="45" fill="none" stroke="#006c46" stroke-width="18"
+                                            th:attr="stroke-dasharray=${dashEc}, transform=${'rotate(' + startEc + ' 60 60)'}" />
+                                    <circle cx="60" cy="60" r="45" fill="none" stroke="#3b82f6" stroke-width="18"
+                                            th:attr="stroke-dasharray=${dashGr}, transform=${'rotate(' + startGr + ' 60 60)'}" />
+                                    <circle cx="60" cy="60" r="45" fill="none" stroke="#f49e0b" stroke-width="18"
+                                            th:attr="stroke-dasharray=${dashEe}, transform=${'rotate(' + startEe + ' 60 60)'}" />
+                                    <circle cx="60" cy="60" r="45" fill="none" stroke="#ba1a1a" stroke-width="18"
+                                            th:attr="stroke-dasharray=${dashRep}, transform=${'rotate(' + startRep + ' 60 60)'}" />
+                                    <circle cx="60" cy="60" r="45" fill="none" stroke="#888780" stroke-width="18"
+                                            th:attr="stroke-dasharray=${dashOtro}, transform=${'rotate(' + startOtro + ' 60 60)'}" />
+                                </th:block>
                             </svg>
                             <p class="text-4xl font-bold text-[#1a1a1a] mt-4" th:text="${totalNormas}">142</p>
                             <p class="text-xs text-[#999] uppercase tracking-wider">NORMAS</p>
                         </div>
 
                         <!-- Legend -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 w-full">
-                            <!-- Economía Circular -->
-                            <div class="flex flex-col gap-1">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-3 h-3 rounded-full bg-[#006c46]"></div>
-                                    <span class="text-sm font-medium text-[#666]">Economía circular (EC)</span>
+                        <div class="w-full space-y-5">
+                            <div th:if="${categoriaStatsGrafico != null}" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                                <div th:each="stat : ${categoriaStatsGrafico}" class="flex flex-col gap-1">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-3 h-3 rounded-full shrink-0" th:style="${'background:' + stat.color}"></div>
+                                        <span class="text-sm font-medium text-[#666] truncate"
+                                              th:text="${stat.nombre + ' (' + stat.codigo + ')'}">Economía circular (EC)</span>
+                                    </div>
+                                    <div class="flex items-baseline gap-3 pl-6">
+                                        <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${stat.count}">57</span>
+                                        <span class="text-xs text-[#999]"
+                                              th:text="${#numbers.formatDecimal(stat.pct, 0, 0)} + '%'">40%</span>
+                                    </div>
                                 </div>
-                                <div class="flex items-baseline gap-3 pl-6">
-                                    <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countEc}">57</span>
-                                    <span class="text-xs text-[#999]"
-                                          th:text="${#numbers.formatDecimal(pctEc, 0, 0)} + '%'">40%</span>
-                                </div>
-                            </div>
-
-                            <!-- Gesti. Residuos -->
-                            <div class="flex flex-col gap-1">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-3 h-3 rounded-full bg-[#3b82f6]"></div>
-                                    <span class="text-sm font-medium text-[#666]">Gesti. Residuos (GR)</span>
-                                </div>
-                                <div class="flex items-baseline gap-3 pl-6">
-                                    <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countGr}">35</span>
-                                    <span class="text-xs text-[#999]"
-                                          th:text="${#numbers.formatDecimal(pctGr, 0, 0)} + '%'">25%</span>
+                                <div th:if="${categoriaStats != null and #lists.isEmpty(categoriaStats)}" class="text-sm text-[#666]">
+                                    No hay categorias asignadas.
                                 </div>
                             </div>
-
-                            <!-- Envases y Embalajes -->
-                            <div class="flex flex-col gap-1">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-3 h-3 rounded-full bg-[#f49e0b]"></div>
-                                    <span class="text-sm font-medium text-[#666]">Envases y Embalajes (EE)</span>
+                            <div th:if="${categoriaStatsGrafico == null}" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-3 h-3 rounded-full bg-[#006c46]"></div>
+                                        <span class="text-sm font-medium text-[#666]">Economía circular (EC)</span>
+                                    </div>
+                                    <div class="flex items-baseline gap-3 pl-6">
+                                        <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countEc}">57</span>
+                                        <span class="text-xs text-[#999]" th:text="${#numbers.formatDecimal(pctEc, 0, 0)} + '%'">40%</span>
+                                    </div>
                                 </div>
-                                <div class="flex items-baseline gap-3 pl-6">
-                                    <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countEe}">21</span>
-                                    <span class="text-xs text-[#999]"
-                                          th:text="${#numbers.formatDecimal(pctEe, 0, 0)} + '%'">15%</span>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-3 h-3 rounded-full bg-[#3b82f6]"></div>
+                                        <span class="text-sm font-medium text-[#666]">Gesti. Residuos (GR)</span>
+                                    </div>
+                                    <div class="flex items-baseline gap-3 pl-6">
+                                        <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countGr}">35</span>
+                                        <span class="text-xs text-[#999]" th:text="${#numbers.formatDecimal(pctGr, 0, 0)} + '%'">25%</span>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <!-- Ley REP -->
-                            <div class="flex flex-col gap-1">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-3 h-3 rounded-full bg-[#ba1a1a]"></div>
-                                    <span class="text-sm font-medium text-[#666]">Ley REP</span>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-3 h-3 rounded-full bg-[#f49e0b]"></div>
+                                        <span class="text-sm font-medium text-[#666]">Envases y Embalajes (EE)</span>
+                                    </div>
+                                    <div class="flex items-baseline gap-3 pl-6">
+                                        <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countEe}">21</span>
+                                        <span class="text-xs text-[#999]" th:text="${#numbers.formatDecimal(pctEe, 0, 0)} + '%'">15%</span>
+                                    </div>
                                 </div>
-                                <div class="flex items-baseline gap-3 pl-6">
-                                    <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countRep}">17</span>
-                                    <span class="text-xs text-[#999]"
-                                          th:text="${#numbers.formatDecimal(pctRep, 0, 0)} + '%'">12%</span>
-                                </div>
-                            </div>
-
-                            <!-- Otro -->
-                            <div class="flex flex-col gap-1">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-3 h-3 rounded-full bg-[#888780]"></div>
-                                    <span class="text-sm font-medium text-[#666]">Otro</span>
-                                </div>
-                                <div class="flex items-baseline gap-3 pl-6">
-                                    <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countOtro}">0</span>
-                                    <span class="text-xs text-[#999]"
-                                          th:text="${#numbers.formatDecimal(pctOtro, 0, 0)} + '%'">0%</span>
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-3 h-3 rounded-full bg-[#ba1a1a]"></div>
+                                        <span class="text-sm font-medium text-[#666]">Ley REP</span>
+                                    </div>
+                                    <div class="flex items-baseline gap-3 pl-6">
+                                        <span class="text-2xl font-bold text-[#1a1a1a]" th:text="${countRep}">17</span>
+                                        <span class="text-xs text-[#999]" th:text="${#numbers.formatDecimal(pctRep, 0, 0)} + '%'">12%</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -572,10 +574,10 @@
                                                 categoría</span>
                                         <th:block th:each="cat, iter : ${normativa.categorias}">
                                                 <span th:if="${iter.index < 2}"
-                                                      th:with="isEc=${#strings.equalsIgnoreCase(cat.nombre, 'Economía circular')}, isGr=${#strings.equalsIgnoreCase(cat.nombre, 'Gestión de residuos')}, isEe=${#strings.equalsIgnoreCase(cat.nombre, 'Envases y Embalajes')}, isRep=${#strings.equalsIgnoreCase(cat.nombre, 'Ley REP') or #strings.equalsIgnoreCase(cat.nombre, 'Responsabilidad Extendida')}"
-                                                      th:text="${isEc ? 'EC' : (isGr ? 'GR' : (isEe ? 'EE' : (isRep ? 'REP' : 'OTRO')))}"
+                                                      th:with="catCodigo=${cat.codigo != null and !#strings.isEmpty(cat.codigo) ? cat.codigo : (cat.nombre != null and !#strings.isEmpty(cat.nombre) ? cat.nombre : 'CAT')}, catColor=${cat.colorHex != null and !#strings.isEmpty(cat.colorHex) ? cat.colorHex : '#888780'}"
+                                                      th:text="${catCodigo}"
                                                       class="inline-block px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-center text-white"
-                                                      th:classappend="${isEc ? 'bg-[#006C46]' : (isGr ? 'bg-[#3B82F6]' : (isEe ? 'bg-[#F49E0B]' : (isRep ? 'bg-[#BA1A1A]' : 'bg-[#888780]')))}">
+                                                      th:style="${'background:' + catColor}">
                                                 </span>
                                         </th:block>
                                         <span th:if="${catSize > 2}"
@@ -702,10 +704,10 @@
                                         <div class="flex flex-wrap gap-2">
                                             <th:block th:each="cat : ${normativa.categorias}">
                                                     <span
-                                                            th:with="isEc=${#strings.equalsIgnoreCase(cat.nombre, 'Economía circular')}, isGr=${#strings.equalsIgnoreCase(cat.nombre, 'Gestión de residuos')}, isEe=${#strings.equalsIgnoreCase(cat.nombre, 'Envases y Embalajes')}, isRep=${#strings.equalsIgnoreCase(cat.nombre, 'Ley REP') or #strings.equalsIgnoreCase(cat.nombre, 'Responsabilidad Extendida')}"
-                                                            th:text="${isEc ? 'EC - Economía Circular' : (isGr ? 'GR - Gestión de Residuos' : (isEe ? 'EE - Envases y Embalajes' : (isRep ? 'REP - Ley REP' : cat.nombre)))}"
+                                                            th:with="catCodigo=${cat.codigo != null and !#strings.isEmpty(cat.codigo) ? cat.codigo : (cat.nombre != null and !#strings.isEmpty(cat.nombre) ? cat.nombre : 'CAT')}, catColor=${cat.colorHex != null and !#strings.isEmpty(cat.colorHex) ? cat.colorHex : '#888780'}"
+                                                            th:text="${catCodigo + ' - ' + (cat.nombre != null ? cat.nombre : 'Categoria')}"
                                                             class="inline-block px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-left text-white shadow-sm"
-                                                            th:classappend="${isEc ? 'bg-[#006C46]' : (isGr ? 'bg-[#3B82F6]' : (isEe ? 'bg-[#F49E0B]' : (isRep ? 'bg-[#BA1A1A]' : 'bg-[#888780]')))}">
+                                                            th:style="${'background:' + catColor}">
                                                     </span>
                                             </th:block>
                                         </div>
@@ -1072,6 +1074,15 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.flash-message').forEach((message) => {
+            setTimeout(() => {
+                message.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+                message.style.opacity = '0';
+                message.style.transform = 'translateY(-6px)';
+                setTimeout(() => message.remove(), 350);
+            }, 5000);
+        });
+
         // Modal Logic
         const openFiltersBtn = document.getElementById('openFiltersModal');
         const closeFiltersBtn = document.getElementById('closeFiltersModal');
@@ -1460,7 +1471,19 @@
 <!-- AOS - Scroll Reveal -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded' });
+    var isMobileAOS = window.innerWidth < 768;
+    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded', disable: isMobileAOS });
+    (function () {
+        var s = document.querySelector('.overflow-y-auto');
+        if (!s) return;
+        function checkAOS() {
+            document.querySelectorAll('[data-aos]:not(.aos-animate)').forEach(function(el) {
+                el.classList.add('aos-animate');
+            });
+        }
+        s.addEventListener('scroll', checkAOS, { passive: true });
+        setTimeout(checkAOS, 500);
+    })();
 </script>
 <!-- Contadores animados KPI -->
 <script th:src="@{/js/animations.js}"></script>

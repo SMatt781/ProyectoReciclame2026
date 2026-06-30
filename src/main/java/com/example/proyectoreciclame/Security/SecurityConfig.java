@@ -57,7 +57,10 @@ public class SecurityConfig {
 
         http
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
-                .csrf(csrf -> csrf.csrfTokenRequestHandler(csrfHandler))
+                .csrf(csrf -> csrf
+                        .csrfTokenRequestHandler(csrfHandler)
+                        .ignoringRequestMatchers("/ws/**")
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/login",
@@ -74,7 +77,8 @@ public class SecurityConfig {
                                 "/images/**",
                                 "/webjars/**",
                                 "/acceso-denegado",
-                                "/api/validar-documento"
+                                "/api/validar-documento",
+                                "/ws/**"
                         ).permitAll()
                         .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")

@@ -23,6 +23,10 @@ public class SessionStore implements HttpSessionListener {
         sessions.remove(se.getSession());
     }
 
+    public int getCount() {
+        return sessions.size();
+    }
+
     public int invalidarTodas(String excluirId) {
         int count = (int) sessions.stream().filter(s -> !s.getId().equals(excluirId)).count();
         sessions.removeIf(s -> {
