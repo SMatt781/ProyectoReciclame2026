@@ -1181,16 +1181,29 @@ public class AdminEstudiosController {
 
         normativaRepository.save(n);
 
-        String estadoActual = n.getEstado() != null ? n.getEstado().name() : "-";
-        String accion = estadoAnterior != n.getEstado()
-                ? "Cambio de estado a " + estadoActual
-                : "Actualizacion de contenido";
         String enlaceNormativa = "/normativas/" + n.getIdNormativa();
-        String tituloNotif = "Normativa actualizada";
-        String mensajeNotif = "La normativa \"" + n.getTitulo() + "\" fue actualizada. " + accion + ".";
-        adminNotificacionController.crearNotificacionAdmin(tituloNotif, mensajeNotif, "NORMATIVA", enlaceNormativa);
-        adminNotificacionController.crearNotificacionSocio(tituloNotif, mensajeNotif, "NORMATIVA", enlaceNormativa);
-        adminNotificacionController.crearNotificacionVisualizador(tituloNotif, mensajeNotif, "NORMATIVA", enlaceNormativa);
+        boolean cambioDeEstadoNorm = estadoAnterior != n.getEstado();
+        boolean ahoraEsVigenteNorm = n.getEstado() == com.example.proyectoreciclame.Entity.Normativa.EstadoNormativa.VIGENTE;
+        boolean antesNoEraVigenteNorm = estadoAnterior != com.example.proyectoreciclame.Entity.Normativa.EstadoNormativa.VIGENTE;
+
+        // Notificar ante cualquier cambio de estado (igual que estudios)
+        if (cambioDeEstadoNorm) {
+            String estadoActual = n.getEstado() != null ? n.getEstado().name() : "-";
+            String mensajeAdmin = "La normativa \"" + n.getTitulo() + "\" cambió de estado a " + estadoActual + ".";
+
+            String tituloSocio;
+            String mensajeSocio;
+            if (ahoraEsVigenteNorm) {
+                tituloSocio = "Normativa publicada";
+                mensajeSocio = "La normativa \"" + n.getTitulo() + "\" ya está disponible.";
+            } else {
+                tituloSocio = "Normativa actualizada";
+                mensajeSocio = "La normativa \"" + n.getTitulo() + "\" ha sido actualizada (estado: " + estadoActual + ").";
+            }
+            adminNotificacionController.crearNotificacionSocio(tituloSocio, mensajeSocio, "NORMATIVA", enlaceNormativa);
+            adminNotificacionController.crearNotificacionVisualizador(tituloSocio, mensajeSocio, "NORMATIVA", enlaceNormativa);
+            adminNotificacionController.crearNotificacionAdmin("Normativa actualizada", mensajeAdmin, "NORMATIVA", enlaceNormativa);
+        }
 
         attr.addFlashAttribute("msg", "Normativa actualizada correctamente");
 
@@ -1245,7 +1258,7 @@ public class AdminEstudiosController {
         return org.springframework.http.ResponseEntity.ok(resultado);
     }
 
-    @GetMapping("/admin/estudios/eliminar/{id}")
+    @PostMapping("/admin/estudios/eliminar/{id}")
     public String eliminarEstudio(@PathVariable Long id, RedirectAttributes attr) {
         Estudio estudio = estudioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Estudio no encontrado"));
@@ -1375,16 +1388,33 @@ public class AdminEstudiosController {
                 pptxPreviewService.generarPreviewAsync(estudio.getIdEstudio());
             }
 
-            String estadoActual = estudio.getEstado() != null ? estudio.getEstado().name() : "-";
-            String accion = estadoAnterior != estudio.getEstado()
-                    ? "Cambio de estado a " + estadoActual
-                    : "Actualizacion de contenido";
             String enlaceEstudio = "/estudios/" + estudio.getIdEstudio();
-            String tituloNotif = "Estudio actualizado";
-            String mensajeNotif = "El estudio \"" + estudio.getTitulo() + "\" fue actualizado. " + accion + ".";
-            adminNotificacionController.crearNotificacionAdmin(tituloNotif, mensajeNotif, "ESTUDIO", enlaceEstudio);
-            adminNotificacionController.crearNotificacionSocio(tituloNotif, mensajeNotif, "ESTUDIO", enlaceEstudio);
-            adminNotificacionController.crearNotificacionVisualizador(tituloNotif, mensajeNotif, "ESTUDIO", enlaceEstudio);
+            boolean cambioDeEstado = estadoAnterior != estudio.getEstado();
+            boolean ahoraEsVigente = estudio.getEstado() == Estudio.EstadoEstudio.VIGENTE;
+            boolean antesNoEraVigente = estadoAnterior != Estudio.EstadoEstudio.VIGENTE;
+
+            // Notificar a socios y visualizadores ante cualquier cambio de estado
+            if (cambioDeEstado) {
+                String estadoActual = estudio.getEstado() != null ? estudio.getEstado().name() : "-";
+                String mensajeAdmin = "El estudio \"" + estudio.getTitulo() + "\" cambió de estado a " + estadoActual + ".";
+
+                String tituloSocio;
+                String mensajeSocio;
+                if (ahoraEsVigente) {
+                    tituloSocio = "Estudio publicado";
+                    mensajeSocio = "El estudio \"" + estudio.getTitulo() + "\" ya está disponible.";
+                } else {
+                    tituloSocio = "Estudio actualizado";
+                    mensajeSocio = "El estudio \"" + estudio.getTitulo() + "\" ha sido actualizado (estado: " + estadoActual + ").";
+                }
+                adminNotificacionController.crearNotificacionSocio(tituloSocio, mensajeSocio, "ESTUDIO", enlaceEstudio);
+                adminNotificacionController.crearNotificacionVisualizador(tituloSocio, mensajeSocio, "ESTUDIO", enlaceEstudio);
+
+                adminNotificacionController.crearNotificacionAdmin(
+                        "Estudio actualizado", mensajeAdmin, "ESTUDIO", enlaceEstudio);
+                attr.addFlashAttribute("notifToastTitulo", "Estudio actualizado");
+                attr.addFlashAttribute("notifToastMensaje", mensajeAdmin);
+            }
 
             attr.addFlashAttribute("msg", "Estudio actualizado correctamente");
 

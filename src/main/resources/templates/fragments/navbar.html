@@ -109,13 +109,14 @@
     }
     </script>
 
-</header>
+    <!-- Scripts WebSocket DENTRO del fragment para que se carguen en todas las páginas -->
+    <script th:src="@{/js/spinner.js}"></script>
+    <script th:src="@{/js/sockjs.min.js}"></script>
+    <script th:src="@{/js/stomp.min.js}"></script>
 
-<script>
+    <script>
     // Cerrar sidebar al hacer click en un enlace
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('🔍 DOMContentLoaded ejecutado');
-
         // ─── Auto-desaparecer mensajes flash después de 5 segundos ───
         function autoDisappearMessage(selector) {
             const messages = document.querySelectorAll(selector);
@@ -124,28 +125,22 @@
                     setTimeout(function() {
                         message.style.transition = 'opacity 0.5s ease-out';
                         message.style.opacity = '0';
-                        setTimeout(function() {
-                            message.remove();
-                        }, 500);
+                        setTimeout(function() { message.remove(); }, 500);
                     }, 5000);
                 }
             });
         }
-
-        // Seleccionar todos los tipos de mensajes flash
         autoDisappearMessage('[class*="flash-message"]');
         autoDisappearMessage('.alert-success');
         autoDisappearMessage('.alert-error');
         autoDisappearMessage('.alert-info');
 
-        // ─── Cerrar sidebar al hacer click en un enlace ───
         document.querySelectorAll('.sidebar-link').forEach(link => {
             link.addEventListener('click', () => {
                 const sidebar = document.getElementById('sidebar');
                 const overlay = document.getElementById('sidebar-overlay');
                 const hamburgerIcon = document.getElementById('hamburger-icon');
                 const closeIcon = document.getElementById('close-icon');
-
                 if (window.innerWidth <= 768) {
                     if (sidebar) sidebar.classList.add('-translate-x-full');
                     if (overlay) overlay.classList.add('hidden');
@@ -154,20 +149,11 @@
                 }
             });
         });
-
-        // El spinner de botones se maneja desde /js/spinner.js (incluido globalmente)
     });
-</script>
+    </script>
 
-<!-- Spinner global: aplica a todos los formularios de páginas con navbar -->
-<script th:src="@{/js/spinner.js}"></script>
-
-<!-- WebSocket: SockJS + STOMP -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-
-<script>
-(function() {
+    <script>
+    (function() {
     var bellLink = document.getElementById('notif-bell-link');
     if (!bellLink) return;
 
@@ -178,6 +164,16 @@
     var unreadCount = parseInt(bellLink.getAttribute('data-unread') || '0', 10);
 
     console.log('[WS] Init - correo:', correo, '| rol:', bellLink.getAttribute('data-user-rol'), '| unread:', unreadCount);
+
+    // Poll inmediato al cargar para corregir posible caché del browser o push perdido durante redirect
+    fetch('/api/notificaciones/no-leidas', { credentials: 'same-origin' })
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(data) {
+            if (data && typeof data.count === 'number') {
+                unreadCount = data.count;
+                updateBadge(unreadCount);
+            }
+        }).catch(function() {});
 
     function getBadge() {
         return document.getElementById('notif-badge') || document.getElementById('notif-badge-hidden');
@@ -194,6 +190,9 @@
             badge.style.display = 'none';
         }
     }
+
+    // Exponer showToast globalmente para que las páginas puedan disparar toasts post-redirect
+    window.showNavToast = showToast;
 
     // Polling de respaldo: si el WebSocket falla, igual se actualiza la campanita
     setInterval(function() {
@@ -379,7 +378,8 @@
 
     connectWebSocket();
 })();
-</script>
+    </script>
 
+</header>
 
 </html>
