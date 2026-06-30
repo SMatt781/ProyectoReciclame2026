@@ -258,9 +258,7 @@
 
                             <!-- Filas -->
                             <div th:each="dominio, dIdx : ${dominios}"
-                                 data-aos="fade-up"
-                                 th:data-aos-delay="${dIdx.index <= 9 ? dIdx.index * 40 : 0}"
-                                 class="bg-surface-container-lowest rounded-xl p-4 lg:px-6 lg:py-4 ambient-shadow flex flex-col lg:grid lg:grid-cols-5 gap-4 items-start lg:items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                                 class="bg-surface-container-lowest rounded-xl p-4 lg:px-6 lg:py-4 ambient-shadow flex flex-col lg:grid lg:grid-cols-5 gap-4 items-start lg:items-center group hover:bg-surface-container/50 transition-colors border border-outline-variant/20 hover:border-outline-variant/30">
 
                                 <!-- Dominio -->
                                 <div class="w-full min-w-0">
@@ -418,7 +416,7 @@
                     <div class="space-y-8">
 
                         <!-- Toggles -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
 
                             <!-- Requerir Mayúsculas -->
                             <div class="bg-surface-container-low p-5 rounded-xl flex items-center justify-between border border-outline-variant/30">
@@ -474,7 +472,7 @@
                         </div>
 
                         <!-- Longitud y Expiración -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-10">
                             <div class="space-y-3">
                                 <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest">LONGITUD MÍNIMA</label>
                                 <input name="longitudMinima" type="number" min="6" max="32"
@@ -1223,6 +1221,7 @@
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
     AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded' });
+    window.addEventListener('pageshow', function(e) { if (e.persisted) AOS.refreshHard(); });
 </script>
 
 <script th:src="@{/js/animations.js}"></script>

@@ -103,7 +103,7 @@
         <div class="bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
 
             <!-- Tabs -->
-            <div class="flex flex-wrap gap-6 px-6 pt-5 pb-0 border-b border-slate-100" id="notifTabs">
+            <div class="flex flex-wrap gap-4 sm:gap-6 px-4 sm:px-6 pt-5 pb-0 border-b border-slate-100" id="notifTabs">
                 <a th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(tipo='ALL')}"
                    th:class="${tipoFiltro == 'ALL' or tipoFiltro == null} ? 'pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px' : 'pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px'">
                     Todas
@@ -123,7 +123,7 @@
             </div>
 
             <!-- Cards -->
-            <div class="p-6 space-y-3">
+            <div class="p-4 sm:p-6 space-y-3">
 
                 <!-- Empty state global -->
                 <div th:if="${notificaciones == null or #lists.isEmpty(notificaciones)}"
@@ -149,7 +149,7 @@
                 <div th:each="n : ${notificaciones}"
                      th:attr="data-tipo=${n.tipo}"
                      th:classappend="${n.leido == false} ? 'border-l-4 border-secondary' : 'border-l-4 border-transparent'"
-                     class="notif-card bg-slate-50 rounded-[1.25rem] p-5 border border-slate-100 flex items-start gap-4 relative">
+                     class="notif-card bg-slate-50 rounded-[1.25rem] p-3 sm:p-5 border border-slate-100 flex items-start gap-3 sm:gap-4 relative">
 
                     <!-- Ícono -->
                     <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -170,7 +170,7 @@
 
                     <!-- Contenido -->
                     <div class="flex-1 min-w-0">
-                        <div class="flex items-start justify-between gap-4 mb-1.5">
+                        <div class="flex items-start justify-between gap-2 sm:gap-4 mb-1.5">
                             <div class="flex items-center gap-2">
                             <span class="text-secondary font-bold text-[11px] uppercase tracking-wider"
                                   th:text="${n.etiqueta}">Tipo</span>
@@ -211,7 +211,7 @@
             </div>
 
             <!-- Controles de Paginación -->
-            <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8" th:if="${totalPages > 1}">
+            <div id="paginationContainer" class="flex justify-center items-center gap-1 sm:gap-2 mt-8" th:if="${totalPages > 1}">
 
                 <!-- Botón anterior -->
                 <a th:if="${hasPrevious}"
