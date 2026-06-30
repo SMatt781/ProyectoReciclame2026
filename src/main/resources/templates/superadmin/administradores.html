@@ -216,7 +216,7 @@
                                class="w-full h-12 px-4 bg-surface-container-low border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20"/>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="space-y-2">
                             <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest block">Apellido Paterno *</label>
                             <input name="apellidoPaterno" required type="text" placeholder="Ej. García"
@@ -229,7 +229,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="space-y-2">
                             <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest block">DNI</label>
                             <input name="dni" maxlength="8" type="text" placeholder="12345678"
@@ -742,7 +742,7 @@
 
         <div class="bg-transparent border border-outline-variant/30 rounded-xl p-4 mb-4 flex flex-col">
 
-            <section class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
+            <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
 
                 <article data-aos="fade-up" data-aos-delay="0"
                          class="bg-surface-container-lowest rounded-[1.25rem] p-4 ambient-shadow ghost-border relative overflow-hidden min-h-[118px]">
@@ -950,8 +950,8 @@
 
 
             <div class="flex flex-col">
-                <div class="overflow-x-auto w-full pb-4">
-                    <div class="flex flex-col gap-4 min-w-[1200px] w-full">
+                <div class="w-full pb-4">
+                    <div class="flex flex-col gap-4 w-full">
                         <!-- Cabecera -->
                         <div class="hidden md:grid grid-cols-5 gap-0 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-on-surface-variant tracking-[0.12em] uppercase tracking-wider">
                             <div class="px-6 py-3">Nombre Completo</div>
@@ -963,10 +963,8 @@
 
                         <!-- Filas -->
                         <div th:each="admin, aIdx : ${administradores.content}"
-                             data-aos="fade-up"
-                             th:data-aos-delay="${aIdx.index <= 9 ? aIdx.index * 40 : 0}"
-                             th:classappend="${admin.estadoCuenta?.name() == 'BLOQUEADO'} ? 'bg-red-50/80 border-red-100' : 'bg-surface-container-lowest border-transparent'"
-                             class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-5 md:gap-0 items-start md:items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
+                             th:classappend="${admin.estadoCuenta?.name() == 'BLOQUEADO'} ? 'bg-red-50/80 border-red-100' : 'bg-surface-container-lowest border-outline-variant/20'"
+                             class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-5 md:gap-0 items-start md:items-center group hover:bg-surface-container/50 transition-colors border hover:border-outline-variant/30">
 
                             <!-- Nombre -->
                             <div class="flex items-center gap-3 w-full px-3">
@@ -984,28 +982,29 @@
                             </div>
 
                             <!-- Correo -->
-                            <div class="flex items-center w-full text-xs font-body text-on-surface-variant px-3"
-                                 th:text="${admin.correo}">
-                                correo@reciclame.org
+                            <div class="flex flex-col w-full px-3">
+                                <p class="md:hidden text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-0.5">Correo</p>
+                                <span class="text-xs font-body text-on-surface-variant break-all" th:text="${admin.correo}">correo@reciclame.org</span>
                             </div>
 
-
-                            <!-- Estado — clickeable -->
-                            <div class="flex items-center justify-center w-full px-3">
+                            <!-- Estado -->
+                            <div class="flex flex-col w-full px-3 md:items-center">
+                                <p class="md:hidden text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-0.5">Estado</p>
                                 <span th:class="${admin.estadoCuenta.name() == 'BLOQUEADO'}
-                                       ? 'rounded-full px-3 py-1 text-[10px] font-extrabold uppercase bg-red-100 text-red-700'
-                                       : 'rounded-full px-3 py-1 text-[10px] font-extrabold uppercase bg-secondary-container/20 text-secondary'"
-                                                                      th:text="${admin.estadoCuenta}">
+                                       ? 'rounded-full px-3 py-1 text-[10px] font-extrabold uppercase bg-red-100 text-red-700 w-fit'
+                                       : 'rounded-full px-3 py-1 text-[10px] font-extrabold uppercase bg-secondary-container/20 text-secondary w-fit'"
+                                      th:text="${admin.estadoCuenta}">
                                 </span>
                             </div>
 
                             <!-- Última conexión -->
-                            <div class="flex items-center justify-center text-sm font-body text-on-surface-variant px-3"
-                                 th:text="${ultimoAccesoTexto[admin.idUsuario]}">
-                                Sin registro
+                            <div class="flex flex-col w-full px-3 md:items-center">
+                                <p class="md:hidden text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-0.5">Última conexión</p>
+                                <span class="text-sm font-body text-on-surface-variant" th:text="${ultimoAccesoTexto[admin.idUsuario]}">Sin registro</span>
                             </div>
+
                             <!-- Acciones -->
-                            <div class="flex items-center justify-end gap-2 whitespace-nowrap w-full px-3">
+                            <div class="flex flex-col w-full px-3 md:flex-row md:items-center md:justify-end gap-2 whitespace-nowrap">
 
                                 <button type="button"
                                         th:attr="data-id=${admin.idUsuario},data-nombres=${admin.nombres ?: ''},data-apellido-paterno=${admin.apellidoPaterno ?: ''},data-apellido-materno=${admin.apellidoMaterno ?: ''},data-dni=${admin.identificacion != null ? admin.identificacion.numero : ''},data-telefono=${admin.telefono ?: ''},data-correo=${admin.correo ?: ''},data-estado=${admin.estadoCuenta.name()}"
@@ -1381,6 +1380,7 @@
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
     AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded' });
+    window.addEventListener('pageshow', function(e) { if (e.persisted) AOS.refreshHard(); });
 </script>
 <!-- Contador animado en KPIs -->
 <script th:src="@{/js/animations.js}"></script>
