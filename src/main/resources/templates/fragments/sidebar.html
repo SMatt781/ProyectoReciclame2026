@@ -203,7 +203,7 @@
         </div>
     </aside>
 
-    <div id="modalNuevoEstudio" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div id="modalNuevoEstudio" class="hidden fixed inset-0 w-screen h-screen z-[210] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="w-full max-w-[800px] bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden relative">
 
             <header class="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-white sticky top-0 z-30">
@@ -828,11 +828,15 @@
                 if (typeof actualizarAcceptArchivoEstudio === 'function') actualizarAcceptArchivoEstudio();
             }
 
-            document.getElementById('modalNuevoEstudio').classList.remove('hidden');
+            var modalEstudio = document.getElementById('modalNuevoEstudio');
+            if (modalEstudio.parentElement !== document.body) {
+                document.body.appendChild(modalEstudio);
+            }
+            modalEstudio.classList.remove('hidden');
         }
     </script>
 
-    <div id="modalNuevaNormativa" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div id="modalNuevaNormativa" class="hidden fixed inset-0 w-screen h-screen z-[210] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="w-full max-w-[800px] bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden relative">
 
             <header class="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-white sticky top-0 z-30">
