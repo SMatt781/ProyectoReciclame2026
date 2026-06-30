@@ -222,48 +222,50 @@
                     </div>
                 </div>
 
-                <!-- 2. Número de identificación + Teléfono -->
-                <div class="space-y-1">
-                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1" id="labelNumeroId">
-                        DNI
-                    </label>
-                    <div class="relative">
-                        <input th:field="*{numeroIdentificacion}"
-                               id="inputNumeroId"
-                               class="w-full px-4 py-2.5 pr-10 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
-                               placeholder="12345678"
-                               type="text"
-                               inputmode="numeric"
-                               maxlength="8"
-                               oninput="validarNumeroId(this); debounceValidarAPI(this)"/>
-                        <span id="docApiStatus" class="absolute right-3 top-1/2 -translate-y-1/2 hidden"></span>
+                <!-- 2. Número de identificación + Teléfono (en fila) -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1" id="labelNumeroId">
+                            DNI
+                        </label>
+                        <div class="relative">
+                            <input th:field="*{numeroIdentificacion}"
+                                   id="inputNumeroId"
+                                   class="w-full px-4 py-2.5 pr-10 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
+                                   placeholder="12345678"
+                                   type="text"
+                                   inputmode="numeric"
+                                   maxlength="8"
+                                   oninput="validarNumeroId(this); debounceValidarAPI(this)"/>
+                            <span id="docApiStatus" class="absolute right-3 top-1/2 -translate-y-1/2 hidden"></span>
+                        </div>
+                        <p id="errorNumeroId" class="text-xs text-red-600 ml-1 hidden"></p>
+                        <div id="docApiMsg" class="hidden rounded-lg px-3 py-2 text-xs font-medium mt-1"></div>
+                        <p th:if="${#fields.hasErrors('numeroIdentificacionValido')}"
+                           th:errors="*{numeroIdentificacionValido}"
+                           class="text-xs text-red-600 ml-1"></p>
+                        <p th:if="${#fields.hasErrors('numeroIdentificacion')}"
+                           th:errors="*{numeroIdentificacion}"
+                           class="text-xs text-red-600 ml-1"></p>
                     </div>
-                    <p id="errorNumeroId" class="text-xs text-red-600 ml-1 hidden"></p>
-                    <div id="docApiMsg" class="hidden rounded-lg px-3 py-2 text-xs font-medium mt-1"></div>
-                    <p th:if="${#fields.hasErrors('numeroIdentificacionValido')}"
-                       th:errors="*{numeroIdentificacionValido}"
-                       class="text-xs text-red-600 ml-1"></p>
-                    <p th:if="${#fields.hasErrors('numeroIdentificacion')}"
-                       th:errors="*{numeroIdentificacion}"
-                       class="text-xs text-red-600 ml-1"></p>
-                </div>
 
-                <div class="space-y-1">
-                    <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
-                        Teléfono
-                    </label>
-                    <input id="inputTelefono"
-                           th:field="*{telefono}"
-                           class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
-                           placeholder="987654321"
-                           type="tel"
-                           inputmode="numeric"
-                           maxlength="9"
-                           oninput="validarTelefono(this)"/>
-                    <p id="errorTelefono" class="text-xs text-red-600 ml-1 hidden">Teléfono debe tener 9 dígitos</p>
-                    <p th:if="${#fields.hasErrors('telefono')}"
-                       th:errors="*{telefono}"
-                       class="text-xs text-red-600 ml-1"></p>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                            Teléfono
+                        </label>
+                        <input id="inputTelefono"
+                               th:field="*{telefono}"
+                               class="w-full px-4 py-2.5 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-primary-container text-sm"
+                               placeholder="987654321"
+                               type="tel"
+                               inputmode="numeric"
+                               maxlength="9"
+                               oninput="validarTelefono(this)"/>
+                        <p id="errorTelefono" class="text-xs text-red-600 ml-1 hidden">Teléfono debe tener 9 dígitos</p>
+                        <p th:if="${#fields.hasErrors('telefono')}"
+                           th:errors="*{telefono}"
+                           class="text-xs text-red-600 ml-1"></p>
+                    </div>
                 </div>
 
                 <!-- 3. Banner de estado de nombres (bloqueado / verificado) -->
@@ -490,6 +492,16 @@
             evaluarPassword(passwordSocio.value, "Socio");
         }
 
+        // Guardar valores antes de toggleDocumento (que los borra al llamar resetNombres y limpiar el input)
+        const inputNumeroId = document.getElementById("inputNumeroId");
+        const inputNombres  = document.getElementById("inputNombres");
+        const inputApPat    = document.getElementById("inputApPat");
+        const inputApMat    = document.getElementById("inputApMat");
+        const savedNumeroId = inputNumeroId ? inputNumeroId.value.trim() : "";
+        const savedNombres  = inputNombres  ? inputNombres.value.trim()  : "";
+        const savedApPat    = inputApPat    ? inputApPat.value.trim()    : "";
+        const savedApMat    = inputApMat    ? inputApMat.value.trim()    : "";
+
         // Inicializar selector según el valor actual del formulario (soporte a errores de validación)
         const radioRUC = document.getElementById("radioRUC");
         if (radioRUC && radioRUC.checked) {
@@ -498,10 +510,17 @@
             toggleDocumento('DNI');
         }
 
-        // Si los campos de nombre ya tienen valor (recarga tras error de validación), desbloquearlos
-        const inputNombres = document.getElementById("inputNombres");
-        if (inputNombres && inputNombres.value.trim() !== "") {
-            desbloquearNombres();
+        // Restaurar DNI/RUC si fue borrado por toggleDocumento
+        if (savedNumeroId && inputNumeroId) inputNumeroId.value = savedNumeroId;
+
+        // Si había nombres (recarga tras error de validación), restaurarlos en modo verificado (readonly)
+        if (savedNombres) {
+            if (inputNombres) { inputNombres.value = savedNombres; inputNombres.setAttribute("readonly",""); inputNombres.classList.add("disabled-field"); }
+            if (inputApPat)   { inputApPat.value   = savedApPat;   inputApPat.setAttribute("readonly","");   inputApPat.classList.add("disabled-field"); }
+            if (inputApMat)   { inputApMat.value   = savedApMat;   inputApMat.setAttribute("readonly","");   inputApMat.classList.add("disabled-field"); }
+            document.getElementById("nombresLockInfo")       ?.classList.add("hidden");
+            document.getElementById("nombresManualInfo")     ?.classList.add("hidden");
+            document.getElementById("nombresVerificadoInfo") ?.classList.remove("hidden");
         }
     });
 
@@ -569,12 +588,12 @@
             errorMsg.textContent = `${nombre} debe tener ${longitud} dígitos (${input.value.length}/${longitud})`;
             input.classList.add("ring-2", "ring-red-400");
             resetApiMsg();
-            resetNombres(); // Bloquear nombres si el número está incompleto
+            if (input.value.length === 0) resetNombres();
         } else {
             errorMsg.classList.add("hidden");
             input.classList.remove("ring-2", "ring-red-400");
             resetApiMsg();
-            resetNombres();
+            if (input.value.length === 0) resetNombres();
         }
     }
 

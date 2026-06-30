@@ -457,10 +457,27 @@
             evaluarPassword(passwordVisualizador.value, "Visualizador");
         }
 
-        // Si los campos de nombre ya tienen valor (recarga tras error de validación), desbloquearlos
+        // Guardar valores antes de que cualquier reset los borre
+        const inputDNIVis     = document.getElementById("inputDNIVis");
         const inputNombresVis = document.getElementById("inputNombresVis");
-        if (inputNombresVis && inputNombresVis.value.trim() !== "") {
-            desbloquearNombresVis();
+        const inputApPatVis   = document.getElementById("inputApPatVis");
+        const inputApMatVis   = document.getElementById("inputApMatVis");
+        const savedDNI        = inputDNIVis     ? inputDNIVis.value.trim()     : "";
+        const savedNombres    = inputNombresVis ? inputNombresVis.value.trim()  : "";
+        const savedApPat      = inputApPatVis   ? inputApPatVis.value.trim()    : "";
+        const savedApMat      = inputApMatVis   ? inputApMatVis.value.trim()    : "";
+
+        // Restaurar DNI si fue borrado
+        if (savedDNI && inputDNIVis) inputDNIVis.value = savedDNI;
+
+        // Si había nombres (recarga tras error de validación), restaurarlos en modo verificado (readonly)
+        if (savedNombres) {
+            if (inputNombresVis) { inputNombresVis.value = savedNombres; inputNombresVis.setAttribute("readonly",""); inputNombresVis.classList.add("disabled-field"); }
+            if (inputApPatVis)   { inputApPatVis.value   = savedApPat;   inputApPatVis.setAttribute("readonly","");   inputApPatVis.classList.add("disabled-field"); }
+            if (inputApMatVis)   { inputApMatVis.value   = savedApMat;   inputApMatVis.setAttribute("readonly","");   inputApMatVis.classList.add("disabled-field"); }
+            document.getElementById("nombresLockInfoVis")       ?.classList.add("hidden");
+            document.getElementById("nombresManualInfoVis")     ?.classList.add("hidden");
+            document.getElementById("nombresVerificadoInfoVis") ?.classList.remove("hidden");
         }
     });
 
@@ -481,12 +498,12 @@
             errorMsg.textContent = `DNI debe tener 8 dígitos (${input.value.length}/8)`;
             input.classList.add("ring-2", "ring-red-400");
             resetDniVisMsg();
-            resetNombresVis();
+            if (input.value.length === 0) resetNombresVis();
         } else {
             errorMsg.classList.add("hidden");
             input.classList.remove("ring-2", "ring-red-400");
             resetDniVisMsg();
-            resetNombresVis();
+            if (input.value.length === 0) resetNombresVis();
         }
     }
 
