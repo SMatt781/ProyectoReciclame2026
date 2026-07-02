@@ -103,8 +103,7 @@ public class DocumentoIdentidadService {
                     if (estado.toUpperCase().contains("BAJA")) {
                         return ResultadoDocumento.noEncontrado("RUC con estado: " + estado);
                     }
-                    String display = razonSocial + (estado.isBlank() ? "" : " — " + estado);
-                    return ResultadoDocumento.ok(display.isBlank() ? "RUC válido" : display);
+                    return ResultadoDocumento.ok(razonSocial.isBlank() ? "RUC válido" : razonSocial);
                 }
 
             } else if (response.statusCode() == 422 || response.statusCode() == 404) {

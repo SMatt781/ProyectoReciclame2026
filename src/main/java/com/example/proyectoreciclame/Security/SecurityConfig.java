@@ -2,6 +2,7 @@ package com.example.proyectoreciclame.Security;
 
 import com.example.proyectoreciclame.Service.RecaptchaService;
 import com.example.proyectoreciclame.Service.SessionStore;
+import com.example.proyectoreciclame.Repository.UsuarioRepository;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,17 +22,20 @@ public class SecurityConfig {
     private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
     private final CustomUserDetailsService customUserDetailsService;
     private final RecaptchaService recaptchaService;
+    private final UsuarioRepository usuarioRepository;
 
     public SecurityConfig(CustomUserDetailsService customUserDetailsService,
                           CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler,
                           CustomAuthenticationFailureHandler customAuthenticationFailureHandler,
                           CustomLogoutSuccessHandler customLogoutSuccessHandler,
-                          RecaptchaService recaptchaService) {
+                          RecaptchaService recaptchaService,
+                          UsuarioRepository usuarioRepository) {
         this.customUserDetailsService = customUserDetailsService;
         this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
         this.customAuthenticationFailureHandler = customAuthenticationFailureHandler;
         this.customLogoutSuccessHandler = customLogoutSuccessHandler;
         this.recaptchaService = recaptchaService;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Bean
@@ -77,6 +81,7 @@ public class SecurityConfig {
                                 "/images/**",
                                 "/webjars/**",
                                 "/acceso-denegado",
+                                "/api/security/session-status",
                                 "/api/validar-documento",
                                 "/ws/**"
                         ).permitAll()
@@ -97,6 +102,10 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(
                         new RecaptchaLoginFilter(recaptchaService),
+                        UsernamePasswordAuthenticationFilter.class
+                )
+                .addFilterAfter(
+                        new AccountStatusFilter(usuarioRepository),
                         UsernamePasswordAuthenticationFilter.class
                 )
                 .formLogin(login -> login

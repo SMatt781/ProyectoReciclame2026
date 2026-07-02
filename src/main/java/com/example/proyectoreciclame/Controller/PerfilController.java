@@ -52,6 +52,7 @@ public class PerfilController {
 
         model.addAttribute("usuario", usuario);
         model.addAttribute("usuarioEmpresa", usuarioEmpresa);
+        model.addAttribute("nombreDisplay", limpiarSufijosRuc(usuario.getNombres()));
         cargarPoliticaEnModelo(model);
         return "perfilUsuario";
     }
@@ -186,6 +187,11 @@ public class PerfilController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/perfil";
+    }
+
+    private String limpiarSufijosRuc(String nombre) {
+        if (nombre == null) return null;
+        return nombre.replaceAll("\\s*—\\s*(ACTIVO|BAJA|SUSPENDIDO|NO HABIDO|HABIDO).*$", "").trim();
     }
 
     private void cargarPoliticaEnModelo(Model model) {

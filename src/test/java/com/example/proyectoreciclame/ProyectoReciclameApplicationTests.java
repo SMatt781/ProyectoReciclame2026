@@ -1,9 +1,7 @@
 package com.example.proyectoreciclame;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
 class ProyectoReciclameApplicationTests {
 
     @Test

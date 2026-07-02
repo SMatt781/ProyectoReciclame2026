@@ -19,7 +19,9 @@ import com.example.proyectoreciclame.Repository.UsuarioRepository;
 import com.example.proyectoreciclame.Service.CorreoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -84,7 +86,14 @@ public class AuthController {
     public String login(@RequestParam(required = false) String correo,
                         @RequestParam(required = false) String error,
                         @RequestParam(required = false) Long restantes,
+                        @RequestParam(required = false) String sessionRevoked,
+                        Authentication authentication,
                         Model model) {
+
+        authentication = obtenerAutenticacionActual(authentication);
+        if (estaAutenticado(authentication)) {
+            return redireccionPorRol(authentication);
+        }
 
         model.addAttribute("recaptchaSiteKey", recaptchaSiteKey);
         model.addAttribute("correoIngresado", correo);
@@ -97,6 +106,9 @@ public class AuthController {
             model.addAttribute("intentosRestantes", restantes);
         } else if ("true".equals(error)) {
             model.addAttribute("errorCredenciales", true);
+        }
+        if ("true".equals(sessionRevoked)) {
+            model.addAttribute("sesionRevocada", true);
         }
 
         return "auth/login";
@@ -121,22 +133,7 @@ public class AuthController {
         nuevaSesion.setFechaInicio(LocalDateTime.now());
         nuevaSesion.setEstado("VIGENTE");
         registroSesionRepository.save(nuevaSesion);
-        if (authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_SUPERADMIN"))) {
-            return "redirect:/superadmin/dashboard";
-        }
-
-        if (authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            return "redirect:/superadmin/dashboard";
-        }
-
-        if (authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_SOCIO"))) {
-            return "redirect:/socio/home";
-        }
-
-        return "redirect:/visualizador/home";
+        return redireccionPorRol(authentication);
     }
 
     @GetMapping("/registro/socio")
@@ -340,7 +337,49 @@ public class AuthController {
     }
 
     @GetMapping("/")
-    public String root() {
+    public String root(Authentication authentication) {
+        authentication = obtenerAutenticacionActual(authentication);
+        if (estaAutenticado(authentication)) {
+            return redireccionPorRol(authentication);
+        }
+
+        return "redirect:/login";
+    }
+
+    private Authentication obtenerAutenticacionActual(Authentication authentication) {
+        if (authentication != null) {
+            return authentication;
+        }
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    private boolean estaAutenticado(Authentication authentication) {
+        return authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken);
+    }
+
+    private String redireccionPorRol(Authentication authentication) {
+        if (authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_SUPERADMIN"))) {
+            return "redirect:/superadmin/dashboard";
+        }
+
+        if (authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return "redirect:/admin/dashboard";
+        }
+
+        if (authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_SOCIO"))) {
+            return "redirect:/socio";
+        }
+
+        if (authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_VISUALIZADOR"))) {
+            return "redirect:/visualizador";
+        }
+
         return "redirect:/login";
     }
 

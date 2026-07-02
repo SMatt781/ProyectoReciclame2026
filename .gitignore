@@ -37,3 +37,5 @@ node_modules/
 src/main/resources/application-local.properties
 src/main/resources/application_local.properties
 src/main/resources/application-aws.properties
+google api key.txt
+src/main/resources/application.properties

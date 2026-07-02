@@ -228,19 +228,21 @@ public class AdminNotificacionController {
 
     private void crearNotificacionPorRol(List<Integer> rolIds, String titulo, String mensaje, String tipo, String enlace) {
         try {
-            usuarioRepository.findByRolIdInAndEliminadoEnIsNull(rolIds)
-                    .forEach(usuario -> {
-                        Notificacion n = new Notificacion();
-                        n.setUsuario(usuario);
-                        n.setTitulo(titulo);
-                        n.setMensaje(mensaje);
-                        n.setTipo(tipo);
-                        n.setEnlaceReferencia(enlace);
-                        n.setLeido(false);
-                        n.setFecha(LocalDateTime.now());
-                        notificacionRepository.save(n);
-                        webSocketService.enviarNotificacion(usuario.getCorreo(), titulo, mensaje, tipo);
-                    });
+            var usuarios = usuarioRepository.findByRolIdInAndEliminadoEnIsNull(rolIds);
+            System.out.println("[NOTIF] Enviando a " + usuarios.size() + " usuarios con rolIds=" + rolIds);
+            usuarios.forEach(usuario -> {
+                Notificacion n = new Notificacion();
+                n.setUsuario(usuario);
+                n.setTitulo(titulo);
+                n.setMensaje(mensaje);
+                n.setTipo(tipo);
+                n.setEnlaceReferencia(enlace);
+                n.setLeido(false);
+                n.setFecha(LocalDateTime.now());
+                notificacionRepository.save(n);
+                System.out.println("[NOTIF] WS → " + usuario.getCorreo() + " | " + titulo);
+                webSocketService.enviarNotificacion(usuario.getCorreo(), titulo, mensaje, tipo);
+            });
         } catch (Exception e) {
             System.out.println("ERROR notificación: " + e.getMessage());
             e.printStackTrace();

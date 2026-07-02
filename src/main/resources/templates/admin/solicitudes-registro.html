@@ -166,7 +166,7 @@
                             <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
                                 Pendientes de aprobación
                             </h4>
-                            <div class="text-4xl font-extrabold text-amber-600" th:text="${totalPendientes}"></div>
+                            <div class="text-4xl font-extrabold text-amber-600" data-stat="pendientes" th:text="${totalPendientes}"></div>
                         </div>
                     </article>
 
@@ -187,7 +187,7 @@
                             <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
                                 Total usuarios activos
                             </h4>
-                            <div class="text-4xl font-extrabold text-on-primary-fixed"
+                            <div class="text-4xl font-extrabold text-on-primary-fixed" data-stat="activos"
                                  th:text="${totalUsuariosActivos}">
                                 0
                             </div>
@@ -211,7 +211,7 @@
                             <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
                                 Empresas registradas
                             </h4>
-                            <div class="text-4xl font-extrabold text-on-primary-fixed"
+                            <div class="text-4xl font-extrabold text-on-primary-fixed" data-stat="empresas"
                                  th:text="${empresasRegistradas}">
                                 0
                             </div>
@@ -235,7 +235,7 @@
                             <h4 class="font-headline text-base font-bold text-on-primary-fixed mb-2 leading-tight">
                                 Solicitudes hoy
                             </h4>
-                            <div class="text-4xl font-extrabold text-on-primary-fixed"
+                            <div class="text-4xl font-extrabold text-on-primary-fixed" data-stat="hoy"
                                  th:text="${solicitudesHoy}">
                                 0
                             </div>
@@ -318,7 +318,7 @@
                 </div>
 
                 <!-- Tabla div-grid -->
-                <div class="flex flex-col">
+                <div id="solicitudesListContainer" class="flex flex-col">
                     <div class="overflow-x-auto w-full pb-4" th:if="${not #lists.isEmpty(solicitudes)}">
                         <div class="flex flex-col gap-4 md:min-w-[1200px] w-full">
 
@@ -589,6 +589,235 @@
     })();
 </script>
 <script th:src="@{/js/animations.js}"></script>
+
+<script>
+(function () {
+    // Parámetros actuales del formulario de filtros
+    function getFiltrosActuales() {
+        var form = document.querySelector('form[action="/admin/usuarios/solicitudes"]');
+        if (!form) return {};
+        var data = new FormData(form);
+        var params = {};
+        data.forEach(function(v, k) { if (v) params[k] = v; });
+        return params;
+    }
+
+    function buildQueryString(params) {
+        return Object.keys(params).map(function(k) {
+            return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
+        }).join('&');
+    }
+
+    function renderFila(s) {
+        var dniRuc = '';
+        if (s.tipoIdentificacion === 'DNI') {
+            dniRuc = '<span class="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-extrabold uppercase text-blue-600 border border-blue-200"><span class="font-bold">DNI</span>: ' + (s.numeroIdentificacion || '') + '</span>';
+        } else if (s.tipoIdentificacion === 'RUC') {
+            dniRuc = '<span class="rounded-full bg-orange-50 px-3 py-1 text-[10px] font-extrabold uppercase text-orange-600 border border-orange-200"><span class="font-bold">RUC</span>: ' + (s.numeroIdentificacion || '') + '</span>';
+        }
+
+        return '<div class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-[240px_100px_180px_150px_100px_150px_1fr] gap-4 items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">'
+            + '<div class="flex items-center gap-3 w-full">'
+            +   '<div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary-container/30 text-sm font-bold text-secondary">' + (s.iniciales || '') + '</div>'
+            +   '<div><p class="text-sm font-bold leading-tight text-on-primary-fixed">' + (s.nombreCompleto || '') + '</p>'
+            +   '<p class="text-[11px] leading-tight text-on-surface-variant">' + (s.estado || '') + '</p></div>'
+            + '</div>'
+            + '<div class="flex justify-start w-full md:w-auto min-w-0">' + dniRuc + '</div>'
+            + '<div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant">' + (s.correo || '') + '</div>'
+            + '<div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant italic">--</div>'
+            + '<div class="flex justify-start w-full md:w-auto"><span class="rounded-full bg-secondary-container/20 px-3 py-1 text-[10px] font-extrabold uppercase text-secondary">' + (s.rolSolicitado || '') + '</span></div>'
+            + '<div class="flex justify-start w-full md:w-auto text-xs font-body text-on-surface-variant">' + (s.fechaSolicitud || '') + '</div>'
+            + '<div class="flex justify-start md:justify-center w-full md:w-auto items-center gap-2 flex-wrap">'
+            +   '<a href="/admin/usuarios/solicitudes/' + s.idUsuario + '" class="inline-flex items-center rounded-lg px-3 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container transition-colors">Ver</a>'
+            +   '<form action="/admin/usuarios/solicitudes/' + s.idUsuario + '/aceptar" method="post"><button type="submit" class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors">Aceptar</button></form>'
+            +   '<form action="/admin/usuarios/solicitudes/' + s.idUsuario + '/denegar" method="post"><input type="hidden" name="motivo" value="Solicitud denegada por administrador"><button type="submit" class="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-error-container hover:text-error transition-colors">Denegar</button></form>'
+            + '</div>'
+            + '</div>';
+    }
+
+    function actualizarLista(data) {
+        var container = document.getElementById('solicitudesListContainer');
+        if (!container) return;
+
+        if (!data.solicitudes || data.solicitudes.length === 0) {
+            container.innerHTML = '<div class="py-12 flex flex-col items-center justify-center text-center bg-surface-container-lowest rounded-xl border border-outline-variant/30 border-dashed mt-6">'
+                + '<h3 class="text-lg font-bold text-on-surface mb-2">No hay solicitudes pendientes</h3>'
+                + '<p class="text-sm text-on-surface-variant max-w-md">No se encontraron solicitudes que coincidan con los filtros aplicados.</p>'
+                + '</div>';
+        } else {
+            var header = '<div class="hidden md:grid grid-cols-[240px_100px_180px_150px_100px_150px_1fr] gap-4 px-6 py-3 border-b border-surface-variant text-sm font-extrabold text-[#1a1a1a] uppercase tracking-wider">'
+                + '<div>Nombre</div><div>DNI/RUC</div><div>Email</div><div>Empresa</div><div>Rol</div><div>Fecha solicitud</div><div class="text-center">Acciones</div></div>';
+            var filas = data.solicitudes.map(renderFila).join('');
+            container.innerHTML = '<div class="overflow-x-auto w-full pb-4"><div class="flex flex-col gap-4 md:min-w-[1200px] w-full">' + header + filas + '</div></div>';
+        }
+
+        // Actualizar KPIs con animación de pulso
+        function actualizarStat(selector, valor) {
+            if (valor === undefined) return;
+            var el = document.querySelector(selector);
+            if (!el) return;
+            if (String(el.textContent.trim()) === String(valor)) return; // sin cambio
+            el.textContent = valor;
+            el.style.transition = 'none';
+            el.style.transform = 'scale(1.18)';
+            requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                    el.style.transition = 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+                    el.style.transform = 'scale(1)';
+                });
+            });
+        }
+        actualizarStat('[data-stat="pendientes"]', data.totalPendientes);
+        actualizarStat('[data-stat="activos"]',    data.totalUsuariosActivos);
+        actualizarStat('[data-stat="empresas"]',   data.empresasRegistradas);
+        actualizarStat('[data-stat="hoy"]',        data.solicitudesHoy);
+    }
+
+    function fetchLista() {
+        var filtros = getFiltrosActuales();
+        var currentPage = new URLSearchParams(window.location.search).get('page') || '0';
+        filtros.page = currentPage;
+        var qs = buildQueryString(filtros);
+        fetch('/admin/usuarios/solicitudes/api-lista?' + qs, { credentials: 'same-origin' })
+            .then(function(r) { return r.ok ? r.json() : null; })
+            .then(function(data) { if (data) actualizarLista(data); })
+            .catch(function() {});
+    }
+
+    // Esperar a que el stompClient del navbar esté listo y suscribirse
+    function suscribirWS() {
+        if (typeof window._stompClient === 'undefined' || !window._stompClient) {
+            setTimeout(suscribirWS, 500);
+            return;
+        }
+        window._stompClient.subscribe('/topic/admin/solicitudes', function() {
+            fetchLista();
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', suscribirWS);
+
+    // Exponer para uso del handler de animación
+    window._fetchListaSolicitudes = fetchLista;
+    window._actualizarListaSolicitudes = actualizarLista;
+})();
+</script>
+
+<!-- Animación + AJAX al procesar solicitudes (sin recarga de página) -->
+<script>
+(function () {
+    var SPINNER_SVG = '<svg class="animate-spin w-3.5 h-3.5 inline-block mr-1 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>';
+
+    function mostrarToast(mensaje, tipo) {
+        var isError = tipo === 'error';
+        var toast = document.createElement('div');
+        toast.className = 'flash-message flex items-center gap-3 rounded-lg px-4 py-3 text-sm shadow-md border'
+            + (isError
+                ? ' bg-red-50 border-red-200 text-red-800'
+                : ' bg-green-50 border-green-200 text-green-800');
+        toast.style.cssText = 'opacity:0;transform:translateY(-8px);transition:opacity 0.3s ease,transform 0.3s ease;';
+        toast.innerHTML = (isError
+            ? '<svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>'
+            : '<svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>')
+            + '<span>' + mensaje + '</span>';
+
+        /* Insertar antes del contenido principal */
+        var main = document.querySelector('main');
+        if (main) main.insertBefore(toast, main.firstChild);
+
+        requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+                toast.style.opacity = '1';
+                toast.style.transform = 'translateY(0)';
+            });
+        });
+
+        setTimeout(function() {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(-8px)';
+            setTimeout(function() { toast.remove(); }, 350);
+        }, 5000);
+    }
+
+    function slideOutRow(row, isAceptar, callback) {
+        row.style.backgroundColor = isAceptar ? 'rgba(107,254,156,0.30)' : 'rgba(186,26,26,0.12)';
+        row.style.overflow = 'hidden';
+        row.style.maxHeight = row.offsetHeight + 'px';
+
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                row.style.transition = 'transform 0.38s cubic-bezier(0.4,0,0.2,1), opacity 0.38s ease-out, max-height 0.38s ease 0.25s, padding 0.25s ease 0.3s, margin 0.25s ease 0.3s, background-color 0.2s ease-out';
+                row.style.transform = 'translateX(90px)';
+                row.style.opacity = '0';
+                setTimeout(function () {
+                    row.style.maxHeight = '0';
+                    row.style.paddingTop = '0';
+                    row.style.paddingBottom = '0';
+                    row.style.marginTop = '0';
+                    row.style.marginBottom = '0';
+                    setTimeout(function () {
+                        row.remove();
+                        if (callback) callback();
+                    }, 280);
+                }, 350);
+            });
+        });
+    }
+
+    var container = document.getElementById('solicitudesListContainer');
+    if (!container) return;
+
+    /* capture:true para interceptar ANTES de que spinner.js reciba el evento */
+    container.addEventListener('submit', function (e) {
+        var form = e.target;
+        if (!form || form.tagName !== 'FORM') return;
+        var row = form.closest('.bg-surface-container-lowest');
+        if (!row) return;
+
+        /* Evitar que spinner.js también procese este evento */
+        e.preventDefault();
+        e.stopPropagation();
+
+        var isAceptar = form.action && form.action.indexOf('/aceptar') !== -1;
+
+        /* Mostrar spinner en el botón */
+        var btn = form.querySelector('button[type="submit"]');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = SPINNER_SVG + (isAceptar ? 'Aceptando...' : 'Denegando...');
+        }
+
+        /* Pequeño tinte inmediato para feedback visual */
+        row.style.backgroundColor = isAceptar ? 'rgba(107,254,156,0.15)' : 'rgba(186,26,26,0.08)';
+        row.style.transition = 'background-color 0.2s ease-out';
+
+        var formData = new FormData(form);
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            credentials: 'same-origin'
+        })
+        .then(function (res) {
+            if (!res.ok && !res.redirected) throw new Error('HTTP ' + res.status);
+            var msg = isAceptar
+                ? 'Solicitud aceptada correctamente. Usuario creado y activado.'
+                : 'Solicitud denegada correctamente.';
+            mostrarToast(msg, 'success');
+            slideOutRow(row, isAceptar, function () {
+                /* Actualizar lista y contadores vía API sin recargar */
+                if (typeof window._fetchListaSolicitudes === 'function') {
+                    window._fetchListaSolicitudes();
+                }
+            });
+        })
+        .catch(function () {
+            /* Fallback: recarga normal si algo falla */
+            window.location.reload();
+        });
+    }, true);
+})();
+</script>
+
 <!-- Chatbot -->
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot}"></th:block>
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot-script}"></th:block>

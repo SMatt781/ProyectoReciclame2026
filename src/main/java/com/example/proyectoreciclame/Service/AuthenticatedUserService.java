@@ -31,7 +31,7 @@ public class AuthenticatedUserService {
 
         SessionUserDto dto = new SessionUserDto();
         dto.setIdUsuario(usuario.getIdUsuario());
-        dto.setNombres(usuario.getNombres());
+        dto.setNombres(limpiarSufijosRuc(usuario.getNombres()));
         dto.setApellidoPaterno(usuario.getApellidoPaterno());
         dto.setApellidoMaterno(usuario.getApellidoMaterno());
         dto.setCorreo(usuario.getCorreo());
@@ -49,5 +49,10 @@ public class AuthenticatedUserService {
         dto.setUrlAvatar(usuario.getUrlAvatar());
 
         return dto;
+    }
+
+    private String limpiarSufijosRuc(String nombre) {
+        if (nombre == null) return null;
+        return nombre.replaceAll("\\s*—\\s*(ACTIVO|BAJA|SUSPENDIDO|NO HABIDO|HABIDO).*$", "").trim();
     }
 }

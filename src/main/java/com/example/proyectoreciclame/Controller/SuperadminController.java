@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -420,6 +421,8 @@ public class SuperadminController {
             redirectAttributes.addFlashAttribute("error", "Administrador no encontrado.");
             return "redirect:/superadmin/administradores";
         }
+        String correoAnterior = admin.getCorreo();
+        Usuario.EstadoCuenta estadoAnterior = admin.getEstadoCuenta();
 
         // Validar unicidad de correo (excluyendo el mismo usuario)
         if (!admin.getCorreo().equalsIgnoreCase(correo)
@@ -450,6 +453,12 @@ public class SuperadminController {
         }
 
         usuarioRepository.save(admin);
+        if (!Objects.equals(estadoAnterior, admin.getEstadoCuenta())
+                || !Objects.equals(correoAnterior, admin.getCorreo())) {
+            webSocketService.enviarSesionRevocada(correoAnterior, "Tu cuenta de administrador fue actualizada. Inicia sesion nuevamente.");
+            sessionStore.invalidarPorCorreoConRetraso(correoAnterior, 1000);
+            sessionStore.invalidarPorCorreoConRetraso(admin.getCorreo(), 1000);
+        }
 
         // Guardar identificación (DNI del administrador)
         if (dni != null && !dni.isBlank()) {
@@ -516,6 +525,8 @@ public class SuperadminController {
 
         admin.setActualizadoEn(LocalDateTime.now());
         usuarioRepository.save(admin);
+        webSocketService.enviarSesionRevocada(admin.getCorreo(), "Tu cuenta de administrador fue actualizada. Inicia sesion nuevamente.");
+        sessionStore.invalidarPorCorreoConRetraso(admin.getCorreo(), 1000);
 
         Usuario superadmin = usuarioRepository
                 .findByCorreoWithRol(authentication.getName()).orElse(null);
@@ -563,6 +574,8 @@ public class SuperadminController {
         admin.setEliminadoEn(LocalDateTime.now());
         admin.setActualizadoEn(LocalDateTime.now());
         usuarioRepository.save(admin);
+        webSocketService.enviarSesionRevocada(admin.getCorreo(), "Tu cuenta de administrador fue eliminada. La sesion fue cerrada.");
+        sessionStore.invalidarPorCorreoConRetraso(admin.getCorreo(), 1000);
 
         Usuario superadmin = usuarioRepository
                 .findByCorreoWithRol(authentication.getName()).orElse(null);

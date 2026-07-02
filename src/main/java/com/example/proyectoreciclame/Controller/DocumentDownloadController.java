@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,15 +88,11 @@ public class DocumentDownloadController {
                 filename = base + ".pdf";
                 log.info("[STREAM] Preview OK: {} bytes", pdfData.length);
 
-            // ── Slow path: conversión on-demand con Aspose (fallback) ────────
+            // ── Slow path: descarga directa via SDK y conversión on-demand ─
             } else {
                 String clave = estudio.getArchivoUrl().replace("/uploads/estudios/", "estudios/");
-                log.info("[STREAM] Preview no disponible — descargando y convirtiendo on-demand: {}", clave);
-                String presignedUrl = s3StorageService.generatePresignedUrl(clave, 300);
-                byte[] fileData;
-                try (InputStream is = new URL(presignedUrl).openStream()) {
-                    fileData = is.readAllBytes();
-                }
+                log.info("[STREAM] Preview no disponible — descargando on-demand via SDK: {}", clave);
+                byte[] fileData = s3StorageService.downloadFile(clave);
                 log.info("[STREAM] Descarga OK: {} bytes", fileData.length);
 
                 if (estudio.getFormato() == Estudio.FormatoEstudio.PPTX) {

@@ -25,13 +25,28 @@ public class NotificacionWebSocketService {
     public void enviarNotificacion(String correoUsuario, String titulo, String mensaje, String tipo) {
         try {
             Map<String, String> payload = Map.of(
-                "titulo", titulo != null ? titulo : "",
-                "mensaje", mensaje != null ? mensaje : "",
-                "tipo", tipo != null ? tipo : "INFO"
+                    "titulo", titulo != null ? titulo : "",
+                    "mensaje", mensaje != null ? mensaje : "",
+                    "tipo", tipo != null ? tipo : "INFO"
             );
             messagingTemplate.convertAndSendToUser(correoUsuario, "/queue/notificaciones", payload);
         } catch (Exception e) {
             System.err.println("Error enviando WebSocket a " + correoUsuario + ": " + e.getMessage());
+        }
+    }
+
+    public void enviarSesionRevocada(String correoUsuario, String motivo) {
+        try {
+            Map<String, String> payload = Map.of(
+                    "titulo", "Sesion cerrada",
+                    "mensaje", motivo != null ? motivo : "Tu sesion fue cerrada por seguridad.",
+                    "tipo", "SESSION_REVOKED",
+                    "redirect", "/login?sessionRevoked=true"
+            );
+            messagingTemplate.convertAndSendToUser(correoUsuario, "/queue/notificaciones", payload);
+            messagingTemplate.convertAndSendToUser(correoUsuario, "/queue/session-control", payload);
+        } catch (Exception e) {
+            System.err.println("Error enviando cierre de sesion a " + correoUsuario + ": " + e.getMessage());
         }
     }
 }

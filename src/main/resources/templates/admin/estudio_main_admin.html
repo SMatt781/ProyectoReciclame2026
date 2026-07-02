@@ -213,10 +213,10 @@
             <div data-aos="fade-up" data-aos-delay="50" class="bg-transparent border border-outline-variant/30 rounded-xl p-6 mb-6">
                 <!-- Search Bar -->
                 <form action="/admin/estudios" method="GET"
-                    class="flex flex-col gap-3 mb-6 w-full">
-                    <!-- Buscador (fila completa) -->
-                    <div class="relative w-full">
-                        <svg class="w-5 h-5 text-[#999] absolute left-3 top-3" fill="none" stroke="currentColor"
+                    class="flex flex-row items-center gap-2 mb-6 w-full">
+                    <!-- Buscador -->
+                    <div class="relative flex-1">
+                        <svg class="w-5 h-5 text-[#999] absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -224,41 +224,39 @@
                         <input type="text" name="search" th:value="${search}" placeholder="Buscar en el repositorio..."
                             class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
                     </div>
-                    <!-- Botones en fila -->
-                    <div class="flex flex-wrap gap-2">
-                        <a href="/admin/estudios"
-                            class="flex items-center gap-2 px-3 py-2 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition text-sm"
-                            title="Limpiar filtros">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                            <span class="font-medium">Limpiar</span>
-                        </a>
-                        <button type="button" id="openFiltersModal"
-                            class="flex items-center gap-2 px-3 py-2 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition text-sm">
-                            <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
-                            <span class="font-medium">Filtros avanzados</span>
-                        </button>
-                        <button type="button" id="toggleViewBtn"
-                            class="flex items-center justify-center w-9 h-9 bg-white text-slate-700 rounded-lg border border-[#e0e0e0] hover:bg-[#f0f0f0] transition-colors"
-                            title="Cambiar vista">
-                            <svg id="icon-list" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                            <svg id="icon-grid" class="w-4 h-4 hidden" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                            </svg>
-                        </button>
-                        <button type="button" onclick="window.location.href='/admin/estudios/exportar'"
-                            class="flex items-center gap-2 px-3 py-2 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition text-sm">
-                            <div th:replace="~{fragments/icons.html :: icon-exportar-excel}"></div>
-                            <span class="font-medium">Exportar</span>
-                        </button>
-                    </div>
+                    <!-- Botones en la misma línea que la barra -->
+                    <a href="/admin/estudios"
+                        class="flex items-center gap-1.5 px-3 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition text-sm whitespace-nowrap shrink-0"
+                        title="Limpiar filtros">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <span class="font-medium hidden md:inline">Limpiar</span>
+                    </a>
+                    <button type="button" id="openFiltersModal"
+                        class="flex items-center gap-1.5 px-3 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition text-sm whitespace-nowrap shrink-0">
+                        <div th:replace="~{fragments/icons.html :: icon-filtros-avanzados}"></div>
+                        <span class="font-medium hidden md:inline">Filtros avanzados</span>
+                    </button>
+                    <button type="button" id="toggleViewBtn"
+                        class="flex items-center justify-center w-10 h-10 bg-white text-slate-700 rounded-lg border border-[#e0e0e0] hover:bg-[#f0f0f0] transition-colors shrink-0"
+                        title="Cambiar vista">
+                        <svg id="icon-list" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg id="icon-grid" class="w-4 h-4 hidden" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                        </svg>
+                    </button>
+                    <button type="button" onclick="window.location.href='/admin/estudios/exportar'"
+                        class="flex items-center gap-1.5 px-3 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition text-sm whitespace-nowrap shrink-0">
+                        <div th:replace="~{fragments/icons.html :: icon-exportar-excel}"></div>
+                        <span class="font-medium hidden md:inline">Exportar</span>
+                    </button>
                 </form>
 
 
@@ -352,10 +350,13 @@
                                 </button>
 
                                 <!-- Eliminar -->
-                                <a th:href="@{/admin/estudios/eliminar/{id}(id=${estudio.idEstudio})}"
+                                <button type="button"
+                                    th:data-id="${estudio.idEstudio}"
+                                    th:data-titulo="${estudio.titulo}"
+                                    onclick="abrirModalEliminarEstudio(this)"
                                     class="px-2.5 py-1 text-sm font-semibold rounded-lg text-on-surface-variant hover:bg-error-container hover:text-error transition">
                                     Eliminar
-                                </a>
+                                </button>
 
                                 <!-- Ver -->
                                 <a th:href="@{/admin/estudios/{id}(id=${estudio.idEstudio})}"
@@ -455,14 +456,18 @@
                             </button>
 
                             <!-- Eliminar -->
-                            <a th:href="@{/admin/estudios/eliminar/{id}(id=${estudio.idEstudio})}" class="flex items-center gap-1.5 px-3 py-1.5
+                            <button type="button"
+                                th:data-id="${estudio.idEstudio}"
+                                th:data-titulo="${estudio.titulo}"
+                                onclick="abrirModalEliminarEstudio(this)"
+                                class="flex items-center gap-1.5 px-3 py-1.5
               bg-transparent text-[#666]
               rounded-lg text-xs font-bold
               hover:bg-red-100 hover:text-red-700
               border border-transparent hover:border-red-200
               transition-colors">
                                 Eliminar
-                            </a>
+                            </button>
 
                             <!-- Ver -->
                             <a th:href="@{/admin/estudios/{id}(id=${estudio.idEstudio})}"
@@ -1218,6 +1223,60 @@ $(document).ready(function () {
         });
     }
 });
+</script>
+
+<!-- Toast post-redirect: notificación de cambio de estado -->
+<div th:if="${notifToastTitulo}"
+     id="notif-toast-payload"
+     th:data-titulo="${notifToastTitulo}"
+     th:data-mensaje="${notifToastMensaje}"
+     style="display:none"></div>
+<script th:if="${notifToastTitulo}">
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        var el = document.getElementById('notif-toast-payload');
+        if (el && typeof window.showNavToast === 'function') {
+            window.showNavToast(
+                el.getAttribute('data-titulo'),
+                el.getAttribute('data-mensaje'),
+                'SISTEMA'
+            );
+        }
+    }, 400);
+});
+</script>
+
+<!-- Modal confirmar eliminar estudio -->
+<div id="modalEliminarEstudio"
+     class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-xl p-8 max-w-sm w-full mx-4">
+        <h2 class="text-xl font-bold text-[#1a1a1a] mb-2">Eliminar estudio</h2>
+        <p class="text-sm text-[#555] mb-1">¿Estás seguro de eliminar el estudio</p>
+        <p class="font-bold text-[#ba1a1a] mb-5" id="nombreEstudioEliminar"></p>
+        <p class="text-xs text-[#888] mb-6">El estudio cambiará de estado a <strong>DEROGADO</strong> y dejará de ser visible para socios y visualizadores.</p>
+        <form id="formEliminarEstudio" method="post" class="flex justify-end gap-3">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="button"
+                    onclick="document.getElementById('modalEliminarEstudio').classList.add('hidden')"
+                    class="px-4 py-2 rounded-lg text-sm font-semibold text-[#555] hover:bg-gray-100 transition">
+                Cancelar
+            </button>
+            <button type="submit"
+                    class="px-4 py-2 rounded-lg text-sm font-semibold bg-[#ba1a1a] text-white hover:bg-[#9b0000] transition">
+                Sí, eliminar
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+function abrirModalEliminarEstudio(btn) {
+    var id = btn.getAttribute('data-id');
+    var titulo = btn.getAttribute('data-titulo');
+    document.getElementById('nombreEstudioEliminar').textContent = titulo;
+    document.getElementById('formEliminarEstudio').action = '/admin/estudios/eliminar/' + id;
+    document.getElementById('modalEliminarEstudio').classList.remove('hidden');
+}
 </script>
 </body>
 
