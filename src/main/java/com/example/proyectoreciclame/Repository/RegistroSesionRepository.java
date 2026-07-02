@@ -78,10 +78,19 @@ public interface RegistroSesionRepository extends JpaRepository<RegistroSesion, 
     @Query("SELECT COUNT(DISTINCT rs.usuario.idUsuario) FROM RegistroSesion rs JOIN rs.usuario u JOIN u.rol r WHERE rs.estado = 'VIGENTE' AND UPPER(r.nombre) NOT IN ('ADMIN', 'SUPERADMIN')")
     long countUsuariosActivos();
 
-    // 4. Nombre del usuario más frecuente — devuelve null si hay error
-    default String getUsuarioMasFrecuente() {
-        return null;
-    }
+    // 4. Nombre del usuario más frecuente — excluye admins/superadmins
+    @Query(value = """
+            SELECT CONCAT(u.nombres, ' ', u.apellido_paterno)
+            FROM registro_sesiones rs
+            JOIN usuarios u ON rs.id_usuario = u.id_usuario
+            JOIN rol r ON u.id_rol = r.id_rol
+            WHERE UPPER(r.nombre) NOT IN ('ADMIN', 'SUPERADMIN')
+              AND u.eliminado_en IS NULL
+            GROUP BY u.id_usuario, u.nombres, u.apellido_paterno
+            ORDER BY COUNT(rs.id_sesion) DESC
+            LIMIT 1
+            """, nativeQuery = true)
+    String getUsuarioMasFrecuente();
 
     @Query("SELECT COUNT(r) FROM RegistroSesion r WHERE r.estado = 'VIGENTE' AND r.fechaInicio >= :desde")
     long countSesionesActivas(@Param("desde") java.time.LocalDateTime desde);

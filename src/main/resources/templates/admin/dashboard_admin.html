@@ -110,7 +110,7 @@
 
     <main class="flex-1 overflow-y-auto px-4 sm:px-6 py-2">
 
-        <div class="w-full h-full">
+        <div id="dashboardContent" class="w-full h-full">
 
             <div class="mb-3" data-aos="fade-down">
                 <h2 class="font-headline font-extrabold text-[2rem] text-on-primary-fixed leading-tight tracking-tight">
@@ -476,6 +476,49 @@
 </script>
 <!-- Contador animado en KPIs -->
 <script th:src="@{/js/animations.js}"></script>
+
+<!-- Tiempo real via WebSocket -->
+<script>
+(function () {
+    function _swapFade(newEl, curEl) {
+        curEl.style.transition = 'opacity 0.25s ease-out';
+        curEl.style.opacity = '0';
+        setTimeout(function () {
+            curEl.parentNode.insertBefore(newEl, curEl);
+            curEl.remove();
+            newEl.querySelectorAll('[data-aos]').forEach(function (el) { el.classList.add('aos-animate'); });
+            newEl.style.opacity = '0';
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    newEl.style.transition = 'opacity 0.35s ease-in';
+                    newEl.style.opacity = '1';
+                });
+            });
+        }, 270);
+    }
+
+    function fetchDashboard() {
+        fetch(window.location.href, { credentials: 'same-origin' })
+            .then(function (r) { return r.ok ? r.text() : null; })
+            .then(function (html) {
+                if (!html) return;
+                var doc = new DOMParser().parseFromString(html, 'text/html');
+                var nuevo = doc.getElementById('dashboardContent');
+                var actual = document.getElementById('dashboardContent');
+                if (nuevo && actual) _swapFade(nuevo, actual);
+            })
+            .catch(function () {});
+    }
+
+    function suscribirWS() {
+        if (!window._stompClient) { setTimeout(suscribirWS, 500); return; }
+        window._stompClient.subscribe('/topic/admin/solicitudes', fetchDashboard);
+        window._stompClient.subscribe('/topic/admin/usuarios', fetchDashboard);
+        window._stompClient.subscribe('/topic/admin/actividad', fetchDashboard);
+    }
+    document.addEventListener('DOMContentLoaded', suscribirWS);
+})();
+</script>
 
 <!-- Chatbot -->
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot}"></th:block>

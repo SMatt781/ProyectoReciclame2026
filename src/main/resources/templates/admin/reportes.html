@@ -117,7 +117,7 @@
             </div>
 
             <!-- ── KPIs ── -->
-            <section class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-5">
+            <section id="reportesKpiSection" class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-5">
 
                 <!-- Ingresos hoy -->
                 <article data-aos="fade-up" data-aos-delay="0"
@@ -233,7 +233,8 @@
                     </h3>
                     <div class="flex items-center justify-center gap-8" style="min-height: 160px;">
                         <div style="position: relative; width: 130px; height: 130px; flex-shrink: 0;">
-                            <canvas id="graficoDona" width="130" height="130" style="display: block;"></canvas>
+                            <canvas id="graficoDona" width="130" height="130" style="display: block;"
+                                    th:attr="data-nor=${descargasNormativa},data-est=${descargasEstudio}"></canvas>
                             <!-- Número central -->
                             <div class="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
                                 <span class="text-xl font-extrabold text-on-primary-fixed" th:text="${descargasEstudio + descargasNormativa}">0</span>
@@ -262,7 +263,7 @@
             </div>
 
             <!-- ── Fila inferior ── -->
-            <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-6">
+            <div id="reportesBottomRow" class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-6">
 
                 <!-- Top 5 documentos más descargados -->
                 <div data-aos="fade-up" data-aos-delay="0"
@@ -397,8 +398,8 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
 
-    let graficoIngresosInstance = null;
-    let rangoActual = 7;
+    var graficoIngresosInstance = null;
+    var rangoActual = 7;
 
     // Función para cambiar rango dinámicamente
     async function cambiarRangoGrafico(dias) {
@@ -493,7 +494,7 @@
 
     // ── Gráfico de dona: descargas por tipo ─────────────────────────────────
     const ctxDona = document.getElementById('graficoDona').getContext('2d');
-    new Chart(ctxDona, {
+    window._reportesDonutChart = new Chart(ctxDona, {
         type: 'doughnut',
         data: {
             labels: ['Normativas', 'Estudios'],
@@ -541,6 +542,74 @@
 </script>
 <!-- Contador animado en KPIs -->
 <script th:src="@{/js/animations.js}"></script>
+
+<!-- Tiempo real via WebSocket -->
+<script>
+(function () {
+    function fetchReportes() {
+        fetch(window.location.href, { credentials: 'same-origin' })
+            .then(function (r) { return r.ok ? r.text() : null; })
+            .then(function (html) {
+                if (!html) return;
+                var doc = new DOMParser().parseFromString(html, 'text/html');
+
+                /* KPIs: swap directo */
+                var newKpi = doc.getElementById('reportesKpiSection');
+                var curKpi = document.getElementById('reportesKpiSection');
+                if (newKpi && curKpi) {
+                    curKpi.outerHTML = newKpi.outerHTML;
+                    var k = document.getElementById('reportesKpiSection');
+                    if (k) k.querySelectorAll('[data-aos]').forEach(function (el) { el.classList.add('aos-animate'); });
+                }
+
+                /* Fila inferior: fade swap */
+                var newBot = doc.getElementById('reportesBottomRow');
+                var curBot = document.getElementById('reportesBottomRow');
+                if (newBot && curBot) {
+                    curBot.style.transition = 'opacity 0.25s ease-out';
+                    curBot.style.opacity = '0';
+                    setTimeout(function () {
+                        curBot.parentNode.insertBefore(newBot, curBot);
+                        curBot.remove();
+                        newBot.querySelectorAll('[data-aos]').forEach(function (el) { el.classList.add('aos-animate'); });
+                        newBot.style.opacity = '0';
+                        requestAnimationFrame(function () {
+                            requestAnimationFrame(function () {
+                                newBot.style.transition = 'opacity 0.35s ease-in';
+                                newBot.style.opacity = '1';
+                            });
+                        });
+                    }, 270);
+                }
+
+                /* Dona: actualizar datos sin destruir el canvas */
+                var newCanvas = doc.getElementById('graficoDona');
+                if (newCanvas && window._reportesDonutChart) {
+                    var newNor = parseInt(newCanvas.dataset.nor || '0');
+                    var newEst = parseInt(newCanvas.dataset.est || '0');
+                    window._reportesDonutChart.data.datasets[0].data = [newNor, newEst];
+                    window._reportesDonutChart.update();
+                    var centerNum = document.querySelector('#graficoDona').closest('div[style]').querySelector('span.text-xl');
+                    if (centerNum) centerNum.textContent = newNor + newEst;
+                }
+
+                /* Gráfico de barras: re-fetch vía API existente */
+                if (typeof cambiarRangoGrafico === 'function') {
+                    cambiarRangoGrafico(rangoActual || 7);
+                }
+            })
+            .catch(function () {});
+    }
+
+    function suscribirWS() {
+        if (!window._stompClient) { setTimeout(suscribirWS, 500); return; }
+        window._stompClient.subscribe('/topic/admin/solicitudes', fetchReportes);
+        window._stompClient.subscribe('/topic/admin/usuarios', fetchReportes);
+        window._stompClient.subscribe('/topic/admin/actividad', fetchReportes);
+    }
+    document.addEventListener('DOMContentLoaded', suscribirWS);
+})();
+</script>
 
 <!-- Chatbot -->
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot}"></th:block>

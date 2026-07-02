@@ -158,6 +158,7 @@
                                     <h3 class="font-headline text-sm font-bold">Solicitudes Pendientes</h3>
                                     <p class="text-[11px] text-on-primary-container mt-1 leading-relaxed">
                                         Hay <span th:text="${usuariosPendientes}"
+                                                  id="pendientes-banner"
                                                   class="font-bold text-white"></span> nuevos usuarios esperando
                                         validación para ingresar a la plataforma.
                                     </p>
@@ -293,6 +294,7 @@
                                class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]" />
                     </div>
                     <a th:href="@{/admin/usuarios/gestion}"
+                       id="limpiarFiltros"
                        class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition"
                        title="Limpiar filtros">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1009,6 +1011,7 @@
 
             <div class="pt-6 mt-4 flex justify-end gap-3 border-t border-outline-variant/30">
                 <button type="submit"
+                        data-no-spinner="true"
                         class="px-6 py-2.5 rounded-lg bg-secondary text-on-secondary font-bold text-sm hover:bg-[#00210c] transition-colors shadow-sm cursor-pointer">
                     Aplicar Filtros
                 </button>
@@ -1164,16 +1167,19 @@
         const filtersForm = document.getElementById('filtersForm');
         const dateError = document.getElementById('dateError');
 
-        filtersForm.addEventListener('submit', (e) => {
-            if (dateStart.value && dateEnd.value) {
-                if (new Date(dateStart.value) > new Date(dateEnd.value)) {
-                    e.preventDefault(); // Bloqueamos el envío porque hay error
-                    dateError.classList.remove('hidden');
-                    return;
-                } else {
-                    dateError.classList.add('hidden');
-                }
+        filtersForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (dateStart.value && dateEnd.value && new Date(dateStart.value) > new Date(dateEnd.value)) {
+                dateError.classList.remove('hidden');
+                return;
             }
+            dateError.classList.add('hidden');
+            var params = new URLSearchParams(new FormData(filtersForm));
+            var currentTexto = new URLSearchParams(window.location.search).get('texto');
+            if (currentTexto) params.set('texto', currentTexto);
+            history.pushState(null, '', '/admin/usuarios/gestion?' + params.toString());
+            closeModal();
+            if (window._fetchListaGestion) window._fetchListaGestion();
         });
     });
 
@@ -1222,14 +1228,124 @@
 <div id="modal-dinamico-container"></div>
 
 <script>
-var _animRowGestion = null;
-
 var _SPINNER_SVG = '<svg class="animate-spin w-4 h-4 inline-block mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>';
 
-function abrirModalDinamico(url, triggerEl) {
-    var isBlockAction = url.indexOf('modal=block') !== -1 || url.indexOf('modal=unblock') !== -1;
-    _animRowGestion = (triggerEl && isBlockAction) ? triggerEl.closest('[data-user-id]') : null;
+function _extractModalEl(html) {
+    var doc = new DOMParser().parseFromString(html, 'text/html');
+    var candidates = doc.querySelectorAll('div');
+    for (var i = 0; i < candidates.length; i++) {
+        var el = candidates[i];
+        if (el.id === 'filtersModal') continue;
+        if (el.classList.contains('fixed') && el.classList.contains('inset-0') &&
+            !el.classList.contains('hidden') && !el.classList.contains('pointer-events-none')) {
+            return el;
+        }
+    }
+    return null;
+}
 
+function _mountModalEl(modal, container, opts) {
+    container.innerHTML = modal.outerHTML;
+    var overlay = container.firstElementChild;
+    if (overlay) overlay.style.zIndex = '210';
+
+    /* Bloquear spinner.js en botones del modal */
+    container.querySelectorAll('button[type="submit"]').forEach(function(btn) {
+        btn.dataset.noSpinner = 'true';
+    });
+
+    /* Cerrar con links de cancelar */
+    container.querySelectorAll('a').forEach(function(a) {
+        var href = a.getAttribute('href') || '';
+        if (href.indexOf('/gestion') !== -1 && href.indexOf('modal=') === -1) {
+            a.addEventListener('click', function(e) { e.preventDefault(); container.innerHTML = ''; });
+        }
+    });
+
+    /* Cerrar al click en fondo oscuro */
+    if (overlay) {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) container.innerHTML = '';
+        });
+    }
+
+    /* ── AJAX: Editar ── */
+    if (opts.isEdit) {
+        container.querySelectorAll('form[method="post"]').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var btn = form.querySelector('button[type="submit"]');
+                if (btn) { btn.disabled = true; btn.innerHTML = _SPINNER_SVG + 'Guardando...'; }
+                fetch(form.action, { method: 'POST', body: new FormData(form), credentials: 'same-origin' })
+                    .then(function(res) {
+                        if (res.redirected) {
+                            container.innerHTML = '';
+                            if (window._fetchListaGestion) window._fetchListaGestion();
+                        } else if (res.ok) {
+                            res.text().then(function(errHtml) {
+                                var errModal = _extractModalEl(errHtml);
+                                if (errModal) _mountModalEl(errModal, container, opts);
+                            });
+                        }
+                    })
+                    .catch(function() { window.location.reload(); });
+            });
+        });
+    }
+
+    /* ── AJAX: Bloquear / Desbloquear ── */
+    if ((opts.isBlock || opts.isUnblock) && opts.row) {
+        var row    = opts.row;
+        var userId = row.dataset.userId;
+        container.querySelectorAll('form[method="post"]').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var btn = form.querySelector('button[type="submit"]');
+                if (btn) { btn.disabled = true; btn.innerHTML = _SPINNER_SVG + 'Procesando...'; }
+                fetch(form.action, { method: 'POST', body: new FormData(form), credentials: 'same-origin' })
+                    .then(function(res) {
+                        if (!res.ok && !res.redirected) throw new Error('HTTP ' + res.status);
+                        /* Inicio de fetch paralelo durante la animación */
+                        var pageFetch = fetch(window.location.href, { credentials: 'same-origin' }).then(function(r) { return r.text(); });
+                        container.innerHTML = '';
+                        row.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease-out';
+                        row.style.transform  = 'translateX(90px)';
+                        row.style.opacity    = '0';
+                        setTimeout(function() {
+                            pageFetch.then(function(pageHtml) {
+                                var freshDoc = new DOMParser().parseFromString(pageHtml, 'text/html');
+                                var newRow   = freshDoc.querySelector('[data-user-id="' + userId + '"]');
+                                if (newRow && row.parentNode) {
+                                    newRow.style.transform = 'translateX(-40px)';
+                                    newRow.style.opacity   = '0';
+                                    row.parentNode.insertBefore(newRow, row);
+                                    row.remove();
+                                    requestAnimationFrame(function() {
+                                        requestAnimationFrame(function() {
+                                            newRow.style.transition = 'transform 0.32s ease-out, opacity 0.32s ease-out';
+                                            newRow.style.transform  = '';
+                                            newRow.style.opacity    = '';
+                                        });
+                                    });
+                                } else if (row.parentNode) {
+                                    row.remove();
+                                }
+                            });
+                        }, 380);
+                    })
+                    .catch(function() { window.location.reload(); });
+            });
+        });
+    }
+}
+
+function abrirModalDinamico(url, triggerEl) {
+    var isBlock   = url.indexOf('modal=block')   !== -1;
+    var isUnblock = url.indexOf('modal=unblock') !== -1;
+    var isEdit    = url.indexOf('modal=edit')    !== -1;
+    var row       = (triggerEl && (isBlock || isUnblock)) ? triggerEl.closest('[data-user-id]') : null;
     var container = document.getElementById('modal-dinamico-container');
 
     container.innerHTML = [
@@ -1241,116 +1357,11 @@ function abrirModalDinamico(url, triggerEl) {
     ].join('');
 
     fetch(url, { credentials: 'same-origin' })
-        .then(function(res) {
-            if (!res.ok) throw new Error('HTTP ' + res.status);
-            return res.text();
-        })
+        .then(function(res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.text(); })
         .then(function(html) {
-            var doc = new DOMParser().parseFromString(html, 'text/html');
-
-            var modal = null;
-            var candidates = doc.querySelectorAll('div');
-            for (var i = 0; i < candidates.length; i++) {
-                var el = candidates[i];
-                if (el.id === 'filtersModal') continue;
-                if (el.classList.contains('fixed') && el.classList.contains('inset-0') &&
-                    !el.classList.contains('hidden') && !el.classList.contains('pointer-events-none')) {
-                    modal = el;
-                    break;
-                }
-            }
-
-            if (!modal) {
-                container.innerHTML = '';
-                window.location.href = url;
-                return;
-            }
-
-            container.innerHTML = modal.outerHTML;
-
-            /* Forzar z-index por encima del navbar */
-            var overlay = container.firstElementChild;
-            if (overlay) overlay.style.zIndex = '210';
-
-            /* Evitar que spinner.js procese los botones del modal (doble envío) */
-            container.querySelectorAll('button[type="submit"]').forEach(function(btn) {
-                btn.dataset.noSpinner = 'true';
-            });
-
-            /* Cerrar con links de cancelar */
-            container.querySelectorAll('a').forEach(function(a) {
-                var href = a.getAttribute('href') || '';
-                if (href.indexOf('/gestion') !== -1 && href.indexOf('modal=') === -1) {
-                    a.addEventListener('click', function(e) { e.preventDefault(); container.innerHTML = ''; });
-                }
-            });
-
-            /* Cerrar al click en fondo oscuro */
-            if (overlay) {
-                overlay.addEventListener('click', function(e) {
-                    if (e.target === overlay) container.innerHTML = '';
-                });
-            }
-
-            /* AJAX para Bloquear / Desbloquear — sin recarga de página */
-            if (isBlockAction && _animRowGestion) {
-                var row = _animRowGestion;
-                var userId = row.dataset.userId;
-
-                container.querySelectorAll('form[method="post"]').forEach(function(form) {
-                    form.addEventListener('submit', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        /* Spinner en botón confirmar */
-                        var btn = form.querySelector('button[type="submit"]');
-                        if (btn) { btn.disabled = true; btn.innerHTML = _SPINNER_SVG + 'Procesando...'; }
-
-                        var formData = new FormData(form);
-
-                        fetch(form.action, { method: 'POST', body: formData, credentials: 'same-origin' })
-                            .then(function(res) {
-                                if (!res.ok && !res.redirected) throw new Error('HTTP ' + res.status);
-
-                                /* Cerrar modal */
-                                container.innerHTML = '';
-
-                                /* Deslizar fila actual hacia afuera */
-                                row.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease-out';
-                                row.style.transform = 'translateX(90px)';
-                                row.style.opacity = '0';
-
-                                /* Traer fila actualizada del servidor */
-                                return fetch(window.location.href, { credentials: 'same-origin' })
-                                    .then(function(r) { return r.text(); })
-                                    .then(function(pageHtml) {
-                                        var freshDoc = new DOMParser().parseFromString(pageHtml, 'text/html');
-                                        var newRow = freshDoc.querySelector('[data-user-id="' + userId + '"]');
-
-                                        setTimeout(function() {
-                                            if (newRow && row.parentNode) {
-                                                /* Preparar entrada desde la izquierda */
-                                                newRow.style.transform = 'translateX(-40px)';
-                                                newRow.style.opacity = '0';
-                                                row.parentNode.insertBefore(newRow, row);
-                                                row.remove();
-                                                requestAnimationFrame(function() {
-                                                    requestAnimationFrame(function() {
-                                                        newRow.style.transition = 'transform 0.32s ease-out, opacity 0.32s ease-out';
-                                                        newRow.style.transform = '';
-                                                        newRow.style.opacity = '';
-                                                    });
-                                                });
-                                            } else if (row.parentNode) {
-                                                row.remove();
-                                            }
-                                        }, 380);
-                                    });
-                            })
-                            .catch(function() { window.location.reload(); });
-                    });
-                });
-            }
+            var modal = _extractModalEl(html);
+            if (!modal) { container.innerHTML = ''; window.location.href = url; return; }
+            _mountModalEl(modal, container, { isEdit: isEdit, isBlock: isBlock, isUnblock: isUnblock, row: row });
         })
         .catch(function(err) {
             console.error('abrirModalDinamico error:', err);
@@ -1387,6 +1398,8 @@ function abrirModalDinamico(url, triggerEl) {
                 actualizarStat('[data-stat="activos"]',    data.usuariosActivos);
                 actualizarStat('[data-stat="bloqueados"]', data.usuariosBloqueados);
                 actualizarStat('[data-stat="pendientes"]', data.usuariosPendientes);
+                var banner = document.getElementById('pendientes-banner');
+                if (banner && data.usuariosPendientes !== undefined) banner.textContent = data.usuariosPendientes;
             })
             .catch(function () {});
     }
@@ -1422,6 +1435,8 @@ function abrirModalDinamico(url, triggerEl) {
             .catch(function () {});
     }
 
+    window._fetchListaGestion = fetchLista;
+
     function suscribirWS() {
         if (!window._stompClient) { setTimeout(suscribirWS, 500); return; }
         window._stompClient.subscribe('/topic/admin/solicitudes', function () {
@@ -1433,6 +1448,34 @@ function abrirModalDinamico(url, triggerEl) {
 
     document.addEventListener('DOMContentLoaded', suscribirWS);
 })();
+</script>
+
+<!-- AJAX navegación: búsqueda sin recarga de página -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var searchForm = document.querySelector('form[action="/admin/usuarios/gestion"][method="get"]');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var params = new URLSearchParams();
+            var texto = (searchForm.querySelector('[name="texto"]') || {}).value || '';
+            if (texto) params.set('texto', texto);
+            history.pushState(null, '', '/admin/usuarios/gestion?' + params.toString());
+            if (window._fetchListaGestion) window._fetchListaGestion();
+        });
+    }
+
+    var limpiarBtn = document.getElementById('limpiarFiltros');
+    if (limpiarBtn) {
+        limpiarBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            var input = searchForm ? searchForm.querySelector('[name="texto"]') : null;
+            if (input) input.value = '';
+            history.pushState(null, '', '/admin/usuarios/gestion');
+            if (window._fetchListaGestion) window._fetchListaGestion();
+        });
+    }
+});
 </script>
 
 <!-- Chatbot -->

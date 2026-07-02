@@ -245,6 +245,12 @@
                             return;
                         }
 
+                        /* Paso que apunta al sidebar completo en desktop: centrar en el área de contenido */
+                        if (!isMobile && sidebar && sidebar.isSameNode(targetEl)) {
+                            this._pinRightOfSidebar(sidebar);
+                            return;
+                        }
+
                         /* En mobile, pasos que apuntan a enlaces dentro del sidebar usan 'bottom' */
                         const inSidebar = isMobile && sidebar && sidebar.contains(targetEl);
                         let position = inSidebar ? 'bottom' : (step.position || 'bottom');
@@ -365,6 +371,28 @@
                     const margin = 8;
                     card.style.left      = Math.max(margin, Math.round((vw - cw) / 2)) + 'px';
                     card.style.top       = (window.innerHeight - ch - margin) + 'px';
+                    card.style.transform = 'none';
+                }, 80);
+            });
+        }
+
+        /* Card centrada en el área de contenido principal (derecha del sidebar), solo desktop */
+        _pinRightOfSidebar(sidebar) {
+            const { card, arrow } = this._els;
+            arrow.style.display = 'none';
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    const sb  = sidebar.getBoundingClientRect();
+                    const vw  = window.innerWidth;
+                    const vh  = window.innerHeight;
+                    const cw  = card.offsetWidth  || 340;
+                    const ch  = card.offsetHeight || 320;
+                    const mainStart = sb.right + 16;
+                    const mainWidth = vw - mainStart - 16;
+                    const left = mainStart + Math.max(0, (mainWidth - cw) / 2);
+                    const top  = Math.max(16, (vh - ch) / 2);
+                    card.style.left      = left + 'px';
+                    card.style.top       = top  + 'px';
                     card.style.transform = 'none';
                 }, 80);
             });

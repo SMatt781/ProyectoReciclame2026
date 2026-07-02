@@ -2,11 +2,14 @@ package com.example.proyectoreciclame.Controller;
 
 import com.example.proyectoreciclame.Entity.Estudio;
 import com.example.proyectoreciclame.Entity.Normativa;
+import com.example.proyectoreciclame.Entity.RegistroDescarga;
 import com.example.proyectoreciclame.Entity.Usuario;
 import com.example.proyectoreciclame.Repository.EstudioRepository;
 import com.example.proyectoreciclame.Repository.NormativaRepository;
+import com.example.proyectoreciclame.Repository.RegistroDescargaRepository;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
 import com.example.proyectoreciclame.Service.DocumentConverterService;
+import com.example.proyectoreciclame.Service.NotificacionWebSocketService;
 import com.example.proyectoreciclame.Service.S3StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,6 +53,12 @@ public class DocumentDownloadController {
 
     @Autowired
     private DocumentConverterService documentConverterService;
+
+    @Autowired
+    private RegistroDescargaRepository registroDescargaRepository;
+
+    @Autowired
+    private NotificacionWebSocketService webSocketService;
 
     /**
      * GET /documentos/estudio/{id}/stream
@@ -217,6 +227,19 @@ public class DocumentDownloadController {
         String clave = estudio.getArchivoUrl().replace("/uploads/estudios/", "estudios/");
         String filename = estudio.getArchivoNombre() != null ? estudio.getArchivoNombre() : "documento";
         String downloadUrl = s3StorageService.generatePresignedDownloadUrl(clave, filename, duration);
+
+        if (usuario != null) {
+            RegistroDescarga reg = new RegistroDescarga();
+            reg.setUsuario(usuario);
+            reg.setTipoDocumento("ESTUDIO");
+            reg.setIdDocumento(id);
+            reg.setNombreDocumento(filename);
+            reg.setUrlDescargada("/documentos/estudio/" + id + "/download");
+            reg.setFechaDescarga(LocalDateTime.now());
+            registroDescargaRepository.save(reg);
+            webSocketService.enviarTopico("/topic/admin/actividad", Map.of("event", "download"));
+        }
+
         response.sendRedirect(downloadUrl);
     }
 
@@ -252,6 +275,19 @@ public class DocumentDownloadController {
         String clave = normativa.getArchivoUrl().replace("/uploads/normativas/", "normativas/");
         String filename = normativa.getArchivoNombre() != null ? normativa.getArchivoNombre() : "normativa";
         String downloadUrl = s3StorageService.generatePresignedDownloadUrl(clave, filename, duration);
+
+        if (usuario != null) {
+            RegistroDescarga reg = new RegistroDescarga();
+            reg.setUsuario(usuario);
+            reg.setTipoDocumento("NORMATIVA");
+            reg.setIdDocumento(id);
+            reg.setNombreDocumento(filename);
+            reg.setUrlDescargada("/documentos/normativa/" + id + "/download");
+            reg.setFechaDescarga(LocalDateTime.now());
+            registroDescargaRepository.save(reg);
+            webSocketService.enviarTopico("/topic/admin/actividad", Map.of("event", "download"));
+        }
+
         response.sendRedirect(downloadUrl);
     }
 

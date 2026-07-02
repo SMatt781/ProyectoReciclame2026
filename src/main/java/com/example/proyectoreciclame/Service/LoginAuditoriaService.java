@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -22,6 +23,7 @@ public class LoginAuditoriaService {
     private final UsuarioRepository usuarioRepository;
     private final IntentoLoginRepository intentoLoginRepository;
     private final RegistroSesionRepository registroSesionRepository;
+    private final NotificacionWebSocketService webSocketService;
 
     // Máximo de intentos fallidos antes del bloqueo
     private static final int MAX_INTENTOS = 5;
@@ -31,10 +33,12 @@ public class LoginAuditoriaService {
 
     public LoginAuditoriaService(UsuarioRepository usuarioRepository,
                                  IntentoLoginRepository intentoLoginRepository,
-                                 RegistroSesionRepository registroSesionRepository) {
+                                 RegistroSesionRepository registroSesionRepository,
+                                 NotificacionWebSocketService webSocketService) {
         this.usuarioRepository = usuarioRepository;
         this.intentoLoginRepository = intentoLoginRepository;
         this.registroSesionRepository = registroSesionRepository;
+        this.webSocketService = webSocketService;
     }
 
     @Transactional
@@ -83,6 +87,8 @@ public class LoginAuditoriaService {
             HttpSession httpSession = request.getSession();
             httpSession.setAttribute("ID_SESION_BD", sesion.getIdSesion());
         }
+
+        webSocketService.enviarTopico("/topic/admin/actividad", Map.of("event", "login"));
     }
 
     /**
@@ -167,6 +173,8 @@ public class LoginAuditoriaService {
                 }
             }
         }
+
+        webSocketService.enviarTopico("/topic/admin/actividad", Map.of("event", "logout"));
     }
 
     private String obtenerIp(HttpServletRequest request) {

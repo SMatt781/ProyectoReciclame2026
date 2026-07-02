@@ -66,7 +66,7 @@
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <main class="flex-1 overflow-y-auto px-6 py-2">
-        <div class="w-full h-full">
+        <div id="descargasMainContent" class="w-full h-full">
 
             <!-- Encabezado -->
             <div class="mb-3" data-aos="fade-down">
@@ -213,6 +213,7 @@
 
                     <!-- Limpiar filtros -->
                     <a th:href="@{/admin/registros/descargas}"
+                       id="limpiarDescargas"
                        class="flex items-center justify-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition no-underline">
                         <svg class="w-5 h-5 text-current"
                              fill="none"
@@ -228,6 +229,7 @@
 
                     <!-- Filtrar -->
                     <button type="submit"
+                            data-no-spinner="true"
                             class="flex items-center justify-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition">
                         <svg class="w-5 h-5 text-current"
                              fill="none"
@@ -411,6 +413,97 @@
         </div>
     </main>
 </div>
+
+<!-- Tiempo real + AJAX filtros -->
+<script>
+(function () {
+    function _swapFade(newEl, curEl) {
+        curEl.style.transition = 'opacity 0.25s ease-out';
+        curEl.style.opacity = '0';
+        setTimeout(function () {
+            curEl.parentNode.insertBefore(newEl, curEl);
+            curEl.remove();
+            newEl.querySelectorAll('[data-aos]').forEach(function (el) { el.classList.add('aos-animate'); });
+            newEl.style.opacity = '0';
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    newEl.style.transition = 'opacity 0.35s ease-in';
+                    newEl.style.opacity = '1';
+                });
+            });
+        }, 270);
+    }
+
+    function fetchDescargas() {
+        fetch(window.location.href, { credentials: 'same-origin' })
+            .then(function (r) { return r.ok ? r.text() : null; })
+            .then(function (html) {
+                if (!html) return;
+                var doc = new DOMParser().parseFromString(html, 'text/html');
+                var nuevo = doc.getElementById('descargasMainContent');
+                var actual = document.getElementById('descargasMainContent');
+                if (nuevo && actual) _swapFade(nuevo, actual);
+            })
+            .catch(function () {});
+    }
+
+    window._fetchDescargas = fetchDescargas;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.querySelector('form[action="/admin/registros/descargas"][method="get"]');
+        var limpiar = document.getElementById('limpiarDescargas');
+
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var params = new URLSearchParams();
+                var texto       = (form.querySelector('[name="texto"]')       || {}).value || '';
+                var tipo        = (form.querySelector('[name="tipo"]')        || {}).value || '';
+                var fechaInicio = (form.querySelector('[name="fechaInicio"]') || {}).value || '';
+                var fechaFin    = (form.querySelector('[name="fechaFin"]')    || {}).value || '';
+                if (texto)       params.set('texto', texto);
+                if (tipo)        params.set('tipo', tipo);
+                if (fechaInicio) params.set('fechaInicio', fechaInicio);
+                if (fechaFin)    params.set('fechaFin', fechaFin);
+                history.pushState(null, '', '/admin/registros/descargas?' + params.toString());
+                fetchDescargas();
+            });
+        }
+
+        if (limpiar) {
+            limpiar.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (form) {
+                    var t  = form.querySelector('[name="texto"]');       if (t)  t.value  = '';
+                    var ti = form.querySelector('[name="tipo"]');        if (ti) ti.value = '';
+                    var fi = form.querySelector('[name="fechaInicio"]'); if (fi) fi.value = '';
+                    var ff = form.querySelector('[name="fechaFin"]');    if (ff) ff.value = '';
+                }
+                history.pushState(null, '', '/admin/registros/descargas');
+                fetchDescargas();
+            });
+        }
+
+        /* Paginación sin recarga */
+        document.addEventListener('click', function (e) {
+            var link = e.target.closest('a[href*="/admin/registros/descargas"]');
+            if (!link || link.id === 'limpiarDescargas' || link.href.indexOf('exportar') !== -1) return;
+            e.preventDefault();
+            var url = new URL(link.href);
+            history.pushState(null, '', url.pathname + url.search);
+            fetchDescargas();
+        });
+    });
+
+    function suscribirWS() {
+        if (!window._stompClient) { setTimeout(suscribirWS, 500); return; }
+        window._stompClient.subscribe('/topic/admin/solicitudes', fetchDescargas);
+        window._stompClient.subscribe('/topic/admin/usuarios', fetchDescargas);
+        window._stompClient.subscribe('/topic/admin/actividad', fetchDescargas);
+    }
+    document.addEventListener('DOMContentLoaded', suscribirWS);
+})();
+</script>
 
 <!-- Chatbot -->
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot}"></th:block>
