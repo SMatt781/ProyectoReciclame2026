@@ -198,7 +198,7 @@
                             <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                                 Total Usuarios
                             </h4>
-                            <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalUsuarios}">
+                            <div class="text-3xl font-extrabold text-on-primary-fixed" data-stat="total" th:text="${totalUsuarios}">
                             </div>
                         </div>
                     </article>
@@ -224,7 +224,7 @@
                             <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                                 Usuarios Activos
                             </h4>
-                            <div class="text-3xl font-extrabold text-secondary" th:text="${usuariosActivos}"></div>
+                            <div class="text-3xl font-extrabold text-secondary" data-stat="activos" th:text="${usuariosActivos}"></div>
                         </div>
                     </article>
 
@@ -250,7 +250,7 @@
                             <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                                 Usuarios Bloqueados
                             </h4>
-                            <div class="text-3xl font-extrabold text-error" th:text="${usuariosBloqueados}"></div>
+                            <div class="text-3xl font-extrabold text-error" data-stat="bloqueados" th:text="${usuariosBloqueados}"></div>
                         </div>
                     </article>
 
@@ -274,7 +274,7 @@
                             <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                                 Pendientes
                             </h4>
-                            <div class="text-3xl font-extrabold text-amber-600" th:text="${usuariosPendientes}">
+                            <div class="text-3xl font-extrabold text-amber-600" data-stat="pendientes" th:text="${usuariosPendientes}">
                             </div>
                         </div>
                     </article>
@@ -316,7 +316,7 @@
                 </form>
 
                 <!-- Tabla + paginación -->
-                <div class="flex flex-col">
+                <div id="gestionListContainer" class="flex flex-col">
                     <div class="w-full pb-4" th:if="${not #lists.isEmpty(usuarios)}">
 
                         <div class="w-full flex flex-col gap-4">
@@ -336,16 +336,17 @@
                             <div th:each="u, uIdx : ${usuarios}"
                                  data-aos="fade-up"
                                  th:data-aos-delay="${uIdx.index <= 9 ? uIdx.index * 40 : 0}"
+                                 th:data-user-id="${u.idUsuario}"
                                  class="bg-surface-container-lowest rounded-xl p-4 lg:px-6 lg:py-4 ambient-shadow flex flex-col lg:grid lg:grid-cols-[minmax(180px,2fr)_minmax(80px,0.8fr)_minmax(120px,1fr)_minmax(90px,0.8fr)_minmax(90px,0.8fr)_minmax(90px,0.8fr)_minmax(160px,1.3fr)] gap-4 lg:items-center group hover:bg-surface-container/50 transition-colors border border-transparent hover:border-outline-variant/30">
 
                                 <!-- Nombre -->
                                 <div class="flex items-center gap-3 w-full">
                                     <div class="flex h-9 w-9  items-center justify-center rounded-full bg-secondary-container/30 text-sm font-bold text-secondary"
                                          th:text="${u.iniciales}"></div>
-                                    <div>
-                                        <p class="text-sm font-bold leading-tight text-on-primary-fixed group-hover:text-secondary transition-colors"
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-bold leading-tight text-on-primary-fixed group-hover:text-secondary transition-colors truncate"
                                            th:text="${u.nombreCompleto}"></p>
-                                        <p class="text-[11px] leading-tight text-on-surface-variant"
+                                        <p class="text-[11px] leading-tight text-on-surface-variant truncate max-w-[200px]"
                                            th:text="${u.correo}"></p>
                                     </div>
                                 </div>
@@ -412,7 +413,7 @@
                                 <div class="flex flex-wrap items-start justify-start lg:justify-center gap-x-3 gap-y-2 w-full max-w-full min-w-0">
 
                                     <!-- EDITAR - Siempre presente -->
-                                    <button type="button" th:if="${u.estado != 'Bloqueado' && u.estado != 'Pendiente' && u.estado != 'Rechazado'}" th:data-url="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='edit', id=${u.idUsuario})}" onclick="abrirModalDinamico(this.dataset.url)" class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors " title="Editar usuario"> Editar </button>
+                                    <button type="button" th:if="${u.estado != 'Bloqueado' && u.estado != 'Pendiente' && u.estado != 'Rechazado'}" th:data-url="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='edit', id=${u.idUsuario})}" onclick="abrirModalDinamico(this.dataset.url, this)" class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors " title="Editar usuario"> Editar </button>
                                     <button th:if="${u.estado == 'Bloqueado' || u.estado == 'Pendiente' || u.estado == 'Rechazado'}"
                                             disabled
                                             class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant opacity-40 cursor-not-allowed "
@@ -424,7 +425,7 @@
                                     <button type="button"
                                             th:if="${u.estado == 'Activo'}"
                                             th:data-url="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='block', id=${u.idUsuario})}"
-                                            onclick="abrirModalDinamico(this.dataset.url)"
+                                            onclick="abrirModalDinamico(this.dataset.url, this)"
                                             class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-error-container hover:text-error transition-colors"
                                             title="Bloquear usuario">
                                         Bloquear
@@ -432,7 +433,7 @@
                                     <button type="button"
                                             th:if="${u.estado == 'Bloqueado'}"
                                             th:data-url="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='unblock', id=${u.idUsuario})}"
-                                            onclick="abrirModalDinamico(this.dataset.url)"
+                                            onclick="abrirModalDinamico(this.dataset.url, this)"
                                             class="inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-secondary-container/20 hover:text-secondary transition-colors"
                                             title="Desbloquear usuario">
                                         Desbloquear
@@ -447,7 +448,7 @@
                                     <!-- HISTORIAL - Siempre habilitado -->
                                     <button type="button"
                                             th:data-url="@{/admin/usuarios/gestion(page=${currentPage}, texto=${texto}, rol=${selectedRoles}, dateStart=${dateStart}, dateEnd=${dateEnd}, estado=${selectedEstados}, modal='historial', id=${u.idUsuario})}"
-                                            onclick="abrirModalDinamico(this.dataset.url)"
+                                            onclick="abrirModalDinamico(this.dataset.url, this)"
                                             class="inline-flex items-center justify-center gap-1 rounded-lg px-2.5 py-1 text-sm font-semibold text-on-surface-variant hover:bg-surface-container hover:text-on-primary-fixed transition-colors"
                                             title="Ver historial de cambios">
                                         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
@@ -1221,18 +1222,18 @@
 <div id="modal-dinamico-container"></div>
 
 <script>
-/**
- * Abre un modal (historial / editar / bloquear) sin recargar la página.
- * Hace fetch de la URL, extrae el primer overlay "fixed inset-0 z-[100]"
- * del HTML devuelto y lo inyecta en el contenedor.
- * Los botones de cerrar/cancelar dentro del modal simplemente limpian el contenedor.
- */
-function abrirModalDinamico(url) {
+var _animRowGestion = null;
+
+var _SPINNER_SVG = '<svg class="animate-spin w-4 h-4 inline-block mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>';
+
+function abrirModalDinamico(url, triggerEl) {
+    var isBlockAction = url.indexOf('modal=block') !== -1 || url.indexOf('modal=unblock') !== -1;
+    _animRowGestion = (triggerEl && isBlockAction) ? triggerEl.closest('[data-user-id]') : null;
+
     var container = document.getElementById('modal-dinamico-container');
 
-    // Spinner de carga
     container.innerHTML = [
-        '<div style="position:fixed;inset:0;z-index:200;display:flex;align-items:center;',
+        '<div style="position:fixed;inset:0;z-index:210;display:flex;align-items:center;',
         'justify-content:center;background:rgba(0,0,0,0.45);backdrop-filter:blur(4px)">',
         '<div style="width:40px;height:40px;border-radius:50%;border:4px solid rgba(255,255,255,0.3);',
         'border-top-color:#fff;animation:spin .7s linear infinite"></div></div>',
@@ -1247,23 +1248,19 @@ function abrirModalDinamico(url) {
         .then(function(html) {
             var doc = new DOMParser().parseFromString(html, 'text/html');
 
-            // Buscar el modal: div con clase "fixed" e "inset-0" que NO sea el modal de filtros
             var modal = null;
             var candidates = doc.querySelectorAll('div');
             for (var i = 0; i < candidates.length; i++) {
                 var el = candidates[i];
-                if (el.id === 'filtersModal') continue;        // excluir filtros avanzados
-                if (el.classList.contains('fixed') &&
-                    el.classList.contains('inset-0') &&
-                    !el.classList.contains('hidden') &&
-                    !el.classList.contains('pointer-events-none')) {
+                if (el.id === 'filtersModal') continue;
+                if (el.classList.contains('fixed') && el.classList.contains('inset-0') &&
+                    !el.classList.contains('hidden') && !el.classList.contains('pointer-events-none')) {
                     modal = el;
                     break;
                 }
             }
 
             if (!modal) {
-                // No se encontró modal → navegar normalmente (fallback)
                 container.innerHTML = '';
                 window.location.href = url;
                 return;
@@ -1271,32 +1268,173 @@ function abrirModalDinamico(url) {
 
             container.innerHTML = modal.outerHTML;
 
-            // Interceptar "Cerrar" / "Cancelar" para que no recarguen la página
+            /* Forzar z-index por encima del navbar */
+            var overlay = container.firstElementChild;
+            if (overlay) overlay.style.zIndex = '210';
+
+            /* Evitar que spinner.js procese los botones del modal (doble envío) */
+            container.querySelectorAll('button[type="submit"]').forEach(function(btn) {
+                btn.dataset.noSpinner = 'true';
+            });
+
+            /* Cerrar con links de cancelar */
             container.querySelectorAll('a').forEach(function(a) {
                 var href = a.getAttribute('href') || '';
                 if (href.indexOf('/gestion') !== -1 && href.indexOf('modal=') === -1) {
-                    a.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        container.innerHTML = '';
-                    });
+                    a.addEventListener('click', function(e) { e.preventDefault(); container.innerHTML = ''; });
                 }
             });
 
-            // Cerrar haciendo click en el fondo oscuro
-            var overlay = container.firstElementChild;
+            /* Cerrar al click en fondo oscuro */
             if (overlay) {
                 overlay.addEventListener('click', function(e) {
                     if (e.target === overlay) container.innerHTML = '';
+                });
+            }
+
+            /* AJAX para Bloquear / Desbloquear — sin recarga de página */
+            if (isBlockAction && _animRowGestion) {
+                var row = _animRowGestion;
+                var userId = row.dataset.userId;
+
+                container.querySelectorAll('form[method="post"]').forEach(function(form) {
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        /* Spinner en botón confirmar */
+                        var btn = form.querySelector('button[type="submit"]');
+                        if (btn) { btn.disabled = true; btn.innerHTML = _SPINNER_SVG + 'Procesando...'; }
+
+                        var formData = new FormData(form);
+
+                        fetch(form.action, { method: 'POST', body: formData, credentials: 'same-origin' })
+                            .then(function(res) {
+                                if (!res.ok && !res.redirected) throw new Error('HTTP ' + res.status);
+
+                                /* Cerrar modal */
+                                container.innerHTML = '';
+
+                                /* Deslizar fila actual hacia afuera */
+                                row.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease-out';
+                                row.style.transform = 'translateX(90px)';
+                                row.style.opacity = '0';
+
+                                /* Traer fila actualizada del servidor */
+                                return fetch(window.location.href, { credentials: 'same-origin' })
+                                    .then(function(r) { return r.text(); })
+                                    .then(function(pageHtml) {
+                                        var freshDoc = new DOMParser().parseFromString(pageHtml, 'text/html');
+                                        var newRow = freshDoc.querySelector('[data-user-id="' + userId + '"]');
+
+                                        setTimeout(function() {
+                                            if (newRow && row.parentNode) {
+                                                /* Preparar entrada desde la izquierda */
+                                                newRow.style.transform = 'translateX(-40px)';
+                                                newRow.style.opacity = '0';
+                                                row.parentNode.insertBefore(newRow, row);
+                                                row.remove();
+                                                requestAnimationFrame(function() {
+                                                    requestAnimationFrame(function() {
+                                                        newRow.style.transition = 'transform 0.32s ease-out, opacity 0.32s ease-out';
+                                                        newRow.style.transform = '';
+                                                        newRow.style.opacity = '';
+                                                    });
+                                                });
+                                            } else if (row.parentNode) {
+                                                row.remove();
+                                            }
+                                        }, 380);
+                                    });
+                            })
+                            .catch(function() { window.location.reload(); });
+                    });
                 });
             }
         })
         .catch(function(err) {
             console.error('abrirModalDinamico error:', err);
             container.innerHTML = '';
-            window.location.href = url;  // fallback: navegación normal
+            window.location.href = url;
         });
 }
 </script>
+<!-- KPIs y lista en tiempo real -->
+<script>
+(function () {
+    function actualizarStat(selector, valor) {
+        if (valor === undefined || valor === null) return;
+        var el = document.querySelector(selector);
+        if (!el) return;
+        if (String(el.textContent.trim()) === String(valor)) return;
+        el.textContent = valor;
+        el.style.transition = 'none';
+        el.style.transform = 'scale(1.18)';
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                el.style.transition = 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+                el.style.transform = 'scale(1)';
+            });
+        });
+    }
+
+    function fetchStats() {
+        fetch('/admin/usuarios/gestion/api-stats', { credentials: 'same-origin' })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (data) {
+                if (!data) return;
+                actualizarStat('[data-stat="total"]',      data.totalUsuarios);
+                actualizarStat('[data-stat="activos"]',    data.usuariosActivos);
+                actualizarStat('[data-stat="bloqueados"]', data.usuariosBloqueados);
+                actualizarStat('[data-stat="pendientes"]', data.usuariosPendientes);
+            })
+            .catch(function () {});
+    }
+
+    function fetchLista() {
+        fetch(window.location.href, { credentials: 'same-origin' })
+            .then(function (r) { return r.ok ? r.text() : null; })
+            .then(function (html) {
+                if (!html) return;
+                var doc = new DOMParser().parseFromString(html, 'text/html');
+                var nuevoContainer = doc.getElementById('gestionListContainer');
+                var actualContainer = document.getElementById('gestionListContainer');
+                if (!nuevoContainer || !actualContainer) return;
+
+                actualContainer.style.transition = 'opacity 0.25s ease-out';
+                actualContainer.style.opacity = '0';
+                setTimeout(function () {
+                    actualContainer.parentNode.insertBefore(nuevoContainer, actualContainer);
+                    actualContainer.remove();
+                    /* Forzar visibilidad de filas con data-aos antes del fade-in */
+                    nuevoContainer.querySelectorAll('[data-aos]').forEach(function (el) {
+                        el.classList.add('aos-animate');
+                    });
+                    nuevoContainer.style.opacity = '0';
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () {
+                            nuevoContainer.style.transition = 'opacity 0.35s ease-in';
+                            nuevoContainer.style.opacity = '1';
+                        });
+                    });
+                }, 270);
+            })
+            .catch(function () {});
+    }
+
+    function suscribirWS() {
+        if (!window._stompClient) { setTimeout(suscribirWS, 500); return; }
+        window._stompClient.subscribe('/topic/admin/solicitudes', function () {
+            fetchStats();
+            fetchLista();
+        });
+        window._stompClient.subscribe('/topic/admin/usuarios', fetchStats);
+    }
+
+    document.addEventListener('DOMContentLoaded', suscribirWS);
+})();
+</script>
+
 <!-- Chatbot -->
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot}"></th:block>
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot-script}"></th:block>

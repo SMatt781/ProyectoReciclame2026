@@ -133,7 +133,7 @@ public class AdminUsuarioController {
             );
 
             String empresa = (u.getUsuarioEmpresa() != null && u.getUsuarioEmpresa().getRazonSocial() != null)
-                    ? u.getUsuarioEmpresa().getRazonSocial()
+                    ? limpiarSufijosRuc(u.getUsuarioEmpresa().getRazonSocial())
                     : "Sin empresa";
 
             String rolUsuario = (u.getRol() != null) ? u.getRol().getNombre() : "Sin rol";
@@ -502,6 +502,8 @@ public class AdminUsuarioController {
         redirectAttributes.addFlashAttribute("success", "Usuario bloqueado correctamente.");
         // ──────────────────────────────────────────────────────────────────────
 
+        webSocketService.enviarTopico("/topic/admin/usuarios", java.util.Map.of("event", "update"));
+
         String url = "redirect:/admin/usuarios/gestion?page=" + page;
         if (texto != null && !texto.isBlank()) url += "&texto=" + texto;
         return url;
@@ -578,9 +580,22 @@ public class AdminUsuarioController {
         redirectAttributes.addFlashAttribute("success", "Usuario desbloqueado correctamente.");
         // ──────────────────────────────────────────────────────────────────────
 
+        webSocketService.enviarTopico("/topic/admin/usuarios", java.util.Map.of("event", "update"));
+
         String url = "redirect:/admin/usuarios/gestion?page=" + page;
         if (texto != null && !texto.isBlank()) url += "&texto=" + texto;
         return url;
+    }
+
+    @GetMapping("/gestion/api-stats")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> getGestionStats() {
+        java.util.Map<String, Object> stats = new java.util.LinkedHashMap<>();
+        stats.put("totalUsuarios", usuarioRepository.countByEliminadoEnIsNull());
+        stats.put("usuariosActivos", usuarioRepository.countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta.ACTIVO));
+        stats.put("usuariosBloqueados", usuarioRepository.countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta.BLOQUEADO));
+        stats.put("usuariosPendientes", usuarioRepository.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE"));
+        return org.springframework.http.ResponseEntity.ok(stats);
     }
 
     // ── Helpers privados ──────────────────────────────────────────────────────
@@ -759,10 +774,15 @@ public class AdminUsuarioController {
 
     private String construirNombreCompleto(String nombres, String apellidoPaterno, String apellidoMaterno) {
         StringBuilder sb = new StringBuilder();
-        if (nombres != null) sb.append(nombres);
+        if (nombres != null) sb.append(limpiarSufijosRuc(nombres));
         if (apellidoPaterno != null) sb.append(" ").append(apellidoPaterno);
         if (apellidoMaterno != null && !apellidoMaterno.isBlank()) sb.append(" ").append(apellidoMaterno);
         return sb.toString().trim();
+    }
+
+    private String limpiarSufijosRuc(String nombre) {
+        if (nombre == null) return "";
+        return nombre.replaceAll("\\s*—\\s*(ACTIVO|BAJA|SUSPENDIDO|NO HABIDO|HABIDO).*$", "").trim();
     }
 
     private String obtenerIniciales(String nombres, String apellidoPaterno) {

@@ -134,6 +134,68 @@ public class AdminSolicitudController {
         return "admin/solicitudes-registro";
     }
 
+    @GetMapping("/api-lista")
+    @ResponseBody
+    public ResponseEntity<java.util.Map<String, Object>> listarSolicitudesJson(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String rol,
+            @RequestParam(required = false) String dateStart,
+            @RequestParam(required = false) String dateEnd) {
+
+        Pageable pageable = PageRequest.of(page, 5);
+        String searchParam = (search != null && !search.isBlank()) ? search.trim() : null;
+        String rolParam    = (rol    != null && !rol.isBlank())    ? rol.trim()    : null;
+
+        LocalDateTime fechaInicio = (dateStart != null && !dateStart.isBlank())
+                ? LocalDate.parse(dateStart).atStartOfDay() : null;
+        LocalDateTime fechaFin = (dateEnd != null && !dateEnd.isBlank())
+                ? LocalDate.parse(dateEnd).atTime(23, 59, 59) : null;
+
+        Page<Usuario> pagina = usuarioRepository.filtrarSolicitudesPendientes(
+                searchParam, rolParam, fechaInicio, fechaFin, pageable);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
+        List<SolicitudRegistroDto> solicitudes = new ArrayList<>();
+
+        for (Usuario u : pagina.getContent()) {
+            Optional<SolicitudRegistro> solicitudOpt = buscarSolicitudRelacionada(u);
+            String rolSolicitado = (u.getRol() != null && u.getRol().getNombre() != null)
+                    ? u.getRol().getNombre()
+                    : solicitudOpt.map(SolicitudRegistro::getRolSolicitado).orElse("Sin rol");
+            String fecha = solicitudOpt.map(SolicitudRegistro::getFechaSolicitud)
+                    .map(f -> f.format(formatter))
+                    .orElse(u.getFechaRegistro() != null ? u.getFechaRegistro().format(formatter) : "-");
+            String nombreCompleto = construirNombreCompleto(u.getNombres(), u.getApellidoPaterno(), u.getApellidoMaterno());
+            String tipoId = null, numId = null;
+            if (u.getIdentificacion() != null) {
+                tipoId = u.getIdentificacion().getTipo().name();
+                numId  = u.getIdentificacion().getNumero();
+            }
+            solicitudes.add(new SolicitudRegistroDto(
+                    u.getIdUsuario(), nombreCompleto, u.getCorreo(),
+                    tipoId, numId, rolSolicitado, u.getEstadoAprobacion(), fecha,
+                    obtenerIniciales(u.getNombres(), u.getApellidoPaterno())));
+        }
+
+        LocalDate hoy = LocalDate.now();
+        long totalPendientes = usuarioRepository.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE");
+
+        java.util.Map<String, Object> result = new java.util.LinkedHashMap<>();
+        result.put("solicitudes", solicitudes);
+        result.put("currentPage", page);
+        result.put("totalPages", pagina.getTotalPages());
+        result.put("hasPrevious", pagina.hasPrevious());
+        result.put("hasNext", pagina.hasNext());
+        result.put("pageNumbers", PaginationUtils.buildPageNumbers(page, pagina.getTotalPages()));
+        result.put("totalPendientes", totalPendientes);
+        result.put("solicitudesHoy", solicitudRegistroRepository.countByEstadoAndFechaSolicitudBetween(
+                "PENDIENTE", hoy.atStartOfDay(), hoy.atTime(23, 59, 59)));
+        result.put("totalUsuariosActivos", usuarioRepository.countUsuariosActivosAprobados());
+        result.put("empresasRegistradas", usuarioRepository.countEmpresasRegistradas());
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/exportar")
     public ResponseEntity<byte[]> exportarSolicitudes(@RequestParam(required = false) String search,
                                                       @RequestParam(required = false) String rol,
@@ -353,10 +415,15 @@ public class AdminSolicitudController {
 
     private String construirNombreCompleto(String nombres, String apellidoPaterno, String apellidoMaterno) {
         StringBuilder sb = new StringBuilder();
-        if (nombres != null && !nombres.isBlank()) sb.append(nombres);
+        if (nombres != null && !nombres.isBlank()) sb.append(limpiarSufijosRuc(nombres));
         if (apellidoPaterno != null && !apellidoPaterno.isBlank()) { if (!sb.isEmpty()) sb.append(" "); sb.append(apellidoPaterno); }
         if (apellidoMaterno != null && !apellidoMaterno.isBlank()) { if (!sb.isEmpty()) sb.append(" "); sb.append(apellidoMaterno); }
         return sb.toString().trim();
+    }
+
+    private String limpiarSufijosRuc(String nombre) {
+        if (nombre == null) return "";
+        return nombre.replaceAll("\\s*—\\s*(ACTIVO|BAJA|SUSPENDIDO|NO HABIDO|HABIDO).*$", "").trim();
     }
 
     private String obtenerIniciales(String nombres, String apellidoPaterno) {
