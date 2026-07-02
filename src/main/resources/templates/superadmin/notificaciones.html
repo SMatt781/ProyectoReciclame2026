@@ -4,48 +4,8 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Notificaciones | Reciclame</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" th:href="@{/css/superadmin.css}"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "on-secondary": "#ffffff", "secondary-fixed": "#c3ecd7",
-                        "surface-container-high": "#dce9ff", "surface-container-lowest": "#ffffff",
-                        "surface-container": "#e5eeff", "on-primary-fixed-variant": "#3f465c",
-                        "on-background": "#0b1c30", "inverse-surface": "#213145",
-                        "on-tertiary-container": "#3980f4", "on-secondary-container": "#476c5b",
-                        "inverse-on-surface": "#eaf1ff", "on-error": "#ffffff",
-                        "surface-bright": "#f8f9ff", "on-tertiary": "#ffffff",
-                        "surface-tint": "#565e74", "background": "#f8f9ff",
-                        "surface-dim": "#cbdbf5", "on-tertiary-fixed-variant": "#004395",
-                        "tertiary-container": "#001a42", "on-error-container": "#93000a",
-                        "on-surface-variant": "#45464d", "primary-container": "#131b2e",
-                        "on-secondary-fixed": "#002115", "error": "#ba1a1a",
-                        "outline-variant": "#c6c6cd", "secondary-fixed-dim": "#a8cfbc",
-                        "on-primary-container": "#7c839b", "tertiary-fixed-dim": "#adc6ff",
-                        "primary": "#000000", "secondary": "#416656",
-                        "surface-container-highest": "#d3e4fe", "on-tertiary-fixed": "#001a42",
-                        "surface-variant": "#d3e4fe", "surface-container-low": "#eff4ff",
-                        "primary-fixed-dim": "#bec6e0", "on-primary-fixed": "#131b2e",
-                        "on-secondary-fixed-variant": "#294e3f", "error-container": "#ffdad6",
-                        "primary-fixed": "#dae2fd", "outline": "#76777d",
-                        "on-surface": "#0b1c30", "inverse-primary": "#bec6e0",
-                        "secondary-container": "#c3ecd7", "on-primary": "#ffffff",
-                        "tertiary-fixed": "#d8e2ff", "surface": "#f8f9ff", "tertiary": "#000000"
-                    },
-                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
-                    fontFamily: {
-                        headline: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
-                        body: ["Inter", "system-ui", "sans-serif"],
-                        label: ["Inter", "system-ui", "sans-serif"]
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
@@ -89,9 +49,9 @@
                 </p>
             </div>
 
-            <form th:action="@{/superadmin/notificaciones/marcar-leidas}" method="post">
+            <form id="formMarcarTodas" th:action="@{/superadmin/notificaciones/marcar-leidas}" method="post">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                <button type="submit"
+                <button type="submit" data-no-spinner="true"
                         class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-slate-500 border border-[#e0e0e0] bg-white rounded-xl hover:bg-slate-50 hover:text-secondary transition">
                     <span class="material-symbols-outlined text-[18px]">done_all</span>
                     Marcar todas como leídas
@@ -100,24 +60,24 @@
         </div>
 
         <!-- Contenedor principal -->
-        <div class="bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
+        <div id="notif-content" th:fragment="notifContent" class="bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
 
             <!-- Tabs -->
             <div class="flex flex-wrap gap-4 sm:gap-6 px-4 sm:px-6 pt-5 pb-0 border-b border-slate-100" id="notifTabs">
                 <a th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(tipo='ALL')}"
-                   th:class="${tipoFiltro == 'ALL' or tipoFiltro == null} ? 'pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px' : 'pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px'">
+                   th:class="${(tipoFiltro == 'ALL' or tipoFiltro == null) ? 'pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px' : 'pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px'} + ' js-nav-notif'">
                     Todas
                 </a>
                 <a th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(tipo='ADMIN')}"
-                   th:class="${tipoFiltro == 'ADMIN'} ? 'pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px' : 'pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px'">
+                   th:class="${(tipoFiltro == 'ADMIN') ? 'pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px' : 'pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px'} + ' js-nav-notif'">
                     Administradores
                 </a>
                 <a th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(tipo='DOMINIO')}"
-                   th:class="${tipoFiltro == 'DOMINIO'} ? 'pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px' : 'pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px'">
+                   th:class="${(tipoFiltro == 'DOMINIO') ? 'pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px' : 'pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px'} + ' js-nav-notif'">
                     Dominios
                 </a>
                 <a th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(tipo='SISTEMA')}"
-                   th:class="${tipoFiltro == 'SISTEMA'} ? 'pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px' : 'pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px'">
+                   th:class="${(tipoFiltro == 'SISTEMA') ? 'pb-4 text-secondary font-bold text-sm border-b-2 border-secondary -mb-px' : 'pb-4 text-on-surface-variant font-semibold text-sm hover:text-on-primary-fixed transition-colors -mb-px'} + ' js-nav-notif'">
                     Sistema
                 </a>
             </div>
@@ -195,10 +155,11 @@
                             </a>
 
                             <form th:if="${n.leido == false}"
+                                  class="js-form-marcar-leida"
                                   th:action="@{/superadmin/notificaciones/marcar-leida/{id}(id=${n.id})}"
                                   method="post">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                                <button type="submit"
+                                <button type="submit" data-no-spinner="true"
                                         class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 text-slate-500 font-semibold rounded-lg text-xs hover:bg-slate-100 transition-colors">
                                     <span class="material-symbols-outlined text-[14px]">mark_email_read</span>
                                     Marcar leída
@@ -216,7 +177,7 @@
                 <!-- Botón anterior -->
                 <a th:if="${hasPrevious}"
                    th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(page=${currentPage - 1},tipo=${tipoFiltro})}"
-                   class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                   class="js-nav-notif p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M15 19l-7-7 7-7" />
@@ -246,9 +207,9 @@
                            th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(page=${p},tipo=${tipoFiltro})}"
                            th:text="${p + 1}"
                            th:class="${p == currentPage} ?
-                           'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
+                           'js-nav-notif w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
                            :
-                           'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container transition'">
+                           'js-nav-notif w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container transition'">
                         </a>
 
                     </span>
@@ -257,7 +218,7 @@
                 <!-- Botón siguiente -->
                 <a th:if="${hasNext}"
                    th:href="@{${'/'+sessionUser.rol.toLowerCase()+'/notificaciones'}(page=${currentPage + 1},tipo=${tipoFiltro})}"
-                   class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                   class="js-nav-notif p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M9 5l7 7-7 7" />
@@ -290,6 +251,86 @@
             }, 4000);
         });
     });
+</script>
+
+<!-- ══ Navegacion sin recarga: tabs, paginacion y marcar leida ══ -->
+<script>
+(function() {
+    function conAjaxHeaders(init) {
+        init = init || {};
+        init.headers = Object.assign({'X-Requested-With': 'XMLHttpRequest'}, init.headers || {});
+        return init;
+    }
+
+    function cargarNotifContent(url, pushUrl) {
+        fetch(url, conAjaxHeaders())
+            .then(function(r) { return r.text(); })
+            .then(function(html) {
+                var doc = new DOMParser().parseFromString(html, 'text/html');
+                var nuevo = doc.getElementById('notif-content');
+                var actual = document.getElementById('notif-content');
+                if (nuevo && actual) {
+                    actual.replaceWith(nuevo);
+                    enlazarNavegacionNotif();
+                    if (pushUrl !== false) history.pushState({ ajaxNotif: true }, '', url);
+                }
+            })
+            .catch(function() { window.location.href = url; });
+    }
+
+    function enlazarNavegacionNotif() {
+        document.querySelectorAll('a.js-nav-notif').forEach(function(a) {
+            if (a.dataset.ajaxBound) return;
+            a.dataset.ajaxBound = '1';
+            a.addEventListener('click', function(e) {
+                e.preventDefault();
+                cargarNotifContent(a.getAttribute('href'));
+            });
+        });
+    }
+
+    function spinnerBotonHTML() {
+        return '<svg class="animate-spin w-4 h-4 inline-block mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">'
+            + '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>'
+            + '<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>'
+            + '<span>Procesando...</span>';
+    }
+
+    document.addEventListener('submit', function(e) {
+        var form = e.target;
+        if (form.id === 'formMarcarTodas' || form.classList.contains('js-form-marcar-leida')) {
+            e.preventDefault();
+            var btn = form.querySelector('button[type="submit"]');
+            var htmlOriginal = btn ? btn.innerHTML : null;
+            if (btn) { btn.disabled = true; btn.innerHTML = spinnerBotonHTML(); }
+
+            var formData = new FormData(form);
+            fetch(form.getAttribute('action'), conAjaxHeaders({ method: 'POST', body: formData }))
+                .then(function(r) { return r.text(); })
+                .then(function(html) {
+                    var doc = new DOMParser().parseFromString(html, 'text/html');
+                    var nuevo = doc.getElementById('notif-content');
+                    var actual = document.getElementById('notif-content');
+                    if (nuevo && actual) {
+                        actual.replaceWith(nuevo);
+                        enlazarNavegacionNotif();
+                    }
+                })
+                .catch(function() { form.submit(); })
+                .finally(function() {
+                    if (btn && btn.isConnected) { btn.disabled = false; btn.innerHTML = htmlOriginal; }
+                });
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        enlazarNavegacionNotif();
+
+        window.addEventListener('popstate', function() {
+            cargarNotifContent(window.location.href, false);
+        });
+    });
+})();
 </script>
 
 <!-- Chatbot -->

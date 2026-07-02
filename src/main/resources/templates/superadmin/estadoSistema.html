@@ -6,49 +6,10 @@
     <title>Recíclame - Estado del Sistema</title>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" th:href="@{/css/superadmin.css}"/>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "on-secondary": "#ffffff", "secondary-fixed": "#c3ecd7",
-                        "surface-container-high": "#dce9ff", "surface-container-lowest": "#ffffff",
-                        "surface-container": "#e5eeff", "on-primary-fixed-variant": "#3f465c",
-                        "on-background": "#0b1c30", "inverse-surface": "#213145",
-                        "on-tertiary-container": "#3980f4", "on-secondary-container": "#476c5b",
-                        "inverse-on-surface": "#eaf1ff", "on-error": "#ffffff",
-                        "surface-bright": "#f8f9ff", "on-tertiary": "#ffffff",
-                        "surface-tint": "#565e74", "background": "#f8f9ff",
-                        "surface-dim": "#cbdbf5", "on-tertiary-fixed-variant": "#004395",
-                        "tertiary-container": "#001a42", "on-error-container": "#93000a",
-                        "on-surface-variant": "#45464d", "primary-container": "#131b2e",
-                        "on-secondary-fixed": "#002115", "error": "#ba1a1a",
-                        "outline-variant": "#c6c6cd", "secondary-fixed-dim": "#a8cfbc",
-                        "on-primary-container": "#7c839b", "tertiary-fixed-dim": "#adc6ff",
-                        "primary": "#000000", "secondary": "#416656",
-                        "surface-container-highest": "#d3e4fe", "on-tertiary-fixed": "#001a42",
-                        "surface-variant": "#d3e4fe", "surface-container-low": "#eff4ff",
-                        "primary-fixed-dim": "#bec6e0", "on-primary-fixed": "#131b2e",
-                        "on-secondary-fixed-variant": "#294e3f", "error-container": "#ffdad6",
-                        "primary-fixed": "#dae2fd", "outline": "#76777d",
-                        "on-surface": "#0b1c30", "inverse-primary": "#bec6e0",
-                        "secondary-container": "#c3ecd7", "on-primary": "#ffffff",
-                        "tertiary-fixed": "#d8e2ff", "surface": "#f8f9ff", "tertiary": "#000000"
-                    },
-                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
-                    fontFamily: {
-                        "sans": ["Plus Jakarta Sans", "sans-serif"],
-                        "mono": ["JetBrains Mono", "monospace"]
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
@@ -104,8 +65,6 @@
             height: 1px;
         }
     </style>
-    <!-- AOS - Scroll Reveal -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 </head>
 
 <body class="bg-surface text-on-surface h-screen flex overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
@@ -124,7 +83,7 @@
              ENCABEZADO — Versión + estado global
              Variables: ${appVersion}, ${buildEnv}, ${uptimePct}
              ══════════════════════════════════════════════════════════════ -->
-        <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4" data-aos="fade-down">
+        <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
 
             <!-- Título técnico -->
             <div>
@@ -176,7 +135,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
 
             <!-- CPU -->
-            <div data-aos="fade-up" data-aos-delay="0" class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
+            <div class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">CPU</p>
@@ -196,14 +155,14 @@
             </div>
 
             <!-- RAM -->
-            <div data-aos="fade-up" data-aos-delay="50" class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
+            <div class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Memoria RAM</p>
                         <p class="font-mono text-3xl font-bold text-blue-600">
                             <span id="ram-val" th:text="${ramUsage >= 0 ? ramUsage : '—'}">—</span>%
                         </p>
-                        <p class="text-[11px] text-slate-400 font-mono mt-1"
+                        <p id="ram-detail" class="text-[11px] text-slate-400 font-mono mt-1"
                            th:text="${ramUsage >= 0 ? (ramUsadaMb + ' MB / ' + ramTotalMb + ' MB') : '— MB / — MB'}">
                             — MB / — MB
                         </p>
@@ -219,22 +178,22 @@
             </div>
 
             <!-- Almacenamiento -->
-            <div data-aos="fade-up" data-aos-delay="100"
+            <div id="disk-card"
                  th:classappend="${diskUsage >= 80} ? 'border-red-300 ring-1 ring-red-200' : 'border-slate-100'"
                  class="bg-white rounded-[1.25rem] p-5 border shadow-sm card-lift relative overflow-hidden">
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Almacenamiento</p>
-                        <p class="font-mono text-3xl font-bold"
+                        <p id="disk-val-wrap" class="font-mono text-3xl font-bold"
                            th:classappend="${diskUsage >= 80} ? 'text-red-600' : 'text-amber-600'">
                             <span id="disk-val" th:text="${diskUsage >= 0 ? diskUsage : '—'}">—</span>%
                         </p>
-                        <p class="text-[11px] text-slate-400 font-mono mt-1"
+                        <p id="disk-detail" class="text-[11px] text-slate-400 font-mono mt-1"
                            th:text="${diskUsage >= 0 ? (diskUsadoGb + ' GB / ' + diskTotalGb + ' GB') : '— GB / — GB'}">
                             — GB / — GB
                         </p>
                     </div>
-                    <div class="w-9 h-9 rounded-xl flex items-center justify-center"
+                    <div id="disk-icon-wrap" class="w-9 h-9 rounded-xl flex items-center justify-center"
                          th:classappend="${diskUsage >= 80} ? 'bg-red-50 text-red-500' : 'bg-amber-50 text-amber-500'">
                         <span class="material-symbols-outlined text-[20px]">hard_drive</span>
                     </div>
@@ -245,7 +204,7 @@
                          th:style="'width: ' + ${diskUsage >= 0 ? diskUsage : 0} + '%;'"></div>
                 </div>
                 <!-- Alerta crítica de almacenamiento -->
-                <div th:if="${diskUsage >= 80}"
+                <div id="disk-alert" th:if="${diskUsage >= 80}"
                      class="mt-3 flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
                     <span class="material-symbols-outlined text-red-500 text-[16px]">warning</span>
                     <p class="text-[11px] font-bold text-red-600">
@@ -255,11 +214,11 @@
             </div>
 
             <!-- Latencia BD -->
-            <div data-aos="fade-up" data-aos-delay="150" class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
+            <div class="bg-white rounded-[1.25rem] p-5 border border-slate-100 shadow-sm card-lift relative overflow-hidden">
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Latencia BD</p>
-                        <p class="font-mono text-3xl font-bold text-secondary"
+                        <p id="latencia-val" class="font-mono text-3xl font-bold text-secondary"
                            th:text="${dbLatencyMs} + 'ms'">
                             24ms
                         </p>
@@ -271,7 +230,7 @@
                 <div class="space-y-1">
                     <!-- Barra proporcional: 200ms = 100%. Color según umbral -->
                     <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div class="h-full bar-animated rounded-full"
+                        <div id="latencia-bar" class="h-full bar-animated rounded-full"
                              th:classappend="${dbLatencyMs > 100} ? 'bg-gradient-to-r from-red-500 to-red-300' : (${dbLatencyMs > 50} ? 'bg-gradient-to-r from-amber-500 to-amber-300' : 'bg-gradient-to-r from-secondary to-secondary-container')"
                              th:style="'width: ' + (${dbLatencyMs > 200 ? 100 : dbLatencyMs * 100 / 200}) + '%;'"></div>
                     </div>
@@ -285,7 +244,7 @@
              IA — Análisis inteligente del sistema
              Variables: ${iaNivelRiesgo}, ${iaResumenSistema}, ${iaRecomendacionSistema}, ${iaFactoresDetectados}
              ══════════════════════════════════════════════════════════════ -->
-        <div data-aos="fade-up" data-aos-delay="50" class="bg-white rounded-[1.25rem] border border-slate-100 shadow-sm p-5 card-lift overflow-hidden relative">
+        <div class="bg-white rounded-[1.25rem] border border-slate-100 shadow-sm p-5 card-lift overflow-hidden relative">
             <div class="absolute top-0 right-0 w-40 h-40 bg-purple-50 rounded-full blur-3xl opacity-70 -translate-y-16 translate-x-16"></div>
 
             <div class="relative flex flex-col xl:flex-row xl:items-start xl:justify-between gap-5">
@@ -301,7 +260,7 @@
                                 Análisis Inteligente del Sistema
                             </h3>
 
-                            <span class="font-mono text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase"
+                            <span id="ia-nivel-badge" class="font-mono text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase"
                                   th:classappend="${iaNivelRiesgo == 'CRÍTICO'} ? ' bg-red-100 text-red-600' :
                                                   (${iaNivelRiesgo == 'MEDIO'} ? ' bg-amber-100 text-amber-700' :
                                                   ' bg-emerald-100 text-emerald-600')"
@@ -310,17 +269,17 @@
                             </span>
                         </div>
 
-                        <p class="text-sm text-slate-600 leading-relaxed max-w-3xl"
+                        <p id="ia-resumen" class="text-sm text-slate-600 leading-relaxed max-w-3xl"
                            th:text="${iaResumenSistema} ?: 'La IA no detectó riesgos relevantes. El sistema se encuentra estable.'">
                             La IA no detectó riesgos relevantes. El sistema se encuentra estable.
                         </p>
 
-                        <div class="mt-4">
+                        <div id="ia-factores-wrap" class="mt-4">
                             <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
                                 Factores detectados
                             </p>
 
-                            <div class="flex flex-wrap gap-2"
+                            <div id="ia-factores-container" class="flex flex-wrap gap-2"
                                  th:if="${iaFactoresDetectados != null and !iaFactoresDetectados.isEmpty()}">
                                 <span th:each="factor : ${iaFactoresDetectados}"
                                       class="font-mono text-[10px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg border border-slate-200"
@@ -329,7 +288,7 @@
                                 </span>
                             </div>
 
-                            <p class="text-xs text-slate-400 font-mono"
+                            <p id="ia-factores-empty" class="text-xs text-slate-400 font-mono"
                                th:if="${iaFactoresDetectados == null or iaFactoresDetectados.isEmpty()}">
                                 Sin factores críticos detectados.
                             </p>
@@ -345,7 +304,7 @@
                         </p>
                     </div>
 
-                    <p class="text-sm font-medium text-slate-700 leading-relaxed"
+                    <p id="ia-recomendacion" class="text-sm font-medium text-slate-700 leading-relaxed"
                        th:text="${iaRecomendacionSistema} ?: 'Mantener el monitoreo preventivo y revisar periódicamente las métricas del sistema.'">
                         Mantener el monitoreo preventivo y revisar periódicamente las métricas del sistema.
                     </p>
@@ -379,7 +338,7 @@
                     <div class="p-5 space-y-4">
                         <div class="bg-gradient-to-br from-primary-container to-slate-800 rounded-2xl p-5 text-white relative overflow-hidden">
                             <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Sesiones Activas</p>
-                            <p class="font-mono text-5xl font-bold text-white leading-none" th:text="${sesionesActivas}">—</p>
+                            <p id="sesiones-activas-val" class="font-mono text-5xl font-bold text-white leading-none" th:text="${sesionesActivas}">—</p>
                             <p class="text-[10px] text-slate-400 mt-2 font-mono">usuarios conectados ahora</p>
                             <div class="absolute bottom-0 right-0 opacity-10">
                                 <span class="material-symbols-outlined" style="font-size:80px;">group</span>
@@ -388,19 +347,19 @@
                         <div class="grid grid-cols-2 gap-2">
                             <div class="bg-slate-50 rounded-xl p-3">
                                 <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1">Sesiones hoy</p>
-                                <p class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${sesionesHoy}">—</p>
+                                <p id="sesiones-hoy-val" class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${sesionesHoy}">—</p>
                             </div>
                             <div class="bg-slate-50 rounded-xl p-3">
                                 <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1">Intentos fallidos</p>
-                                <p class="font-mono text-xl font-bold text-red-500" th:text="${intentosFallidosHoy}">—</p>
+                                <p id="intentos-fallidos-val" class="font-mono text-xl font-bold text-red-500" th:text="${intentosFallidosHoy}">—</p>
                             </div>
                             <div class="bg-slate-50 rounded-xl p-3">
                                 <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1">Récuperaciones</p>
-                                <p class="font-mono text-xl font-bold text-amber-600" th:text="${recuperacionesActivas}">—</p>
+                                <p id="recuperaciones-val" class="font-mono text-xl font-bold text-amber-600" th:text="${recuperacionesActivas}">—</p>
                             </div>
                             <div class="bg-slate-50 rounded-xl p-3">
                                 <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1">Solicitudes reg.</p>
-                                <p class="font-mono text-xl font-bold text-blue-600" th:text="${solicitudesPendientes}">—</p>
+                                <p id="solicitudes-pendientes-val" class="font-mono text-xl font-bold text-blue-600" th:text="${solicitudesPendientes}">—</p>
                             </div>
                         </div>
                     </div>
@@ -559,7 +518,7 @@
         </div>
 
         <!-- Modal: Limpiar Caché -->
-        <div id="modal-cache" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+        <div id="modal-cache" class="hidden fixed inset-0 z-[300] flex items-center justify-center bg-black/40">
             <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm mx-4">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-10 h-10 rounded-xl bg-secondary-container/30 text-secondary flex items-center justify-center flex-shrink-0">
@@ -582,7 +541,7 @@
         </div>
 
         <!-- Modal: Resetear Sesiones -->
-        <div id="modal-sesiones" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+        <div id="modal-sesiones" class="hidden fixed inset-0 z-[300] flex items-center justify-center bg-black/40">
             <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm mx-4">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0">
@@ -609,6 +568,138 @@
             function cerrarModal(id) { document.getElementById(id).classList.add('hidden'); }
         </script>
 
+        <!-- ══ Tiempo real: metricas via WebSocket (sin recargar la pagina) ══
+             Reutiliza la conexion STOMP que ya abre fragments/navbar.html
+             (window._stompClient) en vez de crear una segunda conexion. -->
+        <script>
+        (function() {
+            function actualizarEstadoSistema(data) {
+                var el;
+
+                if (data.cpuUsage >= 0) {
+                    if ((el = document.getElementById('cpu-val'))) el.textContent = data.cpuUsage;
+                    if ((el = document.getElementById('cpu-bar'))) el.style.width = data.cpuUsage + '%';
+                }
+
+                if (data.ramUsage >= 0) {
+                    if ((el = document.getElementById('ram-val'))) el.textContent = data.ramUsage;
+                    if ((el = document.getElementById('ram-bar'))) el.style.width = data.ramUsage + '%';
+                    if ((el = document.getElementById('ram-detail'))) el.textContent = data.ramUsadaMb + ' MB / ' + data.ramTotalMb + ' MB';
+                }
+
+                if (data.diskUsage >= 0) {
+                    var critico = data.diskUsage >= 80;
+                    if ((el = document.getElementById('disk-val'))) el.textContent = data.diskUsage;
+                    if ((el = document.getElementById('disk-detail'))) el.textContent = data.diskUsadoGb + ' GB / ' + data.diskTotalGb + ' GB';
+                    if ((el = document.getElementById('disk-bar'))) {
+                        el.style.width = data.diskUsage + '%';
+                        el.className = 'h-full bar-animated rounded-full ' +
+                            (critico ? 'bg-gradient-to-r from-red-500 to-red-300' : 'bg-gradient-to-r from-amber-500 to-amber-300');
+                    }
+                    if ((el = document.getElementById('disk-val-wrap'))) {
+                        el.className = 'font-mono text-3xl font-bold ' + (critico ? 'text-red-600' : 'text-amber-600');
+                    }
+                    if ((el = document.getElementById('disk-icon-wrap'))) {
+                        el.className = 'w-9 h-9 rounded-xl flex items-center justify-center ' +
+                            (critico ? 'bg-red-50 text-red-500' : 'bg-amber-50 text-amber-500');
+                    }
+                    if ((el = document.getElementById('disk-card'))) {
+                        el.classList.toggle('border-red-300', critico);
+                        el.classList.toggle('ring-1', critico);
+                        el.classList.toggle('ring-red-200', critico);
+                        el.classList.toggle('border-slate-100', !critico);
+                    }
+                    var diskAlert = document.getElementById('disk-alert');
+                    if (critico && !diskAlert) {
+                        var card = document.getElementById('disk-card');
+                        var bar = card ? card.querySelector('.w-full.h-2') : null;
+                        if (bar) {
+                            var div = document.createElement('div');
+                            div.id = 'disk-alert';
+                            div.className = 'mt-3 flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2';
+                            div.innerHTML = '<span class="material-symbols-outlined text-red-500 text-[16px]">warning</span>' +
+                                '<p class="text-[11px] font-bold text-red-600">Almacenamiento crítico — libere espacio para evitar fallos del sistema</p>';
+                            bar.insertAdjacentElement('afterend', div);
+                        }
+                    } else if (!critico && diskAlert) {
+                        diskAlert.remove();
+                    }
+                }
+
+                if ((el = document.getElementById('latencia-val'))) el.textContent = data.dbLatencyMs + 'ms';
+                if ((el = document.getElementById('latencia-bar'))) {
+                    var pct = data.dbLatencyMs > 200 ? 100 : (data.dbLatencyMs * 100 / 200);
+                    el.style.width = pct + '%';
+                    el.className = 'h-full bar-animated rounded-full ' +
+                        (data.dbLatencyMs > 100 ? 'bg-gradient-to-r from-red-500 to-red-300' :
+                            (data.dbLatencyMs > 50 ? 'bg-gradient-to-r from-amber-500 to-amber-300' : 'bg-gradient-to-r from-secondary to-secondary-container'));
+                }
+
+                if ((el = document.getElementById('sesiones-activas-val'))) el.textContent = data.sesionesActivas;
+                if ((el = document.getElementById('sesiones-hoy-val'))) el.textContent = data.sesionesHoy;
+                if ((el = document.getElementById('intentos-fallidos-val'))) el.textContent = data.intentosFallidosHoy;
+                if ((el = document.getElementById('recuperaciones-val'))) el.textContent = data.recuperacionesActivas;
+                if ((el = document.getElementById('solicitudes-pendientes-val'))) el.textContent = data.solicitudesPendientes;
+
+                if ((el = document.getElementById('ia-nivel-badge'))) {
+                    el.textContent = data.iaNivelRiesgo || 'BAJO';
+                    var cls = 'font-mono text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase ';
+                    if (data.iaNivelRiesgo === 'CRÍTICO') cls += 'bg-red-100 text-red-600';
+                    else if (data.iaNivelRiesgo === 'MEDIO') cls += 'bg-amber-100 text-amber-700';
+                    else cls += 'bg-emerald-100 text-emerald-600';
+                    el.className = cls;
+                }
+                if ((el = document.getElementById('ia-resumen'))) el.textContent = data.iaResumenSistema || '';
+                if ((el = document.getElementById('ia-recomendacion'))) el.textContent = data.iaRecomendacionSistema || '';
+
+                var factoresWrap = document.getElementById('ia-factores-wrap');
+                var factores = data.iaFactoresDetectados || [];
+                if (factoresWrap) {
+                    var contenedor = document.getElementById('ia-factores-container');
+                    var vacio = document.getElementById('ia-factores-empty');
+                    if (factores.length > 0) {
+                        if (!contenedor) {
+                            contenedor = document.createElement('div');
+                            contenedor.id = 'ia-factores-container';
+                            contenedor.className = 'flex flex-wrap gap-2';
+                            factoresWrap.appendChild(contenedor);
+                        }
+                        contenedor.innerHTML = '';
+                        factores.forEach(function(f) {
+                            var span = document.createElement('span');
+                            span.className = 'font-mono text-[10px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg border border-slate-200';
+                            span.textContent = f;
+                            contenedor.appendChild(span);
+                        });
+                        if (vacio) vacio.remove();
+                    } else {
+                        if (contenedor) contenedor.remove();
+                        if (!vacio) {
+                            vacio = document.createElement('p');
+                            vacio.id = 'ia-factores-empty';
+                            vacio.className = 'text-xs text-slate-400 font-mono';
+                            vacio.textContent = 'Sin factores críticos detectados.';
+                            factoresWrap.appendChild(vacio);
+                        }
+                    }
+                }
+            }
+
+            function suscribirEstadoSistema(intentos) {
+                intentos = intentos || 0;
+                if (window._stompClient && window._stompClient.connected) {
+                    window._stompClient.subscribe('/topic/superadmin/estado', function(message) {
+                        try { actualizarEstadoSistema(JSON.parse(message.body)); } catch (e) {}
+                    });
+                } else if (intentos < 40) {
+                    setTimeout(function() { suscribirEstadoSistema(intentos + 1); }, 500);
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function() { suscribirEstadoSistema(0); });
+        })();
+        </script>
+
     </main>
 </div>
 
@@ -630,11 +721,6 @@
     document.getElementById('disk-val').textContent = diskUsage;
 </script>
 ══ -->
-<!-- AOS - Scroll Reveal -->
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>
-    AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded' });
-</script>
 <!-- Chatbot -->
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot}"></th:block>
 <th:block th:replace="~{fragments/chatbot-widget :: chatbot-script}"></th:block>

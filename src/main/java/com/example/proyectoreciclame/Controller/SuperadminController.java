@@ -3,6 +3,7 @@ package com.example.proyectoreciclame.Controller;
 import com.example.proyectoreciclame.Entity.*;
 import com.example.proyectoreciclame.Repository.*;
 import com.example.proyectoreciclame.Service.CorreoService;
+import com.example.proyectoreciclame.Service.EstadoSistemaService;
 import com.example.proyectoreciclame.Service.NotificacionWebSocketService;
 import com.example.proyectoreciclame.Service.SessionStore;
 import jakarta.servlet.http.HttpServletResponse;
@@ -56,6 +57,7 @@ public class SuperadminController {
     private final ChatMensajeRepository chatMensajeRepository;
     private final ChatSesionRepository chatSesionRepository;
     private final NotificacionWebSocketService webSocketService;
+    private final EstadoSistemaService estadoSistemaService;
 
     public SuperadminController(UsuarioRepository usuarioRepository,
                                 DominioAutorizadoRepository dominioAutorizadoRepository,
@@ -77,6 +79,7 @@ public class SuperadminController {
                                 ChatMensajeRepository chatMensajeRepository,
                                 ChatSesionRepository chatSesionRepository,
                                 NotificacionWebSocketService webSocketService,
+                                EstadoSistemaService estadoSistemaService,
                                 org.springframework.core.env.Environment env) {
         this.historialRolesRepository = historialRolesRepository;
         this.usuarioRepository = usuarioRepository;
@@ -98,6 +101,7 @@ public class SuperadminController {
         this.chatMensajeRepository = chatMensajeRepository;
         this.chatSesionRepository = chatSesionRepository;
         this.webSocketService = webSocketService;
+        this.estadoSistemaService = estadoSistemaService;
         this.env = env;
     }
 
@@ -143,15 +147,7 @@ public class SuperadminController {
     // Nuevo método para mostrar administradores
     // ── Administradores — GET ────────────────────────────────────────────────
 
-    @GetMapping("/administradores")
-    public String showAdministradores(
-            Model model,
-            @RequestParam(value = "texto", required = false) String texto,
-            @RequestParam(value = "estado", required = false) String estado,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "modal", required = false) String modal,  // ← NUEVO
-            @RequestParam(value = "id", required = false) Long id
-    ) {
+    private void poblarModeloAdministradores(Model model, String texto, String estado, int page) {
         PageRequest pageable = PageRequest.of(
                 page, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "idUsuario"));
 
@@ -201,6 +197,27 @@ public class SuperadminController {
                 politicaContrasenaRepository.findById(1).orElse(null));
         model.addAttribute("ultimoAdmin",
                 usuarioRepository.findUltimoAdminCreado(ROL_ADMIN_IDS).orElse(null));
+    }
+
+    /** Repuebla el listado y agrega el mensaje flash como data-attr del fragmento, para AJAX. */
+    private String respuestaAjaxAdministradores(Model model, String texto, String estado, int page, boolean success, String mensaje) {
+        poblarModeloAdministradores(model, texto, estado, page);
+        model.addAttribute("flashType", success ? "success" : "error");
+        model.addAttribute("flashMessage", mensaje);
+        return "superadmin/administradores :: tablaAdmins";
+    }
+
+    @GetMapping("/administradores")
+    public String showAdministradores(
+            Model model,
+            @RequestParam(value = "texto", required = false) String texto,
+            @RequestParam(value = "estado", required = false) String estado,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "modal", required = false) String modal,  // ← NUEVO
+            @RequestParam(value = "id", required = false) Long id,
+            jakarta.servlet.http.HttpServletRequest request
+    ) {
+        poblarModeloAdministradores(model, texto, estado, page);
 
         // Al final, antes del return:
         if ("historial".equals(modal) && id != null) {
@@ -212,6 +229,15 @@ public class SuperadminController {
             }
         }
         model.addAttribute("modal", modal);
+
+        // ── Peticiones AJAX (paginacion/filtros/historial sin recargar la pagina) ──
+        boolean esAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+        if (esAjax && "historial".equals(modal)) {
+            return "superadmin/administradores :: modalHistorial";
+        }
+        if (esAjax) {
+            return "superadmin/administradores :: tablaAdmins";
+        }
         return "superadmin/administradores";
     }
 
@@ -223,9 +249,16 @@ public class SuperadminController {
             @RequestParam String usuarioCorreo,
             @RequestParam String dominioCorreo,
             @RequestParam(required = false) String dni,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "texto", required = false) String texto,
+            @RequestParam(value = "estado", required = false) String estado,
             RedirectAttributes redirectAttributes,
-            org.springframework.security.core.Authentication authentication
+            org.springframework.security.core.Authentication authentication,
+            Model model,
+            jakarta.servlet.http.HttpServletRequest request
     ) {
+        boolean esAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+
         // Construir correo completo — dominioCorreo ya tiene el @
         String correoCompleto = usuarioCorreo.trim() + dominioCorreo.trim();
         usuario.setCorreo(correoCompleto);
@@ -233,12 +266,14 @@ public class SuperadminController {
         // 0. Validar campos obligatorios
         if (usuario.getNombres() == null || usuario.getNombres().isBlank()
                 || usuario.getApellidoPaterno() == null || usuario.getApellidoPaterno().isBlank()) {
+            if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, false, "El nombre y apellido paterno son obligatorios.");
             redirectAttributes.addFlashAttribute("error", "El nombre y apellido paterno son obligatorios.");
             return "redirect:/superadmin/administradores";
         }
 
         // 1. Validar unicidad de correo
         if (usuarioRepository.existsByCorreo(correoCompleto)) {
+            if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, false, "Ya existe un administrador con ese correo electrónico.");
             redirectAttributes.addFlashAttribute("error",
                     "Ya existe un administrador con ese correo electrónico.");
             return "redirect:/superadmin/administradores";
@@ -247,6 +282,7 @@ public class SuperadminController {
         // 2. Validar unicidad de DNI
         if (dni != null && !dni.isBlank()
                 && identificacionRepository.existsByNumero(dni.trim())) {
+            if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, false, "Ya existe un administrador con ese DNI.");
             redirectAttributes.addFlashAttribute("error",
                     "Ya existe un administrador con ese DNI.");
             return "redirect:/superadmin/administradores";
@@ -274,8 +310,9 @@ public class SuperadminController {
             }
 
             if (!erroresPolitica.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error",
-                        "La contraseña no cumple las políticas: " + String.join(", ", erroresPolitica) + ".");
+                String msg = "La contraseña no cumple las políticas: " + String.join(", ", erroresPolitica) + ".";
+                if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, false, msg);
+                redirectAttributes.addFlashAttribute("error", msg);
                 return "redirect:/superadmin/administradores";
             }
         }
@@ -325,15 +362,16 @@ public class SuperadminController {
             System.out.println("ERROR al enviar correo: " + e.getMessage());
         }
 
-        redirectAttributes.addFlashAttribute("success",
-                "Administrador creado exitosamente. Se envió un correo con las credenciales a " + correoCompleto + ".");
-
         crearNotificacionSuperadmin(
                 "Nuevo administrador creado",
                 "Se creó el administrador " + correoCompleto + " correctamente.",
                 "ADMIN_CREADO",
                 "/superadmin/administradores"
         );
+
+        String mensajeExito = "Administrador creado exitosamente. Se envió un correo con las credenciales a " + correoCompleto + ".";
+        if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, true, mensajeExito);
+        redirectAttributes.addFlashAttribute("success", mensajeExito);
         return "redirect:/superadmin/administradores";
     }
 
@@ -402,15 +440,21 @@ public class SuperadminController {
             @RequestParam String dominioCorreo,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "texto", required = false) String texto,
+            @RequestParam(value = "estado", required = false) String estado,
             @RequestParam(required = false) String estadoCuenta,
             RedirectAttributes redirectAttributes,
-            org.springframework.security.core.Authentication authentication
+            org.springframework.security.core.Authentication authentication,
+            Model model,
+            jakarta.servlet.http.HttpServletRequest request
     ) {
+        boolean esAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+
         // Construir correo completo
         String correo = usuarioCorreo.trim() + dominioCorreo.trim();
 
         // Validar campos obligatorios
         if (nombres.isBlank() || apellidoPaterno.isBlank()) {
+            if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, false, "El nombre y apellido paterno son obligatorios.");
             redirectAttributes.addFlashAttribute("error", "El nombre y apellido paterno son obligatorios.");
             return "redirect:/superadmin/administradores/editar/" + idUsuario
                     + "?page=" + page + (texto != null ? "&texto=" + texto : "");
@@ -418,6 +462,7 @@ public class SuperadminController {
 
         Usuario admin = usuarioRepository.findById(idUsuario).orElse(null);
         if (admin == null) {
+            if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, false, "Administrador no encontrado.");
             redirectAttributes.addFlashAttribute("error", "Administrador no encontrado.");
             return "redirect:/superadmin/administradores";
         }
@@ -427,6 +472,7 @@ public class SuperadminController {
         // Validar unicidad de correo (excluyendo el mismo usuario)
         if (!admin.getCorreo().equalsIgnoreCase(correo)
                 && usuarioRepository.existsByCorreoAndEliminadoEnIsNull(correo)) {
+            if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, false, "Ya existe un administrador con ese correo.");
             redirectAttributes.addFlashAttribute("error", "Ya existe un administrador con ese correo.");
             return "redirect:/superadmin/administradores/editar/" + idUsuario
                     + "?page=" + page + (texto != null ? "&texto=" + texto : "");
@@ -437,6 +483,7 @@ public class SuperadminController {
         if (dni != null && !dni.isBlank()
                 && !dni.trim().equals(dniActual)
                 && identificacionRepository.existsByNumero(dni.trim())) {
+            if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, false, "Ya existe un administrador con ese DNI.");
             redirectAttributes.addFlashAttribute("error", "Ya existe un administrador con ese DNI.");
             return "redirect:/superadmin/administradores/editar/" + idUsuario
                     + "?page=" + page + (texto != null ? "&texto=" + texto : "");
@@ -470,8 +517,6 @@ public class SuperadminController {
         }
 
 
-        redirectAttributes.addFlashAttribute("success", "Administrador actualizado correctamente.");
-
         crearNotificacionSuperadmin(
                 "Administrador editado",
                 "Se actualizaron los datos de " + nombres + " " + apellidoPaterno + ".",
@@ -493,6 +538,9 @@ public class SuperadminController {
             h.setAutorizadoPor(superadmin);
             historialRolesRepository.save(h);
         }
+
+        if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, true, "Administrador actualizado correctamente.");
+        redirectAttributes.addFlashAttribute("success", "Administrador actualizado correctamente.");
         return "redirect:/superadmin/administradores?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
     }
@@ -504,23 +552,28 @@ public class SuperadminController {
             @RequestParam Long idUsuario,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "texto", required = false) String texto,
+            @RequestParam(value = "estado", required = false) String estado,
             RedirectAttributes redirectAttributes,
-            org.springframework.security.core.Authentication authentication
+            org.springframework.security.core.Authentication authentication,
+            Model model,
+            jakarta.servlet.http.HttpServletRequest request
     ) {
+        boolean esAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+
         Usuario admin = usuarioRepository.findById(idUsuario).orElse(null);
         if (admin == null) {
+            if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, false, "Administrador no encontrado.");
             redirectAttributes.addFlashAttribute("error", "Administrador no encontrado.");
             return "redirect:/superadmin/administradores";
         }
 
         boolean estaBloqueado = admin.getEstadoCuenta() == Usuario.EstadoCuenta.BLOQUEADO;
+        String mensajeEstado = estaBloqueado ? "Administrador desbloqueado correctamente." : "Administrador bloqueado correctamente.";
 
         if (estaBloqueado) {
             admin.setEstadoCuenta(Usuario.EstadoCuenta.ACTIVO);
-            redirectAttributes.addFlashAttribute("success", "Administrador desbloqueado correctamente.");
         } else {
             admin.setEstadoCuenta(Usuario.EstadoCuenta.BLOQUEADO);
-            redirectAttributes.addFlashAttribute("success", "Administrador bloqueado correctamente.");
         }
 
         admin.setActualizadoEn(LocalDateTime.now());
@@ -550,6 +603,8 @@ public class SuperadminController {
                 "/superadmin/administradores"
         );
 
+        if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, true, mensajeEstado);
+        redirectAttributes.addFlashAttribute("success", mensajeEstado);
         return "redirect:/superadmin/administradores?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
     }
@@ -561,11 +616,17 @@ public class SuperadminController {
             @RequestParam Long idUsuario,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "texto", required = false) String texto,
+            @RequestParam(value = "estado", required = false) String estado,
             RedirectAttributes redirectAttributes,
-            org.springframework.security.core.Authentication authentication
+            org.springframework.security.core.Authentication authentication,
+            Model model,
+            jakarta.servlet.http.HttpServletRequest request
     ) {
+        boolean esAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+
         Usuario admin = usuarioRepository.findById(idUsuario).orElse(null);
         if (admin == null) {
+            if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, false, "Administrador no encontrado.");
             redirectAttributes.addFlashAttribute("error", "Administrador no encontrado.");
             return "redirect:/superadmin/administradores";
         }
@@ -590,9 +651,6 @@ public class SuperadminController {
             historialRolesRepository.save(h);
         }
 
-        redirectAttributes.addFlashAttribute("success",
-                "Administrador eliminado correctamente.");
-
         crearNotificacionSuperadmin(
                 "Administrador eliminado",
                 "Se eliminó la cuenta de " + admin.getNombres() + " " + admin.getApellidoPaterno(),
@@ -600,6 +658,8 @@ public class SuperadminController {
                 "/superadmin/administradores"
         );
 
+        if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, true, "Administrador eliminado correctamente.");
+        redirectAttributes.addFlashAttribute("success", "Administrador eliminado correctamente.");
         return "redirect:/superadmin/administradores?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
     }
@@ -649,28 +709,9 @@ public class SuperadminController {
         model.addAttribute("totalNotificaciones",
                 notificacionRepository.count());
 
-        // ── Sesiones y seguridad ──────────────────────────────────────────
-        LocalDateTime inicioDia = LocalDate.now().atStartOfDay();
-
-        model.addAttribute("sesionesActivas",
-                registroSesionRepository.countSesionesActivas(LocalDateTime.now().minusHours(8)));
-        model.addAttribute("sesionesHoy",
-                registroSesionRepository.countByFechaInicioAfter(inicioDia));
-
-        long intentosFallidos = intentoLoginRepository.countByFechaAfterAndExitosoFalse(inicioDia);
-        model.addAttribute("intentosFallidosHoy", intentosFallidos);
-
-        model.addAttribute("recuperacionesActivas",
-                recuperacionPasswordRepository.countByUsadoFalse());
-        model.addAttribute("solicitudesPendientes",
-                usuarioRepository.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE"));
-
-        // ── Latencia BD ───────────────────────────────────────────────────
-        long t0 = System.currentTimeMillis();
-        rolRepository.count();
-        long latencia = System.currentTimeMillis() - t0;
-
-        model.addAttribute("dbLatencyMs", latencia);
+        // ── Métricas dinámicas (CPU, RAM, disco, latencia, sesiones, IA) ───
+        Map<String, Object> estado = estadoSistemaService.calcularEstadoSistema();
+        model.addAllAttributes(estado);
         model.addAttribute("dbConexionOk", true);
 
         // ── Info de despliegue ────────────────────────────────────────────
@@ -688,7 +729,9 @@ public class SuperadminController {
         Long superadminId = superadmin != null ? superadmin.getIdUsuario() : null;
 
         // ── Alerta automática si hay muchos intentos fallidos ─────────────
+        Long intentosFallidos = (Long) estado.get("intentosFallidosHoy");
         if (intentosFallidos >= 5 && superadminId != null) {
+            LocalDateTime inicioDia = LocalDate.now().atStartOfDay();
             boolean yaExisteAlerta = notificacionRepository
                     .existsAlertaSistemaHoy(superadminId, "SISTEMA_ALERTA", inicioDia);
 
@@ -702,179 +745,11 @@ public class SuperadminController {
             }
         }
 
-        // ── Variables para análisis inteligente del sistema ───────────────
-        int cpuUsage = -1;
-        int ramUsagePct = -1;
-        int diskUsagePct = -1;
-
-        long ramUsadaMb = 0;
-        long ramTotalMb = 0;
-        long usadoGb = 0;
-        long totalGb = 0;
-
-        // ── CPU, RAM, Disco ───────────────────────────────────────────────
-        try {
-            // CPU
-            com.sun.management.OperatingSystemMXBean osBean =
-                    (com.sun.management.OperatingSystemMXBean)
-                            java.lang.management.ManagementFactory.getOperatingSystemMXBean();
-
-            double cpuLoad = osBean.getCpuLoad();
-            cpuUsage = cpuLoad >= 0 ? (int) Math.round(cpuLoad * 100) : -1;
-
-            model.addAttribute("cpuUsage", cpuUsage);
-
-            // RAM
-            Runtime runtime = Runtime.getRuntime();
-            ramTotalMb = runtime.totalMemory() / (1024 * 1024);
-            long ramLibreMb = runtime.freeMemory() / (1024 * 1024);
-            ramUsadaMb = ramTotalMb - ramLibreMb;
-
-            ramUsagePct = ramTotalMb > 0 ? (int) ((ramUsadaMb * 100) / ramTotalMb) : 0;
-
-            model.addAttribute("ramUsage", ramUsagePct);
-            model.addAttribute("ramUsadaMb", ramUsadaMb);
-            model.addAttribute("ramTotalMb", ramTotalMb);
-
-            // Disco
-            java.io.File disco = new java.io.File("/");
-            totalGb = disco.getTotalSpace() / (1024 * 1024 * 1024);
-            long libreGb = disco.getUsableSpace() / (1024 * 1024 * 1024);
-            usadoGb = totalGb - libreGb;
-
-            diskUsagePct = totalGb > 0 ? (int) ((usadoGb * 100) / totalGb) : 0;
-
-            model.addAttribute("diskUsage", diskUsagePct);
-            model.addAttribute("diskUsadoGb", usadoGb);
-            model.addAttribute("diskTotalGb", totalGb);
-
-        } catch (Exception e) {
-            model.addAttribute("cpuUsage", -1);
-            model.addAttribute("ramUsage", -1);
-            model.addAttribute("ramUsadaMb", 0);
-            model.addAttribute("ramTotalMb", 0);
-            model.addAttribute("diskUsage", -1);
-            model.addAttribute("diskUsadoGb", 0);
-            model.addAttribute("diskTotalGb", 0);
-        }
-
-        // ── IA básica: análisis inteligente del estado del sistema ────────
-        int puntosRiesgo = 0;
-        List<String> factoresDetectados = new ArrayList<>();
-
-
-        if (cpuUsage >= 80) {
-            puntosRiesgo += 2;
-            factoresDetectados.add("uso elevado de CPU");
-        }
-
-        if (ramUsagePct >= 80) {
-            puntosRiesgo += 2;
-            factoresDetectados.add("uso elevado de memoria RAM");
-        }
-
-        if (diskUsagePct >= 75) {
-            puntosRiesgo += 2;
-            factoresDetectados.add("almacenamiento cercano al límite");
-        }
-
-        if (latencia >= 100) {
-            puntosRiesgo += 1;
-            factoresDetectados.add("latencia elevada en la base de datos");
-        }
-
-        if (intentosFallidos >= 5) {
-            puntosRiesgo += 2;
-            factoresDetectados.add("múltiples intentos fallidos de acceso");
-        }
-
-        String iaNivelRiesgo;
-        String iaResumenSistema;
-        String iaRecomendacionSistema;
-
-        if (puntosRiesgo >= 5) {
-            iaNivelRiesgo = "CRÍTICO";
-            iaResumenSistema = "La IA detectó señales relevantes de riesgo operativo o de seguridad en el sistema.";
-            iaRecomendacionSistema = "Revisar recursos del servidor, limpiar almacenamiento, validar logs de acceso y verificar posibles intentos de ingreso no autorizados.";
-        } else if (puntosRiesgo >= 3) {
-            iaNivelRiesgo = "MEDIO";
-            iaResumenSistema = "La IA detectó condiciones que podrían afectar el rendimiento si continúan aumentando.";
-            iaRecomendacionSistema = "Monitorear CPU, RAM, disco, latencia de base de datos y actividad reciente de usuarios.";
-        } else {
-            iaNivelRiesgo = "BAJO";
-            iaResumenSistema = "La IA no detectó riesgos relevantes. El sistema se encuentra estable.";
-            iaRecomendacionSistema = "Mantener el monitoreo preventivo y revisar periódicamente las métricas del sistema.";
-        }
-
-        model.addAttribute("iaNivelRiesgo", iaNivelRiesgo);
-        model.addAttribute("iaResumenSistema", iaResumenSistema);
-        model.addAttribute("iaRecomendacionSistema", iaRecomendacionSistema);
-        model.addAttribute("iaFactoresDetectados", factoresDetectados);
-
-        // ── Log entries para la terminal ──────────────────────────────────────
-        java.time.format.DateTimeFormatter logFmt =
-                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-        LocalDateTime ahora = LocalDateTime.now();
-
-        long jvmStartMs = java.lang.management.ManagementFactory.getRuntimeMXBean().getStartTime();
-        LocalDateTime jvmStart = LocalDateTime.ofInstant(
-                java.time.Instant.ofEpochMilli(jvmStartMs),
-                java.time.ZoneId.systemDefault());
-
-        List<Map<String, String>> logEntries = new ArrayList<>();
-
-        logEntries.add(Map.of(
-                "ts", jvmStart.format(logFmt),
-                "nivel", "INFO",
-                "msg", "Servidor iniciado · Java " + System.getProperty("java.version")));
-
-        logEntries.add(Map.of(
-                "ts", ahora.format(logFmt),
-                "nivel", latencia < 100 ? "INFO" : "WARN",
-                "msg", "Conexión BD verificada · " + latencia + "ms"));
-
-        if (diskUsagePct >= 80) {
-            logEntries.add(Map.of("ts", ahora.format(logFmt), "nivel", "ERROR",
-                    "msg", "Almacenamiento crítico · " + diskUsagePct + "% utilizado"));
-        } else if (diskUsagePct >= 75) {
-            logEntries.add(Map.of("ts", ahora.format(logFmt), "nivel", "WARN",
-                    "msg", "Almacenamiento elevado · " + diskUsagePct + "% — revisar pronto"));
-        } else if (diskUsagePct >= 0) {
-            logEntries.add(Map.of("ts", ahora.format(logFmt), "nivel", "INFO",
-                    "msg", "Almacenamiento en " + diskUsagePct + "% · " + usadoGb + " GB / " + totalGb + " GB"));
-        }
-
-        if (ramUsagePct >= 80) {
-            logEntries.add(Map.of("ts", ahora.format(logFmt), "nivel", "WARN",
-                    "msg", "Memoria RAM al " + ramUsagePct + "% · " + ramUsadaMb + " MB / " + ramTotalMb + " MB"));
-        }
-
-        if (cpuUsage >= 80) {
-            logEntries.add(Map.of("ts", ahora.format(logFmt), "nivel", "WARN",
-                    "msg", "Carga CPU elevada · " + cpuUsage + "%"));
-        }
-
-        if (intentosFallidos >= 5) {
-            logEntries.add(Map.of("ts", ahora.format(logFmt), "nivel", "ERROR",
-                    "msg", intentosFallidos + " intentos de acceso fallidos detectados hoy"));
-        } else if (intentosFallidos > 0) {
-            logEntries.add(Map.of("ts", ahora.format(logFmt), "nivel", "WARN",
-                    "msg", intentosFallidos + " intento(s) de login fallido(s) hoy"));
-        }
-
-        model.addAttribute("logEntries", logEntries);
-
         return "superadmin/estadoSistema";
     }
 
     // Nuevo método para la Configuración de Seguridad
-    @GetMapping("/confSeguridad")
-    public String showConfSeguridad(
-            Model model,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(value = "estadoDominio", required = false) String estadoDominio,
-            @RequestParam(value = "texto", required = false) String texto
-    ) {
+    private void poblarModeloDominios(Model model, int page, String estadoDominio, String texto) {
         model.addAttribute("titulo", "Configuración de Seguridad");
         model.addAttribute("currentSection", "superadmin-conf-seguridad");
         model.addAttribute("estadoDominio", estadoDominio);
@@ -917,7 +792,28 @@ public class SuperadminController {
                     return nueva;
                 });
         model.addAttribute("politica", politica);
+    }
 
+    private String respuestaAjaxDominios(Model model, int page, String estadoDominio, String texto, boolean success, String mensaje) {
+        poblarModeloDominios(model, page, estadoDominio, texto);
+        model.addAttribute("flashType", success ? "success" : "error");
+        model.addAttribute("flashMessage", mensaje);
+        return "superadmin/confSeguridad :: dominiosCard";
+    }
+
+    @GetMapping("/confSeguridad")
+    public String showConfSeguridad(
+            Model model,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(value = "estadoDominio", required = false) String estadoDominio,
+            @RequestParam(value = "texto", required = false) String texto,
+            jakarta.servlet.http.HttpServletRequest request
+    ) {
+        poblarModeloDominios(model, page, estadoDominio, texto);
+
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            return "superadmin/confSeguridad :: dominiosCard";
+        }
         return "superadmin/confSeguridad";
     }
     // ── Dominios — POST (Crear) ───────────────────────────────────────────────────
@@ -927,9 +823,15 @@ public class SuperadminController {
             @RequestParam String nombreDominio,
             @RequestParam(required = false) String motivoAutorizacion,
             @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "texto", required = false) String texto,
+            @RequestParam(value = "estadoDominio", required = false) String estadoDominio,
             RedirectAttributes redirectAttributes,
-            org.springframework.security.core.Authentication authentication
+            org.springframework.security.core.Authentication authentication,
+            Model model,
+            jakarta.servlet.http.HttpServletRequest request
     ) {
+        boolean esAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+
         // Normalizar: asegurarse que empiece con @
         String dominio = nombreDominio.trim();
         if (!dominio.startsWith("@")) {
@@ -937,7 +839,9 @@ public class SuperadminController {
         }
 
         if (dominioAutorizadoRepository.existsByNombreDominioIgnoreCase(dominio)) {
-            redirectAttributes.addFlashAttribute("error", "El dominio '" + dominio + "' ya está registrado.");
+            String msg = "El dominio '" + dominio + "' ya está registrado.";
+            if (esAjax) return respuestaAjaxDominios(model, page, estadoDominio, texto, false, msg);
+            redirectAttributes.addFlashAttribute("error", msg);
             return "redirect:/superadmin/confSeguridad?page=" + page;
         }
 
@@ -954,8 +858,6 @@ public class SuperadminController {
 
         dominioAutorizadoRepository.save(nuevo);
 
-        redirectAttributes.addFlashAttribute("success", "Dominio '" + dominio + "' añadido correctamente.");
-
         crearNotificacionSuperadmin(
                 "Dominio añadido",
                 "Se añadió el dominio " + dominio + " correctamente.",
@@ -963,6 +865,9 @@ public class SuperadminController {
                 "/superadmin/confSeguridad"
         );
 
+        String mensajeExito = "Dominio '" + dominio + "' añadido correctamente.";
+        if (esAjax) return respuestaAjaxDominios(model, page, estadoDominio, texto, true, mensajeExito);
+        redirectAttributes.addFlashAttribute("success", mensajeExito);
         return "redirect:/superadmin/confSeguridad?page=" + page;
     }
 
@@ -1014,10 +919,16 @@ public class SuperadminController {
             @RequestParam(required = false) Boolean estado,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(value = "texto", required = false) String texto,
-            RedirectAttributes redirectAttributes
+            @RequestParam(value = "estadoDominio", required = false) String estadoDominio,
+            RedirectAttributes redirectAttributes,
+            Model model,
+            jakarta.servlet.http.HttpServletRequest request
     ) {
+        boolean esAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+
         DominioAutorizado dominio = dominioAutorizadoRepository.findById(idDominio).orElse(null);
         if (dominio == null) {
+            if (esAjax) return respuestaAjaxDominios(model, page, estadoDominio, texto, false, "Dominio no encontrado.");
             redirectAttributes.addFlashAttribute("error", "Dominio no encontrado.");
             return "redirect:/superadmin/confSeguridad";
         }
@@ -1030,6 +941,7 @@ public class SuperadminController {
         // Validar unicidad excluyendo el mismo registro
         if (!dominio.getNombreDominio().equalsIgnoreCase(nuevoNombre)
                 && dominioAutorizadoRepository.existsByNombreDominioIgnoreCase(nuevoNombre)) {
+            if (esAjax) return respuestaAjaxDominios(model, page, estadoDominio, texto, false, "Ya existe un dominio con ese nombre.");
             redirectAttributes.addFlashAttribute("error", "Ya existe un dominio con ese nombre.");
             return "redirect:/superadmin/confSeguridad?page=" + page
                     + (texto != null ? "&texto=" + texto : "");
@@ -1041,6 +953,7 @@ public class SuperadminController {
 
         dominioAutorizadoRepository.save(dominio);
 
+        if (esAjax) return respuestaAjaxDominios(model, page, estadoDominio, texto, true, "Dominio actualizado correctamente.");
         redirectAttributes.addFlashAttribute("success", "Dominio actualizado correctamente.");
         return "redirect:/superadmin/confSeguridad?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
@@ -1053,16 +966,20 @@ public class SuperadminController {
             @RequestParam Integer idDominio,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(value = "texto", required = false) String texto,
-            RedirectAttributes redirectAttributes
+            @RequestParam(value = "estadoDominio", required = false) String estadoDominio,
+            RedirectAttributes redirectAttributes,
+            Model model,
+            jakarta.servlet.http.HttpServletRequest request
     ) {
+        boolean esAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+
         if (!dominioAutorizadoRepository.existsById(idDominio)) {
+            if (esAjax) return respuestaAjaxDominios(model, page, estadoDominio, texto, false, "Dominio no encontrado.");
             redirectAttributes.addFlashAttribute("error", "Dominio no encontrado.");
             return "redirect:/superadmin/confSeguridad";
         }
 
         dominioAutorizadoRepository.deleteById(idDominio);
-
-        redirectAttributes.addFlashAttribute("success", "Dominio eliminado correctamente.");
 
         crearNotificacionSuperadmin(
                 "Dominio eliminado",
@@ -1071,6 +988,8 @@ public class SuperadminController {
                 "/superadmin/confSeguridad"
         );
 
+        if (esAjax) return respuestaAjaxDominios(model, page, estadoDominio, texto, true, "Dominio eliminado correctamente.");
+        redirectAttributes.addFlashAttribute("success", "Dominio eliminado correctamente.");
         return "redirect:/superadmin/confSeguridad?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
     }
@@ -1083,10 +1002,16 @@ public class SuperadminController {
             @RequestParam Boolean nuevoEstado,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(value = "texto", required = false) String texto,
-            RedirectAttributes redirectAttributes
+            @RequestParam(value = "estadoDominio", required = false) String estadoDominio,
+            RedirectAttributes redirectAttributes,
+            Model model,
+            jakarta.servlet.http.HttpServletRequest request
     ) {
+        boolean esAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+
         DominioAutorizado dominio = dominioAutorizadoRepository.findById(idDominio).orElse(null);
         if (dominio == null) {
+            if (esAjax) return respuestaAjaxDominios(model, page, estadoDominio, texto, false, "Dominio no encontrado.");
             redirectAttributes.addFlashAttribute("error", "Dominio no encontrado.");
             return "redirect:/superadmin/confSeguridad";
         }
@@ -1095,8 +1020,7 @@ public class SuperadminController {
         dominioAutorizadoRepository.save(dominio);
 
         String accion = nuevoEstado ? "activado" : "desactivado";
-        redirectAttributes.addFlashAttribute("success",
-                "Dominio '" + dominio.getNombreDominio() + "' " + accion + " correctamente.");
+        String mensaje = "Dominio '" + dominio.getNombreDominio() + "' " + accion + " correctamente.";
 
         crearNotificacionSuperadmin(
                 nuevoEstado ? "Dominio activado" : "Dominio desactivado",
@@ -1105,6 +1029,8 @@ public class SuperadminController {
                 "/superadmin/confSeguridad"
         );
 
+        if (esAjax) return respuestaAjaxDominios(model, page, estadoDominio, texto, true, mensaje);
+        redirectAttributes.addFlashAttribute("success", mensaje);
         return "redirect:/superadmin/confSeguridad?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
     }
@@ -1303,19 +1229,10 @@ public class SuperadminController {
 
     }
 
-    @GetMapping("/notificaciones")
-    public String showNotificaciones(Model model,
-                                     @RequestParam(required = false, defaultValue = "ALL") String tipo,
-                                     org.springframework.security.core.Authentication authentication) {
-        Usuario superadmin = usuarioRepository
-                .findByCorreoWithRol(authentication.getName()).orElse(null);
-        if (superadmin == null) return "redirect:/superadmin/dashboard";
-
+    private void poblarModeloNotificaciones(Model model, String tipo, Usuario superadmin) {
         List<Notificacion> notificaciones = notificacionRepository
                 .findByUsuarioIdOrderByFechaDesc(superadmin.getIdUsuario());
 
-        // Formatear tiempo relativo
-        LocalDateTime now = LocalDateTime.now();
         List<java.util.Map<String, Object>> notificacionesVm = notificaciones.stream()
                 .filter(n -> {
                     if ("ALL".equals(tipo)) return true;
@@ -1361,14 +1278,33 @@ public class SuperadminController {
                 notificacionRepository.countNoLeidasByUsuario(superadmin.getIdUsuario()));
         model.addAttribute("titulo", "Notificaciones");
         model.addAttribute("currentSection", "superadmin-notificaciones");
+    }
+
+    @GetMapping("/notificaciones")
+    public String showNotificaciones(Model model,
+                                     @RequestParam(required = false, defaultValue = "ALL") String tipo,
+                                     org.springframework.security.core.Authentication authentication,
+                                     jakarta.servlet.http.HttpServletRequest request) {
+        Usuario superadmin = usuarioRepository
+                .findByCorreoWithRol(authentication.getName()).orElse(null);
+        if (superadmin == null) return "redirect:/superadmin/dashboard";
+
+        poblarModeloNotificaciones(model, tipo, superadmin);
+
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            return "superadmin/notificaciones :: notifContent";
+        }
         return "superadmin/notificaciones";
     }
 
     @PostMapping("/notificaciones/marcar-leidas")
     @Transactional
     public String marcarTodasLeidas(
+            @RequestParam(required = false, defaultValue = "ALL") String tipo,
             org.springframework.security.core.Authentication authentication,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes,
+            Model model,
+            jakarta.servlet.http.HttpServletRequest request) {
         Usuario superadmin = usuarioRepository
                 .findByCorreoWithRol(authentication.getName()).orElse(null);
         if (superadmin != null) {
@@ -1379,6 +1315,11 @@ public class SuperadminController {
                         notificacionRepository.save(n);
                     });
         }
+
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With")) && superadmin != null) {
+            poblarModeloNotificaciones(model, tipo, superadmin);
+            return "superadmin/notificaciones :: notifContent";
+        }
         redirectAttributes.addFlashAttribute("success", "Todas las notificaciones marcadas como leídas.");
         return "redirect:/superadmin/notificaciones";
     }
@@ -1386,8 +1327,11 @@ public class SuperadminController {
 
     @PostMapping("/notificaciones/marcar-leida/{id}")
     public String marcarLeida(@PathVariable Long id,
+                              @RequestParam(required = false, defaultValue = "ALL") String tipo,
                               org.springframework.security.core.Authentication authentication,
-                              RedirectAttributes redirectAttributes) {
+                              RedirectAttributes redirectAttributes,
+                              Model model,
+                              jakarta.servlet.http.HttpServletRequest request) {
         Usuario superadmin = usuarioRepository
                 .findByCorreoWithRol(authentication.getName()).orElse(null);
         if (superadmin == null) return "redirect:/superadmin/notificaciones";
@@ -1399,6 +1343,10 @@ public class SuperadminController {
             }
         });
 
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            poblarModeloNotificaciones(model, tipo, superadmin);
+            return "superadmin/notificaciones :: notifContent";
+        }
         redirectAttributes.addFlashAttribute("success", "Notificación marcada como leída.");
         return "redirect:/superadmin/notificaciones";
     }

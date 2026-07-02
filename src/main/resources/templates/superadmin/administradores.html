@@ -5,99 +5,9 @@
     <title>Recíclame - Administradores</title>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" th:href="@{/css/superadmin.css}"/>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-secondary": "#ffffff",
-                        "secondary-fixed": "#c3ecd7",
-                        "surface-container-high": "#dce9ff",
-                        "surface-container-lowest": "#ffffff",
-                        "surface-container": "#e5eeff",
-                        "on-primary-fixed-variant": "#3f465c",
-                        "on-background": "#0b1c30",
-                        "inverse-surface": "#213145",
-                        "on-tertiary-container": "#3980f4",
-                        "on-secondary-container": "#00743a",
-                        "inverse-on-surface": "#eaf1ff",
-                        "on-error": "#ffffff",
-                        "surface-bright": "#f8f9ff",
-                        "on-tertiary": "#ffffff",
-                        "surface-tint": "#565e74",
-                        "background": "#f8f9ff",
-                        "surface-dim": "#cbdbf5",
-                        "on-tertiary-fixed-variant": "#004395",
-                        "tertiary-container": "#001a42",
-                        "on-error-container": "#93000a",
-                        "on-surface-variant": "#45464d",
-                        "primary-container": "#131b2e",
-                        "on-secondary-fixed": "#002115",
-                        "error": "#ba1a1a",
-                        "outline-variant": "#c6c6cd",
-                        "secondary-fixed-dim": "#a8cfbc",
-                        "on-primary-container": "#7c839b",
-                        "tertiary-fixed-dim": "#adc6ff",
-                        "primary": "#000000",
-                        "secondary": "#00743a",
-                        "surface-container-highest": "#d3e4fe",
-                        "on-tertiary-fixed": "#001a42",
-                        "surface-variant": "#d3e4fe",
-                        "surface-container-low": "#eff4ff",
-                        "primary-fixed-dim": "#bec6e0",
-                        "on-primary-fixed": "#131b2e",
-                        "on-secondary-fixed-variant": "#00743a",
-                        "error-container": "#ffdad6",
-                        "primary-fixed": "#dae2fd",
-                        "outline": "#76777d",
-                        "on-surface": "#0b1c30",
-                        "inverse-primary": "#bec6e0",
-                        "secondary-container": "#c3ecd7",
-                        "on-primary": "#ffffff",
-                        "tertiary-fixed": "#d8e2ff",
-                        "surface": "#f8f9ff",
-                        "tertiary": "#000000"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "stack-sm": "8px",
-                        "stack-md": "16px",
-                        "sidebar-width": "260px",
-                        "stack-lg": "32px",
-                        "gutter-md": "24px",
-                        "container-padding": "40px"
-                    },
-                    "fontFamily": {
-                        "headline-md": ["Plus Jakarta Sans"],
-                        "display-lg": ["Plus Jakarta Sans"],
-                        "label-md": ["Plus Jakarta Sans"],
-                        "title-lg": ["Plus Jakarta Sans"],
-                        "body-md": ["Plus Jakarta Sans"],
-                        "body-sm": ["Plus Jakarta Sans"],
-                        "display-xl": ["Plus Jakarta Sans"]
-                    },
-                    "fontSize": {
-                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
-                        "display-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
-                        "title-lg": ["18px", {"lineHeight": "28px", "fontWeight": "600"}],
-                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
-                        "display-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
-                    }
-                }
-            }
-        }
-    </script>
     <!-- AOS - Scroll Reveal -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <style>
@@ -190,7 +100,7 @@
             </div>
         </div>
 
-        <div id="adminModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden items-center justify-center">
+        <div id="adminModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[300] hidden items-center justify-center">
             <div class="relative w-full max-w-3xl bg-surface-container-lowest rounded-[1.5rem] ambient-shadow ghost-border overflow-hidden border border-slate-100 m-auto max-h-[90vh] overflow-y-auto">
 
                 <div class="px-8 pt-8 pb-6 flex justify-between items-start">
@@ -300,7 +210,7 @@
                             class="px-5 py-2.5 font-semibold text-on-surface-variant hover:text-on-primary-fixed text-sm">
                         Cancelar
                     </button>
-                    <button form="formCrearAdmin" type="submit"
+                    <button form="formCrearAdmin" type="submit" data-no-spinner="true"
                             class="bg-secondary hover:bg-[#005a3d] text-white px-7 py-2.5 rounded-xl font-bold text-sm transition-all active:scale-95">
                         Crear Administrador
                     </button>
@@ -699,9 +609,24 @@
                 document.getElementById('dropdownEstado').classList.toggle('hidden');
             }
 
+            function actualizarVisibilidadLimpiarAdmin() {
+                var btn = document.getElementById('btnLimpiarAdmin');
+                var input = document.getElementById('inputBuscarAdmin');
+                var estadoActivo = document.querySelector('input[name="estado"]:checked');
+                var hayFiltro = (input && input.value.trim() !== '') || (estadoActivo && estadoActivo.value !== '');
+                if (btn) btn.classList.toggle('hidden', !hayFiltro);
+            }
+
             document.addEventListener('DOMContentLoaded', function() {
 
-                // Sincronizar label del botón al seleccionar
+                actualizarVisibilidadLimpiarAdmin();
+
+                var inputBuscarAdmin = document.getElementById('inputBuscarAdmin');
+                if (inputBuscarAdmin) {
+                    inputBuscarAdmin.addEventListener('input', actualizarVisibilidadLimpiarAdmin);
+                }
+
+                // Sincronizar label del botón al seleccionar y aplicar filtro sin recargar
                 document.querySelectorAll('input[name="estado"]').forEach(radio => {
                     radio.addEventListener('change', function() {
 
@@ -715,8 +640,14 @@
                             labels[this.value] || 'Estado';
 
                         document.getElementById('dropdownEstado').classList.add('hidden');
+                        actualizarVisibilidadLimpiarAdmin();
 
-                        this.closest('form').submit();
+                        var params = new URLSearchParams();
+                        var textoActual = inputBuscarAdmin ? inputBuscarAdmin.value.trim() : '';
+                        if (textoActual) params.set('texto', textoActual);
+                        if (this.value) params.set('estado', this.value);
+                        var url = '/superadmin/administradores' + (params.toString() ? '?' + params.toString() : '');
+                        if (window.cargarTablaAdmins) { window.cargarTablaAdmins(url); } else { window.location.href = url; }
                     });
                 });
 
@@ -725,15 +656,6 @@
                     const wrapper = document.getElementById('dropdownEstadoWrapper');
                     if (wrapper && !wrapper.contains(e.target)) {
                         document.getElementById('dropdownEstado').classList.add('hidden');
-                    }
-                });
-
-                // Deshabilitar radios al hacer submit para no duplicar el parámetro
-                document.addEventListener('submit', function(e) {
-                    const form = e.target.closest('form[action="/superadmin/administradores"]');
-                    if (form) {
-                        form.querySelectorAll('input[name="estado"][type="radio"]')
-                            .forEach(r => r.disabled = true);
                     }
                 });
 
@@ -847,7 +769,7 @@
 
             </section>
 
-            <form action="/superadmin/administradores"
+            <form id="formFiltrosAdmins" action="/superadmin/administradores"
                   method="get"
                   class="flex flex-col sm:flex-row gap-4 mb-6 w-full flex-wrap">
 
@@ -858,16 +780,19 @@
         </span>
 
                     <input
+                            id="inputBuscarAdmin"
                             class="w-full pl-10 pr-4 py-2.5 border border-[#e0e0e0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00743a] focus:border-transparent bg-[#fafafa]"
                             placeholder="Buscar administrador por nombre o correo..."
                             type="text"
                             name="texto"
+                            autocomplete="off"
                             th:value="${texto}" />
                 </div>
 
                 <!-- Limpiar -->
-                <a th:href="@{/superadmin/administradores}"
-                   class="flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition shrink-0"
+                <a id="btnLimpiarAdmin" th:href="@{/superadmin/administradores}"
+                   th:classappend="${(texto == null or #strings.isEmpty(texto)) and estado == null} ? ' hidden' : ''"
+                   class="js-nav-admins flex items-center gap-2 px-4 py-2.5 text-[#666] border border-[#e0e0e0] bg-white rounded-lg hover:bg-[#f0f0f0] transition shrink-0"
                    title="Limpiar filtros">
 
         <span class="material-symbols-outlined text-[20px]">
@@ -949,7 +874,9 @@
 
 
 
-            <div class="flex flex-col">
+            <div id="admins-content" th:fragment="tablaAdmins"
+                 th:attr="data-flash-type=${flashType}, data-flash-message=${flashMessage}"
+                 class="flex flex-col">
                 <div class="w-full pb-4">
                     <div class="flex flex-col gap-4 w-full">
                         <!-- Cabecera -->
@@ -1014,7 +941,7 @@
                                 </button>
                                 <!-- Después del botón Editar, antes del Eliminar -->
                                 <a th:href="@{/superadmin/administradores(page=${currentPage}, texto=${texto}, modal='historial', id=${admin.idUsuario})}"
-                                   class="inline-flex items-center justify-center h-9 rounded-lg px-3 text-sm font-semibold text-on-surface-variant hover:bg-surface-container/50 hover:text-secondary transition-colors gap-1">
+                                   class="js-nav-historial inline-flex items-center justify-center h-9 rounded-lg px-3 text-sm font-semibold text-on-surface-variant hover:bg-surface-container/50 hover:text-secondary transition-colors gap-1">
                                     <span class="material-symbols-outlined text-[14px]">history</span>
                                     Historial
                                 </a>
@@ -1041,7 +968,7 @@
                          class="flex justify-center items-center gap-2 mt-4">
                         <a th:if="${hasPrevious}"
                            th:href="@{/superadmin/administradores(page=${currentPage - 1}, texto=${texto})}"
-                           class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                           class="js-nav-admins p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
                             <span class="material-symbols-outlined">chevron_left</span>
                         </a>
 
@@ -1055,14 +982,14 @@
                                th:href="@{/superadmin/administradores(page=${i}, texto=${texto})}"
                                th:text="${i + 1}"
                                th:class="${i == currentPage} ?
-                                        'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
+                                        'js-nav-admins w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold bg-secondary text-on-secondary'
                                         :
-                                        'w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container transition'">
+                                        'js-nav-admins w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container transition'">
                             </a>
                         </div>
                         <a th:if="${hasNext}"
                            th:href="@{/superadmin/administradores(page=${currentPage + 1}, texto=${texto})}"
-                           class="p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
+                           class="js-nav-admins p-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition">
                             <span class="material-symbols-outlined">chevron_right</span>
                         </a>
                         <span th:if="${!hasNext}"
@@ -1082,7 +1009,7 @@
      MODAL — Editar Administrador
      ══════════════════════════════════════════════ -->
 <div id="modalEditarAdmin"
-     class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 items-center justify-center px-4">
+     class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[300] items-center justify-center px-4">
 
     <div class="relative w-full max-w-lg bg-surface-container-lowest rounded-[1.5rem] ambient-shadow ghost-border overflow-hidden border border-slate-100 m-auto max-h-[90vh] overflow-y-auto">
 
@@ -1193,7 +1120,7 @@
                     class="px-5 py-2.5 font-semibold text-on-surface-variant hover:text-on-primary-fixed text-sm" type="button">
                 Cancelar
             </button>
-            <button form="formEditarAdmin" type="submit"
+            <button form="formEditarAdmin" type="submit" data-no-spinner="true"
                     class="bg-secondary hover:bg-[#005a3d] text-white px-7 py-2.5 rounded-xl font-bold text-sm transition-all active:scale-95">
                 Guardar Cambios
             </button>
@@ -1204,7 +1131,7 @@
      MODAL — Confirmar Cambio de Estado Admin
      ══════════════════════════════════════════════ -->
 <div id="modalConfirmEstadoAdmin"
-     class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] items-center justify-center">
+     class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[300] items-center justify-center">
     <div class="bg-surface-container-lowest rounded-[1.5rem] ambient-shadow ghost-border max-w-sm w-full mx-4 border border-slate-100 overflow-hidden">
 
         <div class="px-8 pt-8 pb-6 text-center">
@@ -1228,7 +1155,7 @@
                 <input type="hidden" name="idUsuario"  id="estadoAdminId"/>
                 <input type="hidden" name="page"  th:value="${currentPage}"/>
                 <input type="hidden" name="texto" th:value="${texto}"/>
-                <button type="submit" id="btnConfirmarEstadoAdmin"
+                <button type="submit" id="btnConfirmarEstadoAdmin" data-no-spinner="true"
                         class="w-full px-4 py-2.5 rounded-xl font-bold text-white">
                     Confirmar
                 </button>
@@ -1241,7 +1168,7 @@
      MODAL — Confirmar Eliminación Admin
      ══════════════════════════════════════════════ -->
 <div id="modalConfirmEliminarAdmin"
-     class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] items-center justify-center">
+     class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[300] items-center justify-center">
     <div class="bg-surface-container-lowest rounded-[1.5rem] ambient-shadow ghost-border max-w-sm w-full mx-4 border border-slate-100 overflow-hidden">
 
         <div class="px-8 pt-8 pb-6 text-center">
@@ -1265,7 +1192,7 @@
                 <input type="hidden" name="idUsuario"  id="eliminarAdminId"/>
                 <input type="hidden" name="page"  th:value="${currentPage}"/>
                 <input type="hidden" name="texto" th:value="${texto}"/>
-                <button type="submit"
+                <button type="submit" data-no-spinner="true"
                         class="w-full px-4 py-2.5 rounded-xl font-bold text-white bg-red-500 hover:bg-red-600">
                     Sí, eliminar
                 </button>
@@ -1273,8 +1200,8 @@
         </div>
     </div>
 </div>
-<div th:if="${modal == 'historial'}"
-     class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+<div th:fragment="modalHistorial" th:if="${modal == 'historial'}"
+     class="fixed inset-0 z-[300] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
     <div class="w-full max-w-xl bg-surface text-on-surface rounded-[1.5rem] shadow-xl overflow-hidden flex flex-col max-h-[85vh]">
 
         <div class="flex items-start justify-between px-6 py-5 border-b border-outline-variant/30 flex-shrink-0">
@@ -1295,6 +1222,7 @@
                 <p class="text-sm text-on-surface-variant mt-1">Historial de acciones sobre este administrador</p>
             </div>
             <a th:href="@{/superadmin/administradores(page=${currentPage}, texto=${texto})}"
+               onclick="return cerrarModalHistorial(event)"
                class="px-4 py-2 rounded-lg border border-outline-variant/30 bg-surface-container-lowest text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors flex-shrink-0">
                 Cerrar
             </a>
@@ -1376,6 +1304,168 @@
         </div>
     </div>
 </div>
+<div id="historialModalSlot"></div>
+<!-- ══ Navegacion sin recarga: paginacion, filtros y modal de historial ══ -->
+<script>
+(function() {
+    function conAjaxHeaders(init) {
+        init = init || {};
+        init.headers = Object.assign({'X-Requested-With': 'XMLHttpRequest'}, init.headers || {});
+        return init;
+    }
+
+    function mostrarFlashDesdeContenido(nuevo) {
+        var tipo = nuevo.getAttribute('data-flash-type');
+        var mensaje = nuevo.getAttribute('data-flash-message');
+        if (mensaje && window.showNavToast) {
+            window.showNavToast(tipo === 'error' ? 'Error' : 'Listo', mensaje, tipo === 'error' ? 'ALERTA' : 'EXITO');
+        }
+        nuevo.removeAttribute('data-flash-type');
+        nuevo.removeAttribute('data-flash-message');
+        return tipo;
+    }
+
+    window.cargarTablaAdmins = function(url, pushUrl) {
+        return fetch(url, conAjaxHeaders())
+            .then(function(r) { return r.text(); })
+            .then(function(html) {
+                var doc = new DOMParser().parseFromString(html, 'text/html');
+                var nuevo = doc.getElementById('admins-content');
+                var actual = document.getElementById('admins-content');
+                if (nuevo && actual) {
+                    var tipo = mostrarFlashDesdeContenido(nuevo);
+                    actual.replaceWith(nuevo);
+                    enlazarNavegacionAdmins();
+                    if (pushUrl !== false) history.pushState({ ajaxAdmins: true }, '', url);
+                    return tipo;
+                }
+            })
+            .catch(function() { window.location.href = url; });
+    }
+
+    function spinnerBotonHTML() {
+        return '<svg class="animate-spin w-4 h-4 inline-block mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">'
+            + '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>'
+            + '<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>'
+            + '<span>Procesando...</span>';
+    }
+
+    function interceptarFormCRUD(formId, onSuccessClose) {
+        var form = document.getElementById(formId);
+        if (!form) return;
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var btn = form.querySelector('button[type="submit"]') ||
+                document.querySelector('button[form="' + formId + '"][type="submit"]');
+            var htmlOriginal = btn ? btn.innerHTML : null;
+            if (btn) { btn.disabled = true; btn.innerHTML = spinnerBotonHTML(); }
+
+            // Usar la URL actual (mantenida al dia por history.pushState en cada
+            // navegacion AJAX) como fuente de verdad de page/texto/estado, en vez
+            // de los hidden inputs del modal que pueden quedar obsoletos.
+            var urlActual = new URLSearchParams(window.location.search);
+            var formData = new FormData(form);
+            if (urlActual.has('page')) formData.set('page', urlActual.get('page'));
+            if (urlActual.get('texto')) formData.set('texto', urlActual.get('texto')); else formData.delete('texto');
+            if (urlActual.get('estado')) formData.set('estado', urlActual.get('estado')); else formData.delete('estado');
+
+            fetch(form.getAttribute('action'), conAjaxHeaders({ method: 'POST', body: formData }))
+                .then(function(r) { return r.text(); })
+                .then(function(html) {
+                    var doc = new DOMParser().parseFromString(html, 'text/html');
+                    var nuevo = doc.getElementById('admins-content');
+                    var actual = document.getElementById('admins-content');
+                    if (!nuevo || !actual) { form.submit(); return; }
+                    var tipo = mostrarFlashDesdeContenido(nuevo);
+                    actual.replaceWith(nuevo);
+                    enlazarNavegacionAdmins();
+                    if (tipo === 'success' && onSuccessClose) onSuccessClose();
+                })
+                .catch(function() { form.submit(); })
+                .finally(function() {
+                    if (btn) { btn.disabled = false; btn.innerHTML = htmlOriginal; }
+                });
+        });
+    }
+
+    function abrirModalHistorial(url) {
+        fetch(url, conAjaxHeaders())
+            .then(function(r) { return r.text(); })
+            .then(function(html) {
+                var doc = new DOMParser().parseFromString(html, 'text/html');
+                // El fragmento devuelto es directamente el div del modal (th:fragment="modalHistorial")
+                var contenido = doc.body.firstElementChild;
+                var slot = document.getElementById('historialModalSlot');
+                if (contenido && slot) {
+                    slot.innerHTML = '';
+                    slot.appendChild(contenido);
+                    history.pushState({ ajaxHistorial: true }, '', url);
+                }
+            })
+            .catch(function() { window.location.href = url; });
+    }
+
+    window.cerrarModalHistorial = function(event) {
+        if (event) event.preventDefault();
+        var slot = document.getElementById('historialModalSlot');
+        if (slot) slot.innerHTML = '';
+        var volverUrl = event && event.currentTarget ? event.currentTarget.getAttribute('href') : '/superadmin/administradores';
+        history.pushState({ ajaxAdmins: true }, '', volverUrl);
+        return false;
+    };
+
+    function enlazarNavegacionAdmins() {
+        document.querySelectorAll('a.js-nav-admins').forEach(function(a) {
+            if (a.dataset.ajaxBound) return;
+            a.dataset.ajaxBound = '1';
+            a.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.cargarTablaAdmins(a.getAttribute('href'));
+            });
+        });
+
+        document.querySelectorAll('a.js-nav-historial').forEach(function(a) {
+            if (a.dataset.ajaxBound) return;
+            a.dataset.ajaxBound = '1';
+            a.addEventListener('click', function(e) {
+                e.preventDefault();
+                abrirModalHistorial(a.getAttribute('href'));
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        enlazarNavegacionAdmins();
+
+        var formFiltros = document.getElementById('formFiltrosAdmins');
+        if (formFiltros) {
+            formFiltros.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var params = new URLSearchParams();
+                var texto = formFiltros.querySelector('input[name="texto"]');
+                if (texto && texto.value) params.set('texto', texto.value);
+                var estado = formFiltros.querySelector('input[name="estado"]:checked');
+                if (estado && estado.value) params.set('estado', estado.value);
+                var url = '/superadmin/administradores' + (params.toString() ? '?' + params.toString() : '');
+                window.cargarTablaAdmins(url);
+            });
+        }
+
+        // Volver/avanzar del navegador: recargar la vista con la URL correspondiente
+        window.addEventListener('popstate', function() {
+            var slot = document.getElementById('historialModalSlot');
+            if (slot) slot.innerHTML = '';
+            window.cargarTablaAdmins(window.location.href, false);
+        });
+
+        // CRUD de administradores sin recargar la pagina
+        interceptarFormCRUD('formCrearAdmin', function() { if (window.closeModal) window.closeModal(); });
+        interceptarFormCRUD('formEditarAdmin', function() { if (window.cerrarModalEditar) window.cerrarModalEditar(); });
+        interceptarFormCRUD('formCambiarEstadoAdmin', function() { if (window.cerrarModalEstadoAdmin) window.cerrarModalEstadoAdmin(); });
+        interceptarFormCRUD('formEliminarAdmin', function() { if (window.cerrarModalEliminarAdmin) window.cerrarModalEliminarAdmin(); });
+    });
+})();
+</script>
 <!-- AOS - Scroll Reveal -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>

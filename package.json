@@ -6,6 +6,8 @@
   "scripts": {
     "tailwind:watch": "tailwindcss -i ./input.css -o ./src/main/resources/static/css/output.css --watch",
     "tailwind:build": "tailwindcss -i ./input.css -o ./src/main/resources/static/css/output.css --minify",
+    "tailwind:watch:superadmin": "tailwindcss -c ./tailwind.superadmin.config.js -i ./input.superadmin.css -o ./src/main/resources/static/css/superadmin.css --watch",
+    "tailwind:build:superadmin": "tailwindcss -c ./tailwind.superadmin.config.js -i ./input.superadmin.css -o ./src/main/resources/static/css/superadmin.css --minify",
     "dev": "npm run tailwind:watch",
     "build": "npm run tailwind:build"
   },

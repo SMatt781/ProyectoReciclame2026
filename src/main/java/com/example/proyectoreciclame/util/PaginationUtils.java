@@ -3,7 +3,8 @@ package com.example.proyectoreciclame.util;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaginationUtils {
+public class
+PaginationUtils {
 
     private PaginationUtils() {
     }

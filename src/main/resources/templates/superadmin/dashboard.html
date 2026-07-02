@@ -4,45 +4,9 @@
     <meta charset="utf-8"/>
     <title>Recíclame - Dashboard Superadmin</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" th:href="@{/css/superadmin.css}"/>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "on-secondary": "#ffffff", "secondary-fixed": "#c3ecd7",
-                        "surface-container-high": "#dce9ff", "surface-container-lowest": "#ffffff",
-                        "surface-container": "#e5eeff", "on-primary-fixed-variant": "#3f465c",
-                        "on-background": "#0b1c30", "inverse-surface": "#213145",
-                        "on-tertiary-container": "#3980f4", "on-secondary-container": "#476c5b",
-                        "inverse-on-surface": "#eaf1ff", "on-error": "#ffffff",
-                        "surface-bright": "#f8f9ff", "on-tertiary": "#ffffff",
-                        "surface-tint": "#565e74", "background": "#f8f9ff",
-                        "surface-dim": "#cbdbf5", "on-tertiary-fixed-variant": "#004395",
-                        "tertiary-container": "#001a42", "on-error-container": "#93000a",
-                        "on-surface-variant": "#45464d", "primary-container": "#131b2e",
-                        "on-secondary-fixed": "#002115", "error": "#ba1a1a",
-                        "outline-variant": "#c6c6cd", "secondary-fixed-dim": "#a8cfbc",
-                        "on-primary-container": "#7c839b", "tertiary-fixed-dim": "#adc6ff",
-                        "primary": "#000000", "secondary": "#416656",
-                        "surface-container-highest": "#d3e4fe", "on-tertiary-fixed": "#001a42",
-                        "surface-variant": "#d3e4fe", "surface-container-low": "#eff4ff",
-                        "primary-fixed-dim": "#bec6e0", "on-primary-fixed": "#131b2e",
-                        "on-secondary-fixed-variant": "#294e3f", "error-container": "#ffdad6",
-                        "primary-fixed": "#dae2fd", "outline": "#76777d",
-                        "on-surface": "#0b1c30", "inverse-primary": "#bec6e0",
-                        "secondary-container": "#c3ecd7", "on-primary": "#ffffff",
-                        "tertiary-fixed": "#d8e2ff", "surface": "#f8f9ff", "tertiary": "#000000"
-                    },
-                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
-                    fontFamily: { "sans": ["Plus Jakarta Sans", "sans-serif"], "headline": ["Plus Jakarta Sans", "system-ui", "sans-serif"], "body": ["Inter", "system-ui", "sans-serif"] }
-                }
-            }
-        }
-    </script>
     <!-- AOS - Scroll Reveal -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <style>
