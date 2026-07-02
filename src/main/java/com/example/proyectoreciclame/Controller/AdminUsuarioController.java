@@ -14,6 +14,8 @@ import com.example.proyectoreciclame.Entity.SolicitudRegistro;
 
 import com.example.proyectoreciclame.Repository.*;
 import com.example.proyectoreciclame.Service.CorreoService;
+import com.example.proyectoreciclame.Service.NotificacionWebSocketService;
+import com.example.proyectoreciclame.Service.SessionStore;
 
 import com.example.proyectoreciclame.util.PaginationUtils;
 import org.springframework.security.core.Authentication;
@@ -56,6 +58,8 @@ public class AdminUsuarioController {
     private final IdentificacionRepository identificacionRepository;
     private final CorreoService correoService;
     private final DominioAutorizadoRepository dominioAutorizadoRepository;
+    private final SessionStore sessionStore;
+    private final NotificacionWebSocketService webSocketService;
 
     public AdminUsuarioController(UsuarioRepository usuarioRepository,
                                   RolRepository rolRepository,
@@ -66,7 +70,9 @@ public class AdminUsuarioController {
                                   SolicitudRegistroRepository solicitudRegistroRepository,
                                   IdentificacionRepository identificacionRepository,
                                   CorreoService correoService,
-                                  DominioAutorizadoRepository dominioAutorizadoRepository) {
+                                  DominioAutorizadoRepository dominioAutorizadoRepository,
+                                  SessionStore sessionStore,
+                                  NotificacionWebSocketService webSocketService) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.usuarioEmpresaRepository = usuarioEmpresaRepository;
@@ -77,6 +83,8 @@ public class AdminUsuarioController {
         this.identificacionRepository = identificacionRepository;
         this.correoService = correoService;
         this.dominioAutorizadoRepository = dominioAutorizadoRepository;
+        this.sessionStore = sessionStore;
+        this.webSocketService = webSocketService;
     }
 
     @GetMapping("/gestion")
@@ -329,6 +337,7 @@ public class AdminUsuarioController {
 
         // ── Guardar el rol anterior ANTES de modificar ────────────────────────
         Rol rolAnterior = usuario.getRol();
+        Usuario.EstadoCuenta estadoCuentaAnterior = usuario.getEstadoCuenta();
         // ─────────────────────────────────────────────────────────────────────
 
         usuario.setNombres(form.getNombres().trim());
@@ -357,6 +366,12 @@ public class AdminUsuarioController {
         // ── Guardar en historial SOLO si el rol cambió ────────────────────────
         boolean rolCambio = rolNuevo != null
                 && (rolAnterior == null || !rolAnterior.getIdRol().equals(rolNuevo.getIdRol()));
+        boolean estadoCambio = !Objects.equals(estadoCuentaAnterior, usuario.getEstadoCuenta());
+
+        if (rolCambio || estadoCambio) {
+            webSocketService.enviarSesionRevocada(usuario.getCorreo(), "Tu cuenta o rol fue actualizado. Inicia sesion nuevamente.");
+            sessionStore.invalidarPorCorreoConRetraso(usuario.getCorreo(), 1000);
+        }
 
         if (rolCambio) {
             Usuario adminQueActua = usuarioRepository
@@ -435,6 +450,8 @@ public class AdminUsuarioController {
         usuario.setEstadoCuenta(Usuario.EstadoCuenta.BLOQUEADO);
         usuario.setActualizadoEn(LocalDateTime.now());
         usuarioRepository.save(usuario);
+        webSocketService.enviarSesionRevocada(usuario.getCorreo(), "Tu cuenta fue bloqueada. Inicia sesion nuevamente cuando sea reactivada.");
+        sessionStore.invalidarPorCorreoConRetraso(usuario.getCorreo(), 1000);
 
         // ── NUEVO: guardar en historial ───────────────────────────────────────
         Usuario adminQueActua = usuarioRepository
@@ -469,7 +486,7 @@ public class AdminUsuarioController {
                 usuario.getIdUsuario(),
                 "Tu cuenta ha sido bloqueada",
                 motivoNotificacion,
-                "EDICION",
+                "USUARIO_BLOQUEADO",
                 null
         );
 
@@ -510,6 +527,8 @@ public class AdminUsuarioController {
         usuario.setEstadoAprobacion("APROBADO");
         usuario.setActualizadoEn(LocalDateTime.now());
         usuarioRepository.save(usuario);
+        webSocketService.enviarSesionRevocada(usuario.getCorreo(), "Tu cuenta fue actualizada. Inicia sesion nuevamente.");
+        sessionStore.invalidarPorCorreoConRetraso(usuario.getCorreo(), 1000);
 
         LocalDateTime desde = LocalDateTime.now().minusMinutes(15);
         intentoLoginRepository.eliminarIntentosFallidosRecientes(

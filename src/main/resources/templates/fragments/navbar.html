@@ -1,4 +1,6 @@
+
 <html xmlns:th="http://www.thymeleaf.org"><!-- NAVBAR MEJORADO CON HAMBURGUESA EN EL NAVBAR -->
+
 <header th:fragment="navbar" class="flex justify-between items-center px-4 md:px-8 py-4 w-full h-20 docked top-0 sticky z-[200] bg-[#f7f9fb]/80 dark:bg-slate-950/80 backdrop-blur-xl">
 
     <!-- Logo Area con Hamburguesa -->
@@ -101,12 +103,12 @@
 
     <!-- Utilidades del navbar -->
     <script>
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebar-overlay');
-        if (sidebar) sidebar.classList.toggle('-translate-x-full');
-        if (overlay) overlay.classList.toggle('hidden');
-    }
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar) sidebar.classList.toggle('-translate-x-full');
+            if (overlay) overlay.classList.toggle('hidden');
+        }
     </script>
 
     <!-- Scripts WebSocket DENTRO del fragment para que se carguen en todas las páginas -->
@@ -115,269 +117,332 @@
     <script th:src="@{/js/stomp.min.js}"></script>
 
     <script>
-    // Cerrar sidebar al hacer click en un enlace
-    document.addEventListener('DOMContentLoaded', function() {
-        // ─── Auto-desaparecer mensajes flash después de 5 segundos ───
-        function autoDisappearMessage(selector) {
-            const messages = document.querySelectorAll(selector);
-            messages.forEach(function(message) {
-                if (message) {
-                    setTimeout(function() {
-                        message.style.transition = 'opacity 0.5s ease-out';
-                        message.style.opacity = '0';
-                        setTimeout(function() { message.remove(); }, 500);
-                    }, 5000);
-                }
-            });
-        }
-        autoDisappearMessage('[class*="flash-message"]');
-        autoDisappearMessage('.alert-success');
-        autoDisappearMessage('.alert-error');
-        autoDisappearMessage('.alert-info');
+        // Cerrar sidebar al hacer click en un enlace
+        document.addEventListener('DOMContentLoaded', function() {
+            // ─── Auto-desaparecer mensajes flash después de 5 segundos ───
+            function autoDisappearMessage(selector) {
+                const messages = document.querySelectorAll(selector);
+                messages.forEach(function(message) {
+                    if (message) {
+                        setTimeout(function() {
+                            message.style.transition = 'opacity 0.5s ease-out';
+                            message.style.opacity = '0';
+                            setTimeout(function() { message.remove(); }, 500);
+                        }, 5000);
+                    }
+                });
+            }
+            autoDisappearMessage('[class*="flash-message"]');
+            autoDisappearMessage('.alert-success');
+            autoDisappearMessage('.alert-error');
+            autoDisappearMessage('.alert-info');
 
-        document.querySelectorAll('.sidebar-link').forEach(link => {
-            link.addEventListener('click', () => {
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.getElementById('sidebar-overlay');
-                const hamburgerIcon = document.getElementById('hamburger-icon');
-                const closeIcon = document.getElementById('close-icon');
-                if (window.innerWidth <= 768) {
-                    if (sidebar) sidebar.classList.add('-translate-x-full');
-                    if (overlay) overlay.classList.add('hidden');
-                    if (hamburgerIcon) hamburgerIcon.classList.remove('hidden');
-                    if (closeIcon) closeIcon.classList.add('hidden');
-                }
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    const sidebar = document.getElementById('sidebar');
+                    const overlay = document.getElementById('sidebar-overlay');
+                    const hamburgerIcon = document.getElementById('hamburger-icon');
+                    const closeIcon = document.getElementById('close-icon');
+                    if (window.innerWidth <= 768) {
+                        if (sidebar) sidebar.classList.add('-translate-x-full');
+                        if (overlay) overlay.classList.add('hidden');
+                        if (hamburgerIcon) hamburgerIcon.classList.remove('hidden');
+                        if (closeIcon) closeIcon.classList.add('hidden');
+                    }
+                });
             });
         });
-    });
     </script>
 
     <script>
-    (function() {
-    var bellLink = document.getElementById('notif-bell-link');
-    if (!bellLink) return;
+        (function() {
+            var checkingSession = false;
 
-    var correo = bellLink.getAttribute('data-user-correo');
-    if (!correo) return;
+            function verificarSesionActiva() {
+                if (checkingSession) return;
+                checkingSession = true;
 
-    // Badge management
-    var unreadCount = parseInt(bellLink.getAttribute('data-unread') || '0', 10);
-
-    console.log('[WS] Init - correo:', correo, '| rol:', bellLink.getAttribute('data-user-rol'), '| unread:', unreadCount);
-
-    // Poll inmediato al cargar para corregir posible caché del browser o push perdido durante redirect
-    fetch('/api/notificaciones/no-leidas', { credentials: 'same-origin' })
-        .then(function(r) { return r.ok ? r.json() : null; })
-        .then(function(data) {
-            if (data && typeof data.count === 'number') {
-                unreadCount = data.count;
-                updateBadge(unreadCount);
+                fetch('/api/security/session-status', {
+                    credentials: 'same-origin',
+                    cache: 'no-store',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(function(response) {
+                        return response.ok ? response.json() : { authenticated: false, redirect: '/login' };
+                    })
+                    .then(function(data) {
+                        if (data && data.authenticated === false) {
+                            window.location.href = data.redirect || '/login';
+                        }
+                    })
+                    .catch(function() {})
+                    .finally(function() {
+                        checkingSession = false;
+                    });
             }
-        }).catch(function() {});
 
-    function getBadge() {
-        return document.getElementById('notif-badge') || document.getElementById('notif-badge-hidden');
-    }
+            setInterval(verificarSesionActiva, 3000);
+            window.addEventListener('focus', verificarSesionActiva);
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) verificarSesionActiva();
+            });
+        })();
 
-    function updateBadge(count) {
-        var badge = getBadge();
-        if (!badge) return;
-        badge.id = 'notif-badge';
-        if (count > 0) {
-            badge.textContent = count > 99 ? '99+' : count;
-            badge.style.display = 'flex';
-        } else {
-            badge.style.display = 'none';
-        }
-    }
+        (function() {
+            var bellLink = document.getElementById('notif-bell-link');
+            if (!bellLink) return;
 
-    // Exponer showToast globalmente para que las páginas puedan disparar toasts post-redirect
-    window.showNavToast = showToast;
+            var correo = bellLink.getAttribute('data-user-correo');
+            if (!correo) return;
 
-    // Polling de respaldo: si el WebSocket falla, igual se actualiza la campanita
-    setInterval(function() {
-        fetch('/api/notificaciones/no-leidas', { credentials: 'same-origin' })
-            .then(function(r) { return r.ok ? r.json() : null; })
-            .then(function(data) {
-                if (data && typeof data.count === 'number' && data.count !== unreadCount) {
-                    unreadCount = data.count;
-                    updateBadge(unreadCount);
-                }
-            }).catch(function() {});
-    }, 15000);
+            // Badge management
+            var unreadCount = parseInt(bellLink.getAttribute('data-unread') || '0', 10);
 
-    // Toast notifications
-    function showToast(titulo, mensaje, tipo) {
-        var typeMap = {
-            'ALERTA': 'warning',
-            'EXITO': 'success',
-            'SISTEMA': 'info',
-            'INFO': 'info'
-        };
-        var cssType = typeMap[tipo] || 'info';
+            console.log('[WS] Init - correo:', correo, '| rol:', bellLink.getAttribute('data-user-rol'), '| unread:', unreadCount);
 
-        // Remove existing toasts if more than 3
-        var existing = document.querySelectorAll('.ws-toast');
-        if (existing.length >= 3) {
-            existing[0].remove();
-        }
-
-        var toast = document.createElement('div');
-        toast.className = 'notification ws-toast ' + cssType;
-        toast.style.cssText = 'position:fixed;top:80px;right:20px;z-index:99999;max-width:360px;min-width:260px;cursor:pointer;';
-        toast.innerHTML =
-            '<div style="display:flex;align-items:flex-start;gap:0.5rem;">' +
-            '<div style="flex:1;">' +
-            '<div style="font-weight:600;font-size:0.875rem;margin-bottom:2px;">' + (titulo || 'Notificación') + '</div>' +
-            (mensaje ? '<div style="font-size:0.8rem;opacity:0.85;">' + mensaje + '</div>' : '') +
-            '</div>' +
-            '<button style="background:none;border:none;font-size:1.1rem;cursor:pointer;opacity:0.6;padding:0;line-height:1;" onclick="this.closest(\'.ws-toast\').remove()">×</button>' +
-            '</div>';
-
-        document.body.appendChild(toast);
-
-        // Offset multiple toasts
-        var toasts = document.querySelectorAll('.ws-toast');
-        var offset = 80;
-        toasts.forEach(function(t, i) {
-            t.style.top = (offset + i * 90) + 'px';
-        });
-
-        setTimeout(function() {
-            if (toast.parentNode) {
-                toast.style.transition = 'opacity 0.4s';
-                toast.style.opacity = '0';
-                setTimeout(function() { toast.remove(); }, 400);
-            }
-        }, 5000);
-
-        toast.addEventListener('click', function(e) {
-            if (e.target.tagName !== 'BUTTON') {
-                window.location.href = bellLink.getAttribute('href');
-            }
-        });
-    }
-
-    var rol = bellLink.getAttribute('data-user-rol') || '';
-
-    // ── Sidebar badge de solicitudes pendientes ───────────────────────────
-    function getSolicitudesBadge() {
-        return document.getElementById('solicitudes-badge') || document.getElementById('solicitudes-badge-hidden');
-    }
-    function updateSolicitudesBadge(count) {
-        var badge = getSolicitudesBadge();
-        if (!badge) return;
-        badge.id = 'solicitudes-badge';
-        if (count > 0) {
-            badge.textContent = count;
-            badge.style.display = 'flex';
-        } else {
-            badge.style.display = 'none';
-        }
-        // También actualiza el banner del dashboard si existe
-        var banner = document.getElementById('banner-solicitudes');
-        if (banner) {
-            var countEl = document.getElementById('banner-solicitudes-count');
-            if (countEl) countEl.textContent = count;
-            if (count > 0) {
-                banner.style.display = '';
-            } else {
-                banner.style.display = 'none';
-            }
-        }
-    }
-
-    // ── Carga inicial para ADMIN (badge sidebar + contador conectados) ─────
-    if (rol === 'ADMIN') {
-        fetch('/api/admin/solicitudes-pendientes-count', { credentials: 'same-origin' })
-            .then(function(r) { return r.ok ? r.json() : null; })
-            .then(function(data) {
-                if (!data) return;
-                updateSolicitudesBadge(data.solicitudes);
-                var el = document.getElementById('usuarios-conectados-count');
-                if (el) el.textContent = data.conectados;
-            }).catch(function() {});
-    }
-
-    // STOMP connection
-    function connectWebSocket() {
-        // Verificar que las librerías estén cargadas
-        if (typeof SockJS === 'undefined' || typeof Stomp === 'undefined') {
-            console.warn('[WS] SockJS o Stomp no cargadas, reintentando en 1s');
-            setTimeout(connectWebSocket, 1000);
-            return;
-        }
-
-        try {
-            var socket = new SockJS('/ws');
-            var stompClient = Stomp.over(socket);
-            stompClient.debug = null;
-
-            stompClient.connect({}, function(frame) {
-                console.log('[WS] Conectado como:', correo, '| frame:', frame);
-
-                // Notificaciones personales
-                stompClient.subscribe('/user/queue/notificaciones', function(message) {
-                    console.log('[WS] Notificación recibida:', message.body);
-                    try {
-                        var data = JSON.parse(message.body);
-                        unreadCount++;
+            // Poll inmediato al cargar para corregir posible caché del browser o push perdido durante redirect
+            fetch('/api/notificaciones/no-leidas', { credentials: 'same-origin' })
+                .then(function(r) { return r.ok ? r.json() : null; })
+                .then(function(data) {
+                    if (data && typeof data.count === 'number') {
+                        unreadCount = data.count;
                         updateBadge(unreadCount);
-                        showToast(data.titulo, data.mensaje, data.tipo);
-                    } catch(e) { console.error('[WS] Error parseando:', e); }
+                    }
+                }).catch(function() {});
+
+            function getBadge() {
+                return document.getElementById('notif-badge') || document.getElementById('notif-badge-hidden');
+            }
+
+            function updateBadge(count) {
+                var badge = getBadge();
+                if (!badge) return;
+                badge.id = 'notif-badge';
+                if (count > 0) {
+                    badge.textContent = count > 99 ? '99+' : count;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+
+            // Exponer showToast globalmente para que las páginas puedan disparar toasts post-redirect
+            window.showNavToast = showToast;
+
+            // Polling de respaldo: si el WebSocket falla, igual se actualiza la campanita
+            setInterval(function() {
+                fetch('/api/notificaciones/no-leidas', { credentials: 'same-origin' })
+                    .then(function(r) { return r.ok ? r.json() : null; })
+                    .then(function(data) {
+                        if (data && typeof data.count === 'number' && data.count !== unreadCount) {
+                            unreadCount = data.count;
+                            updateBadge(unreadCount);
+                        }
+                    }).catch(function() {});
+            }, 15000);
+
+            // Toast notifications
+            function showToast(titulo, mensaje, tipo) {
+                var typeMap = {
+                    'ALERTA': 'warning',
+                    'EXITO': 'success',
+                    'SISTEMA': 'info',
+                    'INFO': 'info'
+                };
+                var cssType = typeMap[tipo] || 'info';
+
+                // Remove existing toasts if more than 3
+                var existing = document.querySelectorAll('.ws-toast');
+                if (existing.length >= 3) {
+                    existing[0].remove();
+                }
+
+                var toast = document.createElement('div');
+                toast.className = 'notification ws-toast ' + cssType;
+                toast.style.cssText = 'position:fixed;top:80px;right:20px;z-index:99999;max-width:360px;min-width:260px;cursor:pointer;';
+                toast.innerHTML =
+                    '<div style="display:flex;align-items:flex-start;gap:0.5rem;">' +
+                    '<div style="flex:1;">' +
+                    '<div style="font-weight:600;font-size:0.875rem;margin-bottom:2px;">' + (titulo || 'Notificación') + '</div>' +
+                    (mensaje ? '<div style="font-size:0.8rem;opacity:0.85;">' + mensaje + '</div>' : '') +
+                    '</div>' +
+                    '<button style="background:none;border:none;font-size:1.1rem;cursor:pointer;opacity:0.6;padding:0;line-height:1;" onclick="this.closest(\'.ws-toast\').remove()">×</button>' +
+                    '</div>';
+
+                document.body.appendChild(toast);
+
+                // Offset multiple toasts
+                var toasts = document.querySelectorAll('.ws-toast');
+                var offset = 80;
+                toasts.forEach(function(t, i) {
+                    t.style.top = (offset + i * 90) + 'px';
                 });
 
-                // Solicitudes pendientes (solo ADMIN)
-                if (rol === 'ADMIN') {
-                    stompClient.subscribe('/topic/admin/solicitudes', function(message) {
-                        try {
-                            var data = JSON.parse(message.body);
-                            updateSolicitudesBadge(data.count);
-                        } catch(e) {}
-                    });
+                setTimeout(function() {
+                    if (toast.parentNode) {
+                        toast.style.transition = 'opacity 0.4s';
+                        toast.style.opacity = '0';
+                        setTimeout(function() { toast.remove(); }, 400);
+                    }
+                }, 5000);
 
-                    // Usuarios conectados en tiempo real (solo ADMIN)
-                    stompClient.subscribe('/topic/admin/conectados', function(message) {
-                        try {
-                            var data = JSON.parse(message.body);
-                            var el = document.getElementById('usuarios-conectados-count');
-                            if (el) el.textContent = data.count;
-                        } catch(e) {}
-                    });
+                toast.addEventListener('click', function(e) {
+                    if (e.target.tagName !== 'BUTTON') {
+                        window.location.href = bellLink.getAttribute('href');
+                    }
+                });
+            }
+
+            function debeCerrarSesionPorNotificacion(data) {
+                var tipo = String(data && data.tipo ? data.tipo : '').toUpperCase().trim();
+                var titulo = String(data && data.titulo ? data.titulo : '').toLowerCase();
+                var mensaje = String(data && data.mensaje ? data.mensaje : '').toLowerCase();
+                var texto = titulo + ' ' + mensaje;
+
+                return tipo === 'SESSION_REVOKED'
+                    || tipo === 'USUARIO_BLOQUEADO'
+                    || tipo === 'ADMIN_BLOQUEADO'
+                    || tipo === 'CUENTA_BLOQUEADA'
+                    || texto.indexOf('cuenta ha sido bloqueada') !== -1
+                    || texto.indexOf('cuenta fue bloqueada') !== -1
+                    || texto.indexOf('sesion fue cerrada') !== -1
+                    || texto.indexOf('sesión fue cerrada') !== -1
+                    || texto.indexOf('rol fue actualizado') !== -1;
+            }
+
+            var rol = bellLink.getAttribute('data-user-rol') || '';
+
+            // ── Sidebar badge de solicitudes pendientes ───────────────────────────
+            function getSolicitudesBadge() {
+                return document.getElementById('solicitudes-badge') || document.getElementById('solicitudes-badge-hidden');
+            }
+            function updateSolicitudesBadge(count) {
+                var badge = getSolicitudesBadge();
+                if (!badge) return;
+                badge.id = 'solicitudes-badge';
+                if (count > 0) {
+                    badge.textContent = count;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+                // También actualiza el banner del dashboard si existe
+                var banner = document.getElementById('banner-solicitudes');
+                if (banner) {
+                    var countEl = document.getElementById('banner-solicitudes-count');
+                    if (countEl) countEl.textContent = count;
+                    if (count > 0) {
+                        banner.style.display = '';
+                    } else {
+                        banner.style.display = 'none';
+                    }
+                }
+            }
+
+            // ── Carga inicial para ADMIN (badge sidebar + contador conectados) ─────
+            if (rol === 'ADMIN') {
+                fetch('/api/admin/solicitudes-pendientes-count', { credentials: 'same-origin' })
+                    .then(function(r) { return r.ok ? r.json() : null; })
+                    .then(function(data) {
+                        if (!data) return;
+                        updateSolicitudesBadge(data.solicitudes);
+                        var el = document.getElementById('usuarios-conectados-count');
+                        if (el) el.textContent = data.conectados;
+                    }).catch(function() {});
+            }
+
+            // STOMP connection
+            function connectWebSocket() {
+                // Verificar que las librerías estén cargadas
+                if (typeof SockJS === 'undefined' || typeof Stomp === 'undefined') {
+                    console.warn('[WS] SockJS o Stomp no cargadas, reintentando en 1s');
+                    setTimeout(connectWebSocket, 1000);
+                    return;
                 }
 
-                // Estado de estudios en tiempo real (todos los roles)
-                stompClient.subscribe('/topic/estudios', function(message) {
-                    try {
-                        var data = JSON.parse(message.body);
-                        var idEstudio = String(data.idEstudio);
-                        var estado = data.estado;
-                        // Si el estudio se deroga, ocultarlo de la lista de estudios
-                        if (estado === 'DEROGADO') {
-                            document.querySelectorAll('[data-estudio-id="' + idEstudio + '"]').forEach(function(card) {
-                                card.style.transition = 'opacity 0.5s, transform 0.5s';
-                                card.style.opacity = '0';
-                                card.style.transform = 'scale(0.95)';
-                                setTimeout(function() { card.remove(); }, 500);
+                try {
+                    var socket = new SockJS('/ws');
+                    var stompClient = Stomp.over(socket);
+                    stompClient.debug = null;
+
+                    stompClient.connect({}, function(frame) {
+                        console.log('[WS] Conectado como:', correo, '| frame:', frame);
+
+                        // Notificaciones personales
+                        stompClient.subscribe('/user/queue/notificaciones', function(message) {
+                            console.log('[WS] Notificación recibida:', message.body);
+                            try {
+                                var data = JSON.parse(message.body);
+                                if (debeCerrarSesionPorNotificacion(data)) {
+                                    window.location.replace(data.redirect || '/login?sessionRevoked=true');
+                                    return;
+                                }
+                                unreadCount++;
+                                updateBadge(unreadCount);
+                                showToast(data.titulo, data.mensaje, data.tipo);
+                            } catch(e) { console.error('[WS] Error parseando:', e); }
+                        });
+
+                        stompClient.subscribe('/user/queue/session-control', function(message) {
+                            try {
+                                var data = JSON.parse(message.body);
+                                window.location.replace(data.redirect || '/login?sessionRevoked=true');
+                            } catch(e) {
+                                window.location.replace('/login?sessionRevoked=true');
+                            }
+                        });
+
+                        // Solicitudes pendientes (solo ADMIN)
+                        if (rol === 'ADMIN') {
+                            stompClient.subscribe('/topic/admin/solicitudes', function(message) {
+                                try {
+                                    var data = JSON.parse(message.body);
+                                    updateSolicitudesBadge(data.count);
+                                } catch(e) {}
+                            });
+
+                            // Usuarios conectados en tiempo real (solo ADMIN)
+                            stompClient.subscribe('/topic/admin/conectados', function(message) {
+                                try {
+                                    var data = JSON.parse(message.body);
+                                    var el = document.getElementById('usuarios-conectados-count');
+                                    if (el) el.textContent = data.count;
+                                } catch(e) {}
                             });
                         }
-                    } catch(e) {}
-                });
 
-            }, function(error) {
-                console.warn('[WS] Error STOMP, reintentando en 5s:', error);
-                setTimeout(connectWebSocket, 5000);
-            });
+                        // Estado de estudios en tiempo real (todos los roles)
+                        stompClient.subscribe('/topic/estudios', function(message) {
+                            try {
+                                var data = JSON.parse(message.body);
+                                var idEstudio = String(data.idEstudio);
+                                var estado = data.estado;
+                                // Si el estudio se deroga, ocultarlo de la lista de estudios
+                                if (estado === 'DEROGADO') {
+                                    document.querySelectorAll('[data-estudio-id="' + idEstudio + '"]').forEach(function(card) {
+                                        card.style.transition = 'opacity 0.5s, transform 0.5s';
+                                        card.style.opacity = '0';
+                                        card.style.transform = 'scale(0.95)';
+                                        setTimeout(function() { card.remove(); }, 500);
+                                    });
+                                }
+                            } catch(e) {}
+                        });
 
-            socket.onclose = function() {
-                console.warn('[WS] Socket cerrado, reintentando en 5s');
-                setTimeout(connectWebSocket, 5000);
-            };
-        } catch(e) {}
-    }
+                    }, function(error) {
+                        console.warn('[WS] Error STOMP, reintentando en 5s:', error);
+                        setTimeout(connectWebSocket, 5000);
+                    });
 
-    connectWebSocket();
-})();
+                    socket.onclose = function() {
+                        console.warn('[WS] Socket cerrado, reintentando en 5s');
+                        setTimeout(connectWebSocket, 5000);
+                    };
+                } catch(e) {}
+            }
+
+            connectWebSocket();
+        })();
     </script>
 
 </header>
