@@ -202,8 +202,10 @@ public class SuperadminController {
     /** Repuebla el listado y agrega el mensaje flash como data-attr del fragmento, para AJAX. */
     private String respuestaAjaxAdministradores(Model model, String texto, String estado, int page, boolean success, String mensaje) {
         poblarModeloAdministradores(model, texto, estado, page);
-        model.addAttribute("flashType", success ? "success" : "error");
-        model.addAttribute("flashMessage", mensaje);
+        if (mensaje != null && !mensaje.isBlank()) {
+            model.addAttribute("flashType", success ? "success" : "error");
+            model.addAttribute("flashMessage", mensaje);
+        }
         return "superadmin/administradores :: tablaAdmins";
     }
 
@@ -539,8 +541,7 @@ public class SuperadminController {
             historialRolesRepository.save(h);
         }
 
-        if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, true, "Administrador actualizado correctamente.");
-        redirectAttributes.addFlashAttribute("success", "Administrador actualizado correctamente.");
+        if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, true, null);
         return "redirect:/superadmin/administradores?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
     }

@@ -515,6 +515,7 @@
         window._stompClient.subscribe('/topic/admin/solicitudes', fetchDashboard);
         window._stompClient.subscribe('/topic/admin/usuarios', fetchDashboard);
         window._stompClient.subscribe('/topic/admin/actividad', fetchDashboard);
+        window._stompClient.subscribe('/topic/admin/descargas', fetchDashboard);
     }
     document.addEventListener('DOMContentLoaded', suscribirWS);
 })();

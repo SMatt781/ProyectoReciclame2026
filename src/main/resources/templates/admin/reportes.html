@@ -606,6 +606,7 @@
         window._stompClient.subscribe('/topic/admin/solicitudes', fetchReportes);
         window._stompClient.subscribe('/topic/admin/usuarios', fetchReportes);
         window._stompClient.subscribe('/topic/admin/actividad', fetchReportes);
+        window._stompClient.subscribe('/topic/admin/descargas', fetchReportes);
     }
     document.addEventListener('DOMContentLoaded', suscribirWS);
 })();

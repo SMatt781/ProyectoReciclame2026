@@ -237,7 +237,7 @@ public class DocumentDownloadController {
             reg.setUrlDescargada("/documentos/estudio/" + id + "/download");
             reg.setFechaDescarga(LocalDateTime.now());
             registroDescargaRepository.save(reg);
-            webSocketService.enviarTopico("/topic/admin/actividad", Map.of("event", "download"));
+            webSocketService.enviarTopico("/topic/admin/descargas", Map.of("event", "download"));
         }
 
         response.sendRedirect(downloadUrl);
@@ -285,7 +285,7 @@ public class DocumentDownloadController {
             reg.setUrlDescargada("/documentos/normativa/" + id + "/download");
             reg.setFechaDescarga(LocalDateTime.now());
             registroDescargaRepository.save(reg);
-            webSocketService.enviarTopico("/topic/admin/actividad", Map.of("event", "download"));
+            webSocketService.enviarTopico("/topic/admin/descargas", Map.of("event", "download"));
         }
 
         response.sendRedirect(downloadUrl);

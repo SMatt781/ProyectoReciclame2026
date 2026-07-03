@@ -499,7 +499,7 @@
         if (!window._stompClient) { setTimeout(suscribirWS, 500); return; }
         window._stompClient.subscribe('/topic/admin/solicitudes', fetchDescargas);
         window._stompClient.subscribe('/topic/admin/usuarios', fetchDescargas);
-        window._stompClient.subscribe('/topic/admin/actividad', fetchDescargas);
+        window._stompClient.subscribe('/topic/admin/descargas', fetchDescargas);
     }
     document.addEventListener('DOMContentLoaded', suscribirWS);
 })();
