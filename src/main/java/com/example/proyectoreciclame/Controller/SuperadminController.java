@@ -105,8 +105,7 @@ public class SuperadminController {
         this.env = env;
     }
 
-    @GetMapping("/dashboard")
-    public String showDashboard(Model model) {
+    private void poblarModeloDashboard(Model model) {
         model.addAttribute("titulo", "Dashboard");
         model.addAttribute("currentSection", "superadmin-dashboard");
 
@@ -140,8 +139,29 @@ public class SuperadminController {
         model.addAttribute("chatServicioActivo", !apiKey.isBlank() && !apiKey.equals("TU_API_KEY_AQUI"));
         model.addAttribute("chatModelo", env.getProperty("ai.gemini.model", "gemini-2.5-flash"));
         model.addAttribute("chatProveedor", env.getProperty("ai.provider", "GEMINI"));
+    }
 
+    @GetMapping("/dashboard")
+    public String showDashboard(Model model,
+                                jakarta.servlet.http.HttpServletRequest request) {
+        poblarModeloDashboard(model);
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            return "superadmin/dashboard :: dashboardContent";
+        }
         return "superadmin/dashboard";
+    }
+
+    @GetMapping("/estadoSistema/api-stats")
+    @ResponseBody
+    public Map<String, Object> estadoSistemaStats() {
+        return java.util.Map.of(
+                "totalUsuarios", usuarioRepository.countByEliminadoEnIsNull(),
+                "totalRoles", rolRepository.count(),
+                "totalDominios", dominioAutorizadoRepository.count(),
+                "totalNormativas", normativaRepository.count(),
+                "totalEstudios", estudioRepository.count(),
+                "totalNotificaciones", notificacionRepository.count()
+        );
     }
 
     // Nuevo método para mostrar administradores
@@ -245,7 +265,29 @@ public class SuperadminController {
 
     // ── Administradores — POST (Crear) ───────────────────────────────────────
 
+    @GetMapping("/administradores/api-stats")
+    @ResponseBody
+    public java.util.Map<String, Object> administradoresStats() {
+        java.util.Map<String, Object> stats = new java.util.LinkedHashMap<>();
+        stats.put("totalAdmins", usuarioRepository.countByRol_IdInAndEliminadoEnIsNull(ROL_ADMIN_IDS));
+        stats.put("activeAdmins", usuarioRepository.countActiveAdminsByRole(ROL_ADMIN_IDS));
+        stats.put("blockedAdmins", usuarioRepository.countBlockedAdminsByRole(ROL_ADMIN_IDS));
+
+        Usuario ultimo = usuarioRepository.findUltimoAdminCreado(ROL_ADMIN_IDS).orElse(null);
+        if (ultimo != null) {
+            stats.put("ultimoAdminNombre", ultimo.getNombreCompleto());
+            stats.put("ultimoAdminTiempo", ultimo.getUltimoAcceso() != null
+                    ? formatearUltimoAcceso(ultimo.getUltimoAcceso())
+                    : "Recién creado");
+        } else {
+            stats.put("ultimoAdminNombre", null);
+            stats.put("ultimoAdminTiempo", "Sin registros aun");
+        }
+        return stats;
+    }
+
     @PostMapping("/administradores/crear")
+    @Transactional
     public String crearAdministrador(
             @ModelAttribute Usuario usuario,
             @RequestParam String usuarioCorreo,
@@ -273,17 +315,27 @@ public class SuperadminController {
             return "redirect:/superadmin/administradores";
         }
 
-        // 1. Validar unicidad de correo
-        if (usuarioRepository.existsByCorreo(correoCompleto)) {
+        // 1. Validar unicidad de correo (excluye soft-deleted)
+        if (usuarioRepository.existsByCorreoAndEliminadoEnIsNull(correoCompleto)) {
             if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, false, "Ya existe un administrador con ese correo electrónico.");
             redirectAttributes.addFlashAttribute("error",
                     "Ya existe un administrador con ese correo electrónico.");
             return "redirect:/superadmin/administradores";
         }
 
-        // 2. Validar unicidad de DNI
+        java.util.Optional<Usuario> adminEliminadoOpt = usuarioRepository.findDeletedByCorreoWithRol(correoCompleto);
+        if (adminEliminadoOpt.isPresent()
+                && (adminEliminadoOpt.get().getRol() == null
+                || !ROL_ADMIN_IDS.contains(adminEliminadoOpt.get().getRol().getIdRol()))) {
+            String msg = "Ese correo pertenece a un usuario eliminado de otro rol. Use otro correo o revise la gestion de usuarios.";
+            if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, false, msg);
+            redirectAttributes.addFlashAttribute("error", msg);
+            return "redirect:/superadmin/administradores";
+        }
+
+        // 2. Validar unicidad de DNI (excluye soft-deleted)
         if (dni != null && !dni.isBlank()
-                && identificacionRepository.existsByNumero(dni.trim())) {
+                && identificacionRepository.existsByNumeroAndUsuario_EliminadoEnIsNull(dni.trim())) {
             if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, false, "Ya existe un administrador con ese DNI.");
             redirectAttributes.addFlashAttribute("error",
                     "Ya existe un administrador con ese DNI.");
@@ -307,8 +359,8 @@ public class SuperadminController {
             if (politica.getRequiereNumero() && !rawPassword.matches(".*[0-9].*")) {
                 erroresPolitica.add("al menos un número");
             }
-            if (politica.getRequiereSimbolo() && !rawPassword.matches(".*[@#$!|*%&].*")) {
-                erroresPolitica.add("al menos un símbolo (@#$!|*%&)");
+            if (politica.getRequiereSimbolo() && !rawPassword.matches(".*[@#$!|*%&_].*")) {
+                erroresPolitica.add("al menos un símbolo (@#$!|*%&_)");
             }
 
             if (!erroresPolitica.isEmpty()) {
@@ -325,17 +377,34 @@ public class SuperadminController {
         Rol rolAdmin = rolRepository.findById(2)
                 .orElseThrow(() -> new IllegalStateException(
                         "Rol 'Administrador' (id=2) no encontrado en la base de datos."));
-        usuario.setRol(rolAdmin);
+        Usuario adminGuardado = adminEliminadoOpt.orElse(usuario);
+        boolean reactivado = adminEliminadoOpt.isPresent();
+
+        adminGuardado.setRol(rolAdmin);
+        adminGuardado.setNombres(usuario.getNombres() != null ? usuario.getNombres().trim() : null);
+        adminGuardado.setApellidoPaterno(usuario.getApellidoPaterno() != null ? usuario.getApellidoPaterno().trim() : null);
+        adminGuardado.setApellidoMaterno(usuario.getApellidoMaterno() != null ? usuario.getApellidoMaterno().trim() : null);
+        adminGuardado.setTelefono(usuario.getTelefono() != null ? usuario.getTelefono().trim() : null);
+        adminGuardado.setCorreo(correoCompleto);
+        adminGuardado.setContrasenaHash(usuario.getContrasenaHash());
 
         // 5. Estado de cuenta activo
-        usuario.setEstadoCuenta(Usuario.EstadoCuenta.ACTIVO);
-        usuario.setEstadoAprobacion("APROBADO");
-        usuarioRepository.save(usuario);
+        adminGuardado.setEstadoCuenta(Usuario.EstadoCuenta.ACTIVO);
+        adminGuardado.setEstadoAprobacion("APROBADO");
+        adminGuardado.setEliminadoEn(null);
+        adminGuardado.setUltimoAcceso(null);
+        adminGuardado.setFechaRegistro(LocalDateTime.now());
+        adminGuardado.setActualizadoEn(LocalDateTime.now());
+        usuarioRepository.save(adminGuardado);
 
         // 6. Guardar identificación (DNI del administrador)
         if (dni != null && !dni.isBlank()) {
-            Identificacion identificacion = new Identificacion();
-            identificacion.setUsuario(usuario);
+            Identificacion identificacion = identificacionRepository.findByUsuario_IdUsuario(adminGuardado.getIdUsuario())
+                    .orElseGet(() -> {
+                        Identificacion nueva = new Identificacion();
+                        nueva.setUsuario(adminGuardado);
+                        return nueva;
+                    });
             identificacion.setTipo(Identificacion.TipoIdentificacion.DNI);
             identificacion.setNumero(dni.trim());
             identificacionRepository.save(identificacion);
@@ -345,10 +414,10 @@ public class SuperadminController {
                 .findByCorreoWithRol(authentication.getName()).orElse(null);
         if (superadmin != null) {
             HistorialRoles h = new HistorialRoles();
-            h.setUsuarioAfectado(usuario);
-            h.setRolNuevo(usuario.getRol());
+            h.setUsuarioAfectado(adminGuardado);
+            h.setRolNuevo(adminGuardado.getRol());
             h.setEstadoNuevo(Usuario.EstadoCuenta.ACTIVO);
-            h.setMotivo("Administrador creado por Superadmin");
+            h.setMotivo(reactivado ? "Administrador reactivado por Superadmin" : "Administrador creado por Superadmin");
             h.setFechaCambio(LocalDateTime.now());
             h.setAutorizadoPor(superadmin);
             historialRolesRepository.save(h);
@@ -357,7 +426,7 @@ public class SuperadminController {
         try {
             correoService.enviarCredencialesAdministrador(
                     correoCompleto,
-                    usuario.getNombres(),
+                    adminGuardado.getNombres(),
                     rawPassword
             );
         } catch (Exception e) {
@@ -372,7 +441,8 @@ public class SuperadminController {
         );
 
         String mensajeExito = "Administrador creado exitosamente. Se envió un correo con las credenciales a " + correoCompleto + ".";
-        if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, true, mensajeExito);
+        webSocketService.enviarTopico("/topic/admin/usuarios", java.util.Map.of("event", "update"));
+        if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, true, null);
         redirectAttributes.addFlashAttribute("success", mensajeExito);
         return "redirect:/superadmin/administradores";
     }
@@ -541,6 +611,7 @@ public class SuperadminController {
             historialRolesRepository.save(h);
         }
 
+        webSocketService.enviarTopico("/topic/admin/usuarios", java.util.Map.of("event", "update"));
         if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, true, null);
         return "redirect:/superadmin/administradores?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
@@ -604,6 +675,7 @@ public class SuperadminController {
                 "/superadmin/administradores"
         );
 
+        webSocketService.enviarTopico("/topic/admin/usuarios", java.util.Map.of("event", "update"));
         if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, true, mensajeEstado);
         redirectAttributes.addFlashAttribute("success", mensajeEstado);
         return "redirect:/superadmin/administradores?page=" + page
@@ -659,7 +731,8 @@ public class SuperadminController {
                 "/superadmin/administradores"
         );
 
-        if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, true, "Administrador eliminado correctamente.");
+        webSocketService.enviarTopico("/topic/admin/usuarios", java.util.Map.of("event", "update"));
+        if (esAjax) return respuestaAjaxAdministradores(model, texto, estado, page, true, null);
         redirectAttributes.addFlashAttribute("success", "Administrador eliminado correctamente.");
         return "redirect:/superadmin/administradores?page=" + page
                 + (texto != null ? "&texto=" + texto : "");
@@ -819,6 +892,31 @@ public class SuperadminController {
     }
     // ── Dominios — POST (Crear) ───────────────────────────────────────────────────
 
+    @GetMapping("/confSeguridad/politica/api")
+    @ResponseBody
+    public Map<String, Object> politicaSeguridadApi() {
+        PoliticaContrasena politica = politicaContrasenaRepository.findById(1)
+                .orElseGet(() -> {
+                    PoliticaContrasena nueva = new PoliticaContrasena();
+                    nueva.setIdPolitica(1);
+                    nueva.setLongitudMinima(8);
+                    nueva.setRequiereMayuscula(true);
+                    nueva.setRequiereNumero(true);
+                    nueva.setRequiereSimbolo(false);
+                    nueva.setMandatoMfa(false);
+                    nueva.setExpiracionDias(90);
+                    return nueva;
+                });
+        return java.util.Map.of(
+                "requiereMayuscula", Boolean.TRUE.equals(politica.getRequiereMayuscula()),
+                "requiereNumero", Boolean.TRUE.equals(politica.getRequiereNumero()),
+                "requiereSimbolo", Boolean.TRUE.equals(politica.getRequiereSimbolo()),
+                "mandatoMfa", Boolean.TRUE.equals(politica.getMandatoMfa()),
+                "longitudMinima", politica.getLongitudMinima() != null ? politica.getLongitudMinima() : 8,
+                "expiracionDias", politica.getExpiracionDias() != null ? politica.getExpiracionDias() : 90
+        );
+    }
+
     @PostMapping("/confSeguridad/crear")
     public String crearDominio(
             @RequestParam String nombreDominio,
@@ -858,6 +956,7 @@ public class SuperadminController {
         nuevo.setFechaRegistro(java.time.LocalDateTime.now());
 
         dominioAutorizadoRepository.save(nuevo);
+        webSocketService.enviarTopico("/topic/superadmin/dominios", java.util.Map.of("event", "update"));
 
         crearNotificacionSuperadmin(
                 "Dominio añadido",
@@ -953,6 +1052,7 @@ public class SuperadminController {
         dominio.setEstado(estado != null ? estado : dominio.getEstado());
 
         dominioAutorizadoRepository.save(dominio);
+        webSocketService.enviarTopico("/topic/superadmin/dominios", java.util.Map.of("event", "update"));
 
         if (esAjax) return respuestaAjaxDominios(model, page, estadoDominio, texto, true, "Dominio actualizado correctamente.");
         redirectAttributes.addFlashAttribute("success", "Dominio actualizado correctamente.");
@@ -981,6 +1081,7 @@ public class SuperadminController {
         }
 
         dominioAutorizadoRepository.deleteById(idDominio);
+        webSocketService.enviarTopico("/topic/superadmin/dominios", java.util.Map.of("event", "update"));
 
         crearNotificacionSuperadmin(
                 "Dominio eliminado",
@@ -1019,6 +1120,7 @@ public class SuperadminController {
 
         dominio.setEstado(nuevoEstado);
         dominioAutorizadoRepository.save(dominio);
+        webSocketService.enviarTopico("/topic/superadmin/dominios", java.util.Map.of("event", "update"));
 
         String accion = nuevoEstado ? "activado" : "desactivado";
         String mensaje = "Dominio '" + dominio.getNombreDominio() + "' " + accion + " correctamente.";
@@ -1072,6 +1174,7 @@ public class SuperadminController {
         politica.setActualizadoEn(LocalDateTime.now());
 
         politicaContrasenaRepository.save(politica);
+        webSocketService.enviarTopico("/topic/superadmin/dominios", java.util.Map.of("event", "update"));
 
         redirectAttributes.addFlashAttribute("success",
                 "Políticas de contraseña actualizadas correctamente.");
@@ -1222,6 +1325,7 @@ public class SuperadminController {
                         n.setFecha(LocalDateTime.now());
                         notificacionRepository.save(n);
                         webSocketService.enviarNotificacion(superadmin.getCorreo(), titulo, mensaje, tipo);
+                        webSocketService.enviarTopico("/topic/superadmin/notificaciones", java.util.Map.of("event", "update"));
                     });
         } catch (Exception e) {
             System.out.println("ERROR notificación: " + e.getMessage());

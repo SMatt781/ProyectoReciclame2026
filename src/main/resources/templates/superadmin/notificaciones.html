@@ -39,7 +39,8 @@
                     <h2 class="font-extrabold text-[1.875rem] text-on-primary-fixed leading-tight tracking-tight">
                         Notificaciones
                     </h2>
-                    <span th:if="${totalNoLeidas > 0}"
+                    <span id="notifUnreadBadge"
+                          th:classappend="${totalNoLeidas > 0} ? '' : ' hidden'"
                           class="bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full"
                           th:text="${totalNoLeidas} + ' sin leer'">
                 </span>
@@ -60,7 +61,9 @@
         </div>
 
         <!-- Contenedor principal -->
-        <div id="notif-content" th:fragment="notifContent" class="bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
+        <div id="notif-content" th:fragment="notifContent"
+             th:attr="data-unread=${totalNoLeidas}"
+             class="bg-white rounded-[1.25rem] border border-slate-100 shadow-sm overflow-hidden">
 
             <!-- Tabs -->
             <div class="flex flex-wrap gap-4 sm:gap-6 px-4 sm:px-6 pt-5 pb-0 border-b border-slate-100" id="notifTabs">
@@ -262,7 +265,7 @@
         return init;
     }
 
-    function cargarNotifContent(url, pushUrl) {
+    window.cargarNotifContent = function(url, pushUrl) {
         fetch(url, conAjaxHeaders())
             .then(function(r) { return r.text(); })
             .then(function(html) {
@@ -271,11 +274,25 @@
                 var actual = document.getElementById('notif-content');
                 if (nuevo && actual) {
                     actual.replaceWith(nuevo);
+                    actualizarBadgeNoLeidas(nuevo.getAttribute('data-unread'));
                     enlazarNavegacionNotif();
                     if (pushUrl !== false) history.pushState({ ajaxNotif: true }, '', url);
                 }
             })
             .catch(function() { window.location.href = url; });
+    };
+
+    function refrescarNotifActual() {
+        window.cargarNotifContent(window.location.href, false);
+    }
+
+    function actualizarBadgeNoLeidas(valor) {
+        var badge = document.getElementById('notifUnreadBadge');
+        if (!badge) return;
+        var total = parseInt(valor || '0', 10) || 0;
+        badge.textContent = total + ' sin leer';
+        badge.classList.toggle('hidden', total <= 0);
+        if (window.updateNavNotificationBadge) window.updateNavNotificationBadge(total);
     }
 
     function enlazarNavegacionNotif() {
@@ -284,7 +301,7 @@
             a.dataset.ajaxBound = '1';
             a.addEventListener('click', function(e) {
                 e.preventDefault();
-                cargarNotifContent(a.getAttribute('href'));
+                window.cargarNotifContent(a.getAttribute('href'));
             });
         });
     }
@@ -313,6 +330,7 @@
                     var actual = document.getElementById('notif-content');
                     if (nuevo && actual) {
                         actual.replaceWith(nuevo);
+                        actualizarBadgeNoLeidas(nuevo.getAttribute('data-unread'));
                         enlazarNavegacionNotif();
                     }
                 })
@@ -327,8 +345,23 @@
         enlazarNavegacionNotif();
 
         window.addEventListener('popstate', function() {
-            cargarNotifContent(window.location.href, false);
+            window.cargarNotifContent(window.location.href, false);
         });
+
+        (function suscribirNotificacionesWS(intentos) {
+            intentos = intentos || 0;
+            if (window._stompClient && window._stompClient.connected) {
+                var timer = null;
+                function refrescarDebounced() {
+                    clearTimeout(timer);
+                    timer = setTimeout(refrescarNotifActual, 150);
+                }
+                window._stompClient.subscribe('/topic/superadmin/notificaciones', refrescarDebounced);
+                window._stompClient.subscribe('/user/queue/notificaciones', refrescarDebounced);
+            } else if (intentos < 40) {
+                setTimeout(function() { suscribirNotificacionesWS(intentos + 1); }, 500);
+            }
+        })(0);
     });
 })();
 </script>

@@ -19,6 +19,15 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     FROM Usuario u
     LEFT JOIN FETCH u.rol
     WHERE LOWER(u.correo) = LOWER(:correo)
+      AND u.eliminadoEn IS NOT NULL
+""")
+    Optional<Usuario> findDeletedByCorreoWithRol(@Param("correo") String correo);
+
+    @Query("""
+    SELECT u
+    FROM Usuario u
+    LEFT JOIN FETCH u.rol
+    WHERE LOWER(u.correo) = LOWER(:correo)
       AND u.eliminadoEn IS NULL
 """)
     Optional<Usuario> findByCorreoWithRol(@Param("correo") String correo);

@@ -24,7 +24,8 @@
 <div class="flex-1 flex flex-col min-w-0 bg-surface relative">
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-    <main class="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+    <main class="flex-1 overflow-y-auto px-6 py-4">
+        <div id="dashboard-content" th:fragment="dashboardContent" class="space-y-4">
 
         <!-- Encabezado -->
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3" data-aos="fade-down">
@@ -360,6 +361,7 @@
             </div>
         </div>
 
+        </div>
     </main>
 </div>
 
@@ -368,6 +370,43 @@
 <script>
     AOS.init({ duration: 350, easing: 'ease-out-cubic', once: true, offset: -20, startEvent: 'DOMContentLoaded' });
     window.addEventListener('pageshow', function(e) { if (e.persisted) AOS.refreshHard(); });
+</script>
+<script>
+(function() {
+    function conAjaxHeaders(init) {
+        init = init || {};
+        init.headers = Object.assign({'X-Requested-With': 'XMLHttpRequest'}, init.headers || {});
+        return init;
+    }
+
+    function fetchDashboard() {
+        return fetch('/superadmin/dashboard', conAjaxHeaders())
+            .then(function(r) { return r.text(); })
+            .then(function(html) {
+                var doc = new DOMParser().parseFromString(html, 'text/html');
+                var nuevo = doc.getElementById('dashboard-content');
+                var actual = document.getElementById('dashboard-content');
+                if (nuevo && actual) {
+                    actual.replaceWith(nuevo);
+                    if (window.AOS) AOS.refreshHard();
+                }
+            })
+            .catch(function() {});
+    }
+
+    function suscribirDashboardWS(intentos) {
+        intentos = intentos || 0;
+        if (window._stompClient && window._stompClient.connected) {
+            window._stompClient.subscribe('/topic/admin/usuarios', fetchDashboard);
+            window._stompClient.subscribe('/topic/superadmin/dominios', fetchDashboard);
+            window._stompClient.subscribe('/topic/superadmin/notificaciones', fetchDashboard);
+        } else if (intentos < 40) {
+            setTimeout(function() { suscribirDashboardWS(intentos + 1); }, 500);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() { suscribirDashboardWS(0); });
+})();
 </script>
 <!-- Contador animado en KPIs -->
 <script th:src="@{/js/animations.js}"></script>

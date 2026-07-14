@@ -434,37 +434,37 @@
                                 <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
                                     <span class="material-symbols-outlined text-[12px]">group</span> Usuarios
                                 </p>
-                                <p class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalUsuarios}">—</p>
+                                <p data-stat="totalUsuarios" class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalUsuarios}">—</p>
                             </div>
                             <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
                                 <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
                                     <span class="material-symbols-outlined text-[12px]">shield</span> Roles
                                 </p>
-                                <p class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalRoles}">—</p>
+                                <p data-stat="totalRoles" class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalRoles}">—</p>
                             </div>
                             <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
                                 <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
                                     <span class="material-symbols-outlined text-[12px]">domain</span> Dominios
                                 </p>
-                                <p class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalDominios}">—</p>
+                                <p data-stat="totalDominios" class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalDominios}">—</p>
                             </div>
                             <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
                                 <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
                                     <span class="material-symbols-outlined text-[12px]">policy</span> Normativas
                                 </p>
-                                <p class="font-mono text-xl font-bold text-secondary" th:text="${totalNormativas}">—</p>
+                                <p data-stat="totalNormativas" class="font-mono text-xl font-bold text-secondary" th:text="${totalNormativas}">—</p>
                             </div>
                             <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
                                 <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
                                     <span class="material-symbols-outlined text-[12px]">science</span> Estudios
                                 </p>
-                                <p class="font-mono text-xl font-bold text-secondary" th:text="${totalEstudios}">—</p>
+                                <p data-stat="totalEstudios" class="font-mono text-xl font-bold text-secondary" th:text="${totalEstudios}">—</p>
                             </div>
                             <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
                                 <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1 flex items-center gap-1">
                                     <span class="material-symbols-outlined text-[12px]">notifications</span> Notificaciones
                                 </p>
-                                <p class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalNotificaciones}">—</p>
+                                <p data-stat="totalNotificaciones" class="font-mono text-xl font-bold text-on-primary-fixed" th:text="${totalNotificaciones}">—</p>
                             </div>
                         </div>
                     </div>
@@ -685,12 +685,41 @@
                 }
             }
 
+            function actualizarStat(selector, valor) {
+                var el = document.querySelector(selector);
+                if (!el || valor === undefined || valor === null) return;
+                el.textContent = valor;
+                el.classList.add('scale-105');
+                setTimeout(function() { el.classList.remove('scale-105'); }, 180);
+            }
+
+            function fetchEstadoStats() {
+                return fetch('/superadmin/estadoSistema/api-stats', { credentials: 'same-origin' })
+                    .then(function(r) { return r.ok ? r.json() : null; })
+                    .then(function(data) {
+                        if (!data) return;
+                        actualizarStat('[data-stat="totalUsuarios"]', data.totalUsuarios);
+                        actualizarStat('[data-stat="totalRoles"]', data.totalRoles);
+                        actualizarStat('[data-stat="totalDominios"]', data.totalDominios);
+                        actualizarStat('[data-stat="totalNormativas"]', data.totalNormativas);
+                        actualizarStat('[data-stat="totalEstudios"]', data.totalEstudios);
+                        actualizarStat('[data-stat="totalNotificaciones"]', data.totalNotificaciones);
+                    })
+                    .catch(function() {});
+            }
+
             function suscribirEstadoSistema(intentos) {
                 intentos = intentos || 0;
                 if (window._stompClient && window._stompClient.connected) {
                     window._stompClient.subscribe('/topic/superadmin/estado', function(message) {
-                        try { actualizarEstadoSistema(JSON.parse(message.body)); } catch (e) {}
+                        try {
+                            actualizarEstadoSistema(JSON.parse(message.body));
+                            fetchEstadoStats();
+                        } catch (e) {}
                     });
+                    window._stompClient.subscribe('/topic/admin/usuarios', fetchEstadoStats);
+                    window._stompClient.subscribe('/topic/superadmin/dominios', fetchEstadoStats);
+                    window._stompClient.subscribe('/topic/superadmin/notificaciones', fetchEstadoStats);
                 } else if (intentos < 40) {
                     setTimeout(function() { suscribirEstadoSistema(intentos + 1); }, 500);
                 }

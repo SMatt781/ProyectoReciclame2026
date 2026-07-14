@@ -236,6 +236,10 @@
 
             // Exponer showToast globalmente para que las páginas puedan disparar toasts post-redirect
             window.showNavToast = showToast;
+            window.updateNavNotificationBadge = function(count) {
+                unreadCount = count;
+                updateBadge(unreadCount);
+            };
 
             // Polling de respaldo: si el WebSocket falla, igual se actualiza la campanita
             setInterval(function() {

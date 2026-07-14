@@ -9,5 +9,7 @@ public interface IdentificacionRepository extends JpaRepository<Identificacion, 
 
     boolean existsByNumero(String numero);
 
+    boolean existsByNumeroAndUsuario_EliminadoEnIsNull(String numero);
+
     Optional<Identificacion> findByUsuario_IdUsuario(Long idUsuario);
 }

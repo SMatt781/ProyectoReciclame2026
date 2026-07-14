@@ -278,8 +278,12 @@
                 modal.classList.remove('flex');
             }
 
+            // ── Fila activa para animaciones ─────────────────────────────────────────
+            var _activeAdminRow = null;
+
             // ── Modal Editar (abre con JS sin cambiar la URL) ────────────────────────
             function abrirModalEditar(data) {
+                _activeAdminRow = document.querySelector('[data-admin-id="' + data.id + '"]');
                 document.getElementById('editIdUsuario').value       = data.id || '';
                 document.getElementById('editNombres').value         = data.nombres || '';
                 document.getElementById('editApellidoPaterno').value = data.apellidoPaterno || '';
@@ -580,6 +584,7 @@
 
             // ── Modal Eliminar Admin ──────────────────────────────────────────────────────
             function abrirConfirmarEliminarAdmin(id, nombre) {
+                _activeAdminRow = document.querySelector('[data-admin-id="' + id + '"]');
                 document.getElementById('eliminarAdminId').value = id;
                 document.getElementById('msgEliminarAdmin').innerText =
                     '¿Estás seguro de que deseas eliminar permanentemente a ' + nombre + '?';
@@ -684,7 +689,7 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Total Administradores
                         </h4>
-                        <div class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalAdmins}"></div>
+                        <div data-stat="totalAdmins" class="text-3xl font-extrabold text-on-primary-fixed" th:text="${totalAdmins}"></div>
                     </div>
                 </article>
 
@@ -706,7 +711,7 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Administradores Activos
                         </h4>
-                        <div class="text-3xl font-extrabold text-secondary" th:text="${activeAdmins}"></div>
+                        <div data-stat="activeAdmins" class="text-3xl font-extrabold text-secondary" th:text="${activeAdmins}"></div>
                     </div>
                 </article>
 
@@ -728,7 +733,7 @@
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Administradores Bloqueados
                         </h4>
-                        <div class="text-3xl font-extrabold text-error" th:text="${blockedAdmins}"></div>
+                        <div data-stat="blockedAdmins" class="text-3xl font-extrabold text-error" th:text="${blockedAdmins}"></div>
                     </div>
                 </article>
 
@@ -745,25 +750,18 @@
                         </div>
                     </div>
 
-                    <div th:if="${ultimoAdmin != null}">
+                    <div id="ultimoAdminKpi">
                         <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
                             Último creado
                         </h4>
-                        <p class="text-sm font-extrabold text-secondary truncate"
-                           th:text="${ultimoAdmin.nombres + ' ' + ultimoAdmin.apellidoPaterno}">
+                        <p data-stat="ultimoAdminNombre"
+                           class="text-sm font-extrabold text-secondary truncate"
+                           th:text="${ultimoAdmin != null ? ultimoAdmin.nombres + ' ' + ultimoAdmin.apellidoPaterno : 'Sin registros aún'}">
                         </p>
-                        <p class="text-[11px] text-on-surface-variant mt-0.5"
-                           th:text="${ultimoAccesoTexto.get(ultimoAdmin.idUsuario) != null}
-                            ? ${ultimoAccesoTexto.get(ultimoAdmin.idUsuario)}
-                            : 'Recién creado'">
+                        <p data-stat="ultimoAdminTiempo"
+                           class="text-[11px] text-on-surface-variant mt-0.5"
+                           th:text="${ultimoAdmin != null ? (ultimoAccesoTexto.get(ultimoAdmin.idUsuario) != null ? ultimoAccesoTexto.get(ultimoAdmin.idUsuario) : 'Recién creado') : ''}">
                         </p>
-                    </div>
-
-                    <div th:if="${ultimoAdmin == null}">
-                        <h4 class="font-headline text-sm font-bold text-on-primary-fixed mb-1 leading-tight">
-                            Último creado
-                        </h4>
-                        <p class="text-sm text-on-surface-variant">Sin registros aún</p>
                     </div>
                 </article>
 
@@ -890,6 +888,7 @@
 
                         <!-- Filas -->
                         <div th:each="admin, aIdx : ${administradores.content}"
+                             th:attr="data-admin-id=${admin.idUsuario}"
                              th:classappend="${admin.estadoCuenta?.name() == 'BLOQUEADO'} ? 'bg-red-50/80 border-red-100' : 'bg-surface-container-lowest border-outline-variant/20'"
                              class="bg-surface-container-lowest rounded-xl p-4 md:px-6 md:py-4 ambient-shadow flex flex-col md:grid md:grid-cols-5 md:gap-0 items-start md:items-center group hover:bg-surface-container/50 transition-colors border hover:border-outline-variant/30">
 
@@ -1325,6 +1324,36 @@
         return tipo;
     }
 
+    function actualizarStat(selector, valor) {
+        var el = document.querySelector(selector);
+        if (!el || valor === undefined || valor === null) return;
+        var texto = String(valor);
+        if (el.textContent.trim() === texto) return;
+        el.textContent = texto;
+        el.style.transition = 'none';
+        el.style.transform = 'scale(1.12)';
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                el.style.transition = 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)';
+                el.style.transform = 'scale(1)';
+            });
+        });
+    }
+
+    window.fetchAdminStats = function() {
+        return fetch('/superadmin/administradores/api-stats', { credentials: 'same-origin' })
+            .then(function(r) { return r.ok ? r.json() : null; })
+            .then(function(data) {
+                if (!data) return;
+                actualizarStat('[data-stat="totalAdmins"]', data.totalAdmins);
+                actualizarStat('[data-stat="activeAdmins"]', data.activeAdmins);
+                actualizarStat('[data-stat="blockedAdmins"]', data.blockedAdmins);
+                actualizarStat('[data-stat="ultimoAdminNombre"]', data.ultimoAdminNombre || 'Sin registros aún');
+                actualizarStat('[data-stat="ultimoAdminTiempo"]', data.ultimoAdminTiempo || '');
+            })
+            .catch(function() {});
+    };
+
     window.cargarTablaAdmins = function(url, pushUrl) {
         return fetch(url, conAjaxHeaders())
             .then(function(r) { return r.text(); })
@@ -1336,6 +1365,7 @@
                     var tipo = mostrarFlashDesdeContenido(nuevo);
                     actual.replaceWith(nuevo);
                     enlazarNavegacionAdmins();
+                    if (window.fetchAdminStats) window.fetchAdminStats();
                     if (pushUrl !== false) history.pushState({ ajaxAdmins: true }, '', url);
                     return tipo;
                 }
@@ -1350,7 +1380,7 @@
             + '<span>Procesando...</span>';
     }
 
-    function interceptarFormCRUD(formId, onSuccessClose) {
+    function interceptarFormCRUD(formId, onSuccessClose, onSuccessAnimation) {
         var form = document.getElementById(formId);
         if (!form) return;
         form.addEventListener('submit', function(e) {
@@ -1377,9 +1407,16 @@
                     var actual = document.getElementById('admins-content');
                     if (!nuevo || !actual) { form.submit(); return; }
                     var tipo = mostrarFlashDesdeContenido(nuevo);
-                    actual.replaceWith(nuevo);
-                    enlazarNavegacionAdmins();
-                    if (tipo === 'success' && onSuccessClose) onSuccessClose();
+                    var esExito = tipo !== 'error';
+                    if (esExito && onSuccessAnimation) {
+                        if (onSuccessClose) onSuccessClose();
+                        onSuccessAnimation(nuevo, actual);
+                    } else {
+                        actual.replaceWith(nuevo);
+                        enlazarNavegacionAdmins();
+                        if (esExito && onSuccessClose) onSuccessClose();
+                    }
+                    if (esExito && window.fetchAdminStats) window.fetchAdminStats();
                 })
                 .catch(function() { form.submit(); })
                 .finally(function() {
@@ -1434,8 +1471,16 @@
         });
     }
 
+    function suscribirAdminStatsWS() {
+        if (!window._stompClient) { setTimeout(suscribirAdminStatsWS, 500); return; }
+        window._stompClient.subscribe('/topic/admin/usuarios', function() {
+            if (window.fetchAdminStats) window.fetchAdminStats();
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         enlazarNavegacionAdmins();
+        suscribirAdminStatsWS();
 
         var formFiltros = document.getElementById('formFiltrosAdmins');
         if (formFiltros) {
@@ -1460,9 +1505,64 @@
 
         // CRUD de administradores sin recargar la pagina
         interceptarFormCRUD('formCrearAdmin', function() { if (window.closeModal) window.closeModal(); });
-        interceptarFormCRUD('formEditarAdmin', function() { if (window.cerrarModalEditar) window.cerrarModalEditar(); });
+
+        interceptarFormCRUD('formEditarAdmin',
+            function() { if (window.cerrarModalEditar) window.cerrarModalEditar(); },
+            function(nuevo, actual) {
+                var row    = _activeAdminRow;
+                var adminId = row ? row.dataset.adminId : null;
+                if (row && adminId) {
+                    var newRow = nuevo.querySelector('[data-admin-id="' + adminId + '"]');
+                    row.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease-out';
+                    row.style.transform  = 'translateX(90px)';
+                    row.style.opacity    = '0';
+                    setTimeout(function() {
+                        if (newRow && row.parentNode) {
+                            newRow.style.transform = 'translateX(-40px)';
+                            newRow.style.opacity   = '0';
+                            row.parentNode.insertBefore(newRow, row);
+                            row.remove();
+                            requestAnimationFrame(function() {
+                                requestAnimationFrame(function() {
+                                    newRow.style.transition = 'transform 0.32s ease-out, opacity 0.32s ease-out';
+                                    newRow.style.transform  = '';
+                                    newRow.style.opacity    = '';
+                                });
+                            });
+                            enlazarNavegacionAdmins();
+                        } else {
+                            actual.replaceWith(nuevo);
+                            enlazarNavegacionAdmins();
+                        }
+                        _activeAdminRow = null;
+                    }, 380);
+                } else {
+                    actual.replaceWith(nuevo);
+                    enlazarNavegacionAdmins();
+                }
+            }
+        );
+
         interceptarFormCRUD('formCambiarEstadoAdmin', function() { if (window.cerrarModalEstadoAdmin) window.cerrarModalEstadoAdmin(); });
-        interceptarFormCRUD('formEliminarAdmin', function() { if (window.cerrarModalEliminarAdmin) window.cerrarModalEliminarAdmin(); });
+
+        interceptarFormCRUD('formEliminarAdmin',
+            function() { if (window.cerrarModalEliminarAdmin) window.cerrarModalEliminarAdmin(); },
+            function(nuevo, actual) {
+                var row = _activeAdminRow;
+                if (row) {
+                    row.style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease-out';
+                    row.style.transform  = 'translateX(90px)';
+                    row.style.opacity    = '0';
+                    setTimeout(function() {
+                        if (row.parentNode) row.remove();
+                        _activeAdminRow = null;
+                    }, 380);
+                } else {
+                    actual.replaceWith(nuevo);
+                    enlazarNavegacionAdmins();
+                }
+            }
+        );
     });
 })();
 </script>

@@ -47,7 +47,7 @@
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <main class="flex-1 overflow-y-auto px-4 sm:px-6 py-4">
-        <div class="space-y-6">
+        <div id="conf-content" th:fragment="confContent" class="space-y-6">
 
             <div>
                 <h2 class="font-headline font-extrabold text-[1.75rem] sm:text-[2rem] text-on-primary-fixed leading-tight tracking-tight break-words">
@@ -1201,6 +1201,25 @@
             .catch(function() { window.location.href = url; });
     };
 
+    window.refrescarConfSeguridad = function() {
+        var tabla = window.cargarDominios(window.location.href, false);
+        var politica = fetch('/superadmin/confSeguridad/politica/api', { credentials: 'same-origin' })
+            .then(function(r) { return r.ok ? r.json() : null; })
+            .then(function(data) {
+                if (!data) return;
+                var campo;
+                if ((campo = document.getElementById('toggle-mayuscula'))) campo.checked = !!data.requiereMayuscula;
+                if ((campo = document.getElementById('toggle-numero'))) campo.checked = !!data.requiereNumero;
+                if ((campo = document.getElementById('toggle-simbolo'))) campo.checked = !!data.requiereSimbolo;
+                if ((campo = document.querySelector('input[name="mandatoMfa"]'))) campo.checked = !!data.mandatoMfa;
+                if ((campo = document.querySelector('input[name="longitudMinima"]'))) campo.value = data.longitudMinima;
+                if ((campo = document.querySelector('select[name="expiracionDias"]'))) campo.value = data.expiracionDias;
+                if (typeof generarContrasenaEjemplo === 'function') generarContrasenaEjemplo();
+            })
+            .catch(function() {});
+        return Promise.allSettled([tabla, politica]);
+    };
+
     function enlazarNavegacionDominios() {
         document.querySelectorAll('a.js-nav-dominios').forEach(function(a) {
             if (a.dataset.ajaxBound) return;
@@ -1275,6 +1294,17 @@
         interceptarFormDominio('formEliminarDominio', function() {
             if (window.cerrarModalEliminarDominio) window.cerrarModalEliminarDominio();
         });
+
+        (function suscribirDominiosWS(intentos) {
+            intentos = intentos || 0;
+            if (window._stompClient && window._stompClient.connected) {
+                window._stompClient.subscribe('/topic/superadmin/dominios', function() {
+                    if (window.refrescarConfSeguridad) window.refrescarConfSeguridad();
+                });
+            } else if (intentos < 40) {
+                setTimeout(function() { suscribirDominiosWS(intentos + 1); }, 500);
+            }
+        })(0);
     });
 })();
 </script>
