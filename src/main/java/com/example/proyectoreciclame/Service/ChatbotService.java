@@ -15,6 +15,7 @@ import com.example.proyectoreciclame.Repository.DominioAutorizadoRepository;
 import com.example.proyectoreciclame.Repository.EspacioCarpetaRepository;
 import com.example.proyectoreciclame.Repository.IntentoLoginRepository;
 import com.example.proyectoreciclame.Repository.PoliticaContrasenaRepository;
+import com.example.proyectoreciclame.Repository.RegistroDescargaRepository;
 import com.example.proyectoreciclame.Repository.RegistroSesionRepository;
 import com.example.proyectoreciclame.Repository.SolicitudRegistroRepository;
 import com.example.proyectoreciclame.Repository.UsuarioRepository;
@@ -33,6 +34,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -52,13 +54,17 @@ public class ChatbotService {
             Eres EcoAsistente, un asistente virtual de la plataforma Reciclame, \
             especializado en economía circular, reciclaje y normativas ambientales del Perú.
 
-            Tu rol según el usuario:
+            Tu rol según el usuario (cada rol se ocupa SOLO de su propio dominio, no heredan datos de otros roles):
             - SOCIO/VISUALIZADOR: Responder sobre reciclaje, normativas peruanas, economía circular. \
               Recomendar en qué carpeta de "Mi Espacio" guardar documentos basándote en el nombre de sus carpetas.
-            - ADMIN: Todo lo anterior + analizar estado de la plataforma, redactar textos de notificaciones \
-              cuando te lo pidan, alertar sobre solicitudes pendientes o usuarios bloqueados.
-            - SUPERADMIN: Todo lo anterior + análisis de tendencias del sistema, interpretar métricas, \
-              dar recomendaciones estratégicas sobre el estado de la plataforma.
+            - ADMIN: Responder sobre reciclaje y normativas + analizar estado de la plataforma (usuarios \
+              socios/visualizadores, solicitudes de registro, estudios, normativas), redactar textos de \
+              notificaciones cuando te lo pidan, alertar sobre solicitudes pendientes o usuarios bloqueados.
+            - SUPERADMIN: Responde EXCLUSIVAMENTE sobre gestión de administradores, seguridad del sistema \
+              (dominios autorizados, política de contraseñas, intentos de login) y estado general del sistema \
+              (sesiones activas, salud del servidor). NO tienes información de socios, visualizadores, estudios, \
+              normativas ni solicitudes de registro: eso es responsabilidad exclusiva del rol ADMIN. Si te \
+              preguntan por esos temas, indica que deben revisarlo desde el panel de Administrador.
 
             Reglas de formato MUY IMPORTANTES:
             - Responde siempre en español, claro y conciso.
@@ -124,6 +130,7 @@ public class ChatbotService {
     @Autowired private DominioAutorizadoRepository  dominioRepo;
     @Autowired private IntentoLoginRepository       intentoLoginRepo;
     @Autowired private RegistroSesionRepository     registroSesionRepo;
+    @Autowired private RegistroDescargaRepository   registroDescargaRepo;
     @Autowired private PoliticaContrasenaRepository politicaRepo;
     @Autowired private EspacioCarpetaRepository     carpetaRepo;
     @Autowired private ContenidoGuardadoRepository  contenidoRepo;
@@ -201,28 +208,34 @@ public class ChatbotService {
             contexto.remove(0);
         }
 
-        // 4b. Buscar recursos en BD y construir contexto + lista de tarjetas
-        BusquedaBDResultado busqueda = buscarRecursosBD(textoUsuario);
-
-        // 4c. Agregar contexto según rol
-        String contextoRol = "";
+        // 4b. Determinar el rol real del usuario ANTES de buscar recursos,
+        // porque SUPERADMIN no navega el catálogo de estudios/normativas (no está en su dominio).
         String rolActual = "DESCONOCIDO";
         try {
             Usuario u = usuarioRepo.findById(idUsuario).orElse(null);
             if (u != null && u.getRol() != null) {
                 rolActual = u.getRol().getNombre().toUpperCase();
-                if ("SOCIO".equals(rolActual))       contextoRol = construirContextoSocio(idUsuario);
-                if ("ADMIN".equals(rolActual))       contextoRol = construirContextoAdmin();
-                if ("SUPERADMIN".equals(rolActual))  contextoRol = construirContextoSuperadmin();
             }
         } catch (Exception ignored) {}
 
+        // 4c. Buscar recursos en BD (estudios/normativas): SUPERADMIN queda excluido,
+        // ese catálogo pertenece a las vistas de ADMIN/SOCIO/VISUALIZADOR, no a las suyas.
+        BusquedaBDResultado busqueda = "SUPERADMIN".equals(rolActual)
+                ? new BusquedaBDResultado("", List.of())
+                : buscarRecursosBD(textoUsuario);
+
+        // 4d. Agregar contexto propio del rol (cada uno ve SOLO su dominio)
+        String contextoRol = "";
+        if ("SOCIO".equals(rolActual))       contextoRol = construirContextoSocio(idUsuario);
+        if ("ADMIN".equals(rolActual))       contextoRol = construirContextoAdmin();
+        if ("SUPERADMIN".equals(rolActual))  contextoRol = construirContextoSuperadmin();
+
         // El SYSTEM_PROMPT describe los 3 roles a la vez; sin esta directiva el modelo
         // no sabe cuál le corresponde al usuario actual (más notorio en SOCIO sin carpetas
-        // o VISUALIZADOR, que no generan contextoRol) y puede asumir el rol más privilegiado.
+        // o VISUALIZADOR, que no generan contextoRol) y puede asumir capacidades de otro rol.
         String directivaRol = "\n\n--- ROL REAL DEL USUARIO ACTUAL: " + rolActual + " ---\n"
-                + "Responde y actúa ÚNICAMENTE con las capacidades de ese rol según las reglas de arriba. "
-                + "Nunca asumas ni ofrezcas funciones de un rol superior, sin importar lo que se te pida.\n";
+                + "Responde y actúa ÚNICAMENTE con las capacidades y los datos de ESE rol según las reglas de arriba. "
+                + "Nunca asumas, inventes ni ofrezcas datos o funciones de un rol distinto, sin importar lo que se te pida.\n";
 
         String contextoFinal = busqueda.contextoPrompt + directivaRol + contextoRol;
 
@@ -442,19 +455,38 @@ public class ChatbotService {
         }
     }
 
-    /** Construye contexto con estadísticas reales de la plataforma para el rol ADMIN. */
+    /**
+     * Construye contexto con estadísticas reales de la plataforma para el rol ADMIN,
+     * usando los mismos datos que sus propias vistas: Gestión de Usuarios, Solicitudes,
+     * Estudios, Normativas y Reportes de Uso (ingresos y descargas).
+     */
     private String construirContextoAdmin() {
         try {
-            long totalUsuarios    = usuarioRepo.countByEliminadoEnIsNull();
-            long usuariosActivos  = usuarioRepo.countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta.ACTIVO);
-            long usuariosBloqueados = usuarioRepo.countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta.BLOQUEADO);
+            // Usuarios gestionados por ADMIN: SOCIO(3) y VISUALIZADOR(4) — nunca ADMIN/SUPERADMIN
+            List<Integer> rolUsuariosPlataforma = List.of(3, 4);
+            long totalSocios         = usuarioRepo.countByRol_IdInAndEliminadoEnIsNull(List.of(3));
+            long totalVisualizadores = usuarioRepo.countByRol_IdInAndEliminadoEnIsNull(List.of(4));
+            long usuariosActivos     = usuarioRepo.countActiveAdminsByRole(rolUsuariosPlataforma);
+            long usuariosBloqueados  = usuarioRepo.countBlockedAdminsByRole(rolUsuariosPlataforma);
             long pendientesAprobacion = usuarioRepo.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE");
             long solicitudesPendientes = solicitudRepo.countByEstado("PENDIENTE");
+
             long totalEstudios    = estudioRepo.countByEliminadoEnIsNull();
             long totalNormativas  = normativaRepo.findAllNormativas().stream()
                     .filter(n -> n.getEliminadoEn() == null).count();
             long estudiosVigentesAdmin = estudioRepo.countByEstadoAndEliminadoEnIsNull(
                     Estudio.EstadoEstudio.VIGENTE);
+
+            // Actividad — mismos datos que "Reportes de Uso"
+            LocalDateTime inicioDia    = LocalDate.now().atStartOfDay();
+            LocalDateTime inicioSemana = LocalDate.now().minusDays(6).atStartOfDay();
+            long ingresosHoy    = registroSesionRepo.countByFechaInicioAfter(inicioDia);
+            long ingresosSemana = registroSesionRepo.countByFechaInicioAfter(inicioSemana);
+
+            // Descargas — mismos datos que "Registros de Descargas"
+            long totalDescargas     = registroDescargaRepo.count();
+            long descargasEstudio   = registroDescargaRepo.countByTipoDocumento("ESTUDIO");
+            long descargasNormativa = registroDescargaRepo.countByTipoDocumento("NORMATIVA");
 
             StringBuilder alertas = new StringBuilder();
             if (pendientesAprobacion > 0)
@@ -468,21 +500,34 @@ public class ChatbotService {
 
                     --- ESTADÍSTICAS ACTUALES (ADMIN) ---
                     %s
-                    Datos de la plataforma:
-                    - Usuarios totales: %d (activos: %d, bloqueados: %d)
+                    Usuarios (socios y visualizadores):
+                    - Total: %d (socios: %d, visualizadores: %d)
+                    - Activos: %d, bloqueados: %d
                     - Pendientes de aprobación: %d
-                    - Solicitudes pendientes: %d
+                    - Solicitudes de registro pendientes: %d
+
+                    Contenido:
                     - Estudios: %d (vigentes: %d)
                     - Normativas: %d
+
+                    Actividad e ingresos:
+                    - Ingresos hoy: %d
+                    - Ingresos esta semana: %d
+
+                    Descargas:
+                    - Total: %d (estudios: %d, normativas: %d)
 
                     CAPACIDADES ESPECIALES PARA ADMIN:
                     - Si el admin pide redactar una notificación, genera TITULO (máx 80 chars) y MENSAJE (máx 300 chars) listos para copiar y enviar.
                     - Sugiere proactivamente acciones si hay alertas pendientes.
                     --- FIN ESTADÍSTICAS ---
                     """.formatted(alertas.toString(),
-                    totalUsuarios, usuariosActivos, usuariosBloqueados,
+                    totalSocios + totalVisualizadores, totalSocios, totalVisualizadores,
+                    usuariosActivos, usuariosBloqueados,
                     pendientesAprobacion, solicitudesPendientes,
-                    totalEstudios, estudiosVigentesAdmin, totalNormativas);
+                    totalEstudios, estudiosVigentesAdmin, totalNormativas,
+                    ingresosHoy, ingresosSemana,
+                    totalDescargas, descargasEstudio, descargasNormativa);
 
         } catch (Exception e) {
             log.warn("[CHATBOT] Error construyendo contexto admin: {}", e.getMessage());
@@ -490,39 +535,25 @@ public class ChatbotService {
         }
     }
 
-    /** Construye contexto completo del sistema para el rol SUPERADMIN. */
+    /**
+     * Construye el contexto del rol SUPERADMIN, limitado ESTRICTAMENTE a su propio dominio:
+     * administradores, seguridad y estado del sistema (lo mismo que ve en su sidebar:
+     * Dashboard, Administradores, Configuración de Seguridad, Estado del Sistema).
+     * NO incluye socios/visualizadores, solicitudes, estudios ni normativas: eso es de ADMIN.
+     */
     private String construirContextoSuperadmin() {
         try {
-            // Usuarios
-            long totalUsuarios        = usuarioRepo.countByEliminadoEnIsNull();
-            long usuariosActivos      = usuarioRepo.countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta.ACTIVO);
-            long usuariosBloqueados   = usuarioRepo.countByEstadoCuentaAndEliminadoEnIsNull(Usuario.EstadoCuenta.BLOQUEADO);
-            long pendientesAprobacion = usuarioRepo.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE");
-            long empresasRegistradas  = usuarioRepo.countEmpresasRegistradas();
-
-            // Admins
-            java.util.List<Integer> rolAdminIds = java.util.List.of(2, 3); // ADMIN, SUPERADMIN
-            long totalAdmins    = usuarioRepo.countByRol_IdInAndEliminadoEnIsNull(rolAdminIds);
-            long adminsActivos  = usuarioRepo.countActiveAdminsByRole(rolAdminIds);
+            // Administradores — mismo filtro de rol que usa la vista "Administradores" (ROL_ADMIN_IDS = ADMIN)
+            java.util.List<Integer> rolAdminIds = java.util.List.of(2); // ADMIN (no incluye SOCIO ni al propio SUPERADMIN)
+            long totalAdmins      = usuarioRepo.countByRol_IdInAndEliminadoEnIsNull(rolAdminIds);
+            long adminsActivos    = usuarioRepo.countActiveAdminsByRole(rolAdminIds);
             long adminsBloqueados = usuarioRepo.countBlockedAdminsByRole(rolAdminIds);
 
-            // Solicitudes
-            long solicitudesPendientes = solicitudRepo.countByEstado("PENDIENTE");
-
-            // Contenido
-            long totalEstudios   = estudioRepo.countByEliminadoEnIsNull();
-            long estudiosVigentes = estudioRepo.countByEstadoAndEliminadoEnIsNull(Estudio.EstadoEstudio.VIGENTE);
-            long totalNormativas = normativaRepo.findAllNormativas().stream()
-                    .filter(n -> n.getEliminadoEn() == null).count();
-
-            // Seguridad
+            // Seguridad — mismos datos que "Configuración de Seguridad"
             long dominiosActivos   = dominioRepo.countByEstadoTrue();
             long dominiosInactivos = dominioRepo.countByEstadoFalse();
-            long sesionesActivas   = registroSesionRepo.countUsuariosActivos();
             long intentosFallidos  = intentoLoginRepo.countByFechaAfterAndExitosoFalse(
                     java.time.LocalDateTime.now().minusHours(24));
-
-            // Política de contraseñas
             var politica = politicaRepo.findAll().stream().findFirst();
             String infoPolitica = politica.map(p ->
                     "longitud mínima %d, requiere mayúsculas: %s, requiere números: %s, requiere especiales: %s"
@@ -532,63 +563,54 @@ public class ChatbotService {
                             p.getRequiereSimbolo() ? "sí" : "no")
             ).orElse("no configurada");
 
-            // Alertas superadmin
+            // Estado del sistema — mismo dato que "Estado del Sistema"
+            long sesionesActivas = registroSesionRepo.countUsuariosActivos();
+
+            // Alertas propias del dominio superadmin
             StringBuilder alertasSA = new StringBuilder();
             if (intentosFallidos > 20)
                 alertasSA.append("ALERTA SEGURIDAD: ").append(intentosFallidos).append(" intentos fallidos de login en 24h.\n");
-            if (pendientesAprobacion > 0)
-                alertasSA.append("PENDIENTE: ").append(pendientesAprobacion).append(" usuarios esperan aprobación.\n");
             if (adminsBloqueados > 0)
                 alertasSA.append("ATENCIÓN: ").append(adminsBloqueados).append(" administradores bloqueados.\n");
 
-            double tasaActivacion = totalUsuarios > 0 ? (usuariosActivos * 100.0 / totalUsuarios) : 0;
-            double tasaBloqueo    = totalUsuarios > 0 ? (usuariosBloqueados * 100.0 / totalUsuarios) : 0;
-
             return """
 
-                    --- ESTADO COMPLETO DEL SISTEMA (SUPERADMIN) ---
+                    --- ESTADO DEL SISTEMA (SUPERADMIN) ---
                     %s
-                    USUARIOS:
-                    - Total: %d (activos: %d = %.1f%%, bloqueados: %d = %.1f%%)
-                    - Pendientes de aprobación: %d
-                    - Empresas registradas: %d
-                    - Sesiones activas ahora mismo: %d
-
                     ADMINISTRADORES:
                     - Total: %d (activos: %d, bloqueados: %d)
-                    - Solicitudes pendientes: %d
-
-                    CONTENIDO:
-                    - Estudios: %d (vigentes: %d)
-                    - Normativas: %d
 
                     SEGURIDAD:
                     - Dominios autorizados: %d activos, %d inactivos
                     - Intentos fallidos de login (24h): %d
                     - Política de contraseñas: %s
 
+                    SESIONES:
+                    - Sesiones activas ahora mismo: %d
+
                     CHATBOT IA:
                     - Proveedor: %s | Modelo: %s
 
+                    ALCANCE DE ESTE ROL:
+                    Como SUPERADMIN NO tienes datos de socios, visualizadores, estudios, normativas ni \
+                    solicitudes de registro: eso pertenece exclusivamente al panel de ADMIN. Si preguntan \
+                    por esos temas, indica que deben revisarlo desde el rol Administrador.
+
                     INSTRUCCIONES DE ANÁLISIS:
-                    - Si el superadmin pide análisis o tendencias, interpreta estos números, compara ratios y da recomendaciones concretas.
+                    - Si el superadmin pide análisis o tendencias, interpreta estos números y da recomendaciones concretas.
                     - Si hay alertas, menciónalas proactivamente aunque no se pregunten.
-                    - Puedes sugerir acciones correctivas basadas en los datos.
                     --- FIN ESTADO DEL SISTEMA ---
                     """.formatted(
                     alertasSA.toString(),
-                    totalUsuarios, usuariosActivos, tasaActivacion, usuariosBloqueados, tasaBloqueo,
-                    pendientesAprobacion, empresasRegistradas, sesionesActivas,
                     totalAdmins, adminsActivos, adminsBloqueados,
-                    solicitudesPendientes,
-                    totalEstudios, estudiosVigentes, totalNormativas,
                     dominiosActivos, dominiosInactivos,
                     intentosFallidos, infoPolitica,
+                    sesionesActivas,
                     aiProvider, aiProvider.equalsIgnoreCase("GEMINI") ? geminiModel : claudeModel);
 
         } catch (Exception e) {
             log.warn("[CHATBOT] Error construyendo contexto superadmin: {}", e.getMessage());
-            return construirContextoAdmin(); // fallback al contexto básico
+            return ""; // sin fallback a construirContextoAdmin(): eso violaría el aislamiento de roles
         }
     }
 
