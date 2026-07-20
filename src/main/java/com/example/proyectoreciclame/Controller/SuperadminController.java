@@ -301,6 +301,9 @@ public class SuperadminController {
             Model model,
             jakarta.servlet.http.HttpServletRequest request
     ) {
+        // Evita mass assignment: ignora cualquier idUsuario que venga del form/request
+        usuario.setIdUsuario(null);
+
         boolean esAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
 
         // Construir correo completo — dominioCorreo ya tiene el @
