@@ -45,14 +45,9 @@ public class AdminReporteController {
         model.addAttribute("usuariosActivos", registroSesionRepository.countUsuariosActivosDesde(inicio30));
 
         // Gráfico de barras — últimos 7 días
-        List<Object[]> porDia = registroSesionRepository.contarSesionesPorDia(inicioSemana);
-        List<String> etiquetas = porDia.stream()
-                .map(r -> LocalDate.parse(r[0].toString())
-                        .getDayOfWeek()
-                        .getDisplayName(java.time.format.TextStyle.SHORT, new java.util.Locale("es", "PE")))
-                .toList();
-        model.addAttribute("diasLabels", etiquetas);
-        model.addAttribute("diasValores", porDia.stream().map(r -> r[1].toString()).toList());
+        Map<String, Object> serieIngresos = construirSerieIngresos(7);
+        model.addAttribute("diasLabels", serieIngresos.get("diasLabels"));
+        model.addAttribute("diasValores", serieIngresos.get("diasValores"));
 
         // Dona descargas
         model.addAttribute("descargasEstudio",   registroDescargaRepository.countByTipoDocumento("ESTUDIO"));
@@ -72,25 +67,39 @@ public class AdminReporteController {
     @GetMapping("/datos-ingresos")
     @ResponseBody
     public Map<String, Object> obtenerDatosIngresos(@RequestParam(defaultValue = "7") int dias) {
-        LocalDateTime inicio = LocalDate.now().minusDays(dias - 1).atStartOfDay();
+        return construirSerieIngresos(dias);
+    }
 
-        // Obtener datos por día
+    /**
+     * Arma la serie de ingresos por día incluyendo TODOS los días del rango
+     * (aunque tengan 0 sesiones), con etiqueta de dos líneas: día de semana + fecha corta.
+     */
+    private Map<String, Object> construirSerieIngresos(int dias) {
+        LocalDate hoy = LocalDate.now();
+        LocalDate inicioFecha = hoy.minusDays(dias - 1);
+        LocalDateTime inicio = inicioFecha.atStartOfDay();
+
         List<Object[]> porDia = registroSesionRepository.contarSesionesPorDia(inicio);
+        Map<LocalDate, Integer> conteoPorDia = new HashMap<>();
+        for (Object[] r : porDia) {
+            conteoPorDia.put(LocalDate.parse(r[0].toString()), Integer.parseInt(r[1].toString()));
+        }
 
-        List<String> etiquetas = porDia.stream()
-                .map(r -> LocalDate.parse(r[0].toString())
-                        .getDayOfWeek()
-                        .getDisplayName(java.time.format.TextStyle.SHORT, new java.util.Locale("es", "PE")))
-                .toList();
+        java.util.Locale localeEs = new java.util.Locale("es", "PE");
+        java.time.format.DateTimeFormatter fechaCortaFmt = java.time.format.DateTimeFormatter.ofPattern("dd/MM");
 
-        List<Integer> valores = porDia.stream()
-                .map(r -> Integer.parseInt(r[1].toString()))
-                .toList();
+        List<List<String>> etiquetas = new java.util.ArrayList<>();
+        List<Integer> valores = new java.util.ArrayList<>();
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("diasLabels", etiquetas);
-        response.put("diasValores", valores);
+        for (LocalDate fecha = inicioFecha; !fecha.isAfter(hoy); fecha = fecha.plusDays(1)) {
+            String diaSemana = fecha.getDayOfWeek().getDisplayName(java.time.format.TextStyle.SHORT, localeEs);
+            etiquetas.add(List.of(diaSemana, fecha.format(fechaCortaFmt)));
+            valores.add(conteoPorDia.getOrDefault(fecha, 0));
+        }
 
-        return response;
+        Map<String, Object> resultado = new HashMap<>();
+        resultado.put("diasLabels", etiquetas);
+        resultado.put("diasValores", valores);
+        return resultado;
     }
 }

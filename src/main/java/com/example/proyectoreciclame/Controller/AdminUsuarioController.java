@@ -340,9 +340,7 @@ public class AdminUsuarioController {
         Usuario.EstadoCuenta estadoCuentaAnterior = usuario.getEstadoCuenta();
         // ─────────────────────────────────────────────────────────────────────
 
-        usuario.setNombres(form.getNombres().trim());
-        usuario.setApellidoPaterno(form.getApellidoPaterno().trim());
-        usuario.setApellidoMaterno(form.getApellidoMaterno() != null && !form.getApellidoMaterno().isBlank() ? form.getApellidoMaterno().trim() : null);
+        // Nombres y apellidos no son editables desde este formulario: se conservan los valores actuales.
         usuario.setCorreo(form.getCorreo().trim());
         usuario.setTelefono(form.getTelefono().trim());
         usuario.setActualizadoEn(LocalDateTime.now());
