@@ -34,10 +34,14 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,6 +53,8 @@ public class ChatbotService {
     private static final int LIMITE_MENSAJES_SESION = 50;
     // Cuántos mensajes anteriores se envían como contexto a la IA
     private static final int CONTEXTO_MENSAJES      = 10;
+    // Máximo de idas y vueltas modelo→herramienta→modelo por mensaje, para evitar loops infinitos
+    private static final int MAX_RONDAS_HERRAMIENTAS = 4;
 
     private static final String SYSTEM_PROMPT = """
             Eres EcoAsistente, un asistente virtual de la plataforma Reciclame, \
@@ -70,10 +76,15 @@ public class ChatbotService {
             - Responde siempre en español, claro y conciso.
             - NO uses markdown: sin asteriscos (*), sin guiones de lista (-), sin #, sin **, sin *.
             - Para listas usa números: 1. 2. 3. o párrafos separados.
-            - Si el contexto menciona recursos de la plataforma, NO los listes tú mismo. Solo menciona que aparecerán como tarjetas.
+            - Si el contexto o una herramienta menciona recursos de la plataforma, NO los listes tú mismo. Solo menciona que aparecerán como tarjetas.
             - Para notificaciones: cuando redactes, presenta TITULO y MENSAJE claramente separados.
-            - No inventes cifras; usa solo los datos del contexto provisto.
             - Máximo 250 palabras salvo que pidan más detalle.
+
+            USO DE HERRAMIENTAS (muy importante):
+            - Tienes herramientas para consultar datos reales y actualizados de la plataforma (conteos, búsquedas, estadísticas).
+            - SIEMPRE que te pregunten por una cifra, cantidad, estado, listado o dato concreto de la plataforma (estudios, normativas, usuarios, solicitudes, descargas, seguridad, etc.), usa la herramienta correspondiente antes de responder. NUNCA inventes ni estimes un número.
+            - Si ninguna herramienta disponible cubre lo que preguntan, dilo con claridad en vez de adivinar.
+            - Puedes llamar varias herramientas en la misma respuesta si la pregunta lo requiere (por ejemplo, comparar estudios y normativas).
             """;
 
     /** Resultado del procesamiento de un mensaje: texto de la IA + recursos encontrados en BD. */
@@ -218,13 +229,7 @@ public class ChatbotService {
             }
         } catch (Exception ignored) {}
 
-        // 4c. Buscar recursos en BD (estudios/normativas): SUPERADMIN queda excluido,
-        // ese catálogo pertenece a las vistas de ADMIN/SOCIO/VISUALIZADOR, no a las suyas.
-        BusquedaBDResultado busqueda = "SUPERADMIN".equals(rolActual)
-                ? new BusquedaBDResultado("", List.of())
-                : buscarRecursosBD(textoUsuario);
-
-        // 4d. Agregar contexto propio del rol (cada uno ve SOLO su dominio)
+        // 4c. Agregar contexto propio del rol (cada uno ve SOLO su dominio)
         String contextoRol = "";
         if ("SOCIO".equals(rolActual))       contextoRol = construirContextoSocio(idUsuario);
         if ("ADMIN".equals(rolActual))       contextoRol = construirContextoAdmin();
@@ -237,7 +242,10 @@ public class ChatbotService {
                 + "Responde y actúa ÚNICAMENTE con las capacidades y los datos de ESE rol según las reglas de arriba. "
                 + "Nunca asumas, inventes ni ofrezcas datos o funciones de un rol distinto, sin importar lo que se te pida.\n";
 
-        String contextoFinal = busqueda.contextoPrompt + directivaRol + contextoRol;
+        String contextoFinal = directivaRol + contextoRol;
+
+        // 4d. Recursos (tarjetas) que las herramientas de búsqueda vayan encontrando durante la conversación
+        List<RecursoBD> recursosAcumulados = new java.util.ArrayList<>();
 
         // 5. Llamar a la IA (con retry automático si falla por carga)
         String respuesta = null;
@@ -246,9 +254,9 @@ public class ChatbotService {
         while (intentos < 3 && respuesta == null) {
             try {
                 respuesta = switch (aiProvider.toUpperCase()) {
-                    case "CLAUDE_API" -> llamarClaudeApi(contexto, contextoActual);
-                    case "GEMINI"     -> llamarGemini(contexto, contextoActual);
-                    default           -> llamarGemini(contexto, contextoActual);
+                    case "CLAUDE_API" -> llamarClaudeApi(contexto, contextoActual, rolActual, idUsuario, recursosAcumulados);
+                    case "GEMINI"     -> llamarGemini(contexto, contextoActual, rolActual, idUsuario, recursosAcumulados);
+                    default           -> llamarGemini(contexto, contextoActual, rolActual, idUsuario, recursosAcumulados);
                 };
             } catch (Exception e) {
                 intentos++;
@@ -274,7 +282,7 @@ public class ChatbotService {
         msgSistema.setFecha(LocalDateTime.now());
         mensajeRepo.save(msgSistema);
 
-        return new ChatbotResultado(respuesta, busqueda.recursos);
+        return new ChatbotResultado(respuesta, recursosAcumulados);
     }
 
     /**
@@ -296,110 +304,442 @@ public class ChatbotService {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // PROVEEDORES DE IA
+    // HERRAMIENTAS (FUNCTION CALLING) — el modelo decide cuándo y con qué
+    // parámetros consultar datos reales de la plataforma, en vez de depender
+    // de listas fijas de palabras clave.
     // ─────────────────────────────────────────────────────────────────────────
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // BÚSQUEDA DE CONTEXTO EN BD
-    // ─────────────────────────────────────────────────────────────────────────
+    /** Definición de un parámetro de una herramienta. */
+    private static class ToolProp {
+        final String tipo;              // "string" | "integer"
+        final String descripcion;
+        final List<String> valoresEnum; // null si no aplica
 
-    /**
-     * Busca estudios y normativas relevantes al mensaje del usuario
-     * y construye un bloque de contexto para enriquecer el prompt.
-     */
-    // Palabras que indican que el usuario pregunta por el catálogo completo
-    private static final List<String> PALABRAS_CATALOGO_NORM = List.of(
-            "normativa", "normativas", "norma", "normas", "ley", "leyes",
-            "reglamento", "reglamentos", "decreto", "decretos", "resolución", "resoluciones"
-    );
-    private static final List<String> PALABRAS_CATALOGO_EST = List.of(
-            "estudio", "estudios", "documento", "documentos", "informe", "informes",
-            "investigación", "investigaciones", "reporte", "reportes"
-    );
-    private static final List<String> PALABRAS_LISTADO = List.of(
-            "qué", "que", "cuales", "cuáles", "cuantos", "cuántos",
-            "hay", "tienen", "tienes", "existe", "existen", "disponible",
-            "disponibles", "listar", "mostrar", "ver", "lista"
-    );
-
-    /** Resultado interno de la búsqueda en BD. */
-    private static class BusquedaBDResultado {
-        final String           contextoPrompt;
-        final List<RecursoBD>  recursos;
-        BusquedaBDResultado(String contextoPrompt, List<RecursoBD> recursos) {
-            this.contextoPrompt = contextoPrompt;
-            this.recursos       = recursos;
+        ToolProp(String tipo, String descripcion, List<String> valoresEnum) {
+            this.tipo = tipo;
+            this.descripcion = descripcion;
+            this.valoresEnum = valoresEnum;
         }
     }
 
-    private BusquedaBDResultado buscarRecursosBD(String mensaje) {
-        try {
-            String msgLower = mensaje.toLowerCase();
+    /** Definición de una herramienta expuesta al modelo. */
+    private static class ToolDef {
+        final String nombre;
+        final String descripcion;
+        final Map<String, ToolProp> propiedades;
 
-            boolean preguntaNormativas = PALABRAS_CATALOGO_NORM.stream().anyMatch(msgLower::contains)
-                    && PALABRAS_LISTADO.stream().anyMatch(msgLower::contains);
-            boolean preguntaEstudios   = PALABRAS_CATALOGO_EST.stream().anyMatch(msgLower::contains)
-                    && PALABRAS_LISTADO.stream().anyMatch(msgLower::contains);
-
-            List<Estudio>   estudios;
-            List<Normativa> normativas;
-
-            if (preguntaNormativas || preguntaEstudios) {
-                estudios = preguntaEstudios
-                        ? estudioRepo.findAllEstudioDTO().stream().limit(10)
-                                .map(dto -> estudioRepo.findById(dto.id()).orElse(null))
-                                .filter(e -> e != null && e.getEliminadoEn() == null)
-                                .collect(Collectors.toList())
-                        : List.of();
-                normativas = preguntaNormativas
-                        ? normativaRepo.findAllNormativas().stream()
-                                .filter(n -> n.getEliminadoEn() == null).limit(10)
-                                .collect(Collectors.toList())
-                        : List.of();
-                log.info("[CHATBOT] Catálogo — norm:{} est:{}", normativas.size(), estudios.size());
-            } else {
-                String keyword = extraerKeyword(mensaje);
-                if (keyword.isBlank()) return new BusquedaBDResultado("", List.of());
-
-                estudios = estudioRepo.findByTituloContainingIgnoreCaseDTO(keyword).stream().limit(3)
-                        .map(dto -> estudioRepo.findById(dto.id()).orElse(null))
-                        .filter(e -> e != null && e.getEliminadoEn() == null)
-                        .collect(Collectors.toList());
-                normativas = normativaRepo.findByKeyword(keyword).stream()
-                        .filter(n -> n.getEliminadoEn() == null).limit(3)
-                        .collect(Collectors.toList());
-            }
-
-            if (estudios.isEmpty() && normativas.isEmpty())
-                return new BusquedaBDResultado("", List.of());
-
-            // Construir lista de tarjetas
-            List<RecursoBD> tarjetas = new java.util.ArrayList<>();
-            for (Estudio e : estudios) {
-                tarjetas.add(new RecursoBD(e.getIdEstudio(), "ESTUDIO",
-                        e.getTitulo(), e.getDescripcion(), null, e.getAnio()));
-            }
-            for (Normativa n : normativas) {
-                tarjetas.add(new RecursoBD(n.getIdNormativa(), "NORMATIVA",
-                        n.getTitulo(), n.getDescripcion(), n.getCodigo(), n.getAnio()));
-            }
-
-            // Construir texto de contexto para el prompt (solo títulos, sin descripción larga)
-            StringBuilder sb = new StringBuilder();
-            sb.append("\n\n--- RECURSOS DISPONIBLES EN LA PLATAFORMA ---\n");
-            sb.append("Estos recursos reales están en la plataforma. NO los listes en tu respuesta; ");
-            sb.append("solo menciona brevemente que existen y que el usuario puede verlos en las tarjetas que aparecerán.\n");
-            for (RecursoBD r : tarjetas) {
-                sb.append("- [").append(r.tipo).append("] \"").append(r.titulo).append("\" (").append(r.anio).append(")\n");
-            }
-            sb.append("--- FIN ---\n");
-
-            return new BusquedaBDResultado(sb.toString(), tarjetas);
-
-        } catch (Exception e) {
-            log.warn("[CHATBOT] Error buscando recursos BD: {}", e.getMessage());
-            return new BusquedaBDResultado("", List.of());
+        ToolDef(String nombre, String descripcion, Map<String, ToolProp> propiedades) {
+            this.nombre = nombre;
+            this.descripcion = descripcion;
+            this.propiedades = propiedades;
         }
+
+        /** JSON de la función en el formato que espera Gemini (functionDeclarations). */
+        ObjectNode aGeminiJson(ObjectMapper m) {
+            ObjectNode fn = m.createObjectNode();
+            fn.put("name", nombre);
+            fn.put("description", descripcion);
+            ObjectNode params = fn.putObject("parameters");
+            params.put("type", "OBJECT");
+            ObjectNode props = params.putObject("properties");
+            for (var e : propiedades.entrySet()) {
+                ObjectNode p = props.putObject(e.getKey());
+                p.put("type", e.getValue().tipo.toUpperCase());
+                p.put("description", e.getValue().descripcion);
+                if (e.getValue().valoresEnum != null) {
+                    ArrayNode en = p.putArray("enum");
+                    e.getValue().valoresEnum.forEach(en::add);
+                }
+            }
+            return fn;
+        }
+
+        /** JSON de la herramienta en el formato que espera Claude (input_schema). */
+        ObjectNode aClaudeJson(ObjectMapper m) {
+            ObjectNode fn = m.createObjectNode();
+            fn.put("name", nombre);
+            fn.put("description", descripcion);
+            ObjectNode schema = fn.putObject("input_schema");
+            schema.put("type", "object");
+            ObjectNode props = schema.putObject("properties");
+            for (var e : propiedades.entrySet()) {
+                ObjectNode p = props.putObject(e.getKey());
+                p.put("type", e.getValue().tipo.toLowerCase());
+                p.put("description", e.getValue().descripcion);
+                if (e.getValue().valoresEnum != null) {
+                    ArrayNode en = p.putArray("enum");
+                    e.getValue().valoresEnum.forEach(en::add);
+                }
+            }
+            return fn;
+        }
+    }
+
+    private static Map<String, ToolProp> props(Object... kv) {
+        Map<String, ToolProp> m = new LinkedHashMap<>();
+        for (int i = 0; i < kv.length; i += 2) m.put((String) kv[i], (ToolProp) kv[i + 1]);
+        return m;
+    }
+
+    private static final List<String> ESTADOS_ESTUDIO   = List.of("VIGENTE", "BORRADOR", "DEROGADO");
+    private static final List<String> ESTADOS_NORMATIVA = List.of("VIGENTE", "DEROGADA", "PUBLICADA", "CONSULTA_PUBLICA", "BORRADOR_EN_PROCESO");
+    private static final List<String> FORMATOS_ESTUDIO  = List.of("PDF", "PPTX", "XLSX");
+    private static final List<String> ALCANCES_NORMATIVA = List.of("NACIONAL", "INTERNACIONAL");
+    private static final List<String> TIPOS_NORMA = List.of(
+            "LEY_NACIONAL", "DECRETO_SUPREMO", "REGLAMENTO", "ANTEPROYECTO", "HOJA_DE_RUTA", "DECRETO_LEY", "OTRO");
+
+    private static final ToolDef TOOL_CONTAR_ESTUDIOS = new ToolDef(
+            "contar_estudios",
+            "Cuenta cuántos estudios de la plataforma cumplen los filtros dados (todos opcionales). "
+                    + "Úsala siempre que pregunten cuántos estudios hay, existen o están en cierto estado o año.",
+            props(
+                    "estado", new ToolProp("string", "Estado del estudio", ESTADOS_ESTUDIO),
+                    "anio", new ToolProp("integer", "Año de publicación", null),
+                    "formato", new ToolProp("string", "Formato del archivo", FORMATOS_ESTUDIO)
+            ));
+
+    private static final ToolDef TOOL_CONTAR_NORMATIVAS = new ToolDef(
+            "contar_normativas",
+            "Cuenta cuántas normativas de la plataforma cumplen los filtros dados (todos opcionales). "
+                    + "Úsala siempre que pregunten cuántas normativas hay, existen o están en cierto estado, año o tipo.",
+            props(
+                    "estado", new ToolProp("string", "Estado de la normativa", ESTADOS_NORMATIVA),
+                    "anio", new ToolProp("integer", "Año de emisión", null),
+                    "alcance", new ToolProp("string", "Alcance geográfico", ALCANCES_NORMATIVA),
+                    "tipoNorma", new ToolProp("string", "Tipo de norma", TIPOS_NORMA)
+            ));
+
+    private static final ToolDef TOOL_BUSCAR_ESTUDIOS = new ToolDef(
+            "buscar_estudios",
+            "Busca estudios reales de la plataforma por palabra clave en el título o la descripción, "
+                    + "opcionalmente filtrando por estado o año. Úsala también para preguntas cualitativas o "
+                    + "temáticas (por ejemplo, si existe algo sobre compostaje, aunque esa palabra no esté en el "
+                    + "título). Devuelve una lista que se mostrará como tarjetas: no repitas los títulos en tu "
+                    + "texto, solo menciona brevemente que aparecen abajo.",
+            props(
+                    "palabra_clave", new ToolProp("string", "Palabra o frase a buscar en título o descripción", null),
+                    "estado", new ToolProp("string", "Filtrar por estado", ESTADOS_ESTUDIO),
+                    "anio", new ToolProp("integer", "Filtrar por año", null)
+            ));
+
+    private static final ToolDef TOOL_BUSCAR_NORMATIVAS = new ToolDef(
+            "buscar_normativas",
+            "Busca normativas reales de la plataforma por palabra clave en título, código, organismo emisor, "
+                    + "descripción o campo de aplicación, opcionalmente filtrando por estado o año. Úsala también "
+                    + "para preguntas cualitativas o temáticas, no solo cuando la palabra clave coincide con el "
+                    + "título. Devuelve una lista que se mostrará como tarjetas: no repitas los títulos en tu "
+                    + "texto, solo menciona brevemente que aparecen abajo.",
+            props(
+                    "palabra_clave", new ToolProp("string", "Palabra o frase a buscar", null),
+                    "estado", new ToolProp("string", "Filtrar por estado", ESTADOS_NORMATIVA),
+                    "anio", new ToolProp("integer", "Filtrar por año", null)
+            ));
+
+    private static final ToolDef TOOL_TENDENCIA_ESTUDIOS = new ToolDef(
+            "tendencia_estudios_por_anio",
+            "Devuelve cuántos estudios hay por cada año, opcionalmente filtrando por estado. Úsala para preguntas "
+                    + "sobre evolución en el tiempo, comparaciones entre años, o en qué año hubo más o menos estudios.",
+            props("estado", new ToolProp("string", "Filtrar por estado", ESTADOS_ESTUDIO)));
+
+    private static final ToolDef TOOL_TENDENCIA_NORMATIVAS = new ToolDef(
+            "tendencia_normativas_por_anio",
+            "Devuelve cuántas normativas hay por cada año, opcionalmente filtrando por estado. Úsala para preguntas "
+                    + "sobre evolución en el tiempo, comparaciones entre años, o en qué año hubo más o menos normativas.",
+            props("estado", new ToolProp("string", "Filtrar por estado", ESTADOS_NORMATIVA)));
+
+    private static final ToolDef TOOL_ESTUDIOS_RECIENTES = new ToolDef(
+            "estudios_recientes",
+            "Devuelve los estudios publicados en los últimos N días (por defecto 30 si no se especifica). "
+                    + "Úsala para preguntas sobre qué se agregó recientemente, el último mes, la última semana, etc. "
+                    + "Los resultados se muestran como tarjetas.",
+            props("dias", new ToolProp("integer", "Días hacia atrás a considerar, por defecto 30", null)));
+
+    private static final ToolDef TOOL_NORMATIVAS_RECIENTES = new ToolDef(
+            "normativas_recientes",
+            "Devuelve las normativas agregadas en los últimos N días (por defecto 30 si no se especifica). "
+                    + "Úsala para preguntas sobre qué se agregó recientemente, el último mes, la última semana, etc. "
+                    + "Los resultados se muestran como tarjetas.",
+            props("dias", new ToolProp("integer", "Días hacia atrás a considerar, por defecto 30", null)));
+
+    private static final ToolDef TOOL_CONTAR_USUARIOS = new ToolDef(
+            "contar_usuarios",
+            "Cuenta usuarios de la plataforma (socios y/o visualizadores) según rol y/o estado de cuenta.",
+            props(
+                    "rol", new ToolProp("string", "Rol a filtrar", List.of("SOCIO", "VISUALIZADOR")),
+                    "estado", new ToolProp("string", "Estado de la cuenta", List.of("ACTIVO", "BLOQUEADO", "PENDIENTE"))
+            ));
+
+    private static final ToolDef TOOL_CONTAR_SOLICITUDES = new ToolDef(
+            "contar_solicitudes_registro",
+            "Cuenta solicitudes de registro de nuevos usuarios según su estado.",
+            props("estado", new ToolProp("string", "Estado de la solicitud", List.of("PENDIENTE", "APROBADO", "RECHAZADO"))));
+
+    private static final ToolDef TOOL_ESTADISTICAS_DESCARGAS = new ToolDef(
+            "estadisticas_descargas",
+            "Cuenta descargas registradas en la plataforma, opcionalmente filtrando por tipo de documento.",
+            props("tipo", new ToolProp("string", "Tipo de documento", List.of("ESTUDIO", "NORMATIVA"))));
+
+    private static final ToolDef TOOL_CONTAR_ADMINISTRADORES = new ToolDef(
+            "contar_administradores",
+            "Cuenta cuentas de administrador registradas, opcionalmente filtrando por estado.",
+            props("estado", new ToolProp("string", "Estado de la cuenta", List.of("ACTIVO", "BLOQUEADO"))));
+
+    private static final ToolDef TOOL_ESTADO_SEGURIDAD = new ToolDef(
+            "estado_seguridad",
+            "Devuelve el estado de seguridad del sistema: dominios autorizados activos/inactivos, "
+                    + "intentos fallidos de login en las últimas 24 horas y la política de contraseñas vigente.",
+            Map.of());
+
+    private static final List<String> ROLES_CATALOGO_PUBLICO = List.of("SOCIO", "VISUALIZADOR", "ADMIN");
+
+    /** Devuelve las herramientas visibles para el rol actual: cada rol solo ve las de su propio dominio. */
+    private List<ToolDef> herramientasParaRol(String rol) {
+        List<ToolDef> tools = new java.util.ArrayList<>();
+        if (ROLES_CATALOGO_PUBLICO.contains(rol)) {
+            tools.add(TOOL_CONTAR_ESTUDIOS);
+            tools.add(TOOL_CONTAR_NORMATIVAS);
+            tools.add(TOOL_BUSCAR_ESTUDIOS);
+            tools.add(TOOL_BUSCAR_NORMATIVAS);
+            tools.add(TOOL_TENDENCIA_ESTUDIOS);
+            tools.add(TOOL_TENDENCIA_NORMATIVAS);
+            tools.add(TOOL_ESTUDIOS_RECIENTES);
+            tools.add(TOOL_NORMATIVAS_RECIENTES);
+        }
+        if ("ADMIN".equals(rol)) {
+            tools.add(TOOL_CONTAR_USUARIOS);
+            tools.add(TOOL_CONTAR_SOLICITUDES);
+            tools.add(TOOL_ESTADISTICAS_DESCARGAS);
+        }
+        if ("SUPERADMIN".equals(rol)) {
+            tools.add(TOOL_CONTAR_ADMINISTRADORES);
+            tools.add(TOOL_ESTADO_SEGURIDAD);
+        }
+        return tools;
+    }
+
+    /**
+     * Ejecuta una herramienta pedida por el modelo y devuelve un resultado serializable a JSON.
+     * Si la herramienta es una búsqueda, además acumula las tarjetas encontradas en recursosAcumulados.
+     */
+    private Object ejecutarHerramienta(String nombre, JsonNode args, String rol, List<RecursoBD> recursosAcumulados) {
+        try {
+            switch (nombre) {
+                case "contar_estudios": {
+                    String estado  = textoONull(args, "estado");
+                    Integer anio   = enteroONull(args, "anio");
+                    String formato = textoONull(args, "formato");
+                    long total = estudioRepo.findAll().stream()
+                            .filter(e -> e.getEliminadoEn() == null)
+                            .filter(e -> estado == null || e.getEstado().name().equalsIgnoreCase(estado))
+                            .filter(e -> anio == null || anio.equals(e.getAnio()))
+                            .filter(e -> formato == null || e.getFormato().name().equalsIgnoreCase(formato))
+                            .count();
+                    return Map.of("total", total);
+                }
+                case "contar_normativas": {
+                    String estado    = textoONull(args, "estado");
+                    Integer anio     = enteroONull(args, "anio");
+                    String alcance   = textoONull(args, "alcance");
+                    String tipoNorma = textoONull(args, "tipoNorma");
+                    long total = normativaRepo.findAllNormativas().stream()
+                            .filter(n -> n.getEliminadoEn() == null)
+                            .filter(n -> estado == null || n.getEstado().name().equalsIgnoreCase(estado))
+                            .filter(n -> anio == null || anio.equals(n.getAnio()))
+                            .filter(n -> alcance == null || n.getAlcance().name().equalsIgnoreCase(alcance))
+                            .filter(n -> tipoNorma == null || n.getTipoNorma().name().equalsIgnoreCase(tipoNorma))
+                            .count();
+                    return Map.of("total", total);
+                }
+                case "buscar_estudios": {
+                    String palabraClave = textoONull(args, "palabra_clave");
+                    String estado       = textoONull(args, "estado");
+                    Integer anio        = enteroONull(args, "anio");
+                    String pcLower      = palabraClave == null ? null : palabraClave.toLowerCase();
+                    List<Estudio> encontrados = estudioRepo.findAll().stream()
+                            .filter(e -> e.getEliminadoEn() == null)
+                            .filter(e -> pcLower == null || pcLower.isBlank()
+                                    || e.getTitulo().toLowerCase().contains(pcLower)
+                                    || e.getDescripcion().toLowerCase().contains(pcLower))
+                            .filter(e -> estado == null || e.getEstado().name().equalsIgnoreCase(estado))
+                            .filter(e -> anio == null || anio.equals(e.getAnio()))
+                            .limit(5)
+                            .collect(Collectors.toList());
+                    for (Estudio e : encontrados) {
+                        recursosAcumulados.add(new RecursoBD(e.getIdEstudio(), "ESTUDIO",
+                                e.getTitulo(), e.getDescripcion(), null, e.getAnio()));
+                    }
+                    return Map.of("total_encontrados", encontrados.size(), "resultados", encontrados.stream()
+                            .map(e -> Map.of("id", e.getIdEstudio(), "titulo", e.getTitulo(),
+                                    "anio", e.getAnio(), "estado", e.getEstado().name()))
+                            .collect(Collectors.toList()));
+                }
+                case "buscar_normativas": {
+                    String palabraClave = textoONull(args, "palabra_clave");
+                    String estado       = textoONull(args, "estado");
+                    Integer anio        = enteroONull(args, "anio");
+                    String pcLower      = palabraClave == null ? null : palabraClave.toLowerCase();
+                    List<Normativa> encontradas = normativaRepo.findAllNormativas().stream()
+                            .filter(n -> n.getEliminadoEn() == null)
+                            .filter(n -> pcLower == null || pcLower.isBlank()
+                                    || n.getTitulo().toLowerCase().contains(pcLower)
+                                    || (n.getCodigo() != null && n.getCodigo().toLowerCase().contains(pcLower))
+                                    || n.getOrganismoEmisor().toLowerCase().contains(pcLower)
+                                    || (n.getDescripcion() != null && n.getDescripcion().toLowerCase().contains(pcLower))
+                                    || (n.getCampoAplicacion() != null && n.getCampoAplicacion().toLowerCase().contains(pcLower)))
+                            .filter(n -> estado == null || n.getEstado().name().equalsIgnoreCase(estado))
+                            .filter(n -> anio == null || anio.equals(n.getAnio()))
+                            .limit(5)
+                            .collect(Collectors.toList());
+                    for (Normativa n : encontradas) {
+                        recursosAcumulados.add(new RecursoBD(n.getIdNormativa(), "NORMATIVA",
+                                n.getTitulo(), n.getDescripcion(), n.getCodigo(), n.getAnio()));
+                    }
+                    return Map.of("total_encontradas", encontradas.size(), "resultados", encontradas.stream()
+                            .map(n -> Map.of("id", n.getIdNormativa(), "titulo", n.getTitulo(),
+                                    "anio", n.getAnio(), "estado", n.getEstado().name()))
+                            .collect(Collectors.toList()));
+                }
+                case "tendencia_estudios_por_anio": {
+                    String estado = textoONull(args, "estado");
+                    List<Map<String, Object>> porAnio = estudioRepo.findAll().stream()
+                            .filter(e -> e.getEliminadoEn() == null)
+                            .filter(e -> estado == null || e.getEstado().name().equalsIgnoreCase(estado))
+                            .collect(Collectors.groupingBy(Estudio::getAnio, Collectors.counting()))
+                            .entrySet().stream()
+                            .sorted(Map.Entry.comparingByKey())
+                            .map(e -> Map.<String, Object>of("anio", e.getKey(), "total", e.getValue()))
+                            .collect(Collectors.toList());
+                    return Map.of("por_anio", porAnio);
+                }
+                case "tendencia_normativas_por_anio": {
+                    String estado = textoONull(args, "estado");
+                    List<Map<String, Object>> porAnio = normativaRepo.findAllNormativas().stream()
+                            .filter(n -> n.getEliminadoEn() == null)
+                            .filter(n -> estado == null || n.getEstado().name().equalsIgnoreCase(estado))
+                            .collect(Collectors.groupingBy(Normativa::getAnio, Collectors.counting()))
+                            .entrySet().stream()
+                            .sorted(Map.Entry.comparingByKey())
+                            .map(e -> Map.<String, Object>of("anio", e.getKey(), "total", e.getValue()))
+                            .collect(Collectors.toList());
+                    return Map.of("por_anio", porAnio);
+                }
+                case "estudios_recientes": {
+                    Integer dias = enteroONull(args, "dias");
+                    int diasFinal = dias != null ? dias : 30;
+                    LocalDate limite = LocalDate.now().minusDays(diasFinal);
+                    List<Estudio> recientes = estudioRepo.findAll().stream()
+                            .filter(e -> e.getEliminadoEn() == null)
+                            .filter(e -> e.getFechaPublicacion() != null && !e.getFechaPublicacion().isBefore(limite))
+                            .sorted(Comparator.comparing(Estudio::getFechaPublicacion).reversed())
+                            .limit(5)
+                            .collect(Collectors.toList());
+                    for (Estudio e : recientes) {
+                        recursosAcumulados.add(new RecursoBD(e.getIdEstudio(), "ESTUDIO",
+                                e.getTitulo(), e.getDescripcion(), null, e.getAnio()));
+                    }
+                    return Map.of("dias", diasFinal, "total_encontrados", recientes.size(), "resultados", recientes.stream()
+                            .map(e -> Map.of("id", e.getIdEstudio(), "titulo", e.getTitulo(),
+                                    "fecha_publicacion", String.valueOf(e.getFechaPublicacion())))
+                            .collect(Collectors.toList()));
+                }
+                case "normativas_recientes": {
+                    Integer dias = enteroONull(args, "dias");
+                    int diasFinal = dias != null ? dias : 30;
+                    LocalDateTime limite = LocalDateTime.now().minusDays(diasFinal);
+                    List<Normativa> recientes = normativaRepo.findAllNormativas().stream()
+                            .filter(n -> n.getEliminadoEn() == null)
+                            .filter(n -> n.getFechaCreacion() != null && !n.getFechaCreacion().isBefore(limite))
+                            .sorted(Comparator.comparing(Normativa::getFechaCreacion).reversed())
+                            .limit(5)
+                            .collect(Collectors.toList());
+                    for (Normativa n : recientes) {
+                        recursosAcumulados.add(new RecursoBD(n.getIdNormativa(), "NORMATIVA",
+                                n.getTitulo(), n.getDescripcion(), n.getCodigo(), n.getAnio()));
+                    }
+                    return Map.of("dias", diasFinal, "total_encontradas", recientes.size(), "resultados", recientes.stream()
+                            .map(n -> Map.of("id", n.getIdNormativa(), "titulo", n.getTitulo(),
+                                    "fecha_creacion", String.valueOf(n.getFechaCreacion())))
+                            .collect(Collectors.toList()));
+                }
+                case "contar_usuarios": {
+                    // Solo tiene sentido para ADMIN; se valida arriba con herramientasParaRol
+                    String rolFiltro   = textoONull(args, "rol");
+                    String estadoFiltro = textoONull(args, "estado");
+                    List<Integer> rolIds = "SOCIO".equalsIgnoreCase(rolFiltro) ? List.of(3)
+                            : "VISUALIZADOR".equalsIgnoreCase(rolFiltro) ? List.of(4)
+                            : List.of(3, 4);
+                    if ("ACTIVO".equalsIgnoreCase(estadoFiltro)) {
+                        return Map.of("total", usuarioRepo.countActiveAdminsByRole(rolIds));
+                    } else if ("BLOQUEADO".equalsIgnoreCase(estadoFiltro)) {
+                        return Map.of("total", usuarioRepo.countBlockedAdminsByRole(rolIds));
+                    } else if ("PENDIENTE".equalsIgnoreCase(estadoFiltro)) {
+                        return Map.of("total", usuarioRepo.countByEstadoAprobacionAndEliminadoEnIsNull("PENDIENTE"));
+                    }
+                    return Map.of("total", usuarioRepo.countByRol_IdInAndEliminadoEnIsNull(rolIds));
+                }
+                case "contar_solicitudes_registro": {
+                    String estado = textoONull(args, "estado");
+                    if (estado == null) {
+                        long pend = solicitudRepo.countByEstado("PENDIENTE");
+                        long apro = solicitudRepo.countByEstado("APROBADO");
+                        long rech = solicitudRepo.countByEstado("RECHAZADO");
+                        return Map.of("pendientes", pend, "aprobadas", apro, "rechazadas", rech, "total", pend + apro + rech);
+                    }
+                    return Map.of("total", solicitudRepo.countByEstado(estado.toUpperCase()));
+                }
+                case "estadisticas_descargas": {
+                    String tipo = textoONull(args, "tipo");
+                    if (tipo == null) {
+                        return Map.of("total", registroDescargaRepo.count(),
+                                "estudios", registroDescargaRepo.countByTipoDocumento("ESTUDIO"),
+                                "normativas", registroDescargaRepo.countByTipoDocumento("NORMATIVA"));
+                    }
+                    return Map.of("total", registroDescargaRepo.countByTipoDocumento(tipo.toUpperCase()));
+                }
+                case "contar_administradores": {
+                    String estado = textoONull(args, "estado");
+                    List<Integer> adminIds = List.of(2);
+                    if ("ACTIVO".equalsIgnoreCase(estado)) return Map.of("total", usuarioRepo.countActiveAdminsByRole(adminIds));
+                    if ("BLOQUEADO".equalsIgnoreCase(estado)) return Map.of("total", usuarioRepo.countBlockedAdminsByRole(adminIds));
+                    return Map.of("total", usuarioRepo.countByRol_IdInAndEliminadoEnIsNull(adminIds));
+                }
+                case "estado_seguridad": {
+                    long dominiosActivos   = dominioRepo.countByEstadoTrue();
+                    long dominiosInactivos = dominioRepo.countByEstadoFalse();
+                    long intentosFallidos  = intentoLoginRepo.countByFechaAfterAndExitosoFalse(LocalDateTime.now().minusHours(24));
+                    var politica = politicaRepo.findAll().stream().findFirst();
+                    String infoPolitica = politica.map(p ->
+                            "longitud mínima %d, requiere mayúsculas: %s, requiere números: %s, requiere especiales: %s"
+                                    .formatted(p.getLongitudMinima(),
+                                            p.getRequiereMayuscula() ? "sí" : "no",
+                                            p.getRequiereNumero() ? "sí" : "no",
+                                            p.getRequiereSimbolo() ? "sí" : "no")
+                    ).orElse("no configurada");
+                    return Map.of(
+                            "dominios_activos", dominiosActivos,
+                            "dominios_inactivos", dominiosInactivos,
+                            "intentos_fallidos_24h", intentosFallidos,
+                            "politica_contrasenas", infoPolitica
+                    );
+                }
+                default:
+                    return Map.of("error", "Herramienta desconocida: " + nombre);
+            }
+        } catch (Exception e) {
+            log.warn("[CHATBOT] Error ejecutando herramienta {}: {}", nombre, e.getMessage());
+            return Map.of("error", "No se pudo completar la consulta: " + e.getMessage());
+        }
+    }
+
+    private String textoONull(JsonNode args, String campo) {
+        if (args == null || !args.hasNonNull(campo)) return null;
+        String v = args.get(campo).asText();
+        return v.isBlank() ? null : v;
+    }
+
+    private Integer enteroONull(JsonNode args, String campo) {
+        if (args == null || !args.hasNonNull(campo)) return null;
+        return args.get(campo).asInt();
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -614,25 +954,10 @@ public class ChatbotService {
         }
     }
 
-    /** Extrae una keyword útil del mensaje del usuario. */
-    private String extraerKeyword(String mensaje) {
-        // Palabras vacías a ignorar
-        List<String> stopWords = List.of("que", "como", "cual", "cuales", "donde", "cuando",
-                "hay", "tiene", "tienen", "puedo", "debo", "sobre", "para", "con", "sin",
-                "una", "uno", "los", "las", "del", "qué", "cómo", "cuál", "es", "son",
-                "me", "te", "se", "la", "le", "un", "en", "de", "el", "y", "a", "o");
+    private String llamarClaudeApi(List<ChatMensaje> contexto, String contextoBD, String rol,
+                                    Long idUsuario, List<RecursoBD> recursosAcumulados) throws Exception {
+        List<ToolDef> tools = herramientasParaRol(rol);
 
-        String[] palabras = mensaje.toLowerCase()
-                .replaceAll("[¿?¡!.,;:]", "")
-                .split("\\s+");
-
-        return java.util.Arrays.stream(palabras)
-                .filter(p -> p.length() > 3 && !stopWords.contains(p))
-                .findFirst()
-                .orElse("");
-    }
-
-    private String llamarClaudeApi(List<ChatMensaje> contexto, String contextoBD) throws Exception {
         ObjectNode body = mapper.createObjectNode();
         body.put("model", claudeModel);
         body.put("max_tokens", 1024);
@@ -645,26 +970,70 @@ public class ChatbotService {
             msg.put("content", m.getMensaje());
         }
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.anthropic.com/v1/messages"))
-                .header("x-api-key", claudeApiKey)
-                .header("anthropic-version", "2023-06-01")
-                .header("content-type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(body)))
-                .build();
-
-        HttpResponse<String> response = HttpClient.newHttpClient()
-                .send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() != 200) {
-            throw new RuntimeException("Claude API error " + response.statusCode() + ": " + response.body());
+        if (!tools.isEmpty()) {
+            ArrayNode toolsArr = body.putArray("tools");
+            for (ToolDef t : tools) toolsArr.add(t.aClaudeJson(mapper));
         }
 
-        JsonNode json = mapper.readTree(response.body());
-        return json.path("content").get(0).path("text").asText();
+        for (int ronda = 0; ronda < MAX_RONDAS_HERRAMIENTAS; ronda++) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.anthropic.com/v1/messages"))
+                    .header("x-api-key", claudeApiKey)
+                    .header("anthropic-version", "2023-06-01")
+                    .header("content-type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(body)))
+                    .build();
+
+            HttpResponse<String> response = HttpClient.newHttpClient()
+                    .send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() != 200) {
+                throw new RuntimeException("Claude API error " + response.statusCode() + ": " + response.body());
+            }
+
+            JsonNode json = mapper.readTree(response.body());
+            JsonNode contentArr = json.path("content");
+
+            StringBuilder texto = new StringBuilder();
+            List<JsonNode> toolUses = new java.util.ArrayList<>();
+            for (JsonNode block : contentArr) {
+                String tipo = block.path("type").asText();
+                if ("text".equals(tipo)) texto.append(block.path("text").asText());
+                if ("tool_use".equals(tipo)) toolUses.add(block);
+            }
+
+            if (toolUses.isEmpty()) {
+                return texto.toString();
+            }
+
+            log.info("[CHATBOT] Claude pidió {} herramienta(s) en ronda {}", toolUses.size(), ronda + 1);
+
+            ObjectNode assistantMsg = messages.addObject();
+            assistantMsg.put("role", "assistant");
+            assistantMsg.set("content", contentArr);
+
+            ObjectNode userMsg = messages.addObject();
+            userMsg.put("role", "user");
+            ArrayNode resultParts = userMsg.putArray("content");
+            for (JsonNode tu : toolUses) {
+                String nombreFuncion = tu.path("name").asText();
+                String toolUseId     = tu.path("id").asText();
+                JsonNode args        = tu.path("input");
+                Object resultado = ejecutarHerramienta(nombreFuncion, args, rol, recursosAcumulados);
+
+                ObjectNode resultBlock = resultParts.addObject();
+                resultBlock.put("type", "tool_result");
+                resultBlock.put("tool_use_id", toolUseId);
+                resultBlock.put("content", mapper.writeValueAsString(resultado));
+            }
+        }
+
+        throw new RuntimeException("Se excedió el número máximo de llamadas a herramientas");
     }
 
-    private String llamarGemini(List<ChatMensaje> contexto, String contextoBD) throws Exception {
+    private String llamarGemini(List<ChatMensaje> contexto, String contextoBD, String rol,
+                                 Long idUsuario, List<RecursoBD> recursosAcumulados) throws Exception {
+        List<ToolDef> tools = herramientasParaRol(rol);
         String url = "https://generativelanguage.googleapis.com/v1beta/models/"
                 + geminiModel + ":generateContent?key=" + geminiApiKey;
 
@@ -684,28 +1053,65 @@ public class ChatbotService {
             parts.addObject().put("text", m.getMensaje());
         }
 
+        if (!tools.isEmpty()) {
+            ArrayNode toolsArr = body.putArray("tools");
+            ObjectNode toolObj = toolsArr.addObject();
+            ArrayNode funcDecls = toolObj.putArray("functionDeclarations");
+            for (ToolDef t : tools) funcDecls.add(t.aGeminiJson(mapper));
+        }
+
         ObjectNode genConfig = body.putObject("generationConfig");
         genConfig.put("maxOutputTokens", 1024);
         genConfig.put("temperature", 0.7);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .timeout(java.time.Duration.ofSeconds(30))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(body)))
-                .build();
+        for (int ronda = 0; ronda < MAX_RONDAS_HERRAMIENTAS; ronda++) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .timeout(Duration.ofSeconds(30))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(body)))
+                    .build();
 
-        HttpResponse<String> response = HttpClient.newHttpClient()
-                .send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = HttpClient.newHttpClient()
+                    .send(request, HttpResponse.BodyHandlers.ofString());
 
-        if (response.statusCode() != 200) {
-            throw new RuntimeException("Gemini API error " + response.statusCode() + ": " + response.body());
+            if (response.statusCode() != 200) {
+                throw new RuntimeException("Gemini API error " + response.statusCode() + ": " + response.body());
+            }
+
+            JsonNode json = mapper.readTree(response.body());
+            JsonNode partsNode = json.path("candidates").get(0).path("content").path("parts");
+
+            JsonNode funcCallPart = null;
+            StringBuilder texto = new StringBuilder();
+            for (JsonNode p : partsNode) {
+                if (p.has("functionCall")) { funcCallPart = p.get("functionCall"); break; }
+                if (p.has("text")) texto.append(p.get("text").asText());
+            }
+
+            if (funcCallPart == null) {
+                return texto.toString();
+            }
+
+            String nombreFuncion = funcCallPart.path("name").asText();
+            JsonNode args = funcCallPart.path("args");
+            log.info("[CHATBOT] Gemini pidió herramienta '{}' en ronda {}", nombreFuncion, ronda + 1);
+            Object resultado = ejecutarHerramienta(nombreFuncion, args, rol, recursosAcumulados);
+
+            // Turno "model" con la llamada a función tal cual la devolvió el modelo
+            ObjectNode modelTurn = contents.addObject();
+            modelTurn.put("role", "model");
+            modelTurn.putArray("parts").addObject().set("functionCall", funcCallPart);
+
+            // Turno "function" con el resultado real de la consulta
+            ObjectNode funcTurn = contents.addObject();
+            funcTurn.put("role", "function");
+            ObjectNode funcResponse = funcTurn.putArray("parts").addObject().putObject("functionResponse");
+            funcResponse.put("name", nombreFuncion);
+            funcResponse.set("response", mapper.createObjectNode().set("result", mapper.valueToTree(resultado)));
         }
 
-        JsonNode json = mapper.readTree(response.body());
-        return json.path("candidates").get(0)
-                   .path("content").path("parts").get(0)
-                   .path("text").asText();
+        throw new RuntimeException("Se excedió el número máximo de llamadas a herramientas");
     }
 }
 
